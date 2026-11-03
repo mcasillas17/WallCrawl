@@ -119,6 +119,17 @@ class PackagingTest(unittest.TestCase):
             p.validate_bundled_illustrations(self.destination)
         self.assertEqual(before, self.state())
 
+    def test_numbered_instruction_chart_is_bound_to_the_correct_exercise_and_variant(self):
+        frame = self.document['frames'][0]
+        record = {'tool': 'native-imagegen', 'prompt': 'Artificial numbered chart', 'layout': 'sequence-chart',
+                  'exerciseId': frame['exerciseId'], 'variant': 'unrelated', 'outputSha256': frame['master']['sha256']}
+        data = json.dumps(record).encode()
+        (self.ledger.parent / frame['generation']['path']).write_bytes(data)
+        frame['generation']['sha256'] = p.digest(data)
+        self.save()
+        with self.assertRaisesRegex(ValueError, 'chart belongs to a different'):
+            p.collect_supplement(self.ledger)
+
     def test_native_strip_cannot_substitute_a_different_phase(self):
         frame = self.document['frames'][0]
         record = {'tool': 'native-imagegen', 'prompt': 'Artificial geometry', 'nativeStrip': frame['source'],

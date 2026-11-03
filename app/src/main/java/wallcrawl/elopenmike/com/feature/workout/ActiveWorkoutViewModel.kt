@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -47,7 +49,8 @@ class ActiveWorkoutViewModel(
     // The rest timer never uses this clock; it has its own monotonic one.
     private val nowMillis: () -> Long = System::currentTimeMillis,
     elapsedRealtimeClock: ElapsedRealtimeClock = ElapsedRealtimeClock.System,
-    private val programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null
+    private val programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null,
+    private val userProfileRepository: UserProfileRepository? = null
 ) : ViewModel() {
 
     private val currentExerciseIndexFlow = MutableStateFlow(0)
@@ -176,7 +179,8 @@ class ActiveWorkoutViewModel(
             val previousPerformance = workoutHistoryAnalyzer.latestCompletedExercisePerformance(
                 sessions = completedSessions,
                 exerciseId = currentEx.exerciseId,
-                purpose = currentEx.prescription.purpose
+                purpose = currentEx.prescription.purpose,
+                isLegacyMobility = currentEx.isLegacyMobility
             )
 
             ActiveWorkoutUiState.Active(
@@ -193,7 +197,8 @@ class ActiveWorkoutViewModel(
                 isConfirmingDiscard = screenState.confirmations.isConfirmingDiscard,
                 programAssociation = associationState.association,
                 programReadError = associationState.error,
-                programFinishUnsupported = screenState.programFinishUnsupported
+                programFinishUnsupported = screenState.programFinishUnsupported,
+                painExclusionOffer = screenState.confirmations.painExclusionOffer
             )
         }
     }.stateIn(
@@ -256,6 +261,9 @@ class ActiveWorkoutViewModel(
         // A repeat of the outcome this set already has is a duplicate tap or a re-emitted
         // edit, not new information, so it is never written again.
         if (current == performance) return
+        val stoppedExerciseId = if (performance.stopReason == SetStopReason.PAIN_STOP && current?.stopReason != SetStopReason.PAIN_STOP) {
+            exerciseContaining(setId)?.exerciseId
+        } else null
         val wasCompleted = current?.isCompleted == true
         // Rest starts only on a genuine false -> true completion transition, so editing a
         // value on an already-completed set never hands out another rest period.
@@ -271,6 +279,7 @@ class ActiveWorkoutViewModel(
                 outcomesAwaitingObservation[setId] = performance
                 setUpdateErrorFlow.value = null
                 if (startsRest) startRestFor(setId)
+                if (stoppedExerciseId != null) offerPainExclusion(stoppedExerciseId)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -349,6 +358,45 @@ class ActiveWorkoutViewModel(
                 isCompleted = false
             )
         )
+    }
+
+    private suspend fun offerPainExclusion(exerciseId: String) {
+        val repository = userProfileRepository ?: return
+        val profile = try {
+            repository.getUserProfile().first()
+        } catch (error: CancellationException) {
+            throw error
+        } catch (_: Exception) {
+            return // The stop was recorded even if exclusions could not be read.
+        }
+        val confirmations = confirmationFlow.value
+        if (exerciseId !in profile.excludedExerciseIds && exerciseId !in confirmations.pendingExclusions) {
+            confirmationFlow.value = confirmations.copy(pendingExclusions = confirmations.pendingExclusions + exerciseId)
+        }
+    }
+
+    fun acceptPainExclusion(exerciseId: String) {
+        val repository = userProfileRepository ?: return
+        val confirmations = confirmationFlow.value
+        if (confirmations.pendingExclusions.firstOrNull() != exerciseId || confirmations.exclusionSaving) return
+        confirmationFlow.value = confirmations.copy(exclusionSaving = true, exclusionSaveFailed = false)
+        viewModelScope.launch {
+            try {
+                repository.setExerciseExcluded(exerciseId, true)
+                confirmationFlow.update { it.withoutFirstExclusion() }
+            } catch (error: CancellationException) {
+                throw error
+            } catch (_: Exception) {
+                confirmationFlow.update { it.copy(exclusionSaving = false, exclusionSaveFailed = true) }
+            }
+        }
+    }
+
+    fun dismissPainExclusionOffer(exerciseId: String) {
+        val confirmations = confirmationFlow.value
+        if (confirmations.pendingExclusions.firstOrNull() == exerciseId && !confirmations.exclusionSaving) {
+            confirmationFlow.value = confirmations.withoutFirstExclusion()
+        }
     }
 
     /** Records the optional manageable confirmation for work the user already completed. */
@@ -526,7 +574,8 @@ class ActiveWorkoutViewModel(
             workoutRepository: WorkoutRepository,
             exerciseCatalog: ExerciseCatalog,
             workoutHistoryAnalyzer: WorkoutHistoryAnalyzer,
-            programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null
+            programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null,
+            userProfileRepository: UserProfileRepository
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -535,7 +584,8 @@ class ActiveWorkoutViewModel(
                     workoutRepository,
                     exerciseCatalog,
                     workoutHistoryAnalyzer,
-                    programRepository = programRepository
+                    programRepository = programRepository,
+                    userProfileRepository = userProfileRepository
                 ) as T
             }
         }
@@ -551,8 +601,18 @@ class ActiveWorkoutViewModel(
 
     private data class ConfirmationState(
         val pendingFinish: FinishDecision.ConfirmIncomplete? = null,
-        val isConfirmingDiscard: Boolean = false
-    )
+        val isConfirmingDiscard: Boolean = false,
+        val pendingExclusions: List<String> = emptyList(),
+        val exclusionSaving: Boolean = false,
+        val exclusionSaveFailed: Boolean = false
+    ) {
+        val painExclusionOffer: PainExclusionOffer?
+            get() = pendingExclusions.firstOrNull()?.let { PainExclusionOffer(it, exclusionSaving, exclusionSaveFailed) }
+
+        fun withoutFirstExclusion() = copy(
+            pendingExclusions = pendingExclusions.drop(1), exclusionSaving = false, exclusionSaveFailed = false
+        )
+    }
 
     private data class ScreenState(
         @StringRes val error: Int?,

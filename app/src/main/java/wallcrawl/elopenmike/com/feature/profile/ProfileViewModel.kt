@@ -134,15 +134,19 @@ class ProfileViewModel(
     // Capability saves also replace the equipment list as part of a whole-profile write.
     private val equipmentEdits = Mutex()
 
+    private val exclusionSaveFailed = MutableStateFlow(false)
+
     val uiState: StateFlow<ProfileUiState> = combine(
         userProfileRepository.getUserProfile(),
-        capabilityEditorFlow
-    ) { profile, editor ->
+        capabilityEditorFlow,
+        exclusionSaveFailed
+    ) { profile, editor, exclusionFailed ->
         val state: ProfileUiState = ProfileUiState.Success(
             profile = profile,
             isSaving = editor.isSaving,
             movementCapabilityDraft = editor.draft,
             movementCapabilityError = editor.error,
+            exclusionSaveFailed = exclusionFailed,
             availableEquipmentOptions = StandardEquipment.ALL,
             availableMuscleOptions = StandardMuscles.PRIORITY_OPTIONS,
             availableConstraintOptions = TrainingConstraint.entries
@@ -158,6 +162,31 @@ class ProfileViewModel(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = ProfileUiState.Loading
     )
+
+    fun removeReportedCondition(conditionId: String) {
+        viewModelScope.launch {
+            try {
+                userProfileRepository.removeReportedCondition(conditionId)
+            } catch (error: CancellationException) {
+                throw error
+            } catch (_: Exception) {
+                conditionState.value = conditionState.value.copy(saveFailed = true)
+            }
+        }
+    }
+
+    fun removeExcludedExercise(exerciseId: String) {
+        viewModelScope.launch {
+            try {
+                userProfileRepository.setExerciseExcluded(exerciseId, false)
+                exclusionSaveFailed.value = false
+            } catch (error: CancellationException) {
+                throw error
+            } catch (_: Exception) {
+                exclusionSaveFailed.value = true
+            }
+        }
+    }
 
     fun updateThemePreference(theme: ThemePreference) {
         viewModelScope.launch {

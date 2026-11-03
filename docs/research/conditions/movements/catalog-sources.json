@@ -1,0 +1,72 @@
+[
+  {
+    "exerciseId": "wrist-extensor-stretch",
+    "conditionId": "lateral-elbow-tendinopathy",
+    "sources": [
+      {
+        "url": "https://doi.org/10.1136/bmjopen-2024-085916",
+        "title": "Sveinall et al., heavy slow resistance feasibility trial, stretching component"
+      },
+      {
+        "url": "https://www.orthoinfo.org/globalassets/pdfs/exercise-program-for-epicondylitis.pdf",
+        "title": "AAOS, Therapeutic Exercise Program for Epicondylitis, exercise 2. Hand placement for assisted wrist flexion."
+      }
+    ]
+  },
+  {
+    "exerciseId": "straight-leg-raise",
+    "conditionId": "patellofemoral-pain",
+    "sources": [
+      {
+        "url": "https://doi.org/10.1186/s13018-024-04688-x",
+        "title": "Kamel et al., patellofemoral pain trial, supplementary knee exercise program"
+      },
+      {
+        "url": "https://www.orthoinfo.org/staying-healthy/knee-exercises",
+        "title": "AAOS, Knee Exercises, Straight-Leg Lift. Position of the opposite leg and example lift height."
+      }
+    ]
+  },
+  {
+    "exerciseId": "side-lying-isometric-hip-abduction-hold",
+    "conditionId": "gluteal-tendinopathy",
+    "sources": [
+      {
+        "url": "https://doi.org/10.1136/bmjsem-2019-000558",
+        "title": "Clifford et al., isometric exercise program, Figure 2A(i) and training booklet"
+      }
+    ]
+  },
+  {
+    "exerciseId": "standing-isometric-gluteal-contraction",
+    "conditionId": "gluteal-tendinopathy",
+    "sources": [
+      {
+        "url": "https://doi.org/10.1136/bmjsem-2019-000558",
+        "title": "Clifford et al., isometric exercise program, standing exercise and training booklet p. 7"
+      }
+    ]
+  },
+  {
+    "exerciseId": "lying-piriformis-stretch",
+    "conditionId": "piriformis-syndrome",
+    "sources": [
+      {
+        "url": "https://myhealth.alberta.ca/Health/aftercareinformation/pages/conditions.aspx?hwid=zc2596",
+        "title": "MyHealth Alberta, Piriformis Syndrome: Care Instructions. Supine knee-toward-opposite-shoulder setup in the home-care section."
+      }
+    ]
+  },
+  {
+    "exerciseId": "tendon-gliding-sequence",
+    "conditionId": "carpal-tunnel-syndrome",
+    "sourceId": "cts-p1",
+    "executionNote": "The follow-up review inspected the full trial methods and Figure 2a–e. The five numbered hand positions return to fully open fingers between shapes. Adding glides to the splint did not show a significant between-group advantage in this trial.",
+    "sources": [
+      {
+        "title": "Abdolrazaghi et al., Tendon and Nerve Gliding Exercises, Treatment and Figure 2a–e",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10035085/"
+      }
+    ]
+  }
+]

@@ -65,10 +65,15 @@ private const val PRIOR_SESSION_CHRONOLOGY = """
 
 // Select unknown relevant types and purposes too, so strict decoding reports corruption rather
 // than silently relabelling it via the legacy converter or skipping it as incompatible evidence.
+private const val INVALID_PURPOSE_OR_ROLE = """
+    e.purpose NOT IN ('ORDINARY', 'SUPPORTIVE') OR e.role NOT IN ('MAIN', 'MOBILITY')
+    OR (e.role = 'MOBILITY' AND e.purpose != 'SUPPORTIVE')
+"""
+
 private const val ELIGIBLE_PREVIOUS_EXERCISE = """
     e.exerciseId = v.exerciseId AND (
-        e.purpose NOT IN ('ORDINARY', 'SUPPORTIVE')
-        OR (e.purpose = v.purpose AND (
+        ($INVALID_PURPOSE_OR_ROLE)
+        OR (e.purpose = v.purpose AND e.role = v.role AND (
         e.exerciseType NOT IN ('WEIGHT_REPS', 'BODYWEIGHT_REPS', 'ASSISTED_BODYWEIGHT', 'DURATION', 'DISTANCE_DURATION')
         OR (e.exerciseType = v.exerciseType
             AND (v.exerciseType != 'DISTANCE_DURATION' OR (
@@ -113,7 +118,7 @@ interface WorkoutHistoryDao {
                 OR EXISTS (SELECT 1 FROM workout_exercises e WHERE e.sessionId = s.id
                     AND (e.exerciseType NOT IN ('WEIGHT_REPS', 'BODYWEIGHT_REPS', 'ASSISTED_BODYWEIGHT',
                         'DURATION', 'DISTANCE_DURATION')
-                        OR e.purpose NOT IN ('ORDINARY', 'SUPPORTIVE')
+                        OR ($INVALID_PURPOSE_OR_ROLE)
                         OR (e.targetRepMin IS NULL) != (e.targetRepMax IS NULL)
                         OR (e.exerciseType = 'DISTANCE_DURATION'
                             AND e.targetDurationSeconds IS NULL AND e.targetDistanceMeters IS NULL)))
@@ -161,7 +166,7 @@ interface WorkoutHistoryDao {
         SELECT e.exerciseId, e.exerciseType, s.weightUnit AS weightUnitName,
             MAX(CASE WHEN w.completedWeight > 0 THEN w.completedWeight END) AS maxWeight,
             MAX(w.completedReps) AS maxReps,
-            MAX(e.purpose NOT IN ('ORDINARY', 'SUPPORTIVE')) AS invalidPurpose
+            MAX(($INVALID_PURPOSE_OR_ROLE)) AS invalidPurposeOrRole
         FROM workout_sessions s
         JOIN workout_exercises e ON e.sessionId = s.id
         JOIN workout_sets w ON w.workoutExerciseId = e.id
@@ -173,7 +178,7 @@ interface WorkoutHistoryDao {
           AND s.completedAtTimestamp < viewed.startedAtTimestamp
           AND EXISTS (SELECT 1 FROM workout_exercises v
               WHERE v.sessionId = viewed.id AND v.exerciseId = e.exerciseId AND v.exerciseType = e.exerciseType)
-          AND e.purpose != 'SUPPORTIVE'
+          AND (e.purpose = 'ORDINARY' OR ($INVALID_PURPOSE_OR_ROLE))
           AND e.exerciseType IN ('WEIGHT_REPS', 'BODYWEIGHT_REPS', 'ASSISTED_BODYWEIGHT')
           AND w.exerciseType = e.exerciseType AND w.isCompleted = 1
           AND w.stopReason IS NULL AND w.stoppedAtTimestamp IS NULL AND w.completedReps > 0
@@ -187,7 +192,7 @@ interface WorkoutHistoryDao {
         val rows = selectPersonalRecordBaselines(sessionId)
         require(rows.size <= MAX_RECORD_BASELINES) { "Stored record baseline exceeds its representation bound." }
         return rows.map { row ->
-            require(!row.invalidPurpose) { "Stored record baseline contains an unknown prescription purpose." }
+            require(!row.invalidPurposeOrRole) { "Stored record baseline contains an invalid prescription purpose or role." }
             PersonalRecordBaseline(
                 row.exerciseId, row.exerciseType,
                 requireNotNull(WeightUnit.entries.firstOrNull { it.name == row.weightUnitName }) {
@@ -288,7 +293,7 @@ interface WorkoutHistoryDao {
                     s.weightUnit NOT IN ('LBS', 'KG')
                     OR (e.id IS NOT NULL AND (e.exerciseType NOT IN ('WEIGHT_REPS', 'BODYWEIGHT_REPS',
                         'ASSISTED_BODYWEIGHT', 'DURATION', 'DISTANCE_DURATION')
-                        OR e.purpose NOT IN ('ORDINARY', 'SUPPORTIVE')
+                        OR ($INVALID_PURPOSE_OR_ROLE)
                         OR (e.targetRepMin IS NULL) != (e.targetRepMax IS NULL)
                         OR (e.exerciseType = 'DISTANCE_DURATION'
                             AND e.targetDurationSeconds IS NULL AND e.targetDistanceMeters IS NULL)))
@@ -303,7 +308,7 @@ interface WorkoutHistoryDao {
         SELECT w.id FROM workout_sets w
         JOIN workout_exercises e ON e.id = w.workoutExerciseId
         JOIN workout_sessions s ON s.id = e.sessionId
-        WHERE ($ANALYTICS_RANGE_SESSION) AND e.exerciseId = :exerciseId AND e.purpose != 'SUPPORTIVE'
+        WHERE ($ANALYTICS_RANGE_SESSION) AND e.exerciseId = :exerciseId AND (e.purpose = 'ORDINARY' OR ($INVALID_PURPOSE_OR_ROLE))
           AND ($ELIGIBLE_PREVIOUS_SET)
     """)
     suspend fun selectAnalyticsComparableSetIds(
@@ -315,7 +320,7 @@ interface WorkoutHistoryDao {
         SELECT r.* FROM workout_recommendation_records r
         JOIN workout_sessions s ON s.id = r.sessionId
         WHERE ($ANALYTICS_RANGE_SESSION)
-          AND EXISTS (SELECT 1 FROM workout_exercises e WHERE e.sessionId = s.id AND e.exerciseId = :exerciseId)
+          AND EXISTS (SELECT 1 FROM workout_exercises e WHERE e.sessionId = s.id AND e.exerciseId = :exerciseId AND e.role = 'MAIN')
         ORDER BY s.completedAtTimestamp ASC, s.id ASC
     """)
     suspend fun selectAnalyticsRecommendationRecords(
@@ -326,7 +331,7 @@ interface WorkoutHistoryDao {
     @Query("""
         SELECT DISTINCT e.exerciseId FROM workout_exercises e
         JOIN workout_sessions s ON s.id = e.sessionId
-        WHERE s.status = 'COMPLETED' AND s.completedAtTimestamp IS NOT NULL
+        WHERE s.status = 'COMPLETED' AND s.completedAtTimestamp IS NOT NULL AND e.role = 'MAIN'
         ORDER BY e.exerciseId ASC LIMIT :limit
     """)
     suspend fun selectAnalyticsExerciseIds(limit: Int): List<String>
@@ -358,7 +363,7 @@ data class PersonalRecordBaselineRow(
     val weightUnitName: String,
     val maxWeight: Double?,
     val maxReps: Int?,
-    val invalidPurpose: Boolean
+    val invalidPurposeOrRole: Boolean
 )
 
 data class HistorySessionSize(

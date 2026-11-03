@@ -1,0 +1,8 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Create a second demonstrator illustration for this medically educational exercise card. Match this reference's quiet, supported position, from the side. Draw one adult man wearing a long-sleeve crew-neck training shirt, loose joggers, and flat exercise shoes. Show his full body with generous clear margins on all sides. His back and the back of his head contact the floor and a thin soft head pillow respectively; both knees bent, both soles planted, hands relaxed beside thighs. Show just the very small nod one makes when beginning to say yes while looking toward the ceiling, with a long relaxed neck, his occiput remaining on the pillow. Keep chin clear of chest. Use the catalog's sparse clean white contour-only vector-like line drawing; genuine transparent alpha background AND transparent open interiors, no shading/fill/no matte. No text, angles, arrows, labels or additional poses. Square image, one instructional still.",
+  "outputSha256": "d6db7334c22c78eef1c85f9d844165a72daa8526416a4ac466df7f20040fccb6",
+  "layout": "hold",
+  "variant": "male",
+  "exerciseId": "supine-supported-chin-nod"
+}

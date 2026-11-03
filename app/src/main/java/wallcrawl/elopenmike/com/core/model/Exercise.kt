@@ -311,3 +311,11 @@ object StandardEquipment {
 
     val ALL = FULL_GYM + BAND_SETUPS + SUPPORT_ASSEMBLY
 }
+
+/** PR 105 stored this second ID for the wall-supported figure-four stretch. Keep logged IDs intact. */
+internal object WallStretchIdentity {
+    const val previous = "figure-four-stretch"
+    const val catalog = "supine-wall-supported-piriformis-stretch"
+
+    fun forLookup(id: String) = if (id == previous) catalog else id
+}

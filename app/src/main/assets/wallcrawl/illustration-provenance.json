@@ -1561,6 +1561,396 @@
       "variant": "male"
     },
     {
+      "exerciseId": "hsd-supine-dumbbell-scapular-protraction",
+      "frameNumber": 1,
+      "generationRecordSha256": "98dbc99cbb67e21759c4a059961dfbcbdda28cd4a7f2a915711ed08b4e3a8e9c",
+      "masterSha256": "db619e6912a7c5aecbebabd601497965693f6a379aad376673e9b35b9776b9cc",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/hsd-supine-dumbbell-scapular-protraction/frame-1.svg",
+      "sha256": "a999bfdca3f6886b3f4f024e11f7f55c444a92c798732c2b3059180bf7466d2d",
+      "sourceSha256": "d8e76fe69496222cf1b22ab3a3e601a566541a1dba7e567ce4ab4673b31c5931",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "b543c307a090ff7a78d95e0c637263ca6d00b1d9f28b55acfebd1006658ac5a2",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "hsd-supine-dumbbell-scapular-protraction",
+      "frameNumber": 2,
+      "generationRecordSha256": "98dbc99cbb67e21759c4a059961dfbcbdda28cd4a7f2a915711ed08b4e3a8e9c",
+      "masterSha256": "a37c38e41f0476d44515997012dabc46d3fe547c0ed29cae2d55226a72e77e6f",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/hsd-supine-dumbbell-scapular-protraction/frame-2.svg",
+      "sha256": "3ab21cc6f49113960c9ef2854a599eb2cc6900a47e7ceaf75e9a068ec48be0c7",
+      "sourceSha256": "d8e76fe69496222cf1b22ab3a3e601a566541a1dba7e567ce4ab4673b31c5931",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "c50894b78b03d099a272f375d96b16ef956cc48081eb85b23c17ef89052c4bc5",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "hsd-supine-dumbbell-scapular-protraction",
+      "frameNumber": 3,
+      "generationRecordSha256": "98dbc99cbb67e21759c4a059961dfbcbdda28cd4a7f2a915711ed08b4e3a8e9c",
+      "masterSha256": "95d24e515c2d9346351596b4484ddb8d56cf0c98d4d46050ee9862bd17acd6d4",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/hsd-supine-dumbbell-scapular-protraction/frame-3.svg",
+      "sha256": "79c55f09bebaf5baf9d291d4877203b47bbb6164174e9592d0f0550d047260c4",
+      "sourceSha256": "d8e76fe69496222cf1b22ab3a3e601a566541a1dba7e567ce4ab4673b31c5931",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "d44ed0cb5179a10b11d8f04c8eecc58b44d2f560db68628d649fb18aa0446ae1",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "hsd-supine-dumbbell-scapular-protraction",
+      "frameNumber": 1,
+      "generationRecordSha256": "10100cb1cd6a898e76aef506c307f8b0332642dd6c474ee1aa674b6b461da805",
+      "masterSha256": "24af2e2a366620c0cc7e7b541bdd0a8218f311fed8ab80378701c5043beb0c5a",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/hsd-supine-dumbbell-scapular-protraction/frame-1.svg",
+      "sha256": "1227f02cf41077aabd6230776632eda62fb05e9bb698256f557f9c3f69fea7a8",
+      "sourceSha256": "d8e76fe69496222cf1b22ab3a3e601a566541a1dba7e567ce4ab4673b31c5931",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "7851b7ad20238ba1c9725f7a560c9aad80e07fd77fe04d94e18c256192c2fc7c",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "hsd-supine-dumbbell-scapular-protraction",
+      "frameNumber": 2,
+      "generationRecordSha256": "10100cb1cd6a898e76aef506c307f8b0332642dd6c474ee1aa674b6b461da805",
+      "masterSha256": "1ce058a3f93b8dbccf7deeba5a222fd9fd2291dbc8802b17440f86d0cc299008",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/hsd-supine-dumbbell-scapular-protraction/frame-2.svg",
+      "sha256": "197024ade2c810d98a0d259d73c972056718d545bd4485e3956162b79400033f",
+      "sourceSha256": "d8e76fe69496222cf1b22ab3a3e601a566541a1dba7e567ce4ab4673b31c5931",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "54c62f365d4294bcae1e0fa4a8ad0b2cb5447c4f36eaecd13782c26a3b646b0c",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "hsd-supine-dumbbell-scapular-protraction",
+      "frameNumber": 3,
+      "generationRecordSha256": "10100cb1cd6a898e76aef506c307f8b0332642dd6c474ee1aa674b6b461da805",
+      "masterSha256": "a6c3a19a4bc982c500dbdc97c5c20dbc8d32407c474d10a75c94c57d4b62d95b",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/hsd-supine-dumbbell-scapular-protraction/frame-3.svg",
+      "sha256": "cf45480414bc63d8036732f6bc401be8863e212294ce6cc5e4a56f89009f6ec5",
+      "sourceSha256": "d8e76fe69496222cf1b22ab3a3e601a566541a1dba7e567ce4ab4673b31c5931",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "45879faedaaa65b3942468d2acd511ecf63660129b99d10ee3b0a7418bc71c16",
+      "variant": "male"
+    },
+    {
       "exerciseId": "insertional-chair-seated-neutral-heel-raise",
       "frameNumber": 1,
       "generationRecordSha256": "08b93a6a8a9a6e23de3942085a247345f995dff7f0f2f47f28b30b1f48d895ec",
@@ -3118,6 +3508,396 @@
         "vips": "8.18.7"
       },
       "traceRecordSha256": "f0084f53b562cf0cfbc9059bf9fdd270c6e7d3913086026849bd8ef35e18e871",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "lying-piriformis-stretch",
+      "frameNumber": 1,
+      "generationRecordSha256": "2db23d9ff580c75ee20bd8245e330c68d0bb7152153a95d8641a1de89ab99425",
+      "masterSha256": "b5af8410db1b6988fb2e000155910bbf9051794d02418033cfdb8381204778e5",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/lying-piriformis-stretch/frame-1.svg",
+      "sha256": "4ac839fdef3891242f903523507eeff9d58f7158917185bdec39a93af4307ca0",
+      "sourceSha256": "9e397b0529f705f658fa130b0eabf44816086e76a5b7d2f061aa80050a4d099e",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "58dddacfb05a2388831b93f41a5df273fc975492df3f2731cc17867eefc469a2",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "lying-piriformis-stretch",
+      "frameNumber": 2,
+      "generationRecordSha256": "2db23d9ff580c75ee20bd8245e330c68d0bb7152153a95d8641a1de89ab99425",
+      "masterSha256": "b5af8410db1b6988fb2e000155910bbf9051794d02418033cfdb8381204778e5",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/lying-piriformis-stretch/frame-2.svg",
+      "sha256": "4ac839fdef3891242f903523507eeff9d58f7158917185bdec39a93af4307ca0",
+      "sourceSha256": "9e397b0529f705f658fa130b0eabf44816086e76a5b7d2f061aa80050a4d099e",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "58dddacfb05a2388831b93f41a5df273fc975492df3f2731cc17867eefc469a2",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "lying-piriformis-stretch",
+      "frameNumber": 3,
+      "generationRecordSha256": "2db23d9ff580c75ee20bd8245e330c68d0bb7152153a95d8641a1de89ab99425",
+      "masterSha256": "b5af8410db1b6988fb2e000155910bbf9051794d02418033cfdb8381204778e5",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/lying-piriformis-stretch/frame-3.svg",
+      "sha256": "4ac839fdef3891242f903523507eeff9d58f7158917185bdec39a93af4307ca0",
+      "sourceSha256": "9e397b0529f705f658fa130b0eabf44816086e76a5b7d2f061aa80050a4d099e",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "58dddacfb05a2388831b93f41a5df273fc975492df3f2731cc17867eefc469a2",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "lying-piriformis-stretch",
+      "frameNumber": 1,
+      "generationRecordSha256": "7ea00f9593dadea28415d506a077e19ae9b2b21dbaecd0e6ad58384f9815eab7",
+      "masterSha256": "23bc05c01915bb9d9e7abcbd2c4bd0af02af2949b98e841158faa30f327f38d9",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/lying-piriformis-stretch/frame-1.svg",
+      "sha256": "83acb70853d2398592829df20b89cbb7be0c099c2b65e8f1d1524ebd92d347d6",
+      "sourceSha256": "9e397b0529f705f658fa130b0eabf44816086e76a5b7d2f061aa80050a4d099e",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "fd378c78cf6002397bde462ebf188df5956edeb5ebd15a97c8d6aa9070413858",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "lying-piriformis-stretch",
+      "frameNumber": 2,
+      "generationRecordSha256": "7ea00f9593dadea28415d506a077e19ae9b2b21dbaecd0e6ad58384f9815eab7",
+      "masterSha256": "23bc05c01915bb9d9e7abcbd2c4bd0af02af2949b98e841158faa30f327f38d9",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/lying-piriformis-stretch/frame-2.svg",
+      "sha256": "83acb70853d2398592829df20b89cbb7be0c099c2b65e8f1d1524ebd92d347d6",
+      "sourceSha256": "9e397b0529f705f658fa130b0eabf44816086e76a5b7d2f061aa80050a4d099e",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "fd378c78cf6002397bde462ebf188df5956edeb5ebd15a97c8d6aa9070413858",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "lying-piriformis-stretch",
+      "frameNumber": 3,
+      "generationRecordSha256": "7ea00f9593dadea28415d506a077e19ae9b2b21dbaecd0e6ad58384f9815eab7",
+      "masterSha256": "23bc05c01915bb9d9e7abcbd2c4bd0af02af2949b98e841158faa30f327f38d9",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/lying-piriformis-stretch/frame-3.svg",
+      "sha256": "83acb70853d2398592829df20b89cbb7be0c099c2b65e8f1d1524ebd92d347d6",
+      "sourceSha256": "9e397b0529f705f658fa130b0eabf44816086e76a5b7d2f061aa80050a4d099e",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "fd378c78cf6002397bde462ebf188df5956edeb5ebd15a97c8d6aa9070413858",
       "variant": "male"
     },
     {
@@ -5461,6 +6241,396 @@
       "variant": "male"
     },
     {
+      "exerciseId": "side-lying-isometric-hip-abduction-hold",
+      "frameNumber": 1,
+      "generationRecordSha256": "6057346b1fbcfcee385a8ddeebca51b503db984126864ad7b0698a89aea97c16",
+      "masterSha256": "1f19a61ba559926128c70f67b86d6848fbf55a94136edfe38b91d62433a57943",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/side-lying-isometric-hip-abduction-hold/frame-1.svg",
+      "sha256": "0ab7488e040a7d0ceccd6087aa4ee8cf4811fa46084f15f491866a1a890aed66",
+      "sourceSha256": "eebe0b4251e6346e69038a807a428405bf1fb401b0cdcd406ad626485b8a3a73",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "809791de705b88fe67f9a5cf04c6f4ebca428301ae43640fb287cc1f52bc2ac1",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "side-lying-isometric-hip-abduction-hold",
+      "frameNumber": 2,
+      "generationRecordSha256": "6057346b1fbcfcee385a8ddeebca51b503db984126864ad7b0698a89aea97c16",
+      "masterSha256": "1f19a61ba559926128c70f67b86d6848fbf55a94136edfe38b91d62433a57943",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/side-lying-isometric-hip-abduction-hold/frame-2.svg",
+      "sha256": "0ab7488e040a7d0ceccd6087aa4ee8cf4811fa46084f15f491866a1a890aed66",
+      "sourceSha256": "eebe0b4251e6346e69038a807a428405bf1fb401b0cdcd406ad626485b8a3a73",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "809791de705b88fe67f9a5cf04c6f4ebca428301ae43640fb287cc1f52bc2ac1",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "side-lying-isometric-hip-abduction-hold",
+      "frameNumber": 3,
+      "generationRecordSha256": "6057346b1fbcfcee385a8ddeebca51b503db984126864ad7b0698a89aea97c16",
+      "masterSha256": "1f19a61ba559926128c70f67b86d6848fbf55a94136edfe38b91d62433a57943",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/side-lying-isometric-hip-abduction-hold/frame-3.svg",
+      "sha256": "0ab7488e040a7d0ceccd6087aa4ee8cf4811fa46084f15f491866a1a890aed66",
+      "sourceSha256": "eebe0b4251e6346e69038a807a428405bf1fb401b0cdcd406ad626485b8a3a73",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "809791de705b88fe67f9a5cf04c6f4ebca428301ae43640fb287cc1f52bc2ac1",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "side-lying-isometric-hip-abduction-hold",
+      "frameNumber": 1,
+      "generationRecordSha256": "3ba0e9827bb06c2c57ddec5db44736f6c356b231bec1136bfe3fbedebf916eb9",
+      "masterSha256": "1484686e0586ab9a3f5742a1eef42c4eafd06b14a9a1fa081875274553a8e86b",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/side-lying-isometric-hip-abduction-hold/frame-1.svg",
+      "sha256": "2cd446969d457226bd1f47d8f328439368c6a9dcd67d89ec332db348c4e8d2db",
+      "sourceSha256": "eebe0b4251e6346e69038a807a428405bf1fb401b0cdcd406ad626485b8a3a73",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "79326ae080c011ce06349c4d92c7567663f0286b2f733d33612cc7dae10563ea",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "side-lying-isometric-hip-abduction-hold",
+      "frameNumber": 2,
+      "generationRecordSha256": "3ba0e9827bb06c2c57ddec5db44736f6c356b231bec1136bfe3fbedebf916eb9",
+      "masterSha256": "1484686e0586ab9a3f5742a1eef42c4eafd06b14a9a1fa081875274553a8e86b",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/side-lying-isometric-hip-abduction-hold/frame-2.svg",
+      "sha256": "2cd446969d457226bd1f47d8f328439368c6a9dcd67d89ec332db348c4e8d2db",
+      "sourceSha256": "eebe0b4251e6346e69038a807a428405bf1fb401b0cdcd406ad626485b8a3a73",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "79326ae080c011ce06349c4d92c7567663f0286b2f733d33612cc7dae10563ea",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "side-lying-isometric-hip-abduction-hold",
+      "frameNumber": 3,
+      "generationRecordSha256": "3ba0e9827bb06c2c57ddec5db44736f6c356b231bec1136bfe3fbedebf916eb9",
+      "masterSha256": "1484686e0586ab9a3f5742a1eef42c4eafd06b14a9a1fa081875274553a8e86b",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/side-lying-isometric-hip-abduction-hold/frame-3.svg",
+      "sha256": "2cd446969d457226bd1f47d8f328439368c6a9dcd67d89ec332db348c4e8d2db",
+      "sourceSha256": "eebe0b4251e6346e69038a807a428405bf1fb401b0cdcd406ad626485b8a3a73",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "79326ae080c011ce06349c4d92c7567663f0286b2f733d33612cc7dae10563ea",
+      "variant": "male"
+    },
+    {
       "exerciseId": "standing-dumbbell-scaption",
       "frameNumber": 1,
       "generationRecordSha256": "801fa0c7e79c7169189cd18be26e7e7221a47378f0af168ffd2fac41f682538c",
@@ -5848,6 +7018,396 @@
         "vips": "8.18.7"
       },
       "traceRecordSha256": "2450f74f362219a49a04e7ebb25b1dbe5d5f74289d8c437b1a67b7dd8e407b39",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "standing-isometric-gluteal-contraction",
+      "frameNumber": 1,
+      "generationRecordSha256": "0e08e1064fc36dc1a2831bfd4ec31a63038067ea0d967d2e8a7373343c4cc6b7",
+      "masterSha256": "3bb7422838cad48ce9641d6d2c912ac62dc8e9575fbe49a32518903b5aa23661",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/standing-isometric-gluteal-contraction/frame-1.svg",
+      "sha256": "0590963d1b2ff64d83949d9665714447b4308cd47b49ec24f17c687f750bd032",
+      "sourceSha256": "eebe0b4251e6346e69038a807a428405bf1fb401b0cdcd406ad626485b8a3a73",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "d07cf088962db685b13ec89cd4f9a972f0f397cf46c7009b1df9876b8d563183",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "standing-isometric-gluteal-contraction",
+      "frameNumber": 2,
+      "generationRecordSha256": "0e08e1064fc36dc1a2831bfd4ec31a63038067ea0d967d2e8a7373343c4cc6b7",
+      "masterSha256": "b90d675a4b80c9f67702fa033eed0d51022d4d7c83e5f7f3b52314c308cf1204",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/standing-isometric-gluteal-contraction/frame-2.svg",
+      "sha256": "65dc0c764e53574156adfe37bcd9ddb70918cca79d268a422c0d96a82546a721",
+      "sourceSha256": "eebe0b4251e6346e69038a807a428405bf1fb401b0cdcd406ad626485b8a3a73",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "6053aafc7b5fb9ab3854559b71be9ec8e606eb18a7083b620f32b40048af0531",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "standing-isometric-gluteal-contraction",
+      "frameNumber": 3,
+      "generationRecordSha256": "0e08e1064fc36dc1a2831bfd4ec31a63038067ea0d967d2e8a7373343c4cc6b7",
+      "masterSha256": "7f51162dd60a2ee1a35b64af14e393524941dce832d566ef46847160c89793e2",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/standing-isometric-gluteal-contraction/frame-3.svg",
+      "sha256": "664a0ab48a426da7c7ddb42335dfde762681099a8c6659e95c3151270a29888b",
+      "sourceSha256": "eebe0b4251e6346e69038a807a428405bf1fb401b0cdcd406ad626485b8a3a73",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "68189deb79af2e8695d17944a8c72bcce9574942938e3daaeaff7c2a9f2b1aa8",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "standing-isometric-gluteal-contraction",
+      "frameNumber": 1,
+      "generationRecordSha256": "8270b9f2a062f15c8cb0c76148f3102e3efeb47c5b2a1d33c94acb45ee67ee91",
+      "masterSha256": "b1bd53a20dde63a8aa5a3ba75d5c51d3d449adfa94702aece31cd84f7e1ba4f3",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/standing-isometric-gluteal-contraction/frame-1.svg",
+      "sha256": "ab6942577e0115e5616f850132d854da7cbef252688adb50e037ea2cd543322a",
+      "sourceSha256": "eebe0b4251e6346e69038a807a428405bf1fb401b0cdcd406ad626485b8a3a73",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "5b56ba2385f56ff5c6026d738831f086a161a44f3dfb9f4834da7faff27ff3a9",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "standing-isometric-gluteal-contraction",
+      "frameNumber": 2,
+      "generationRecordSha256": "8270b9f2a062f15c8cb0c76148f3102e3efeb47c5b2a1d33c94acb45ee67ee91",
+      "masterSha256": "e0337003e4008252d7df40c67f70c8cd04c0bf7a0df0279a6393fc270b14d702",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/standing-isometric-gluteal-contraction/frame-2.svg",
+      "sha256": "70a9ec5b07041cb41c5d8570c7431e95ec414b6d65c40f43721d171d12efa3ec",
+      "sourceSha256": "eebe0b4251e6346e69038a807a428405bf1fb401b0cdcd406ad626485b8a3a73",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "0708d848abb7626d5e325b03fcfcefe42491cdfe7f1abbf753d385376e5decd1",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "standing-isometric-gluteal-contraction",
+      "frameNumber": 3,
+      "generationRecordSha256": "8270b9f2a062f15c8cb0c76148f3102e3efeb47c5b2a1d33c94acb45ee67ee91",
+      "masterSha256": "dff986e1cb3b7752960da57b9f2c41f64200474e9d2d1b38858944686eaf90b5",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/standing-isometric-gluteal-contraction/frame-3.svg",
+      "sha256": "3cfbb341439611c8811f044d9f4ce97d8812ac3128b6272a68723e604a0bbd20",
+      "sourceSha256": "eebe0b4251e6346e69038a807a428405bf1fb401b0cdcd406ad626485b8a3a73",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "e851091c648bb52a44e9278a74301943b2cdc5685067a8e4c74a7c1175d7dda8",
       "variant": "male"
     },
     {
@@ -6241,6 +7801,786 @@
       "variant": "male"
     },
     {
+      "exerciseId": "straight-leg-raise",
+      "frameNumber": 1,
+      "generationRecordSha256": "37c63dc7a16ec9b806de2504a8098c461e0347d9b981d0e2c97ac51a20ffd738",
+      "masterSha256": "4452a3ffe6b4afe12f341403102f6902a5468d09278f1958060d5ba1cdf70793",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/straight-leg-raise/frame-1.svg",
+      "sha256": "9ed3e220fa510808d847c2605dfb4dfe1626a81c442dcc26ec988f206885f0b9",
+      "sourceSha256": "fac2ff6d637e028fbc73c957e0e7192ee7398acd819fbb7c3b7a0fd5d437c631",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "62f566a859947c5241a48dba597cb2db257711f71b1740e7abad5f3ab6cd7cde",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "straight-leg-raise",
+      "frameNumber": 2,
+      "generationRecordSha256": "37c63dc7a16ec9b806de2504a8098c461e0347d9b981d0e2c97ac51a20ffd738",
+      "masterSha256": "bbfefa670c67727836a64fabe9f11d64b1ea51670598da2a578bbe6ad4c1ee3a",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/straight-leg-raise/frame-2.svg",
+      "sha256": "46b862d68cfe3b4e75c9c4ebd941c5779034653171208215dd3d1697dc69ea68",
+      "sourceSha256": "fac2ff6d637e028fbc73c957e0e7192ee7398acd819fbb7c3b7a0fd5d437c631",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "5216da7fd2729c8e2b2c381e7abcb0e6e1e6d49089b00c07681f1d16a68e3447",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "straight-leg-raise",
+      "frameNumber": 3,
+      "generationRecordSha256": "37c63dc7a16ec9b806de2504a8098c461e0347d9b981d0e2c97ac51a20ffd738",
+      "masterSha256": "fac0dc45ec02ffe612cbf586a5f70fcb24fda6a52e46f852ba3ed62a90c4ab98",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/straight-leg-raise/frame-3.svg",
+      "sha256": "bf8fa878267f3bd213dada7201c5822877cfe4f2894b876e82a465da965ef687",
+      "sourceSha256": "fac2ff6d637e028fbc73c957e0e7192ee7398acd819fbb7c3b7a0fd5d437c631",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "a6af5943159fcab04bac4beec83bbce2c04a7b7d3e968f8999b7396fdff21c87",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "straight-leg-raise",
+      "frameNumber": 1,
+      "generationRecordSha256": "d1f3aa8c6ed6df9ff377913db8304dc55d65ac9d0e7a114e6a72b2b443ec36b0",
+      "masterSha256": "268ce2f416d2904831a83167922c8d239659af5dc77b6516820f22996043b07a",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/straight-leg-raise/frame-1.svg",
+      "sha256": "46bee975739f3ac81babc922fe8d12419c6e80ea36e187b62b77b911d99a22ec",
+      "sourceSha256": "fac2ff6d637e028fbc73c957e0e7192ee7398acd819fbb7c3b7a0fd5d437c631",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "c8cfc725accebf6dc63312d041719ec0db02623048b91d331ac3b06980f62889",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "straight-leg-raise",
+      "frameNumber": 2,
+      "generationRecordSha256": "d1f3aa8c6ed6df9ff377913db8304dc55d65ac9d0e7a114e6a72b2b443ec36b0",
+      "masterSha256": "cf097660b59dbfe2b90c6d3aeb729e1b9cac4d5199f43abcd9833f5a5003cc76",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/straight-leg-raise/frame-2.svg",
+      "sha256": "ec3b0942b56ca5baa98d49293852143fbc8017de52fbfd5e29a9af184320befc",
+      "sourceSha256": "fac2ff6d637e028fbc73c957e0e7192ee7398acd819fbb7c3b7a0fd5d437c631",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "fd649df6558d96b69eebc2612aa344d70f4d767418ad0a86e0c5694a0e2bb0d5",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "straight-leg-raise",
+      "frameNumber": 3,
+      "generationRecordSha256": "d1f3aa8c6ed6df9ff377913db8304dc55d65ac9d0e7a114e6a72b2b443ec36b0",
+      "masterSha256": "fdcfa34c284bf89121c03af568c2086eacc42e4af58559e27b9c6ad89397fab3",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.7071823204419889,
+          "y": 0.7071823204419889
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 724,
+          "kernel": "lanczos3",
+          "width": 724
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/straight-leg-raise/frame-3.svg",
+      "sha256": "cd16115a0c51f01cadeb0ae220b11c920677f4368d4c29a5a62aec3904b6eb52",
+      "sourceSha256": "fac2ff6d637e028fbc73c957e0e7192ee7398acd819fbb7c3b7a0fd5d437c631",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "aeabc6df1a40bf2a2993276b535030daa90d6fd78cf8e773f2b59ac81e005a46",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "supine-supported-chin-nod",
+      "frameNumber": 1,
+      "generationRecordSha256": "5b7fbb7eeb04999fc927007a5498bdc69d1b5aceffbeb37ce2f51fac9d2f886a",
+      "masterSha256": "338022e9eea22ccfbfa2e8523ebfb80ed510650878835895d189806d1d94cdcf",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/supine-supported-chin-nod/frame-1.svg",
+      "sha256": "40bb8bf0e1b11aed21bf355f39dfe8f8aa6aee8cf2da6da929dd4be7ca94328e",
+      "sourceSha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "511cdece748cb2d3875177567b5f0c1ae8cacc7741e09220e2908928392c35bd",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "supine-supported-chin-nod",
+      "frameNumber": 2,
+      "generationRecordSha256": "5b7fbb7eeb04999fc927007a5498bdc69d1b5aceffbeb37ce2f51fac9d2f886a",
+      "masterSha256": "338022e9eea22ccfbfa2e8523ebfb80ed510650878835895d189806d1d94cdcf",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/supine-supported-chin-nod/frame-2.svg",
+      "sha256": "40bb8bf0e1b11aed21bf355f39dfe8f8aa6aee8cf2da6da929dd4be7ca94328e",
+      "sourceSha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "511cdece748cb2d3875177567b5f0c1ae8cacc7741e09220e2908928392c35bd",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "supine-supported-chin-nod",
+      "frameNumber": 3,
+      "generationRecordSha256": "5b7fbb7eeb04999fc927007a5498bdc69d1b5aceffbeb37ce2f51fac9d2f886a",
+      "masterSha256": "338022e9eea22ccfbfa2e8523ebfb80ed510650878835895d189806d1d94cdcf",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/supine-supported-chin-nod/frame-3.svg",
+      "sha256": "40bb8bf0e1b11aed21bf355f39dfe8f8aa6aee8cf2da6da929dd4be7ca94328e",
+      "sourceSha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "511cdece748cb2d3875177567b5f0c1ae8cacc7741e09220e2908928392c35bd",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "supine-supported-chin-nod",
+      "frameNumber": 1,
+      "generationRecordSha256": "19039c35fc21deba1b9bf95792bcec35023c4c5b9f658dc552442e5b10c98b64",
+      "masterSha256": "d6db7334c22c78eef1c85f9d844165a72daa8526416a4ac466df7f20040fccb6",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/supine-supported-chin-nod/frame-1.svg",
+      "sha256": "b3a4ca68f4e1b15f2ee4bfd8ed93b5b9675c8e88c5cfbb2574d2071c8f36cb4f",
+      "sourceSha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "9aad42c448509d79eae4970f4f4843bc527df05ed70d593dad7c69d2b58a94df",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "supine-supported-chin-nod",
+      "frameNumber": 2,
+      "generationRecordSha256": "19039c35fc21deba1b9bf95792bcec35023c4c5b9f658dc552442e5b10c98b64",
+      "masterSha256": "d6db7334c22c78eef1c85f9d844165a72daa8526416a4ac466df7f20040fccb6",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/supine-supported-chin-nod/frame-2.svg",
+      "sha256": "b3a4ca68f4e1b15f2ee4bfd8ed93b5b9675c8e88c5cfbb2574d2071c8f36cb4f",
+      "sourceSha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "9aad42c448509d79eae4970f4f4843bc527df05ed70d593dad7c69d2b58a94df",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "supine-supported-chin-nod",
+      "frameNumber": 3,
+      "generationRecordSha256": "19039c35fc21deba1b9bf95792bcec35023c4c5b9f658dc552442e5b10c98b64",
+      "masterSha256": "d6db7334c22c78eef1c85f9d844165a72daa8526416a4ac466df7f20040fccb6",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/supine-supported-chin-nod/frame-3.svg",
+      "sha256": "b3a4ca68f4e1b15f2ee4bfd8ed93b5b9675c8e88c5cfbb2574d2071c8f36cb4f",
+      "sourceSha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "9aad42c448509d79eae4970f4f4843bc527df05ed70d593dad7c69d2b58a94df",
+      "variant": "male"
+    },
+    {
       "exerciseId": "supine-wall-supported-piriformis-stretch",
       "frameNumber": 1,
       "generationRecordSha256": "2d9b2f8d2be3f852378f710bfe5d4488c2f6579878ff57995352acf188191266",
@@ -6628,6 +8968,786 @@
         "vips": "8.18.7"
       },
       "traceRecordSha256": "35c62f505fd3ced680870bb48c73c505d89755ff85597dd58ca66f089a934273",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "tendon-gliding-sequence",
+      "frameNumber": 1,
+      "generationRecordSha256": "60286fda3f9f560f56b8f60291734ef483e357f65e4af3303a7cebe20c4e6ea1",
+      "masterSha256": "98929b78dc9e36816a9261470c80c5b04cfe4e8799b058366da35f4f22a4af27",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/tendon-gliding-sequence/frame-1.svg",
+      "sha256": "7a228074dc8f085bb2cc43efc67fdd36945e3a7d85ab91b0147fd5744fdc83d1",
+      "sourceSha256": "efbddcd425eaf89d308d1c768ed861c1723d5b299b5cb7646139e5ee937918bc",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "2c7b76ddb1127ceb4451243f2165f76265fc36683a92635f85577cc101370239",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "tendon-gliding-sequence",
+      "frameNumber": 2,
+      "generationRecordSha256": "60286fda3f9f560f56b8f60291734ef483e357f65e4af3303a7cebe20c4e6ea1",
+      "masterSha256": "98929b78dc9e36816a9261470c80c5b04cfe4e8799b058366da35f4f22a4af27",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/tendon-gliding-sequence/frame-2.svg",
+      "sha256": "7a228074dc8f085bb2cc43efc67fdd36945e3a7d85ab91b0147fd5744fdc83d1",
+      "sourceSha256": "efbddcd425eaf89d308d1c768ed861c1723d5b299b5cb7646139e5ee937918bc",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "2c7b76ddb1127ceb4451243f2165f76265fc36683a92635f85577cc101370239",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "tendon-gliding-sequence",
+      "frameNumber": 3,
+      "generationRecordSha256": "60286fda3f9f560f56b8f60291734ef483e357f65e4af3303a7cebe20c4e6ea1",
+      "masterSha256": "98929b78dc9e36816a9261470c80c5b04cfe4e8799b058366da35f4f22a4af27",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/tendon-gliding-sequence/frame-3.svg",
+      "sha256": "7a228074dc8f085bb2cc43efc67fdd36945e3a7d85ab91b0147fd5744fdc83d1",
+      "sourceSha256": "efbddcd425eaf89d308d1c768ed861c1723d5b299b5cb7646139e5ee937918bc",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "2c7b76ddb1127ceb4451243f2165f76265fc36683a92635f85577cc101370239",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "tendon-gliding-sequence",
+      "frameNumber": 1,
+      "generationRecordSha256": "8bafb30d91844014b6c104be683cdaa2fb98c4d4535ab8fdd81fddf9bdd4dad1",
+      "masterSha256": "7588ecb6bc1e5861e1a3092a12aa0c49e5288a96cc3eaa74a6fc52fb05b0e5cf",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/tendon-gliding-sequence/frame-1.svg",
+      "sha256": "bcd1a35fba66b7b30216a8266202dda2abc4783b5a0edd53079daae327895cc0",
+      "sourceSha256": "efbddcd425eaf89d308d1c768ed861c1723d5b299b5cb7646139e5ee937918bc",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "41cd9aaeea74fa90535f6072ad381cc8cc8e2e9a10664c9208ff403aa1a8ae70",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "tendon-gliding-sequence",
+      "frameNumber": 2,
+      "generationRecordSha256": "8bafb30d91844014b6c104be683cdaa2fb98c4d4535ab8fdd81fddf9bdd4dad1",
+      "masterSha256": "7588ecb6bc1e5861e1a3092a12aa0c49e5288a96cc3eaa74a6fc52fb05b0e5cf",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/tendon-gliding-sequence/frame-2.svg",
+      "sha256": "bcd1a35fba66b7b30216a8266202dda2abc4783b5a0edd53079daae327895cc0",
+      "sourceSha256": "efbddcd425eaf89d308d1c768ed861c1723d5b299b5cb7646139e5ee937918bc",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "41cd9aaeea74fa90535f6072ad381cc8cc8e2e9a10664c9208ff403aa1a8ae70",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "tendon-gliding-sequence",
+      "frameNumber": 3,
+      "generationRecordSha256": "8bafb30d91844014b6c104be683cdaa2fb98c4d4535ab8fdd81fddf9bdd4dad1",
+      "masterSha256": "7588ecb6bc1e5861e1a3092a12aa0c49e5288a96cc3eaa74a6fc52fb05b0e5cf",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/tendon-gliding-sequence/frame-3.svg",
+      "sha256": "bcd1a35fba66b7b30216a8266202dda2abc4783b5a0edd53079daae327895cc0",
+      "sourceSha256": "efbddcd425eaf89d308d1c768ed861c1723d5b299b5cb7646139e5ee937918bc",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "41cd9aaeea74fa90535f6072ad381cc8cc8e2e9a10664c9208ff403aa1a8ae70",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "wrist-extensor-stretch",
+      "frameNumber": 1,
+      "generationRecordSha256": "567a88f7d4cc5689737f305edd6ccbcb046c5c77e877901abd7bb8ed0a4f42bf",
+      "masterSha256": "496c5dfb96cddbd013a1b8f2de49d5b06729e2d0725622cdf2e5ada7964844d3",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/wrist-extensor-stretch/frame-1.svg",
+      "sha256": "0ec954fba69a0c1499d38dca4699f93c311753b92a950b0b0f625b3560e9affb",
+      "sourceSha256": "6477818b70cd9d7a85c819244617ef0fb11080ede1b74c0e51e59e972411f92b",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "fb69f1e984cdcff0a9d89d61b0886d6669152e10abea3efcdc773ab838e7614e",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "wrist-extensor-stretch",
+      "frameNumber": 2,
+      "generationRecordSha256": "567a88f7d4cc5689737f305edd6ccbcb046c5c77e877901abd7bb8ed0a4f42bf",
+      "masterSha256": "496c5dfb96cddbd013a1b8f2de49d5b06729e2d0725622cdf2e5ada7964844d3",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/wrist-extensor-stretch/frame-2.svg",
+      "sha256": "0ec954fba69a0c1499d38dca4699f93c311753b92a950b0b0f625b3560e9affb",
+      "sourceSha256": "6477818b70cd9d7a85c819244617ef0fb11080ede1b74c0e51e59e972411f92b",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "fb69f1e984cdcff0a9d89d61b0886d6669152e10abea3efcdc773ab838e7614e",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "wrist-extensor-stretch",
+      "frameNumber": 3,
+      "generationRecordSha256": "567a88f7d4cc5689737f305edd6ccbcb046c5c77e877901abd7bb8ed0a4f42bf",
+      "masterSha256": "496c5dfb96cddbd013a1b8f2de49d5b06729e2d0725622cdf2e5ada7964844d3",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/female/wrist-extensor-stretch/frame-3.svg",
+      "sha256": "0ec954fba69a0c1499d38dca4699f93c311753b92a950b0b0f625b3560e9affb",
+      "sourceSha256": "6477818b70cd9d7a85c819244617ef0fb11080ede1b74c0e51e59e972411f92b",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "fb69f1e984cdcff0a9d89d61b0886d6669152e10abea3efcdc773ab838e7614e",
+      "variant": "female"
+    },
+    {
+      "exerciseId": "wrist-extensor-stretch",
+      "frameNumber": 1,
+      "generationRecordSha256": "641d103a76fdd4177fd28ddde39b0442f1d3ebbfb0bda43af93e638f7096ed8c",
+      "masterSha256": "937f9118850d890cb1c84ae283475cea24bd7b20ec845779917f10ebac190379",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/wrist-extensor-stretch/frame-1.svg",
+      "sha256": "4ef391d3bf4e4b1d505eb68b51ce94d43ef8f02b61d191ca3cf4b3a08ce5832a",
+      "sourceSha256": "6477818b70cd9d7a85c819244617ef0fb11080ede1b74c0e51e59e972411f92b",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "4e8b07118a896cb4eac7b3569c46ccd465be40f9fd97e263bffc2110b75bfc85",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "wrist-extensor-stretch",
+      "frameNumber": 2,
+      "generationRecordSha256": "641d103a76fdd4177fd28ddde39b0442f1d3ebbfb0bda43af93e638f7096ed8c",
+      "masterSha256": "937f9118850d890cb1c84ae283475cea24bd7b20ec845779917f10ebac190379",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/wrist-extensor-stretch/frame-2.svg",
+      "sha256": "4ef391d3bf4e4b1d505eb68b51ce94d43ef8f02b61d191ca3cf4b3a08ce5832a",
+      "sourceSha256": "6477818b70cd9d7a85c819244617ef0fb11080ede1b74c0e51e59e972411f92b",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "4e8b07118a896cb4eac7b3569c46ccd465be40f9fd97e263bffc2110b75bfc85",
+      "variant": "male"
+    },
+    {
+      "exerciseId": "wrist-extensor-stretch",
+      "frameNumber": 3,
+      "generationRecordSha256": "641d103a76fdd4177fd28ddde39b0442f1d3ebbfb0bda43af93e638f7096ed8c",
+      "masterSha256": "937f9118850d890cb1c84ae283475cea24bd7b20ec845779917f10ebac190379",
+      "options": {
+        "alphaThreshold": 128,
+        "canvas": {
+          "fit": "contain",
+          "height": 512,
+          "width": 512
+        },
+        "decode": {
+          "animated": false,
+          "failOn": "warning",
+          "limitInputPixels": 16777216
+        },
+        "mask": "alpha",
+        "maskResolution": "source-or-upscale-to512",
+        "pathOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "pathScale": {
+          "x": 0.4082934609250399,
+          "y": 0.4082934609250399
+        },
+        "potrace": {
+          "alphaMax": 1,
+          "background": "transparent",
+          "blackOnWhite": true,
+          "color": "#fff",
+          "optCurve": true,
+          "optTolerance": 0.2,
+          "threshold": 128,
+          "turdSize": 2,
+          "turnPolicy": "minority"
+        },
+        "resize": {
+          "fit": "fill",
+          "height": 1254,
+          "kernel": "lanczos3",
+          "width": 1254
+        },
+        "svgo": {
+          "multipass": false,
+          "plugins": [
+            "convertPathData"
+          ]
+        }
+      },
+      "path": "exercise-illustrations/male/wrist-extensor-stretch/frame-3.svg",
+      "sha256": "4ef391d3bf4e4b1d505eb68b51ce94d43ef8f02b61d191ca3cf4b3a08ce5832a",
+      "sourceSha256": "6477818b70cd9d7a85c819244617ef0fb11080ede1b74c0e51e59e972411f92b",
+      "toolVersions": {
+        "jimp": "0.14.0",
+        "node": "v26.10.0",
+        "potrace": "2.1.8",
+        "sharp": "0.35.5",
+        "svgo": "4.1.0",
+        "vips": "8.18.7"
+      },
+      "traceRecordSha256": "4e8b07118a896cb4eac7b3569c46ccd465be40f9fd97e263bffc2110b75bfc85",
       "variant": "male"
     }
   ],

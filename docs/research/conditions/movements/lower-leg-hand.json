@@ -1,0 +1,619 @@
+[
+  {
+    "requestId": "achilles-straight-knee-eccentric-heel-lower",
+    "status": "specified",
+    "execution": "For the midportion Achilles step protocol, use the other leg to raise the body onto the forefeet. Transfer weight to the working forefoot at the step edge. With the working knee straight, lower the heel beneath the forefoot under control. Use the other leg to lift back up. A hand can contact the wall as shown in the original protocol.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Beyer et al. Heavy slow resistance versus eccentric training as treatment for Achilles tendinopathy",
+        "url": "https://tripp.co.za/wp-content/uploads/Beyer2015_Achillestendinopathy.pdf",
+        "location": "Treatment Intervention, pp. 1705–1706",
+        "access": "Full primary paper, public PDF. Figure 1 depicts the heavy slow resistance comparison arm."
+      },
+      {
+        "title": "Alfredson et al. Heavy-load eccentric calf muscle training for the treatment of chronic Achilles tendinosis",
+        "url": "https://3stepsolutions.s3.amazonaws.com/assets/custom/000015/documents/alfredson-eccentric%20achilles.pdf",
+        "location": "Eccentric Training Model and photographs, pp. 361–362, Figures 1A–C and 2",
+        "access": "Original protocol paper, full PDF. Page 362 and the photographs were visually inspected. Figure 2 shows a wall contact during the backpack progression."
+      }
+    ],
+    "artBrief": {
+      "start": "Side view, raised heel on the forefoot at the edge of the step. Show a nearby wall and the other foot assisting the rise.",
+      "middle": "Lift the other foot clear. Keep the working knee straight during the lowering phase.",
+      "end": "Heel ends below the forefoot with the knee straight, as in Figure 1B. Show the other leg supplying the return."
+    }
+  },
+  {
+    "requestId": "achilles-bent-knee-eccentric-heel-lower",
+    "status": "specified",
+    "execution": "For the midportion Achilles step protocol, use the other leg to raise the body onto the forefeet. Transfer weight to the working forefoot at the step edge. With the working knee bent, lower the heel beneath the forefoot under control. Use the other leg to lift back up. A hand can contact the wall as shown in the original protocol.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Beyer et al. Heavy slow resistance versus eccentric training as treatment for Achilles tendinopathy",
+        "url": "https://tripp.co.za/wp-content/uploads/Beyer2015_Achillestendinopathy.pdf",
+        "location": "Treatment Intervention, pp. 1705–1706",
+        "access": "Full primary paper, public PDF. Figure 1 depicts the heavy slow resistance comparison arm."
+      },
+      {
+        "title": "Alfredson et al. Heavy-load eccentric calf muscle training for the treatment of chronic Achilles tendinosis",
+        "url": "https://3stepsolutions.s3.amazonaws.com/assets/custom/000015/documents/alfredson-eccentric%20achilles.pdf",
+        "location": "Eccentric Training Model and photographs, pp. 361–362, Figures 1A–C and 2",
+        "access": "Original protocol paper, full PDF. Page 362 and the photographs were visually inspected. Figure 2 shows a wall contact during the backpack progression."
+      }
+    ],
+    "artBrief": {
+      "start": "Side view, raised heel on the forefoot at the edge of the step. Show a nearby wall and the other foot assisting the rise.",
+      "middle": "Lift the other foot clear. Keep the working knee bent during the lowering phase.",
+      "end": "Heel ends below the forefoot with the knee bent, as in Figure 1C. Show the other leg supplying the return."
+    }
+  },
+  {
+    "requestId": "plantar-fascia-towel-toe-heel-raise-step",
+    "status": "specified",
+    "execution": "Unilateral version. Stand on a step with the heel free, toes over a folded towel and one hand on the chair back shown in Figure 2. Rise on the working foot, pause with the toes extended over the towel, then lower on the same foot. The other leg is lifted. Towel thickness was individualized. The two-leg starting option and later backpack loading were separate adaptations.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Rathleff et al. High-load strength training improves outcome in patients with plantar fasciitis",
+        "url": "https://braceworks.ca/wp-content/uploads/2016/04/Rathleff-og-M%C3%B8lgaard-2014_High-load-strength-training-improves-outcome-in-patients-with-plantar-fasciitis-A-randomized-controlled-trial-with-12-month-follow-up.pdf",
+        "location": "High-load strength training, pp. 2–3, Figure 2 (four photographs)",
+        "access": "Full primary PDF and Figure 2 visually inspected."
+      }
+    ],
+    "artBrief": {
+      "start": "Side view of bare forefoot on the step, towel under toes, heel free, chair within reach.",
+      "middle": "Hand on the chair back, lift the free foot and rise on the working forefoot.",
+      "end": "Show the heel high and the toes extending over the towel, then the same heel lowering under control."
+    }
+  },
+  {
+    "requestId": "acute-sprain-protected-active-ankle-rom-unresolved",
+    "status": "assessment-dependent",
+    "execution": "Protected active ankle motion is one part of the acute/postacute sprain program. The patient moves the ankle under their own power within the protection and motion allowed after examination. Injury severity, tissue-healing stage, pain and tolerance affect loading and external support. The accelerated exercise trial studied grade 1–2 sprains.",
+    "remainingGap": "A diagnosis alone does not select the direction, supported position or permitted excursion. These require assessment before choosing a specific exercise.",
+    "sources": [
+      {
+        "title": "Martin et al. Ankle stability and movement coordination impairments: lateral ankle ligament sprains, revision 2021",
+        "url": "https://www.orthopt.org/uploads/content_files/files/jospt.2021.0302.pdf",
+        "location": "Summary of recommendations, acute/postacute Protection and Optimal Loading and Therapeutic Exercise",
+        "access": "Full issuing-academy guideline PDF inspected."
+      },
+      {
+        "title": "Bleakley et al. Effect of accelerated rehabilitation on function after ankle sprain",
+        "url": "https://www.bmj.com/content/340/bmj.c1964.full",
+        "location": "Methods and conclusions, early exercise for grade 1 or 2 sprains",
+        "access": "Primary trial text. Provides a stage-specific example, not universal eligibility."
+      }
+    ]
+  },
+  {
+    "requestId": "seated-anchored-band-ankle-dorsiflexion",
+    "status": "specified",
+    "execution": "Sit on the floor facing a low, fixed table-leg anchor. Loop the band over the working forefoot near the metatarsal heads, knee straight and heel supported on the floor. Draw the forefoot toward the shin against tension and lower it under control. Hall used the individual’s full ankle range. The heel-on-floor and forward-anchor illustration follows the AAOS and AAFP variants.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Hall et al. Balance- and strength-training protocols to improve chronic ankle instability deficits, part I",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6089027/",
+        "location": "Methods, Strength-Training Protocol and Balance-Training Protocol",
+        "access": "Indexed primary methods inspected, including the table attachment, forefoot contact and full-range instruction."
+      },
+      {
+        "title": "AAOS. Foot and ankle conditioning program",
+        "url": "https://orthoinfo.aaos.org/globalassets/pdfs/foot-and-ankle-conditioning-program---2025.pdf",
+        "location": "Exercise 9, Ankle Dorsiflexion/Plantar Flexion",
+        "access": "Issuing-academy handout inspected. Independent instructional variant with heel on floor."
+      },
+      {
+        "title": "American Family Physician. Recovering from an ankle sprain",
+        "url": "https://www.aafp.org/afp/2025/1200/patient-information-ankle-sprain.pdf",
+        "location": "Exercise Bands, resisted dorsiflexion, Picture 10, p. 4",
+        "access": "Issuing-journal handout inspected. Specifies a table or chair anchor in front."
+      }
+    ],
+    "artBrief": {
+      "start": "Leg straight, heel grounded, band leading from forefoot to a low anchor ahead.",
+      "middle": "Keep the knee still while the forefoot rises toward the shin.",
+      "end": "Band remains in contact as the ankle returns toward the start."
+    }
+  },
+  {
+    "requestId": "seated-anchored-band-ankle-inversion",
+    "status": "specified",
+    "execution": "Sit on the floor with the working leg extended. Resist inversion by looping the band around the big-toe side of the forefoot, secured to a low table-leg anchor on the outside of the working foot. Hold hip and knee still. Turn the sole inward toward the other leg through the individual’s available range and control the return. Hall reports the seated table-to-forefoot exercise. The direction-specific band routing is supplied by the separate ACE instructions.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Hall et al. Balance- and strength-training protocols to improve chronic ankle instability deficits, part I",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6089027/",
+        "location": "Methods, Strength-Training Protocol and Balance-Training Protocol",
+        "access": "Indexed primary methods inspected, including the table attachment, forefoot contact and full-range instruction."
+      },
+      {
+        "title": "Cain et al. Four-week ankle-rehabilitation programs in adolescent athletes with chronic ankle instability",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7462179/",
+        "location": "Methods, Resistance-Band Intervention, Figure 2A caption",
+        "access": "Primary full text. Separate adolescent trial. Specifies knee extension, steady hip and knee, heel bolster and full available excursion."
+      },
+      {
+        "title": "American Council on Exercise. Ankles, knees and hips: 10 joint-friendly exercises",
+        "url": "https://www.acefitness.org/resources/pros/expert-articles/9158/ankles-knees-and-hips-10-joint-friendly-exercises-for-the-lower-extremity/",
+        "location": "Banded Inversion and Eversion, directions for each movement",
+        "access": "Exercise author’s own directions for the fixed-anchor variant inspected. Independent technique source, not an injury trial or a Hall trial photograph."
+      }
+    ],
+    "artBrief": {
+      "start": "Show the working forefoot and low anchor on its outside, with the band contacting the big-toe side of the forefoot.",
+      "middle": "Turn the sole inward toward the other leg; keep knee and thigh oriented as at the start.",
+      "end": "Allow the band to draw the foot back under control. Keep the anchor visible."
+    }
+  },
+  {
+    "requestId": "seated-anchored-band-ankle-eversion",
+    "status": "specified",
+    "execution": "Sit on the floor with the working leg extended. Resist eversion by looping the band around the little-toe side of the forefoot, secured to a low table-leg anchor on the inside of the working foot. Hold hip and knee still. Turn the sole outward away from the other leg through the individual’s available range and control the return. Hall reports the seated table-to-forefoot exercise. The direction-specific band routing is supplied by the separate ACE instructions.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Hall et al. Balance- and strength-training protocols to improve chronic ankle instability deficits, part I",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6089027/",
+        "location": "Methods, Strength-Training Protocol and Balance-Training Protocol",
+        "access": "Indexed primary methods inspected, including the table attachment, forefoot contact and full-range instruction."
+      },
+      {
+        "title": "Cain et al. Four-week ankle-rehabilitation programs in adolescent athletes with chronic ankle instability",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7462179/",
+        "location": "Methods, Resistance-Band Intervention, Figure 2A caption",
+        "access": "Primary full text. Separate adolescent trial. Specifies knee extension, steady hip and knee, heel bolster and full available excursion."
+      },
+      {
+        "title": "American Council on Exercise. Ankles, knees and hips: 10 joint-friendly exercises",
+        "url": "https://www.acefitness.org/resources/pros/expert-articles/9158/ankles-knees-and-hips-10-joint-friendly-exercises-for-the-lower-extremity/",
+        "location": "Banded Inversion and Eversion, directions for each movement",
+        "access": "Exercise author’s own directions for the fixed-anchor variant inspected. Independent technique source, not an injury trial or a Hall trial photograph."
+      }
+    ],
+    "artBrief": {
+      "start": "Show the working forefoot and low anchor on its inside, with the band contacting the little-toe side of the forefoot.",
+      "middle": "Turn the sole outward away from the other leg; keep knee and thigh oriented as at the start.",
+      "end": "Allow the band to draw the foot back under control. Keep the anchor visible."
+    }
+  },
+  {
+    "requestId": "single-leg-stance-eyes-open-progression-unresolved",
+    "status": "program",
+    "execution": "Stand on the involved leg with eyes open. In the published McKeon-based progression the first level was a hard floor for 60 seconds. Later levels used a foam pad, then ball tosses on foam. Progression required repeated error-free performance. Eyes-closed trials formed a separate branch.",
+    "remainingGap": "A single picture would obscure surface and task changes. Choose a named level, and distinguish its supervised setup and recovery support from a home adaptation.",
+    "sources": [
+      {
+        "title": "Hall et al. Balance- and strength-training protocols to improve chronic ankle instability deficits, part I",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6089027/",
+        "location": "Methods, Strength-Training Protocol and Balance-Training Protocol",
+        "access": "Indexed primary methods inspected, including the table attachment, forefoot contact and full-range instruction."
+      },
+      {
+        "title": "Anguish and Sandrey. Two 4-week balance-training programs for chronic ankle instability",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6138271/",
+        "location": "Progressive Hop-to-Stabilization Balance Program, Table 2, single-limb stance rows",
+        "access": "Full primary trial HTML and table inspected. This trial independently implemented the McKeon progression."
+      }
+    ]
+  },
+  {
+    "requestId": "posterior-tibial-plantarflexed-eccentric-adduction",
+    "status": "specified",
+    "execution": "Sit with knees bent, wearing the prescribed orthosis in the shoe, and place the involved foot on the pivoting TibPost Loader plate. Press the forefoot down to maintain the device’s plantar-flexion signal. Use the hand lever to position the foot inward without active adduction, then resist the spring as it moves the forefoot outward in the horizontal plane back to neutral. This is equipment-specific.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Kulig et al. Nonsurgical management of posterior tibial tendon dysfunction with orthoses and resistive exercise",
+        "url": "https://biomechanical.com/services/documents/NonSurg%20Manage%20PTTD%20wOrthoses%20Excercise%20-%20Kulig%20Reischl.pdf",
+        "location": "Interventions, pp. 29–30, Figure 1 and its caption",
+        "access": "Full primary results paper PDF. Visually inspected both views of the apparatus in Figure 1."
+      },
+      {
+        "title": "Kulig et al. Non-operative management of posterior tibialis tendon dysfunction: design of a randomized clinical trial",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1513568/",
+        "location": "Intervention, specialized exercise unit, Figure 2 and ECC allocation",
+        "access": "Primary protocol, full text and figure caption via Europe PMC XML."
+      }
+    ],
+    "artBrief": {
+      "start": "Show the seated participant, shod working foot on the pivoting plate, upright hand lever and spring beside the plate.",
+      "middle": "Show the lever moving the forefoot into adduction while downward pressure on the forefoot is maintained.",
+      "end": "Illustrate the spring drawing the plate back toward neutral and the working foot controlling that return."
+    }
+  },
+  {
+    "requestId": "peroneal-band-loading-execution-unresolved",
+    "status": "partial",
+    "execution": "The service evaluation offered peroneal strengthening with an elastic band. A separately documented NHS phase-2 variant is seated eversion: anchor the band, keep the knee still and heel on the floor, turn the sole out against the band, then return under control.",
+    "remainingGap": "The evaluation does not identify its direction, anchor, posture or excursion. The NHS variant gives a distinct candidate, without identifying what the study participants performed.",
+    "sources": [
+      {
+        "title": "Diagnostic and therapeutic role of peroneal tenography in chronic peroneal disorders: a service evaluation",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12051077/",
+        "location": "Materials and methods, conservative management",
+        "access": "Full primary paper, Europe PMC XML. Mixed peroneal disorders, not a dedicated exercise trial."
+      },
+      {
+        "title": "My Joint Health Hub. Peroneal tendinopathy",
+        "url": "https://myjointhealthhub.bnssg.nhs.uk/foot-ankle-pain/peroneal-tendinopathy/",
+        "location": "Phase 2: Elastic Band Resisted Eversion",
+        "access": "Direct NHS service handout inspected. Independent instructional source, not the service evaluation’s intervention manual."
+      }
+    ]
+  },
+  {
+    "requestId": "short-foot-arch-raise-no-toe-flexion",
+    "status": "program",
+    "execution": "With the forefoot resting on the ground, draw the ball of the foot toward the heel and lift the inner arch. Keep the toes long and forefoot down. This motor-control task begins seated, then progresses to standing on both feet and finally on one foot. The trial evaluated the combined program.",
+    "remainingGap": "Select seated, two-leg standing or one-leg standing as separate illustrated levels. The trial does not establish identical balance-support needs across those levels.",
+    "sources": [
+      {
+        "title": "Effects of integrating lower-leg exercises into a multimodal therapeutic approach on medial tibial stress syndrome management among recreational runners",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11826869/",
+        "location": "Methods, Lower-Leg Exercise Intervention, Table 1",
+        "access": "Full primary paper and Table 1 inspected in Europe PMC XML."
+      }
+    ]
+  },
+  {
+    "requestId": "weighted-towel-toe-curl",
+    "status": "specified",
+    "execution": "Seated weighted variant: start with both feet on the floor and a small towel spread in front of the working foot. Place a weight at the edge of the towel. Grasp its center with the toes, curl it toward the foot along the smooth floor, then relax. This setup comes from the AAOS instructions. The MTSS trial reports placing 1- and 2-kg weights on the towel during progression; neither is a universal starting load.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Effects of integrating lower-leg exercises into a multimodal therapeutic approach on medial tibial stress syndrome management among recreational runners",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11826869/",
+        "location": "Methods, Lower-Leg Exercise Intervention, Table 1",
+        "access": "Full primary paper and Table 1 inspected in Europe PMC XML."
+      },
+      {
+        "title": "AAOS. Foot and ankle conditioning program",
+        "url": "https://orthoinfo.aaos.org/globalassets/pdfs/foot-and-ankle-conditioning-program---2025.pdf",
+        "location": "Exercise 8, Towel Curls, exercises page 4",
+        "access": "Issuing-academy handout inspected. Specifies the seated variant, which part of the towel to grip and where to add a weight. The MTSS trial did not publish those setup details."
+      }
+    ],
+    "artBrief": {
+      "start": "Show the seated position with foot on the floor, a towel flat ahead and the weight on the edge away from the toes.",
+      "middle": "Toes grasp the center of the towel and curl it toward the working foot.",
+      "end": "Show the gathered towel and the weight traveling with it; then relax the toes."
+    }
+  },
+  {
+    "requestId": "hallux-flexor-strengthening-execution-unresolved",
+    "status": "program",
+    "execution": "Early in-clinic isometrics held the first metatarsophalangeal joint neutral while the therapist resisted the whole great-toe phalanx manually, without curling the interphalangeal joint. Later the therapist resisted moving toe flexion through its range. Home isometrics used the floor as resistance. Gait training and sesamoid mobilization were additional treatment components.",
+    "remainingGap": "Select therapist-resisted static, therapist-resisted moving or home floor press as distinct variants. The home body position is unspecified. This functional hallux-limitus study provides indirect evidence for first-joint osteoarthritis.",
+    "sources": [
+      {
+        "title": "Shamus et al. The effect of sesamoid mobilization, flexor hallucis strengthening, and gait training on reducing pain and restoring function in individuals with hallux limitus",
+        "url": "https://www.researchgate.net/publication/8415351_The_Effect_of_Sesamoid_Mobilization_Flexor_Hallucis_Strengthening_and_Gait_Training_on_Reducing_Pain_and_Restoring_Function_in_Individuals_With_Hallux_Limitus_A_Clinical_Trial",
+        "location": "Intervention (experimental group), Flexor Hallucis Strengthening, pp. 371–372",
+        "access": "Primary paper text in a publicly readable author-uploaded copy. Functional hallux limitus population."
+      }
+    ]
+  },
+  {
+    "requestId": "wrist-extensor-loading-execution-unresolved",
+    "status": "assessment-dependent",
+    "execution": "The guideline allows isometric, concentric or eccentric wrist-extensor resistance for subacute or chronic lateral elbow pain. One trial setup was seated, forearm resting palm-down on an armrest or tabletop, fist holding the handle of a freely hanging water container. Participants lifted or lowered the container at the wrist.",
+    "remainingGap": "Select contraction type and load for the person. A still isometric hold, lifting against gravity and controlling the descent are different executions. A handled container is one published option.",
+    "sources": [
+      {
+        "title": "Lucado et al. Lateral elbow pain and muscle function impairments",
+        "url": "https://www.orthopt.org/uploads/content_files/files/lucado_et_al_2022_lateral_elbow_pain_and_muscle_function_impairments.pdf",
+        "location": "Therapeutic Exercise recommendations and evidence synthesis",
+        "access": "Full issuing-academy CPG PDF."
+      },
+      {
+        "title": "Peterson et al. A randomized controlled trial of exercise versus wait-list in chronic tennis elbow",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3207303/",
+        "location": "Methods, Intervention and Figure 2 caption",
+        "access": "Full primary trial HTML. Directly identifies the handled water container, forearm support, grip and load direction."
+      }
+    ]
+  },
+  {
+    "requestId": "rubber-bar-eccentric-wrist-flexion",
+    "status": "specified",
+    "execution": "Hold a horizontal rubber torsion bar across the upper chest, with the involved elbow bent and wrist flexed. Grip the far end with the other hand and flex that wrist to wind the bar. Reach both arms forward, elbows straight, retaining the twist. Hold the other end still while the involved wrist slowly opens toward extension, unwinding the bar. The methods identify eccentric wrist-flexor work. Panel E incorrectly names the extensors.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Tyler et al. Clinical outcomes of the addition of eccentrics for rehabilitation of previously failed treatments of golfers elbow",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4060314/",
+        "location": "Methods, Treatment, and Figure 1A–E caption",
+        "access": "Primary article methods and figure caption inspected. The last caption label conflicts with the abstract and methods."
+      },
+      {
+        "title": "Tyler et al. Reverse Tyler Twist, illustrated sequence",
+        "url": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/07f0/4060314/aa425462ef71/ijspt-05-365-f001.jpg",
+        "location": "Figure 1, panels A–E",
+        "access": "Original published photograph sequence visually inspected."
+      }
+    ],
+    "artBrief": {
+      "start": "Bar across chest in the flexed working wrist; opposite hand takes the free end.",
+      "middle": "Other hand twists, then both elbows straighten in front while the twist is held.",
+      "end": "Opposite hand holds its end; the working wrist moves into extension as the bar unwinds."
+    }
+  },
+  {
+    "requestId": "assisted-supinated-dumbbell-eccentric-elbow-flexion",
+    "status": "specified",
+    "execution": "Stand with the working upper arm near the torso, elbow bent in midrange and palm up around a dumbbell. The opposite hand supports the working wrist from beneath. Lower the weight by gradually opening the working elbow with that support. The case started in midrange; the single photograph does not define numeric endpoints or justify a full-extension finish. The report cannot establish a universal dose.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Multifaceted Exercise Prescription in the Management of an Overhead Athlete with Suspected Distal Biceps Tendinopathy: A Case Report",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7739288/",
+        "location": "Intervention, initial session, Table 2 and Figure 1B",
+        "access": "Full primary case report, Europe PMC XML. The prose and table give different initial repetition schemes."
+      },
+      {
+        "title": "Supinated dumbbell eccentric elbow flexion in the reported athlete",
+        "url": "https://mdpi-res.com/d_attachment/jfmk/jfmk-05-00056/article_deploy/html/images/jfmk-05-00056-g001.png",
+        "location": "Figure 1, panel B (middle photograph)",
+        "access": "Publisher image visually inspected. Panels A and C use different grips or equipment."
+      }
+    ],
+    "artBrief": {
+      "start": "Side view in standing, elbow bent beside torso, palm up on dumbbell, other hand beneath wrist.",
+      "middle": "Keep palms and support contacts visible as the working elbow opens slowly.",
+      "end": "Show a lower midrange position, without locking the elbow or rotating to neutral."
+    }
+  },
+  {
+    "requestId": "cts-lumbrical-stretch-execution-unresolved",
+    "status": "partial",
+    "execution": "Baker compared lumbrical-focused and general stretch programs alongside night splints. Figure 2 shows a hooked-finger position with the outer finger joints bent, as well as opposite-hand assistance in some panels and wrist movements in the comparison drawings.",
+    "remainingGap": "The standalone figure and registration do not resolve the complete active/passive instructions, support surface, limits or holds for each arm. Confirm the figure legend and original instruction sheet before turning these into a CTS stretch sequence.",
+    "sources": [
+      {
+        "title": "Baker et al. The comparative effectiveness of combined lumbrical muscle splints and stretches on symptoms and function in carpal tunnel syndrome",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/22200381/",
+        "location": "Abstract, Interventions; four-week home regimen",
+        "access": "Primary abstract. The full exercise instructions were not accessible at this record."
+      },
+      {
+        "title": "Baker et al. Trial exercise illustration",
+        "url": "https://ars.els-cdn.com/content/image/1-s2.0-S0003999311006952-gr2.jpg",
+        "location": "Figure 2, panels A1–A3 and B1–B3",
+        "access": "Publisher-hosted primary graphic visually inspected. It shows two sets of three drawings without accompanying step-by-step text."
+      },
+      {
+        "title": "Effect of Lumbrical Stretching on Carpal Tunnel Syndrome, NCT00803257",
+        "url": "https://clinicaltrials.gov/study/NCT00803257",
+        "location": "Study Plan, Arms and Interventions",
+        "access": "Investigator registration inspected using the ClinicalTrials.gov API. Names the stretch arms but does not give their respective movement instructions."
+      }
+    ]
+  },
+  {
+    "requestId": "median-nerve-glide-cts-execution-unresolved",
+    "status": "specified",
+    "execution": "Keep shoulder and neck neutral, elbow bent about 90°. Follow Figure 3 in order: (1) neutral wrist, closed fingers and thumb; (2) open fingers and straighten thumb alongside them; (3) extend wrist with fingers straight and thumb neutral; (4) extend thumb away; (5) turn palm up; (6) use the opposite hand to add gentle thumb extension. The figure places the visible forearm turn in step 5.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Abdolrazaghi et al. Effectiveness of tendon and nerve gliding exercises in mild idiopathic carpal tunnel syndrome",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10035085/",
+        "location": "Treatment and Figure 3a–f",
+        "access": "Full primary Methods and corresponding figure caption inspected. The study did not find an additional benefit over splinting alone."
+      },
+      {
+        "title": "Abdolrazaghi et al. Median-nerve glide",
+        "url": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/7c4e/10035085/8ef18ba0708a/10.1177_15589447211006857-fig3.jpg",
+        "location": "Figure 3, panels a–f",
+        "access": "Primary six-panel illustration visually inspected."
+      }
+    ],
+    "artBrief": {
+      "start": "Show panels 1 and 2, with the wrist neutral in both.",
+      "middle": "Show wrist extension and the separate active thumb movement in panels 3 and 4.",
+      "end": "Show palm-up forearm in panel 5 and gentle opposite-hand thumb contact in panel 6."
+    }
+  },
+  {
+    "requestId": "tendon-glide-cts-execution-unresolved",
+    "status": "specified",
+    "execution": "Keep the wrist neutral. Straighten all fingers, curl the middle and end joints into a hook, then reopen. Make a full fist and reopen. Bend only the base knuckles for tabletop and reopen. For the long fist, bend base and middle joints with the finger ends relatively straight. Return to straight fingers between each shape.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Abdolrazaghi et al. Effectiveness of tendon and nerve gliding exercises in mild idiopathic carpal tunnel syndrome",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10035085/",
+        "location": "Treatment and Figure 2a–e",
+        "access": "Full primary Methods and corresponding figure caption inspected. The study did not find an additional benefit over splinting alone."
+      },
+      {
+        "title": "Abdolrazaghi et al. Tendon gliding positions",
+        "url": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/7c4e/10035085/5b52684131e4/10.1177_15589447211006857-fig2.jpg",
+        "location": "Figure 2, panels a–e",
+        "access": "Primary five-panel illustration visually inspected."
+      }
+    ],
+    "artBrief": {
+      "start": "Use a side or oblique hand view showing straight fingers and the hooked middle and end joints.",
+      "middle": "Show full fist and tabletop separately, with a straight-hand reset between shapes.",
+      "end": "Show long fist with end joints relatively straight and the return to the open hand."
+    }
+  },
+  {
+    "requestId": "ulnar-nerve-glide-elbow-execution-unresolved",
+    "status": "partial",
+    "execution": "The RCT used a therapist-taught home program from the Philadelphia Hand Centre. A separate illustrated hospital program has two sequences: reach forward at shoulder height with wrist and fingers bent, open fingers and extend wrist, then bend elbow; separately, reach out to the side with wrist and fingers bent, rotate the arm outward and add an opposite neck side-bend as instructed.",
+    "remainingGap": "The trial-specific handout is not reproduced in the investigator’s thesis. The separate handout does not establish the trial’s exact intermediate joints, excursion or which steps an individual should use.",
+    "sources": [
+      {
+        "title": "Svernlöv et al. Conservative treatment of the cubital tunnel syndrome",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/19282413/",
+        "location": "Abstract, randomized comparison in mild or moderate cubital tunnel syndrome",
+        "access": "Primary abstract. Additional benefits of gliding over education were not demonstrated."
+      },
+      {
+        "title": "Svernlöv. Treatment of Epicondylalgia and Nerve Entrapments around the Elbow",
+        "url": "https://www.diva-portal.org/smash/get/diva2%3A461794/fulltext01.pdf",
+        "location": "Methods, Paper III, p. 48",
+        "access": "Author’s doctoral thesis, full public PDF. Identifies the Byron/Philadelphia Hand Centre program and the separate patient instruction sheet."
+      },
+      {
+        "title": "Aurora BayCare. Ulnar nerve gliding program – conservative",
+        "url": "https://ahc.aurorahealthcare.org/fywb/baycare/X25998bc.pdf",
+        "location": "First and Second Sequences, positions 1–6",
+        "access": "Independent hospital handout, full PDF instructions inspected. Identity with the trial handout is unconfirmed."
+      }
+    ]
+  },
+  {
+    "requestId": "measured-isometric-thumb-extension-spring-gauge",
+    "status": "specified",
+    "execution": "Rest the forearm on a table, hand beyond its edge and wrist neutral. With the unaffected hand lift the gauge to the assigned load. Place the proximal thumb segment beneath its padded contact inside the upright housing. Keep the thumb still in neutral while the other hand steadies the base. Lift the gauge off with the other hand before withdrawing the thumb.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "McBain et al. Isometric thumb extension exercise as part of a multimodal intervention for de Quervain’s syndrome",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10584067/",
+        "location": "Methods, Exercise intervention and Figure 3 caption",
+        "access": "Primary methods and home device instructions inspected. Randomized feasibility study with individually measured loads."
+      },
+      {
+        "title": "McBain et al. Home exercise spring gauge",
+        "url": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/99ae/10584067/8185d8a42eff/10.1177_17589983231158499-fig3.jpg",
+        "location": "Figure 3, side and front views",
+        "access": "Original publisher-supplied images visually inspected."
+      }
+    ],
+    "artBrief": {
+      "start": "Side view of forearm supported to the wrist, hand free, upright windowed housing held beside table edge.",
+      "middle": "Close-up of padded sliding gauge on proximal thumb; opposite hand stabilizes base during the static hold.",
+      "end": "Opposite hand lifts the gauge to unload before the working thumb leaves the device."
+    }
+  },
+  {
+    "requestId": "thumb-cmc-coordination-execution-unresolved",
+    "status": "program",
+    "execution": "The THETA manual teaches an active thumb arch with the base abducted, the knuckle flexed and the tip slightly bent. Phase 1 separates palmar abduction, thumb lift and thumb-knuckle flexion before object handling. Phase 2 adds index-supported arch resistance, then functional grip, pinch and progressively loaded tasks. The manual permits omitting a movement when knuckle flexion is insufficient.",
+    "remainingGap": "The appendix resolves the positions and exercise names. The broad request still needs a specific exercise number and phase; the treating team advanced patients according to performance.",
+    "sources": [
+      {
+        "title": "Wouters et al. Effectiveness of exercise therapy in patients with thumb carpometacarpal osteoarthritis",
+        "url": "https://pure.eur.nl/ws/files/214451072/1-s2.0-S1063458425011872-main.pdf",
+        "location": "Interventions and Table 2",
+        "access": "Full primary trial PDF, Erasmus University repository."
+      },
+      {
+        "title": "THETA Study Treatment Protocol",
+        "url": "https://ars.els-cdn.com/content/image/1-s2.0-S1063458425011872-mmc1.docx",
+        "location": "Exercise Therapy Build-Up phases 1 and 2; Homework Exercises; exercise sheets 1–7",
+        "access": "Publisher’s original downloadable DOCX opened. Phase instructions, weekly schedule and individual exercise sheet labels inspected."
+      }
+    ]
+  },
+  {
+    "requestId": "hand-small-large-fist-active-rom",
+    "status": "specified",
+    "execution": "Actively curl the middle and end joints of fingers two through five with the base knuckles straight, then bend the base knuckles to complete a fist. Briefly hold and reverse the order. The photograph leaves the thumb outside the fingers.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Hennig et al. Effect of home-based hand exercises in women with hand osteoarthritis, illustrated exercise appendix",
+        "url": "https://ars.els-cdn.com/content/image/1-s2.0-S0003496724026062-mmc2.pdf",
+        "location": "Appendix 1, movement 3 (instructions and photographs)",
+        "access": "Original publisher PDF, both pages and corresponding photographs inspected."
+      },
+      {
+        "title": "Østerås et al. Exercise programme with telephone follow-up for people with hand osteoarthritis: protocol for a randomised controlled trial",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3995554/",
+        "location": "Table 2, exercises 5–8",
+        "access": "Full primary protocol table via Europe PMC XML. Its grip implement and finger stretch differ from Hennig’s."
+      }
+    ],
+    "artBrief": {
+      "start": "Hand open, with the thumb free.",
+      "middle": "Side view of the small hook-like fist, base knuckles still straight.",
+      "end": "Close the base knuckles, thumb outside, then unwind the fingers in reverse."
+    }
+  },
+  {
+    "requestId": "hand-grip-rubber-ball-squeeze",
+    "status": "specified",
+    "execution": "Hold the approximately 7-cm exercise ball in the palm. Wrap four fingers around it and oppose the thumb on the other side. Squeeze and hold without changing grip, then release. The source does not quantify stiffness.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Hennig et al. Effect of home-based hand exercises in women with hand osteoarthritis, illustrated exercise appendix",
+        "url": "https://ars.els-cdn.com/content/image/1-s2.0-S0003496724026062-mmc2.pdf",
+        "location": "Appendix 1, movement 4 (instructions and photographs)",
+        "access": "Original publisher PDF, both pages and corresponding photographs inspected."
+      },
+      {
+        "title": "Østerås et al. Exercise for hand osteoarthritis",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6464796/",
+        "location": "Characteristics of included studies, Hennig 2015",
+        "access": "Systematic-review extraction inspected for ball material and diameter."
+      }
+    ],
+    "artBrief": {
+      "start": "Round ball in the palm.",
+      "middle": "Wrap fingers and oppose the thumb as in the photograph.",
+      "end": "Maintain the grip during the static squeeze and release without changing its placement."
+    }
+  },
+  {
+    "requestId": "band-thumb-abduction-extension-execution-unresolved",
+    "status": "specified",
+    "execution": "Rest a loose fist palm-down on a flat surface. Loop a small elastic band around all five proximal digit segments. Move the thumb away against it in combined abduction/extension, keeping both thumb joints bent. Pause and bring it back.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Hennig et al. Effect of home-based hand exercises in women with hand osteoarthritis, illustrated exercise appendix",
+        "url": "https://ars.els-cdn.com/content/image/1-s2.0-S0003496724026062-mmc2.pdf",
+        "location": "Appendix 1, movement 5 (instructions and photographs)",
+        "access": "Original publisher PDF, both pages and corresponding photographs inspected."
+      },
+      {
+        "title": "Østerås et al. Exercise programme with telephone follow-up for people with hand osteoarthritis: protocol for a randomised controlled trial",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3995554/",
+        "location": "Table 2, exercises 5–8",
+        "access": "Full primary protocol table via Europe PMC XML. Its grip implement and finger stretch differ from Hennig’s."
+      }
+    ],
+    "artBrief": {
+      "start": "Overhead loose fist, band across the proximal segments.",
+      "middle": "Thumb separates from the fingers, maintaining its bent knuckle and tip.",
+      "end": "Show the widened thumb space with band under tension before return."
+    }
+  },
+  {
+    "requestId": "finger-stretch-hand-oa-execution-unresolved",
+    "status": "specified",
+    "execution": "Hennig version: rest the palm on a flat surface and steady the wrist with the opposite hand. Actively fan the thumb and fingers apart, pause, then draw them together. Østerås instead used opposite-hand pressure to stretch finger joints. Keep those movements separate.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Hennig et al. Effect of home-based hand exercises in women with hand osteoarthritis, illustrated exercise appendix",
+        "url": "https://ars.els-cdn.com/content/image/1-s2.0-S0003496724026062-mmc2.pdf",
+        "location": "Appendix 1, movement 6 (instructions and photographs)",
+        "access": "Original publisher PDF, both pages and corresponding photographs inspected."
+      },
+      {
+        "title": "Østerås et al. Exercise programme with telephone follow-up for people with hand osteoarthritis: protocol for a randomised controlled trial",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3995554/",
+        "location": "Table 2, exercises 5–8",
+        "access": "Full primary protocol table via Europe PMC XML. Its grip implement and finger stretch differ from Hennig’s."
+      }
+    ],
+    "artBrief": {
+      "start": "Hand flat, opposite hand on wrist.",
+      "middle": "Spread all five digits while keeping the palm supported.",
+      "end": "Bring the digits together without the other hand pressing the fingers."
+    }
+  }
+]

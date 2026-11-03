@@ -39,7 +39,7 @@ class Migration15To16Test {
         helper.writableDatabase
         helper.close()
         val database = Room.databaseBuilder(context, WallCrawlDatabase::class.java, name)
-            .addMigrations(WallCrawlDatabase.MIGRATION_15_16, WallCrawlDatabase.MIGRATION_16_17).build()
+            .addMigrations(*WallCrawlDatabase.ALL_MIGRATIONS).build()
         try {
             assertEquals(WALLCRAWL_SCHEMA_VERSION, database.openHelper.writableDatabase.version)
             val template = database.workoutTemplateDao().getTemplateWithExercises("template-7")!!

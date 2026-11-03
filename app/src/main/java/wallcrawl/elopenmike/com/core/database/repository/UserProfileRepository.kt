@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.core.database.repository
 
+import wallcrawl.elopenmike.com.core.database.PERSISTED_LIST_SEPARATOR
 import wallcrawl.elopenmike.com.core.database.dao.UserProfileDao
 import wallcrawl.elopenmike.com.core.database.dao.ConditionReassessmentDao
 import wallcrawl.elopenmike.com.core.database.entity.toModel
@@ -46,7 +47,14 @@ interface UserProfileRepository {
     suspend fun updateUnit(unit: WeightUnit)
     suspend fun updateMusclePriorities(priorities: Map<String, PriorityLevel>)
     suspend fun updateExcludedExercises(excludedIds: List<String>)
+    /** Adds or removes one ID without replacing exclusions edited by another screen. */
+    suspend fun setExerciseExcluded(exerciseId: String, excluded: Boolean) {
+        throw UnsupportedOperationException("Individual exercise exclusions are unavailable.")
+    }
     suspend fun updateTrainingConstraints(constraints: Set<TrainingConstraint>)
+    suspend fun removeReportedCondition(conditionId: String) {
+        error("Reported condition removal is unavailable.")
+    }
     suspend fun updateActiveConditions(conditions: List<SelectedCondition>) {
         throw UnsupportedOperationException("Condition selection is unavailable in this repository.")
     }
@@ -166,10 +174,28 @@ class OfflineUserProfileRepository(
         mutateProfile { current -> current.copy(excludedExerciseIds = excludedIds) }
     }
 
+    override suspend fun setExerciseExcluded(exerciseId: String, excluded: Boolean) {
+        mutateProfile { current ->
+            val ids = current.excludedExerciseIds
+            if ((exerciseId in ids) == excluded) return@mutateProfile null
+            val updated = if (excluded) ids + exerciseId else ids.filterNot { it == exerciseId }
+            // Imported session IDs may contain the separator used by the profile column.
+            require(updated.none { it.isBlank() } &&
+                (updated.isEmpty() || updated.joinToString(PERSISTED_LIST_SEPARATOR).split(PERSISTED_LIST_SEPARATOR) == updated))
+            current.copy(excludedExerciseIds = updated)
+        }
+    }
+
     override suspend fun updateTrainingConstraints(constraints: Set<TrainingConstraint>) {
         mutateProfile { current ->
             check(current.unresolvedTrainingConstraintsRaw == null) { "Training constraints require review before editing." }
             current.copy(trainingConstraints = constraints)
+        }
+    }
+
+    override suspend fun removeReportedCondition(conditionId: String) {
+        mutateProfile { current ->
+            if (conditionId in current.reportedConditions) current.copy(reportedConditions = current.reportedConditions - conditionId) else null
         }
     }
 

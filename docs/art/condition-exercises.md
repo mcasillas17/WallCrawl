@@ -1,6 +1,6 @@
 # Condition research exercises and artwork
 
-The exercise catalog contains 319 movements. Its 17 WallCrawl additions have 102 published PNG frame slots, with 82 distinct frame images. The Android player displays a 512-pixel SVG traced from each selected PNG. Each row below opens the original study or guideline and the versioned artwork for both app variants.
+The exercise catalog contains 327 movements. Its 25 WallCrawl additions have 150 published PNG frame slots, with 110 distinct frame images. The Android player displays a 512-pixel SVG traced from each selected PNG. Each row below opens the original study or guideline and the versioned artwork for both app variants.
 
 Open **Exercises → Condition reference** to search all 50 conditions in English or Spanish. Each publication lists the catalog illustrations for the precise movements described by that source. The research reference is available offline. Opening a publication uses the device’s browser.
 
@@ -23,14 +23,20 @@ Open **Exercises → Condition reference** to search all 50 conditions in Englis
 | Seated Band Plantar Flexion With a Supported Bent Knee | [10.1136/bjsports-2024-109138](https://pmc.ncbi.nlm.nih.gov/articles/PMC12171478/) | [Male](../../art/condition-exercises/masters/insertional-neutral-band-plantarflexion-bent-knee/male/) · [Female](../../art/condition-exercises/masters/insertional-neutral-band-plantarflexion-bent-knee/female/) |
 | Seated Hand-Assisted Plantar Fascia Stretch | [10.1111/sms.12313](https://pubmed.ncbi.nlm.nih.gov/25145882/) | [Male](../../art/condition-exercises/masters/seated-hand-assisted-plantar-fascia-stretch/male/) · [Female](../../art/condition-exercises/masters/seated-hand-assisted-plantar-fascia-stretch/female/) |
 | Side-Lying Dumbbell External Rotation With Pillow Support | [10.1186/s13063-020-04892-0](https://pmc.ncbi.nlm.nih.gov/articles/PMC7705859/) | [Male](../../art/condition-exercises/masters/hsd-side-lying-dumbbell-er-pillow/male/) · [Female](../../art/condition-exercises/masters/hsd-side-lying-dumbbell-er-pillow/female/) |
-
+| Pillow-Supported Chin Nod | [Execution source](https://www.sira.nsw.gov.au/resources-library/motor-accident-resources/publications/for-professionals/whiplash-resources/SIRA08104-Whiplash-Guidelines-1117-396479.pdf) | [Male](../../art/condition-exercises/masters/supine-supported-chin-nod/male/) · [Female](../../art/condition-exercises/masters/supine-supported-chin-nod/female/) |
+| Supine Straight-Arm Dumbbell Reach | [Execution source](https://pmc.ncbi.nlm.nih.gov/articles/PMC7705859/) | [Male](../../art/condition-exercises/masters/hsd-supine-dumbbell-scapular-protraction/male/) · [Female](../../art/condition-exercises/masters/hsd-supine-dumbbell-scapular-protraction/female/) |
+| Wrist Extensor Stretch | [Execution source](https://doi.org/10.1136/bmjopen-2024-085916) | [Male](../../art/condition-exercises/masters/wrist-extensor-stretch/male/) · [Female](../../art/condition-exercises/masters/wrist-extensor-stretch/female/) |
+| Supine Straight-Leg Raise | [Execution source](https://doi.org/10.1186/s13018-024-04688-x) | [Male](../../art/condition-exercises/masters/straight-leg-raise/male/) · [Female](../../art/condition-exercises/masters/straight-leg-raise/female/) |
+| Side-Lying Hip Abduction Hold | [Execution source](https://doi.org/10.1136/bmjsem-2019-000558) | [Male](../../art/condition-exercises/masters/side-lying-isometric-hip-abduction-hold/male/) · [Female](../../art/condition-exercises/masters/side-lying-isometric-hip-abduction-hold/female/) |
+| Standing Glute Hold With Opposite Leg Raise | [Execution source](https://doi.org/10.1136/bmjsem-2019-000558) | [Male](../../art/condition-exercises/masters/standing-isometric-gluteal-contraction/male/) · [Female](../../art/condition-exercises/masters/standing-isometric-gluteal-contraction/female/) |
+| Supine Knee-to-Opposite-Shoulder Stretch | [Execution source](https://myhealth.alberta.ca/Health/aftercareinformation/pages/conditions.aspx?hwid=zc2596) | [Male](../../art/condition-exercises/masters/lying-piriformis-stretch/male/) · [Female](../../art/condition-exercises/masters/lying-piriformis-stretch/female/) |
+| Five-Position Finger Tendon Glide | [Execution source](https://pmc.ncbi.nlm.nih.gov/articles/PMC10035085/) | [Male](../../art/condition-exercises/masters/tendon-gliding-sequence/male/) · [Female](../../art/condition-exercises/masters/tendon-gliding-sequence/female/) |
 
 ## Coverage
 
-The [research register](../research/conditions/exercise-requests.json) contains 89 requests. Of the 19 movements with a source description detailed enough to illustrate, 17 have complete catalog artwork. Two further requests are possible matches for existing exercises. The side-lying hip abduction study leaves the support position unspecified and the published male bridge sequence does not establish the PHOENIX floor-return endpoint. The other 68 requests still have unresolved equipment, movement, measurement or program details.
+All 19 initially specified movements now have paired artwork, including the supported chin nod and straight-arm dumbbell reach. Six exercises use newly authored illustrations for the seven identities in the merged PR. Its wall-supported figure-four uses the matching catalog entry. The five-position finger sequence shows every shape on one numbered chart, including a written cue to open the hand between shapes. [PR exercise sources and decisions](../research/conditions/movements/pr-105.md)
 
-- **Pillow-Supported Chin Nod**. The earlier male drawing shows a pronounced tuck. The newer male drawing fails the transparency check, and the image service blocked its replacement. The female hold is retained for review.
-- **Supine Straight-Arm Dumbbell Reach**. The drawings show disproportionate changes in shoulder-to-hand length during the reach.
+The [movement review](../research/conditions/movements/README.md) covers all 68 previously open requests. It distinguishes 33 specified movements, 17 partial descriptions, 13 programs and five assessment-dependent choices. The separate catalog comparison accepts Side-Lying Leg Raise as a supported-head illustration. The male Glute Bridge still lacks the lowered endpoint needed for the PHOENIX repetition.
 
 ## Retention and verification
 

@@ -415,7 +415,8 @@ private fun WallCrawlAppContent(
                         workoutRepository = container.workoutRepository,
                         exerciseCatalog = container.exerciseCatalog,
                         workoutHistoryAnalyzer = container.workoutHistoryAnalyzer,
-                        programRepository = container.programRepository
+                        programRepository = container.programRepository,
+                        userProfileRepository = container.userProfileRepository
                     )
                 )
                 ActiveWorkoutScreen(

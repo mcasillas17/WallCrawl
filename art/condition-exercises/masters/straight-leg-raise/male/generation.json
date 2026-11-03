@@ -1,0 +1,12 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Use case: scientific-educational. Native original line-art exercise illustration for WallCrawl dark-mode library. Supplied image is a STYLE reference only; disregard its pose and equipment. Match sparse simple white contours with a few garment seams, plain T-shirt, sports shorts, training shoes, low-detail neutral face, naturally proportioned adult. Draw solid crisp even WHITE (#fff) contour strokes of adequate weight on fully TRANSPARENT RGBA with genuinely open transparent interiors throughout body, garments and surrounding area. Never paint in body interiors. No filled skin, monochrome black outlines, noise, hatching, lighting, soft glow, shading, highlights, grey ground, text, arrows, labels, literal checkerboard, border or backdrop. Male-presenting adult with short hair. Wide native 3:1 PNG strip composed of THREE equal SQUARE cells touching horizontally, no dividing lines. THREE separate full-body depictions, one fully inside the left third, one inside center third, one inside right third; 7% clear inset EACH cell even at toe and head; do not let contours touch vertical cut points at 1/3 or 2/3. Each depicts the same adult seen from the SAME low side three-quarter camera lying face UP with head on the floor at LEFT and feet toward RIGHT. Head, shoulders, arms and pelvis rest on floor and remain completely still. Far leg bent, its single knee raised and shoe flat on floor throughout. Closer working leg STRAIGHT from hip to heel, never bend that knee. Left cell: straight leg rests horizontally flat on floor, toe up. Middle cell: lift straight leg to 10 degrees, heel half a foot above floor. Right cell: same straight leg elevated to ~20 degrees, heel one foot (30cm) above floor. THREE DISTINCT heights, same far bent knee and firm opposite foot, same camera, body position, scale, height of baseline, and character in all cells. Hip never bridges. Keep negative space between limbs; full heels shoes and heads, at smaller scale if needed. No pillows or mat or equipment.",
+  "outputSha256": "ccf403cb36194da53866a3ba57f0202852619c4b05e9c6fdd391cc4562c460da",
+  "layout": "three-panels",
+  "variant": "male",
+  "exerciseId": "straight-leg-raise",
+  "nativeStrip": {
+    "path": "masters/straight-leg-raise/male/native-strip.png",
+    "sha256": "ccf403cb36194da53866a3ba57f0202852619c4b05e9c6fdd391cc4562c460da"
+  }
+}

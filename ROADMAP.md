@@ -1270,4 +1270,6 @@ retaining all 14 historical inputs and adding nine clearly fictional scenarios.
 The [integration contract](docs/condition-aware-workouts.md) maps each scenario to
 the existing planner, lifecycle and Room suites.
 
-**Exercises → Condition reference** exposes all 50 researched conditions and their 187 distinct sources. Each source links to any matching illustrated movement in the catalog. The 17 neutral supplemental exercises have versioned PNG masters and both app illustration variants. All condition-specific prescriptions and restrictions await qualified clinical review. [Catalog and artwork coverage](docs/art/condition-exercises.md)
+**Exercises → Condition reference** exposes all 50 researched conditions and their 187 distinct sources. Each source links to any matching illustrated movement in the catalog. The 25 neutral supplemental exercises have versioned PNG masters and both app illustration variants. All condition-specific prescriptions and restrictions await qualified clinical review. [Catalog and artwork coverage](docs/art/condition-exercises.md)
+
+All 68 previously open movement requests now have source-level follow-up. Six of the seven PR 105 exercise identities have new artwork and one reuses the wall-supported stretch. [Movement review](docs/research/conditions/movements/README.md) · [PR integration](docs/research/conditions/movements/pr-105.md)

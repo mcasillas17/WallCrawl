@@ -34,6 +34,16 @@ Execution references for additional illustrations follow.
 - [Effects of adding aerobic physical activity to strengthening exercise on hip osteoarthritis symptoms: protocol for the PHOENIX randomised controlled trial](https://pmc.ncbi.nlm.nih.gov/articles/PMC9014787/). Additional file 5 > Bridging; Functional / Knee Extensors.
 - [High-load strength training improves outcome in patients with plantar fasciitis: A randomized controlled trial with 12-month follow-up.](https://pubmed.ncbi.nlm.nih.gov/25145882/). Methods > Interventions > Plantar-specific stretching and High-load strength training (PDF p.2); Figures1–2.
 
+Additional source locations include SIRA Appendix 3, exercise 1 (printed p.45), and the HEAVY manual, exercise 5 (PDF p.9). The finger tendon chart shows all five positions together. Each chart and each new contour drawing was authored for WallCrawl.
+
+- [Sveinall et al., heavy slow resistance feasibility trial, stretching component](https://doi.org/10.1136/bmjopen-2024-085916).
+- [AAOS, Therapeutic Exercise Program for Epicondylitis, exercise 2. Hand placement for assisted wrist flexion.](https://www.orthoinfo.org/globalassets/pdfs/exercise-program-for-epicondylitis.pdf).
+- [Kamel et al., patellofemoral pain trial, supplementary knee exercise program](https://doi.org/10.1186/s13018-024-04688-x).
+- [AAOS, Knee Exercises, Straight-Leg Lift. Position of the opposite leg and example lift height.](https://www.orthoinfo.org/staying-healthy/knee-exercises).
+- [Clifford et al., isometric exercise program, standing exercise and training booklet p. 7](https://doi.org/10.1136/bmjsem-2019-000558).
+- [MyHealth Alberta, Piriformis Syndrome: Care Instructions. Supine knee-toward-opposite-shoulder setup in the home-care section.](https://myhealth.alberta.ca/Health/aftercareinformation/pages/conditions.aspx?hwid=zc2596).
+- [Abdolrazaghi et al., Tendon and Nerve Gliding Exercises, Treatment and Figure 2a–e](https://pmc.ncbi.nlm.nih.gov/articles/PMC10035085/).
+
 The separately pinned Workout Guide import retains its own attribution in
 `workout-guide/`. Historical WallCrawl illustration adaptations retain their
 original notice and credits in `exercise-illustrations/NOTICE.md`. Their bytes and

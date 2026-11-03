@@ -42,8 +42,18 @@ data class UserProfile(
     val illustrationPreference: IllustrationPreference = IllustrationPreference.AUTOMATIC,
     val activeConditions: List<SelectedCondition> = emptyList(),
     /** Exact legacy text whose meaning this build cannot safely use for planning. */
-    val unresolvedTrainingConstraintsRaw: String? = null
+    val unresolvedTrainingConstraintsRaw: String? = null,
+    /** Earlier condition reports have no reviewed answers. Keep even unrecognized IDs. */
+    val reportedConditions: Set<String> = emptySet()
 ) {
+    val planningExclusions: List<String> get() = when {
+        WallStretchIdentity.previous in excludedExerciseIds && WallStretchIdentity.catalog !in excludedExerciseIds ->
+            excludedExerciseIds + WallStretchIdentity.catalog
+        WallStretchIdentity.catalog in excludedExerciseIds && WallStretchIdentity.previous !in excludedExerciseIds ->
+            excludedExerciseIds + WallStretchIdentity.previous
+        else -> excludedExerciseIds
+    }
+    val hasConditionReports: Boolean get() = activeConditions.isNotEmpty() || reportedConditions.isNotEmpty()
     val primaryGoal: FitnessGoal get() = goals.firstOrNull() ?: FitnessGoal.BUILD_MUSCLE
 
     companion object {

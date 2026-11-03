@@ -101,7 +101,7 @@ from the same local history. It writes nothing, not even the ledger cache. Its s
 holds only the four filter choices, which week is expanded and how many rows are shown,
 never history or chart values. It sends no telemetry and makes no
 network or model call. Package 15 adds the weight unit a template's loads are in.
-Current storage is Room 16 and archive 6.
+Current storage uses Room 18 and archive version 8.
 
 Historical title/rationale, notes and measurements are shown as stored. Current
 profile, template or catalog programming cannot fill missing historical facts.
@@ -119,7 +119,7 @@ it cannot recreate historical profile or catalog inputs that were never stored.
 ### Archive compatibility
 
 The archive format has its own version, separate from the Room schema version. This
-build **writes version 6** and **reads versions 1 through 6**. The schema version, app
+build **writes version 8** and **reads versions 1 through 8**. The schema version, app
 version, creation time, and the bundled catalog commit are recorded as provenance only;
 they never decide whether a file can be restored.
 
@@ -156,6 +156,14 @@ one. It is the same kind of training data the template already held, stays on-de
 is exported only when the user asks, and is removed by Delete all data. Earlier
 archives keep their checksums and restore their templates with no unit. Unsaved
 template-editor drafts are never written to the database, a file, or an archive.
+
+Two builds used version 7. One saved reported condition IDs, the role of a session
+exercise and an optional hold on each repetition. The other saved selected answers,
+frozen session context, prescription purpose, recommendation bindings, unresolved
+restrictions and pending reassessments. Version 8 preserves either history. A reported
+ID carries no answers or clearance. Historical mobility stays supportive and earns
+no strength credit. Both the recorded repetitions and the prescribed hold are retained.
+Each version 7 document must use one consistent format and match its original checksum.
 
 A file written by a newer WallCrawl is still refused with a message saying so, rather than
 partially understood — a future format may attach meaning to fields this build would drop.

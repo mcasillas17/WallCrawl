@@ -109,4 +109,4 @@ unspecified gender. Newer unknown archive versions are rejected.
 
 ## Neutral research catalog additions
 
-The 17 WallCrawl exercises add 102 SVG slots across the two variants, bringing the app to 319 illustrated exercises and 1,914 variant SVG files. Moving exercises use three positions. Holds use one pose across all three slots. The PNG masters, prompts and execution references are in the [artwork index](art/condition-exercises.md).
+The 25 WallCrawl exercises add 150 SVG slots across the two variants, bringing the app to 327 illustrated exercises and 1,962 variant SVG files. Moving exercises use three positions. Holds use one pose across all three slots. The tendon-glide sequence displays its complete numbered chart in every slot. The PNG masters, prompts and execution references are in the [artwork index](art/condition-exercises.md).

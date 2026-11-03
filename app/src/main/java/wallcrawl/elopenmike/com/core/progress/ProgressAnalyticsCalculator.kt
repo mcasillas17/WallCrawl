@@ -29,6 +29,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.convertWeight
+import wallcrawl.elopenmike.com.core.model.trainingActivity
 
 /** A range beyond the analytics representation bounds; reported as too large, never truncated. */
 class AnalyticsRangeTooLargeException : IllegalStateException("Analytics range exceeds its representation bound.")
@@ -76,7 +77,8 @@ class ProgressAnalyticsCalculator(
             // Per-session ledger calls cannot see a whole week, so the existing weekly ledger's own bounds are
             // checked here once per week and reported as too large rather than as a read error.
             if (exceedsLedgerWeekBounds(byWeek[week].orEmpty())) throw AnalyticsRangeTooLargeException()
-            byWeek[week].orEmpty().sortedWith(compareBy({ it.completedAtTimestamp }, { it.id })).map { session ->
+            val trainingSessions = byWeek[week].orEmpty().mapNotNull { it.trainingActivity() }
+            trainingSessions.sortedWith(compareBy({ it.completedAtTimestamp }, { it.id })).map { session ->
                 val completed = session.exercises
                     .filter { it.inScope(scope, exercisesById) }
                     .flatMap { exercise -> exercise.sets.filter { it.isCompleted } }
@@ -133,7 +135,7 @@ class ProgressAnalyticsCalculator(
                 AnalyticsSeries(buckets)
             },
             fullWeeks = weeks.size - 1,
-            hasWorkoutsInRange = sessions.isNotEmpty(),
+            hasWorkoutsInRange = rows.any { it.isNotEmpty() },
             unclassifiableSets = unclassifiable,
             unattributedWorkSets = unattributed.filterValues { it > 0 },
             performance = if (scope is AnalyticsScope.Exercise) {

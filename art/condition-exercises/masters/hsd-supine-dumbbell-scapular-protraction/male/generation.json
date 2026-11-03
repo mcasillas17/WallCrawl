@@ -1,0 +1,12 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Correct this adult male exercise diagram for the supine dumbbell reach. Keep its three equally spaced panels, white contour line style and transparent open interiors, adult man exercising in a plain T-shirt and trousers. A specific missing movement must become clearly visible. Draw the viewer-facing shoulder as a distinct round deltoid continuous with the vertical upper arm; let the free far hand rest on abdomen. View him slightly from the head end as well as from the side so the working shoulder's back edge is readable separately from the far back. First panel: the back of the near shoulder sits on the flat plinth. Middle panel: the ENTIRE near shoulder, whole straight arm and dumbbell have translated straight toward the ceiling together about 2 cm. Last panel: the near shoulder blade slides around the ribs and peels clearly OFF the plinth, carrying elbow, wrist and weight together about 4 cm above the start. In the last panel draw a clear triangular window of transparent air between the back of the round near shoulder and the tabletop. The chest is not lifting, head, far shoulder, feet and table stay in place. Keep all three shoulder-to-grip distances identical; extending the arm is not the movement. Keep the dumbbell centered directly above that shoulder. Compose all three full figures with heads, weight, both shoes and table in bounds in each cell, same camera, stable landmarks. Sparse white line illustration entire figure in every cell. No labels, no arrows, no shading, no fills, no background.",
+  "outputSha256": "89c5d793bfe5d5cc4fc467d6d2cbfee4d76c709625e9ee630ad1c2e786011d30",
+  "layout": "three-panels",
+  "variant": "male",
+  "exerciseId": "hsd-supine-dumbbell-scapular-protraction",
+  "nativeStrip": {
+    "path": "masters/hsd-supine-dumbbell-scapular-protraction/male/native-strip.png",
+    "sha256": "89c5d793bfe5d5cc4fc467d6d2cbfee4d76c709625e9ee630ad1c2e786011d30"
+  }
+}

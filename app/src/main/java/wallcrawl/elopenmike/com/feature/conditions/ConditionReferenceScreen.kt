@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.feature.conditions
 
+import wallcrawl.elopenmike.com.core.model.Exercise
 import android.content.ActivityNotFoundException
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
@@ -144,8 +145,7 @@ private fun ReferenceDetail(
     exerciseCatalog: ExerciseCatalog,
     visualProvider: ExerciseVisualProvider
 ) {
-    val vocabulary = LocalExerciseVocabulary.current
-    val ids = remember(condition) { condition.sources.flatMap { it.exerciseIds }.distinct() }
+    val ids = remember(condition) { (condition.sources.flatMap { it.exerciseIds } + condition.relatedReading.flatMap { it.exerciseIds }).distinct() }
     var attempt by remember(condition.id) { mutableIntStateOf(0) }
     val movements = if (ids.isEmpty()) null else readOffline(condition.id, exerciseCatalog, attempt) {
         ids.associateWith { id -> requireNotNull(exerciseCatalog.getExerciseById(id)) }
@@ -155,6 +155,19 @@ private fun ReferenceDetail(
     val uriHandler = LocalUriHandler.current
     var expandedId by rememberSaveable(condition.id) { mutableStateOf<String?>(null) }
     var failedId by remember(condition.id) { mutableStateOf<String?>(null) }
+    var showRelated by rememberSaveable(condition.id) { mutableStateOf(false) }
+    fun openPublication(id: String, url: String) {
+        failedId = try {
+            uriHandler.openUri(url)
+            null
+        } catch (e: IllegalArgumentException) {
+            id
+        } catch (e: SecurityException) {
+            id
+        } catch (e: ActivityNotFoundException) {
+            id
+        }
+    }
     LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         item {
             RegionHeading(region, spanish)
@@ -170,22 +183,8 @@ private fun ReferenceDetail(
                 Text(source.title, color = color, style = MaterialTheme.typography.titleMedium)
                 Text(stringResource(if (source.fullText) R.string.condition_reference_full else R.string.condition_reference_partial),
                     color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
-                if (source.exerciseIds.isNotEmpty()) {
-                    Text(stringResource(R.string.condition_reference_illustrations), modifier = Modifier.padding(top = 8.dp),
-                        color = color, style = MaterialTheme.typography.labelLarge)
-                    when {
-                        movements == null -> CircularProgressIndicator()
-                        movements.isFailure -> {
-                            Text(stringResource(R.string.exercises_catalog_error), color = MaterialTheme.colorScheme.error)
-                            TextButton(onClick = { attempt++ }) { Text(stringResource(R.string.history_retry), color = color) }
-                        }
-                        else -> source.exerciseIds.forEach { id ->
-                            TextButton(onClick = { selectedExerciseId = id }) {
-                                Text(vocabulary.exerciseName(movements.getOrThrow().getValue(id)), color = color)
-                            }
-                        }
-                    }
-                }
+                source.executionNote?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                ReferenceExercises(source.exerciseIds, movements, { attempt++ }) { selectedExerciseId = it }
                 val expanded = expandedId == source.id
                 val notesLabel = stringResource(if (expanded) R.string.condition_reference_hide_notes else R.string.condition_reference_show_notes)
                 TextButton(onClick = { expandedId = if (expanded) null else source.id },
@@ -199,23 +198,65 @@ private fun ReferenceDetail(
                 }
                 val openLabel = stringResource(R.string.condition_reference_open)
                 OutlinedButton(modifier = Modifier.semantics { contentDescription = "$openLabel. ${source.title}" }, onClick = {
-                    failedId = try {
-                        uriHandler.openUri(source.url)
-                        null
-                    } catch (e: IllegalArgumentException) {
-                        source.id
-                    } catch (e: SecurityException) {
-                        source.id
-                    } catch (e: ActivityNotFoundException) {
-                        source.id
-                    }
+                    openPublication(source.id, source.url)
                 }) { Text(openLabel, color = color) }
                 if (failedId == source.id) Text(stringResource(R.string.condition_reference_link_error), color = MaterialTheme.colorScheme.error)
+            }
+        }
+        if (condition.relatedReading.isNotEmpty()) {
+            item {
+                TextButton(onClick = { showRelated = !showRelated }) {
+                    Text(stringResource(if (showRelated) R.string.condition_related_hide else R.string.condition_related_show,
+                        condition.relatedReading.size), color = MaterialTheme.colorScheme.onSurface)
+                }
+            }
+            if (showRelated) {
+                item { Text(stringResource(R.string.condition_related_note), color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                items(condition.relatedReading, key = { it.url }) { ref ->
+                    WallCrawlCard(Modifier.fillMaxWidth()) {
+                        Text(ref.title, color = MaterialTheme.colorScheme.onSurface)
+                        Text(stringResource(when (ref.access) {
+                            "full_text" -> R.string.condition_reference_full
+                            "abstract_only" -> R.string.condition_reference_partial
+                            else -> R.string.condition_related_registry
+                        }), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        ReferenceExercises(ref.exerciseIds, movements, { attempt++ }) { selectedExerciseId = it }
+                        TextButton(onClick = { openPublication(ref.url, ref.url) }) {
+                            Text(stringResource(R.string.condition_reference_open), color = MaterialTheme.colorScheme.onSurface)
+                        }
+                        if (failedId == ref.url) Text(stringResource(R.string.condition_reference_link_error),
+                            color = MaterialTheme.colorScheme.error)
+                    }
+                }
             }
         }
     }
     selectedExerciseId?.let { movements?.getOrNull()?.get(it) }?.let { exercise ->
         ExerciseDetailSheet(exercise, visualProvider, onDismiss = { selectedExerciseId = null })
+    }
+}
+
+@Composable
+private fun ReferenceExercises(
+    exerciseIds: List<String>,
+    movements: Result<Map<String, Exercise>>?,
+    retry: () -> Unit,
+    select: (String) -> Unit
+) {
+    if (exerciseIds.isEmpty()) return
+    val color = MaterialTheme.colorScheme.onSurface
+    val vocabulary = LocalExerciseVocabulary.current
+    Text(stringResource(R.string.condition_reference_illustrations), modifier = Modifier.padding(top = 8.dp),
+        color = color, style = MaterialTheme.typography.labelLarge)
+    when {
+        movements == null -> CircularProgressIndicator()
+        movements.isFailure -> {
+            Text(stringResource(R.string.exercises_catalog_error), color = MaterialTheme.colorScheme.error)
+            TextButton(onClick = retry) { Text(stringResource(R.string.history_retry), color = color) }
+        }
+        else -> exerciseIds.forEach { id ->
+            TextButton(onClick = { select(id) }) { Text(vocabulary.exerciseName(movements.getOrThrow().getValue(id)), color = color) }
+        }
     }
 }
 

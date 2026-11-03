@@ -125,13 +125,13 @@ class WorkoutGenerationContextBuilder(
         val now = Instant.ofEpochMilli(transactionRead?.history?.asOfTimestamp ?: nowTimestamp())
         val zone = transactionRead?.history?.zoneId ?: zoneId()
         val initialProfile = transactionRead?.profile ?: userProfileRepository.getProfileOnce()
-        val needsConditionRead = transactionRead != null || initialProfile.activeConditions.isNotEmpty() ||
+        val needsConditionRead = transactionRead != null || initialProfile.hasConditionReports ||
             workoutRepository.hasPendingConditionReassessment(initialProfile.id)
         var support = transactionSupport ?: if (needsConditionRead) conditionSupport() else null
         var conditionRead = transactionRead ?: support?.let { workoutRepository.getConditionContext(initialProfile.id, it, now.toEpochMilli(), zone, intent == WorkoutPlanningIntent.PROGRAM) }
         val initialProgram = if (intent == WorkoutPlanningIntent.PROGRAM && conditionRead == null) programRepository?.get(initialProfile.id) else null
         // A program projection can observe a selection made after the bootstrap profile read.
-        if (conditionRead == null && initialProgram?.profile?.activeConditions?.isNotEmpty() == true) {
+        if (conditionRead == null && initialProgram?.profile?.hasConditionReports == true) {
             support = conditionSupport()
             conditionRead = workoutRepository.getConditionContext(initialProfile.id, support, now.toEpochMilli(), zone, true)
         }
@@ -266,7 +266,7 @@ class WorkoutGenerationContextBuilder(
                 nowTimestamp = now.toEpochMilli(),
                 exercisesById = allExercises.associateBy { it.id }
             ),
-            excludedExerciseIds = profile.excludedExerciseIds,
+            excludedExerciseIds = profile.planningExclusions,
             allowedExercises = conditionCandidates,
             automaticEligibilityResult = automaticEligibilityResult,
             capabilityEvidence = capabilityEvidence,
@@ -293,6 +293,7 @@ class WorkoutGenerationContextBuilder(
         var examinedPrescriptions = 0
         for (session in sessions) {
             for (exercise in session.exercises) {
+                if (exercise.isLegacyMobility) continue
                 if (examinedPrescriptions == MAX_PRIOR_REST_PRESCRIPTIONS) {
                     return preferences
                 }

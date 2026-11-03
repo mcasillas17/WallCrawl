@@ -64,7 +64,7 @@ see [privacy and explicit exports](privacy.md).
 
 **Exercises → Condition reference** opens a searchable offline library of 50 conditions in seven regions. Each detail shows the publications, the research team's access level and expandable study notes. English and Spanish names, search and controls are available. Publication titles retain their original language and detailed extraction notes are in English. Opening a source uses the system browser. Where the cited source describes an illustrated catalog movement, tap its localized name to open the exercise detail.
 
-The catalog contains 319 exercises, including 17 neutral WallCrawl additions with both illustration variants. Each has explicit execution guidance and PNG masters. The source-specific exercise links identify the movement studied. The condition picker and deterministic planner use the separate clinical release records, currently empty. [Exercise sources, PNG masters and remaining artwork gaps](art/condition-exercises.md)
+The catalog contains 327 exercises, including 25 neutral WallCrawl additions with both illustration variants. Each has explicit execution guidance and PNG masters. The source-specific exercise links identify the movement studied. The condition picker and deterministic planner use the separate clinical release records, currently empty. [Exercise sources, PNG masters and remaining artwork gaps](art/condition-exercises.md)
 
 ## Integration scenarios
 
@@ -154,10 +154,14 @@ and explicit variant lint checks succeeded; retained lint reports and exact
 commands distinguish the current verification from the earlier full matrix.
 Warnings remain a bounded maintenance concern, not a claim of pristine output.
 
-## Reference and catalog expansion checks
+## November 2 reference and catalog expansion checks
 
-The expanded debug APK contains 319 exercises and 50 searchable condition references. Eleven condition pages link to the 17 illustrated supplement exercises through the publications that describe them. Seven shared body-region graphics identify the location on each reference page.
+The November 2 debug APK contained 319 exercises and 50 searchable condition references. Eleven condition pages link to the 17 illustrated supplement exercises through the publications that describe them. Seven shared body-region graphics identify the location on each reference page.
 
 The expansion passed 212 Python tests, 1,473 JVM tests and 62 focused Android API 37 tests. Device checks covered catalog parsing, Spanish names and guidance, condition reference navigation and publication links, artwork selection, and artwork binding. Debug and release lint reported zero errors. The packaged APK retained all 1,836 prior variant SVGs byte-for-byte and includes 78 new SVG frames. The versioned source-art directory contains 102 PNG frame slots for the 17 local catalog entries.
 
-Verification used an emulator. The supine chin nod and supine dumbbell scapular reach still need usable paired artwork. Condition-specific workout rules await qualified clinical review.
+The November 2 verification used an emulator.
+
+## November 3 movement research and PR integration
+
+All 68 open requests have [source-level movement descriptions](research/conditions/movements/README.md). The supported chin nod and supine straight-arm reach now have paired traced artwork. The catalog includes all seven exercise identities from the merged PR through six new illustrations and one matching prior entry. Fifteen condition pages link to illustrated exercises. The 50 condition reference entries remain separate from the clinical release gate. [PR dispositions and upgrade details](research/conditions/movements/pr-105.md)

@@ -3,11 +3,36 @@ package wallcrawl.elopenmike.com.core.database.repository
 import android.util.JsonReader
 import android.util.JsonToken
 import java.io.StringReader
+import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits
 import wallcrawl.elopenmike.com.core.io.BoundedCharacterReader
 import wallcrawl.elopenmike.com.core.model.*
 
 /** Versioned, bounded storage for selected facts and frozen session evidence. */
 object ConditionContextCodec {
+    // The released column's empty-string SQL default still means no reports in v18.
+    fun encodeReports(ids: Set<String>): String {
+        require(ids.size <= LocalDataArchiveLimits.MAX_COLLECTION_ITEMS)
+        require(ids.all { it.isNotBlank() && it.length <= LocalDataArchiveLimits.MAX_REPORTED_CONDITION_ID_LENGTH })
+        return if (ids.isEmpty()) "" else conditionCanonicalJson(ids)
+    }
+
+    fun decodeReports(json: String): Set<String> {
+        if (json.isEmpty()) return emptySet()
+        return JsonReader(StringReader(json)).use { reader ->
+            reader.beginArray()
+            val ids = buildSet {
+                while (reader.hasNext()) {
+                    require(size < LocalDataArchiveLimits.MAX_COLLECTION_ITEMS && reader.peek() == JsonToken.STRING)
+                    val id = reader.nextString()
+                    require(id.isNotBlank() && id.length <= LocalDataArchiveLimits.MAX_REPORTED_CONDITION_ID_LENGTH && add(id))
+                }
+            }
+            reader.endArray()
+            require(reader.peek() == JsonToken.END_DOCUMENT)
+            ids
+        }
+    }
+
     fun encodeSelections(values: List<SelectedCondition>): String {
         require(values.size <= 32 && values.map { it.conditionId }.distinct().size == values.size)
         return conditionCanonicalJson(values.map(::selection))

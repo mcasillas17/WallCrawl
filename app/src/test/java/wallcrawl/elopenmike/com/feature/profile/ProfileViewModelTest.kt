@@ -29,6 +29,19 @@ import wallcrawl.elopenmike.com.test.MainDispatcherRule
 class ProfileViewModelTest {
 
     @Test
+    fun removingAnExclusionKeepsOtherExercisesAndProfileSettings() = runTest {
+        val repository = repositoryWith(profile().copy(excludedExerciseIds = listOf("one", "two")))
+        val before = repository.getProfileOnce()
+        val viewModel = ProfileViewModel(repository)
+        viewModel.removeExcludedExercise("one")
+        viewModel.removeExcludedExercise("one")
+        advanceUntilIdle()
+        assertThat(repository.getProfileOnce()).isEqualTo(before.copy(
+            excludedExerciseIds = listOf("two"), revision = before.revision + 1
+        ))
+    }
+
+    @Test
     fun refusedConditionSaveRetainsDraftAndDoesNotReplaceProfile() = runTest {
         val underlying = repositoryWith(profile())
         var writes = 0

@@ -569,7 +569,7 @@ class TodayViewModel(
                     RecommendationContextIdentity.of(currentContext) !=
                     recommendation.contextIdentity
                 ) {
-                    if (recommendation.conditionContext != null || currentContext.userProfile.activeConditions.isNotEmpty()) {
+                    if (recommendation.conditionContext != null || currentContext.userProfile.hasConditionReports) {
                         conditionRefusalFlow.value = ConditionStartRefused("changed-condition-facts",
                             currentContext.userProfile.activeConditions.map { it.conditionId }.toSet())
                     }

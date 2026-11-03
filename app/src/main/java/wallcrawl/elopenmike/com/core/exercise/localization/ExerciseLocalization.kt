@@ -1,5 +1,7 @@
 package wallcrawl.elopenmike.com.core.exercise.localization
 
+import wallcrawl.elopenmike.com.core.model.WallStretchIdentity
+
 import java.text.Normalizer
 import java.util.Locale
 
@@ -69,7 +71,7 @@ class ExerciseLocalization(
             equipmentByCanonicalName[canonicalName]?.values.orEmpty()).toList()
 
     private fun textFor(exerciseId: String, languageTag: String): LocalizedExerciseText? =
-        exercisesById[exerciseId]?.get(language(languageTag))
+        exercisesById[WallStretchIdentity.forLookup(exerciseId)]?.get(language(languageTag))
 
     private fun language(languageTag: String): String =
         Locale.forLanguageTag(languageTag).language.lowercase(Locale.ROOT)

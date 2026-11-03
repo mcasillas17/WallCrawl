@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -56,6 +57,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -140,6 +142,17 @@ fun ProfileScreen(
                 ProfileContent(
                     conditionSection = {
                         if (conditions.loadFailed) Text(stringResource(R.string.condition_load_error), color = MaterialTheme.colorScheme.onSurface)
+                        if (state.profile.reportedConditions.isNotEmpty()) {
+                            WallCrawlCard {
+                                Text(stringResource(R.string.condition_legacy_title), color = MaterialTheme.colorScheme.onSurface)
+                                Text(stringResource(R.string.condition_legacy_refusal), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                state.profile.reportedConditions.sorted().forEach { id ->
+                                    TextButton(onClick = { viewModel.removeReportedCondition(id) }) {
+                                        Text(stringResource(R.string.condition_legacy_remove, reportedConditionName(id)), color = MaterialTheme.colorScheme.onSurface)
+                                    }
+                                }
+                            }
+                        }
                         val selected = conditions.draft ?: state.profile.activeConditions
                         if (conditions.records.isNotEmpty() || selected.isNotEmpty() || conditions.draft != null) {
                             WallCrawlCard {
@@ -157,6 +170,8 @@ fun ProfileScreen(
                         PendingConditionControls(conditions, state.profile.activeConditions, viewModel::updateReassessmentAnswers, viewModel::reassess)
                     },
                     profile = state.profile,
+                    exclusionSaveFailed = state.exclusionSaveFailed,
+                    onRemoveExclusion = viewModel::removeExcludedExercise,
                     movementCapabilityDraft = state.movementCapabilityDraft,
                     movementCapabilityError = state.movementCapabilityError,
                     isSavingCapabilities = state.isSaving,
@@ -190,6 +205,8 @@ fun ProfileScreen(
 @Composable
 private fun ProfileContent(
     conditionSection: @Composable () -> Unit,
+    exclusionSaveFailed: Boolean,
+    onRemoveExclusion: (String) -> Unit,
     profile: UserProfile,
     movementCapabilityDraft: MovementCapabilities?,
     movementCapabilityError: ProfileCapabilityError?,
@@ -441,6 +458,28 @@ private fun ProfileContent(
         }
 
         item { conditionSection() }
+        if (profile.excludedExerciseIds.isNotEmpty()) {
+            item {
+                Column {
+                    Text(stringResource(R.string.profile_excluded_heading), fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.semantics { heading() })
+                    Text(stringResource(R.string.profile_excluded_hint), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (exclusionSaveFailed) Text(stringResource(R.string.profile_exclusion_save_error),
+                        color = MaterialTheme.colorScheme.error)
+                }
+            }
+            items(profile.excludedExerciseIds.distinct()) { exerciseId ->
+                val name = LocalExerciseVocabulary.current.exerciseName(exerciseId)
+                val removeDescription = stringResource(R.string.profile_excluded_remove_description, name)
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(name, modifier = Modifier.weight(1f))
+                    TextButton(onClick = { onRemoveExclusion(exerciseId) },
+                        modifier = Modifier.semantics { contentDescription = removeDescription }) {
+                        Text(stringResource(R.string.profile_excluded_remove))
+                    }
+                }
+            }
+        }
         item {
             MovementCapabilityProfileCard(
                 persistedCapabilities = profile.movementCapabilities,
@@ -1022,4 +1061,17 @@ private fun <T> SegmentedPill(
             }
         }
     }
+}
+
+@Composable
+private fun reportedConditionName(id: String): String = when (id) {
+    "piriformis_syndrome" -> stringResource(R.string.condition_name_piriformis_syndrome)
+    "gluteal_tendinopathy" -> stringResource(R.string.condition_name_gluteal_tendinopathy)
+    "lumbar_radiculopathy" -> stringResource(R.string.condition_name_lumbar_radiculopathy)
+    "nonspecific_low_back_pain" -> stringResource(R.string.condition_name_nonspecific_low_back_pain)
+    "rotator_cuff_related_shoulder_pain" -> stringResource(R.string.condition_name_rotator_cuff_related_shoulder_pain)
+    "lateral_elbow_tendinopathy" -> stringResource(R.string.condition_name_lateral_elbow_tendinopathy)
+    "carpal_tunnel_syndrome" -> stringResource(R.string.condition_name_carpal_tunnel_syndrome)
+    "patellofemoral_pain" -> stringResource(R.string.condition_name_patellofemoral_pain)
+    else -> id
 }

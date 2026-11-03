@@ -98,7 +98,8 @@ class WorkoutHistoryAnalyzer {
     fun latestCompletedExercisePerformance(
         sessions: List<WorkoutSession>,
         exerciseId: String,
-        purpose: PrescriptionPurpose = PrescriptionPurpose.ORDINARY
+        purpose: PrescriptionPurpose = PrescriptionPurpose.ORDINARY,
+        isLegacyMobility: Boolean = false
     ): CompletedExercisePerformance? {
         require(exerciseId.isNotBlank()) { "exerciseId must not be blank." }
 
@@ -108,7 +109,7 @@ class WorkoutHistoryAnalyzer {
             .sortedByDescending { it.completedAtTimestamp }
             .mapNotNull { session ->
                 val completedSets = session.exercises
-                    .firstOrNull { it.exerciseId == exerciseId && it.prescription.purpose == purpose }
+                    .firstOrNull { it.exerciseId == exerciseId && it.prescription.purpose == purpose && it.isLegacyMobility == isLegacyMobility }
                     ?.sets
                     ?.completedPerformanceSets()
                     ?.sortedBy { it.setNumber }

@@ -1,0 +1,8 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Create one square adult male athlete in a long sleeve T-shirt and loose long track pants exercise catalog icon. Use the attached illustration as a style reference only: simple white contour strokes, transparent background with fully transparent open insides of clothing, no solid fill, no shadow, no text and ample margins. Show one CLEAR different exercise in a three-quarter overhead view so left and right sides of the body can be distinguished: supine single bent-knee cross-body stretch toward the OPPOSITE shoulder. Full body from head to shoes diagonally across the frame, head and both shoulders resting on the ground and gaze toward ceiling. LEFT LEG remains extended flat and straight, left heel far away. RIGHT hip and knee bend; right thigh comes up toward the abdomen then crosses gently toward the LEFT collarbone. LEFT hand reaches across and cups the OUTSIDE of the RIGHT knee, holding it toward the left shoulder. Right foot is visibly off the floor and does not rest on the other thigh. Right arm rests freely by the side. Do not clasp both hands around the knee. All four limb attachments anatomically clear. No pillow, no wall, no furniture, no props. A single held pose. Match the transparent technical outline ink of the supplied catalog master.",
+  "outputSha256": "23bc05c01915bb9d9e7abcbd2c4bd0af02af2949b98e841158faa30f327f38d9",
+  "layout": "hold",
+  "variant": "male",
+  "exerciseId": "lying-piriformis-stretch"
+}

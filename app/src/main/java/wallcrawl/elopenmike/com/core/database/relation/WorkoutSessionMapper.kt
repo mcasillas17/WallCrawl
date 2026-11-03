@@ -79,9 +79,15 @@ internal fun WorkoutExerciseWithSets.toWorkoutExercise(): WorkoutExercise {
             effortTarget = effortTarget,
             restClass = exercise.restClass,
             restTargetSource = exercise.restTargetSource,
-            purpose = PrescriptionPurpose.valueOf(exercise.purpose)
+            purpose = PrescriptionPurpose.valueOf(exercise.purpose),
+            holdSeconds = exercise.targetHoldSeconds
         ),
         notes = exercise.notes,
+        isLegacyMobility = when (exercise.legacyRole) {
+            "MAIN" -> false
+            "MOBILITY" -> true
+            else -> error("Unrecognized stored exercise role.")
+        },
         sets = sets.sortedWith(compareBy<WorkoutSetEntity> { it.setNumber }.thenBy { it.id }).map { setEntity ->
             WorkoutSet(
                 id = setEntity.id,

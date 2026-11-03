@@ -29,6 +29,9 @@ class ConditionPlanningPolicy {
         if (pending.isNotEmpty()) return ConditionPlanningResult.Blocked(pending.take(512).map {
             ConditionViolation("pending-reassessment", setOf(it.conditionId), setOf(it.exerciseId))
         })
+        if (profile.reportedConditions.isNotEmpty()) return ConditionPlanningResult.Blocked(
+            listOf(ConditionViolation("legacy-condition-report", emptySet()))
+        )
         if (profile.activeConditions.isEmpty()) return ConditionPlanningResult.NotApplicable
         val ids = profile.activeConditions.map { it.conditionId }.toSet()
         fun blocked(reason: String, exercises: Set<String> = emptySet()) = ConditionPlanningResult.Blocked(listOf(ConditionViolation(reason, ids, exercises)))
@@ -138,13 +141,13 @@ class ConditionPlanningPolicy {
 
     private fun ordinaryEligible(exercise: Exercise, profile: UserProfile): Boolean {
         val metadata = exercise.acceptedMetadata() ?: return false
-        return exercise.id !in profile.excludedExerciseIds && exercise.hasRequiredEquipment(profile.availableEquipment) &&
+        return exercise.id !in profile.planningExclusions && exercise.hasRequiredEquipment(profile.availableEquipment) &&
             metadata.equipmentAlternatives.isEquipmentSatisfiedBy(profile.availableEquipment.normalizedEquipmentSet()) &&
             metadata.capabilityRequirements.none { profile.movementCapabilities[it] == CapabilityLevel.AVOID } &&
             metadata.clearsJointConstraintsOf(profile) && !metadata.violatesImpactRestrictionOf(profile)
     }
     private fun supportiveEligible(exercise: Exercise, profile: UserProfile, requirements: ConditionSupportiveRequirements): Boolean =
-        exercise.id !in profile.excludedExerciseIds && exercise.hasRequiredEquipment(profile.availableEquipment) &&
+        exercise.id !in profile.planningExclusions && exercise.hasRequiredEquipment(profile.availableEquipment) &&
             requirements.equipmentAlternatives.isEquipmentSatisfiedBy(profile.availableEquipment.normalizedEquipmentSet()) &&
             requirements.capabilities.none { profile.movementCapabilities[it] == CapabilityLevel.AVOID } &&
             profile.trainingConstraints.none { it != TrainingConstraint.LOW_IMPACT_ONLY && it !in requirements.clearedConstraints } &&

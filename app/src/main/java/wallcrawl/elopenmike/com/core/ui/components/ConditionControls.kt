@@ -87,6 +87,7 @@ fun ConditionRefusal(reasons: List<ConditionViolation>) {
     reasons.forEach { reason ->
         val message = when (reason.reason) {
             "pending-reassessment", "response-requires-reassessment" -> R.string.condition_pending_hint
+            "legacy-condition-report" -> R.string.condition_legacy_refusal
             "active-workout" -> R.string.condition_active_refusal
             "stale-event", "stale-profile" -> R.string.condition_stale_refusal
             "changed-condition-facts" -> R.string.condition_workout_changed

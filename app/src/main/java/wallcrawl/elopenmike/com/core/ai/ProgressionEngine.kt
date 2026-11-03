@@ -25,7 +25,7 @@ class ProgressionEngine {
         if (sessions.map { it.id }.distinct().size != sessions.size) {
             return hold(ProgressionReason.HOLD_DUPLICATE_OBSERVATION)
         }
-        val attempts = sessions.filter { s -> s.exercises.any { it.exerciseId == exerciseId } &&
+        val attempts = sessions.mapNotNull { it.trainingActivity() }.filter { s -> s.exercises.any { it.exerciseId == exerciseId } &&
             (s.exercises.any { it.exerciseId == exerciseId && it.prescription.purpose == PrescriptionPurpose.ORDINARY } ||
                 s.exercises.any { ex -> ex.sets.any { it.type != SetType.WARMUP &&
                     (it.stopReason != null || it.stoppedAtTimestamp != null) } })

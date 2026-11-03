@@ -305,6 +305,10 @@ def collect_supplement(ledger_path: Path) -> dict[str, bytes]:
             require(panel_hashes[strip["sha256"]][number - 1] == frame["master"]["sha256"], "Master differs from its native strip cell")
         else:
             require(generation.get("outputSha256") == frame["master"]["sha256"], "Generation record must bind the retained master")
+            if generation.get("layout") == "sequence-chart":
+                require(generation.get("exerciseId") == exercise_id and generation.get("variant") == variant,
+                        "Instructional chart belongs to a different exercise or variant")
+                strip_id = ("sequence-chart", frame["master"]["sha256"])
         require(variant_strips.setdefault((exercise_id, variant), strip_id) == strip_id,
                 "A moving sequence must use one native strip for all three cells")
         asset_path = f"exercise-illustrations/{variant}/{exercise_id}/frame-{number}.svg"

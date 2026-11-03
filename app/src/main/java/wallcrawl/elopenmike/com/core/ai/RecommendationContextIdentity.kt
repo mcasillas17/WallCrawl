@@ -89,6 +89,9 @@ object RecommendationContextIdentity {
             line("constraints", context.programConstraints.canonicalForm())
         )
         lines += line("conditions", conditionFacts(context))
+        if (context.userProfile.reportedConditions.isNotEmpty()) {
+            lines += line("reportedConditions", conditionDigest(context.userProfile.reportedConditions.sorted()))
+        }
         val header = context.programHeader
         lines += line("planningIntent", context.planningIntent.name)
         lines += line("programHeader", header.profileId, header.programId ?: "none", header.revision.toString(),
@@ -135,6 +138,7 @@ object RecommendationContextIdentity {
                 session.exercises.sortedWith(compareBy({ it.exerciseId }, { it.id })).forEach { exercise ->
                     lines += line("progressionExercise", exercise.id, exercise.sessionId,
                         exercise.exerciseId, exercise.prescription.toString())
+                    if (exercise.isLegacyMobility) lines += line("legacyMobility", exercise.id)
                     exercise.sets.sortedWith(compareBy({ it.setNumber }, { it.id })).forEach { set ->
                         lines += line("progressionSet", set.toString())
                     }

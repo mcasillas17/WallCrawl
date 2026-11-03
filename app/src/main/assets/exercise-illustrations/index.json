@@ -1836,6 +1836,18 @@
         "exercise-illustrations/male/hsd-side-lying-dumbbell-er-pillow/frame-3.svg"
       ]
     },
+    "hsd-supine-dumbbell-scapular-protraction": {
+      "female": [
+        "exercise-illustrations/female/hsd-supine-dumbbell-scapular-protraction/frame-1.svg",
+        "exercise-illustrations/female/hsd-supine-dumbbell-scapular-protraction/frame-2.svg",
+        "exercise-illustrations/female/hsd-supine-dumbbell-scapular-protraction/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hsd-supine-dumbbell-scapular-protraction/frame-1.svg",
+        "exercise-illustrations/male/hsd-supine-dumbbell-scapular-protraction/frame-2.svg",
+        "exercise-illustrations/male/hsd-supine-dumbbell-scapular-protraction/frame-3.svg"
+      ]
+    },
     "inchworm": {
       "female": [
         "exercise-illustrations/female/inchworm/frame-1.svg",
@@ -2242,6 +2254,18 @@
         "exercise-illustrations/male/lying-leg-raise/frame-1.svg",
         "exercise-illustrations/male/lying-leg-raise/frame-2.svg",
         "exercise-illustrations/male/lying-leg-raise/frame-3.svg"
+      ]
+    },
+    "lying-piriformis-stretch": {
+      "female": [
+        "exercise-illustrations/female/lying-piriformis-stretch/frame-1.svg",
+        "exercise-illustrations/female/lying-piriformis-stretch/frame-2.svg",
+        "exercise-illustrations/female/lying-piriformis-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/lying-piriformis-stretch/frame-1.svg",
+        "exercise-illustrations/male/lying-piriformis-stretch/frame-2.svg",
+        "exercise-illustrations/male/lying-piriformis-stretch/frame-3.svg"
       ]
     },
     "machine-chest-press": {
@@ -2976,6 +3000,18 @@
         "exercise-illustrations/male/side-lying-hip-abduction/frame-3.svg"
       ]
     },
+    "side-lying-isometric-hip-abduction-hold": {
+      "female": [
+        "exercise-illustrations/female/side-lying-isometric-hip-abduction-hold/frame-1.svg",
+        "exercise-illustrations/female/side-lying-isometric-hip-abduction-hold/frame-2.svg",
+        "exercise-illustrations/female/side-lying-isometric-hip-abduction-hold/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/side-lying-isometric-hip-abduction-hold/frame-1.svg",
+        "exercise-illustrations/male/side-lying-isometric-hip-abduction-hold/frame-2.svg",
+        "exercise-illustrations/male/side-lying-isometric-hip-abduction-hold/frame-3.svg"
+      ]
+    },
     "side-lying-leg-raise": {
       "female": [
         "exercise-illustrations/female/side-lying-leg-raise/frame-1.svg",
@@ -3348,6 +3384,18 @@
         "exercise-illustrations/male/standing-dumbbell-scaption/frame-3.svg"
       ]
     },
+    "standing-isometric-gluteal-contraction": {
+      "female": [
+        "exercise-illustrations/female/standing-isometric-gluteal-contraction/frame-1.svg",
+        "exercise-illustrations/female/standing-isometric-gluteal-contraction/frame-2.svg",
+        "exercise-illustrations/female/standing-isometric-gluteal-contraction/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/standing-isometric-gluteal-contraction/frame-1.svg",
+        "exercise-illustrations/male/standing-isometric-gluteal-contraction/frame-2.svg",
+        "exercise-illustrations/male/standing-isometric-gluteal-contraction/frame-3.svg"
+      ]
+    },
     "standing-quad-stretch": {
       "female": [
         "exercise-illustrations/female/standing-quad-stretch/frame-1.svg",
@@ -3408,6 +3456,18 @@
         "exercise-illustrations/male/straight-arm-pulldown/frame-3.svg"
       ]
     },
+    "straight-leg-raise": {
+      "female": [
+        "exercise-illustrations/female/straight-leg-raise/frame-1.svg",
+        "exercise-illustrations/female/straight-leg-raise/frame-2.svg",
+        "exercise-illustrations/female/straight-leg-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/straight-leg-raise/frame-1.svg",
+        "exercise-illustrations/male/straight-leg-raise/frame-2.svg",
+        "exercise-illustrations/male/straight-leg-raise/frame-3.svg"
+      ]
+    },
     "sumo-deadlift": {
       "female": [
         "exercise-illustrations/female/sumo-deadlift/frame-1.svg",
@@ -3444,6 +3504,18 @@
         "exercise-illustrations/male/superman-hold/frame-3.svg"
       ]
     },
+    "supine-supported-chin-nod": {
+      "female": [
+        "exercise-illustrations/female/supine-supported-chin-nod/frame-1.svg",
+        "exercise-illustrations/female/supine-supported-chin-nod/frame-2.svg",
+        "exercise-illustrations/female/supine-supported-chin-nod/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/supine-supported-chin-nod/frame-1.svg",
+        "exercise-illustrations/male/supine-supported-chin-nod/frame-2.svg",
+        "exercise-illustrations/male/supine-supported-chin-nod/frame-3.svg"
+      ]
+    },
     "supine-wall-supported-piriformis-stretch": {
       "female": [
         "exercise-illustrations/female/supine-wall-supported-piriformis-stretch/frame-1.svg",
@@ -3478,6 +3550,18 @@
         "exercise-illustrations/male/t-bar-row/frame-1.svg",
         "exercise-illustrations/male/t-bar-row/frame-2.svg",
         "exercise-illustrations/male/t-bar-row/frame-3.svg"
+      ]
+    },
+    "tendon-gliding-sequence": {
+      "female": [
+        "exercise-illustrations/female/tendon-gliding-sequence/frame-1.svg",
+        "exercise-illustrations/female/tendon-gliding-sequence/frame-2.svg",
+        "exercise-illustrations/female/tendon-gliding-sequence/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/tendon-gliding-sequence/frame-1.svg",
+        "exercise-illustrations/male/tendon-gliding-sequence/frame-2.svg",
+        "exercise-illustrations/male/tendon-gliding-sequence/frame-3.svg"
       ]
     },
     "toe-touch": {
@@ -3826,6 +3910,18 @@
         "exercise-illustrations/male/wrist-extension/frame-1.svg",
         "exercise-illustrations/male/wrist-extension/frame-2.svg",
         "exercise-illustrations/male/wrist-extension/frame-3.svg"
+      ]
+    },
+    "wrist-extensor-stretch": {
+      "female": [
+        "exercise-illustrations/female/wrist-extensor-stretch/frame-1.svg",
+        "exercise-illustrations/female/wrist-extensor-stretch/frame-2.svg",
+        "exercise-illustrations/female/wrist-extensor-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/wrist-extensor-stretch/frame-1.svg",
+        "exercise-illustrations/male/wrist-extensor-stretch/frame-2.svg",
+        "exercise-illustrations/male/wrist-extensor-stretch/frame-3.svg"
       ]
     }
   },

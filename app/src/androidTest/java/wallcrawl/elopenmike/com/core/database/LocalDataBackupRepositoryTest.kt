@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.core.database
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -55,6 +56,27 @@ import wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendin
  */
 @RunWith(AndroidJUnit4::class)
 class LocalDataBackupRepositoryTest {
+    @Test fun historicalMobilityPreservesRepetitionsHoldAndOpaqueIdsAcrossRoom() = runBlocking<Unit> {
+        val assets = InstrumentationRegistry.getInstrumentation().context.assets
+        val bytes = assets.open("archives/v7-reported.json").use { it.readBytes() }
+        val expected = LocalDataArchiveCodec.read(bytes.inputStream()).snapshot
+        repository.restoreFrom(bytes.inputStream())
+        assertThat(database.completedWorkoutHistoryDao().getCompletedTimestamps()).isEmpty()
+        val output = ByteArrayOutputStream().also { repository.exportTo { it } }
+        val exported = LocalDataArchiveCodec.read(output.toByteArray().inputStream())
+        assertThat(exported.metadata.archiveVersion).isEqualTo(8)
+        assertThat(exported.snapshot).isEqualTo(expected)
+
+        // Version 8 also permits the old Room separator inside an opaque ID.
+        val ids = linkedSetOf("one|", "two|||three", " four ")
+        val updated = exported.copy(snapshot = expected.copy(profile = expected.profile!!.copy(reportedConditions = ids)))
+        val current = ByteArrayOutputStream().also { LocalDataArchiveCodec.write(updated) { it } }
+        repository.deleteAllLocalData()
+        repository.restoreFrom(current.toByteArray().inputStream())
+        val reexport = ByteArrayOutputStream().also { repository.exportTo { it } }
+        assertThat(LocalDataArchiveCodec.read(reexport.toByteArray().inputStream()).snapshot).isEqualTo(updated.snapshot)
+    }
+
     @Test fun conditionRowsSurviveExportDeleteAndRestore() = runBlocking<Unit> {
         seedFixtureData()
         val context = SessionConditionContext(1, 1,

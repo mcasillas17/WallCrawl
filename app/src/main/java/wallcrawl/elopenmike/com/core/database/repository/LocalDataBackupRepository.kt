@@ -307,7 +307,9 @@ class OfflineLocalDataBackupRepository(
             effortMaxRir = prescription.effortTarget?.maxRir,
             restClass = prescription.restClass,
             restTargetSource = prescription.restTargetSource,
-            purpose = prescription.purpose.name
+            purpose = prescription.purpose.name,
+            legacyRole = if (isLegacyMobility) "MOBILITY" else "MAIN",
+            targetHoldSeconds = prescription.holdSeconds
         )
 
     private fun WorkoutSet.toSetEntity() = WorkoutSetEntity(

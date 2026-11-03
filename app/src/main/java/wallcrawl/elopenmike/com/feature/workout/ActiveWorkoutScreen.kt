@@ -193,6 +193,33 @@ fun ActiveWorkoutScreen(
                     )
                 }
 
+                state.painExclusionOffer?.let { offer ->
+                    val name = LocalExerciseVocabulary.current.exerciseName(offer.exerciseId)
+                    AlertDialog(
+                        onDismissRequest = { viewModel.dismissPainExclusionOffer(offer.exerciseId) },
+                        title = { Text(stringResource(R.string.pain_offer_title, name)) },
+                        text = {
+                            Column {
+                                Text(stringResource(R.string.pain_offer_body))
+                                if (offer.saveFailed) Text(
+                                    stringResource(R.string.profile_exclusion_save_error),
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        },
+                        confirmButton = {
+                            TextButton(enabled = !offer.saving, onClick = { viewModel.acceptPainExclusion(offer.exerciseId) }) {
+                                Text(stringResource(R.string.pain_offer_accept))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(enabled = !offer.saving, onClick = { viewModel.dismissPainExclusionOffer(offer.exerciseId) }) {
+                                Text(stringResource(R.string.pain_offer_decline))
+                            }
+                        }
+                    )
+                }
+
                 if (state.isConfirmingDiscard) {
                     DiscardConfirmationDialog(
                         onConfirm = { viewModel.confirmCancel(onNavigateBack) },
@@ -612,7 +639,7 @@ private fun prescriptionTarget(
 ): String {
     val locale = LocalConfiguration.current.locales[0]
     val sets = LocaleFormatting.formatCount(prescription.targetSets, locale)
-    return when (prescription.exerciseType) {
+    val target = when (prescription.exerciseType) {
         ExerciseType.WEIGHT_REPS, ExerciseType.BODYWEIGHT_REPS,
         ExerciseType.ASSISTED_BODYWEIGHT -> {
             val range = prescription.repRange
@@ -653,6 +680,9 @@ private fun prescriptionTarget(
             }
         ).joinToString(stringResource(R.string.detail_separator))
     }
+    return prescription.holdSeconds?.let { value ->
+        stringResource(R.string.workout_target_with_hold, target, LocaleFormatting.formatCount(value, locale))
+    } ?: target
 }
 
 /**

@@ -86,10 +86,10 @@ class WorkoutGuideCatalogParserTest {
 
     @Test fun supplement_packagedStoreRetainsLegacyIdentityAndShipsLocalNotices() = kotlinx.coroutines.runBlocking {
         val snapshot = WorkoutGuideCatalogStore(assets).snapshot()
-        assertThat(snapshot.exercises).hasSize(319)
-        assertThat(snapshot.framesByExerciseId.values.flatten()).hasSize(957)
+        assertThat(snapshot.exercises).hasSize(327)
+        assertThat(snapshot.framesByExerciseId.values.flatten()).hasSize(981)
         assertThat(snapshot.catalogVersion).startsWith(snapshot.catalogAttribution.commit + "+wallcrawl:")
-        assertThat(snapshot.exercises.filter { it.source?.catalogId == "wallcrawl" }).hasSize(17)
+        assertThat(snapshot.exercises.filter { it.source?.catalogId == "wallcrawl" }).hasSize(25)
         assertThat(snapshot.exercises.filter { it.source?.catalogId == "wallcrawl" }
             .all { it.programming == null && it.reviewedMetadata == null && it.executionGuidance != null })
             .isTrue()

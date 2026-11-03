@@ -13,6 +13,9 @@ class ConditionReferenceTest {
         val all = library.flatMap { it.entries }
         assertThat(all).hasSize(50)
         assertThat(all.flatMap { it.sources }).hasSize(196)
+        assertThat(all.count { it.relatedReading.isNotEmpty() }).isEqualTo(8)
+        assertThat(all.single { it.id == "piriformis-syndrome" }.relatedReading.map { it.access })
+            .containsAtLeast("full_text", "abstract_only")
         listOf("piriformis", "sindrome del piriforme", "piriformis muscle syndrome").forEach { query ->
             assertThat(library.search(query).flatMap { it.entries }.map { it.id }).containsExactly("piriformis-syndrome")
         }

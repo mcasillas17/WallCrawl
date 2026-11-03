@@ -250,6 +250,7 @@ private fun LazyListScope.prescription(prescription: ExercisePrescription, unit:
         field(R.string.set_field_load) { weight(prescription.targetWeight, unit) }
     if (prescription.exerciseType == ExerciseType.ASSISTED_BODYWEIGHT)
         field(R.string.history_assistance) { weight(prescription.targetAssistanceWeight, unit) }
+    prescription.holdSeconds?.let { field(R.string.history_hold_per_rep) { seconds(it) } }
     prescription.targetDurationSeconds?.let { field(R.string.set_field_seconds) { seconds(it) } }
     prescription.targetDistanceMeters?.let { field(R.string.set_field_meters) { meters(it) } }
     field(R.string.history_effort_target) {

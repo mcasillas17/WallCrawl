@@ -15,8 +15,11 @@ internal data class ReferenceCondition(
     val id: String,
     val names: ReferenceNames,
     val aliases: List<String>,
-    val sources: List<ReferenceSource>
+    val sources: List<ReferenceSource>,
+    val relatedReading: List<ReadingCitation>
 )
+
+internal data class ReadingCitation(val title: String, val url: String, val access: String, val exerciseIds: List<String>)
 
 internal data class ReferenceSource(
     val id: String,
@@ -26,13 +29,18 @@ internal data class ReferenceSource(
     val population: String,
     val findings: String,
     val limitations: String,
-    val exerciseIds: List<String>
+    val exerciseIds: List<String>,
+    val executionNote: String?
 )
 
 internal fun readConditionReference(json: String): List<ReferenceRegion> {
     fun JSONArray.strings() = List(length()) { getString(it) }
     fun JSONObject.referenceNames() = ReferenceNames(getString("en"), getString("es"))
     fun <T> JSONArray.mapObjects(transform: (JSONObject) -> T) = List(length()) { transform(getJSONObject(it)) }
+    fun JSONObject.publicationUrl() = getString("url").also { value ->
+        val uri = URI(value)
+        require(uri.scheme == "https" && uri.host != null && uri.userInfo == null && (uri.port == -1 || uri.port == 443))
+    }
     val ids = mutableSetOf<String>()
     return JSONArray(json).mapObjects { group ->
         ReferenceRegion(group.referenceNames(), group.getJSONArray("entries").mapObjects { entry ->
@@ -40,14 +48,16 @@ internal fun readConditionReference(json: String): List<ReferenceRegion> {
             require(id.isNotBlank() && ids.add(id))
             ReferenceCondition(id, entry.referenceNames(), entry.getJSONArray("aliases").strings(),
                 entry.getJSONArray("sources").mapObjects { source ->
-                    val url = source.getString("url")
-                    val uri = URI(url)
-                    require(uri.scheme == "https" && uri.host != null && uri.userInfo == null && (uri.port == -1 || uri.port == 443))
+                    val url = source.publicationUrl()
                     val access = source.getString("access")
                     require(access == "full-text" || access == "abstract-only")
                     ReferenceSource(source.getString("id"), source.getString("title"), url, access == "full-text",
                         source.getString("population"), source.getString("findings"), source.getString("limitations"),
-                        source.getJSONArray("exerciseIds").strings())
+                        source.getJSONArray("exerciseIds").strings(), source.optString("executionNote").takeIf { it.isNotBlank() })
+                }, entry.getJSONArray("relatedReading").mapObjects { ref ->
+                    val access = ref.getString("access")
+                    require(access in setOf("full_text", "abstract_only", "registry_or_summary"))
+                    ReadingCitation(ref.getString("title"), ref.publicationUrl(), access, ref.optJSONArray("exerciseIds")?.strings().orEmpty())
                 })
         })
     }.also { require(ids.isNotEmpty()) }

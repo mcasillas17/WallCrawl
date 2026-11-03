@@ -19,12 +19,24 @@ class ConditionReferenceTest(unittest.TestCase):
                                  [(s['title'], s['url'], s['access']['status']) for s in dossier['sources']])
                 self.assertTrue(all(s['findings'] and s['limitations'] for s in row['sources']))
 
-    def test_only_shipped_request_identities_link_and_only_at_their_cited_sources(self):
+    def test_illustrations_link_only_at_their_cited_sources_with_one_verified_upstream_match(self):
         requests = json.loads((DOSSIERS / 'exercise-requests.json').read_text())['requests']
         shipped = {e['id'] for e in json.loads((ROOT / 'app/src/main/assets/wallcrawl/catalog.json').read_text())['exercises']}
         expected = {(s['conditionId'], s['sourceId'], r['id']) for r in requests if r['id'] in shipped
                     for s in r['sourceRefs'] if s['conditionId'] in r['conditionIds']}
+        expected.add(('carpal-tunnel-syndrome', 'cts-p1', 'tendon-gliding-sequence'))
+        expected.add(('iliotibial-band-related-lateral-knee-pain', 'mckay-2020', 'side-lying-leg-raise'))
         actual = {(c['id'], s['id'], e) for group in build_library() for c in group['entries']
                   for s in c['sources'] for e in s['exerciseIds']}
         self.assertEqual(expected, actual)
         self.assertIn(('piriformis-syndrome', 'shamsi-2024', 'supine-wall-supported-piriformis-stretch'), actual)
+
+    def test_extended_bibliography_preserves_access_and_omits_duplicate_or_unconfirmed_records(self):
+        all_entries = [c for region in build_library() for c in region['entries']]
+        self.assertEqual(8, sum(bool(c['relatedReading']) for c in all_entries))
+        for c in all_entries:
+            refs = c['relatedReading']
+            self.assertEqual(len(refs), len({r['url'] for r in refs}))
+            self.assertTrue(all(r['access'] in ('full_text', 'abstract_only', 'registry_or_summary') for r in refs))
+        piriformis = next(c for c in all_entries if c['id'] == 'piriformis-syndrome')
+        self.assertNotIn('https://doi.org/10.1186/s13102-023-00802-4', {r['url'] for r in piriformis['relatedReading']})

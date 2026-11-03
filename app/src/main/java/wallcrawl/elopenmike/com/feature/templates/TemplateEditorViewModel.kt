@@ -312,7 +312,7 @@ class TemplateEditorViewModel(
                     isDirty = isDirty(loaded),
                     unresolvedRowIds = loaded.unresolvedRows(catalogById)
                 )
-                if (loadedProfile.activeConditions.isNotEmpty()) refreshSupport()
+                if (loadedProfile.hasConditionReports) refreshSupport()
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {

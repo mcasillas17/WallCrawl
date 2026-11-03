@@ -343,6 +343,150 @@
       "exerciseType": "weight_reps",
       "isStretch": false,
       "executionGuidance": "Lie on your side on a stable padded table, knees bent and head supported. Place a pillow between the upper arm and your side, bend that elbow to a right angle, and start with the dumbbell near your abdomen. Rotate the forearm upward, then lower it with the upper arm supported and the trunk still."
+    },
+    {
+      "id": "supine-supported-chin-nod",
+      "sourceId": "supine-supported-chin-nod",
+      "sourceSlug": "supine-supported-chin-nod",
+      "name": "Pillow-Supported Chin Nod",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Neck"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Pillow",
+        "Bodyweight"
+      ],
+      "exerciseType": "duration",
+      "isStretch": false,
+      "executionGuidance": "Lie on your back with your knees bent and your head and neck resting on a soft pillow. Make a small nod as if saying yes, keeping the back of your head on the pillow. Relax back to the starting position."
+    },
+    {
+      "id": "hsd-supine-dumbbell-scapular-protraction",
+      "sourceId": "hsd-supine-dumbbell-scapular-protraction",
+      "sourceSlug": "hsd-supine-dumbbell-scapular-protraction",
+      "name": "Supine Straight-Arm Dumbbell Reach",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Shoulders"
+      ],
+      "secondaryMuscles": [
+        "Upper Back"
+      ],
+      "listedEquipment": [
+        "Dumbbell",
+        "Padded Plinth"
+      ],
+      "exerciseType": "weight_reps",
+      "isStretch": false,
+      "executionGuidance": "Lie on your back on a stable padded table with your legs extended. Rest the free hand on your abdomen. Hold the dumbbell directly above your shoulder with the elbow straight. Reach upward by lifting the shoulder blade, then bring the shoulder back to the table. Keep your head and back supported."
+    },
+    {
+      "id": "wrist-extensor-stretch",
+      "sourceId": "wrist-extensor-stretch",
+      "sourceSlug": "wrist-extensor-stretch",
+      "name": "Wrist Extensor Stretch",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Forearms"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Bodyweight"
+      ],
+      "exerciseType": "duration",
+      "isStretch": true,
+      "executionGuidance": "Reach one arm forward with your elbow straight and palm down. Bend the wrist so your fingers point down. With the other hand, gently draw the back of that hand toward you until you feel a stretch along the outside of your forearm. Hold, then release."
+    },
+    {
+      "id": "straight-leg-raise",
+      "sourceId": "straight-leg-raise",
+      "sourceSlug": "straight-leg-raise",
+      "name": "Supine Straight-Leg Raise",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Quadriceps"
+      ],
+      "secondaryMuscles": [
+        "Hips"
+      ],
+      "listedEquipment": [
+        "Bodyweight"
+      ],
+      "exerciseType": "bodyweight_reps",
+      "isStretch": false,
+      "executionGuidance": "Lie on your back with one knee bent and that foot flat on the floor. Tighten the thigh of your straight leg and lift the heel about a foot off the floor. Keep your pelvis still and that knee straight as you lower the leg."
+    },
+    {
+      "id": "side-lying-isometric-hip-abduction-hold",
+      "sourceId": "side-lying-isometric-hip-abduction-hold",
+      "sourceSlug": "side-lying-isometric-hip-abduction-hold",
+      "name": "Side-Lying Hip Abduction Hold",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Pillow",
+        "Bodyweight"
+      ],
+      "exerciseType": "duration",
+      "isStretch": false,
+      "executionGuidance": "Lie on your side with the working leg on top. Bend the lower knee and place one or two pillows between your knees. Keep your hips stacked. Lift the straight top leg sideways about 30 degrees, keeping it in line with your trunk. Hold it there, then lower it to the support."
+    },
+    {
+      "id": "standing-isometric-gluteal-contraction",
+      "sourceId": "standing-isometric-gluteal-contraction",
+      "sourceSlug": "standing-isometric-gluteal-contraction",
+      "name": "Standing Glute Hold With Opposite Leg Raise",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Chair",
+        "Bodyweight"
+      ],
+      "exerciseType": "bodyweight_reps",
+      "isStretch": false,
+      "executionGuidance": "Stand on one leg and rest the opposite hand on a stable chair. Keep the hip of the standing leg steady and your pelvis level. Move the free leg out to the side, then bring it back beside the standing leg without setting the foot down."
+    },
+    {
+      "id": "lying-piriformis-stretch",
+      "sourceId": "lying-piriformis-stretch",
+      "sourceSlug": "lying-piriformis-stretch",
+      "name": "Supine Knee-to-Opposite-Shoulder Stretch",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Bodyweight"
+      ],
+      "exerciseType": "bodyweight_reps",
+      "isStretch": true,
+      "executionGuidance": "Lie on your back with one leg straight. Bend the other knee and bring it gently across your body toward the opposite shoulder with your opposite hand on the outside of the knee. Keep your head and shoulders supported. Release before switching sides."
+    },
+    {
+      "id": "tendon-gliding-sequence",
+      "sourceId": "tendon-gliding-sequence",
+      "sourceSlug": "tendon-gliding-sequence",
+      "name": "Five-Position Finger Tendon Glide",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Forearms"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Bodyweight"
+      ],
+      "exerciseType": "bodyweight_reps",
+      "isStretch": false,
+      "executionGuidance": "Keep your wrist straight. Start with open fingers. For the hook, bend the middle and end joints while keeping the base knuckles straight. For a full fist, curl all the finger joints. For the tabletop, bend only the base knuckles, keeping the fingers straight. For the long fist, bend the base and middle joints while keeping the end joints straight. Fully straighten your fingers between shapes."
     }
   ]
 }

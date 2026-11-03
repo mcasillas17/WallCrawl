@@ -160,6 +160,11 @@ class ConditionReferenceNavigationTest {
         compose.onAllNodesWithText(notes).onFirst().performClick()
         list.performScrollToNode(hasText(text(R.string.condition_reference_limits)))
         compose.onNodeWithText(text(R.string.condition_reference_limits)).assertIsDisplayed()
+        val related = text(R.string.condition_related_show).substringBefore("(").trim()
+        list.performScrollToNode(hasText(related, substring = true))
+        compose.onNodeWithText(related, substring = true).performClick()
+        list.performScrollToNode(hasText(text(R.string.condition_related_note)))
+        compose.onNodeWithText(text(R.string.condition_related_note)).assertIsDisplayed()
         compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
         compose.onNode(hasSetTextAction()).assertTextContains(query)
         compose.onNodeWithContentDescription(text(R.string.action_back)).performClick()

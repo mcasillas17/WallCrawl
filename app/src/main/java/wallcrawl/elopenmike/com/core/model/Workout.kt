@@ -121,6 +121,13 @@ data class WorkoutSession(
         get() = exercises.sumOf { it.sets.size }
 }
 
+/** Empty workouts predate the mobility block and retain their original training-day semantics. */
+internal fun WorkoutSession.trainingActivity(): WorkoutSession? {
+    if (exercises.none { it.isLegacyMobility }) return this
+    val counted = exercises.filterNot { it.isLegacyMobility }
+    return if (counted.isEmpty()) null else copy(exercises = counted)
+}
+
 enum class SessionStatus {
     IN_PROGRESS,
     COMPLETED,
@@ -154,8 +161,12 @@ data class WorkoutExercise(
     val orderIndex: Int,
     val prescription: ExercisePrescription,
     val notes: String = "",
-    val sets: List<WorkoutSet> = emptyList()
+    val sets: List<WorkoutSet> = emptyList(),
+    /** Mobility from the earlier routine block is visible in history but excluded from training totals. */
+    val isLegacyMobility: Boolean = false
 ) {
+    init { require(!isLegacyMobility || prescription.purpose == PrescriptionPurpose.SUPPORTIVE) }
+
     /** Compatibility constructor for persisted repetition-only sessions before schema 4. */
     constructor(
         id: String = UUID.randomUUID().toString(),

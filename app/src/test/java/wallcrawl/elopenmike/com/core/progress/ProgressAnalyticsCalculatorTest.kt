@@ -63,6 +63,25 @@ class ProgressAnalyticsCalculatorTest {
         assertThat(result.performance.single().observations.map { it.sessionId }).containsExactly("ordinary")
     }
 
+    @Test fun legacyRoutineRowsContributeNoWorkoutsSetsRepsVolumeDoseOrPerformance() {
+        val ordinary = session("mixed", THIS_WEEK, sets = listOf(weighted(1, 40.0, 10)))
+        val routine = session("old-routine", PREV_WEEK, sets = listOf(weighted(1, 90.0, 30))).let { session ->
+            val ex = session.exercises.single()
+            session.copy(exercises = listOf(ex.copy(prescription = ex.prescription.copy(
+                purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE), isLegacyMobility = true)))
+        }
+        val mixed = ordinary.copy(exercises = ordinary.exercises + routine.exercises.single().copy(sessionId = ordinary.id))
+        val comparable = (mixed.exercises + routine.exercises).flatMap { it.sets }.map { it.id }.toSet()
+        val result = calculateAll(listOf(mixed, routine), AnalyticsScope.Exercise("bench"), comparable)
+        val values = result.series.mapValues { (_, series) -> series.buckets.sumOf { it.value } }
+        assertThat(values).containsExactly(AnalyticsMetric.WORKOUTS, 1.0, AnalyticsMetric.COMPLETED_SETS, 1.0,
+            AnalyticsMetric.REPS, 10.0, AnalyticsMetric.EXTERNAL_LOAD_VOLUME, 400.0, AnalyticsMetric.REVIEWED_PRIMARY_DOSE, 1.0)
+        assertThat(result.performance.single().observations.map { it.sessionId }).containsExactly(mixed.id)
+        val onlyRoutine = calculateAll(listOf(routine))
+        assertThat(onlyRoutine.hasWorkoutsInRange).isFalse()
+        assertThat(onlyRoutine.series.values.flatMap { it.buckets }.flatMap { it.contributors }).isEmpty()
+    }
+
     @Test
     fun rangeIsCalendarWeeksEndingWithThePartialCurrentWeek() {
         val weeks = ProgressAnalyticsCalculator.rangeWeeks(AnalyticsRange.WEEKS_4, NOW, UTC)

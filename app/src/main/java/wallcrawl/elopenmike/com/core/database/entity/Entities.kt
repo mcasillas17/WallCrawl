@@ -55,7 +55,9 @@ data class UserProfileEntity(
     @ColumnInfo(defaultValue = "'AUTOMATIC'")
     val illustrationPreference: IllustrationPreference = IllustrationPreference.AUTOMATIC,
     @ColumnInfo(defaultValue = "'[]'")
-    val activeConditionsJson: String = "[]"
+    val activeConditionsJson: String = "[]",
+    @ColumnInfo(defaultValue = "''")
+    val reportedConditionsJson: String = ""
 )
 
 @Entity(
@@ -113,7 +115,10 @@ data class WorkoutExerciseEntity(
     val restClass: RestClass? = null,
     val restTargetSource: RestTargetSource? = null,
     @ColumnInfo(defaultValue = "'ORDINARY'")
-    val purpose: String = "ORDINARY"
+    val purpose: String = "ORDINARY",
+    val targetHoldSeconds: Int? = null,
+    @ColumnInfo(name = "role", defaultValue = "'MAIN'")
+    val legacyRole: String = "MAIN"
 )
 
 @Entity(

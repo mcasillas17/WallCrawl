@@ -54,7 +54,8 @@ interface UserProfileDao {
                 decodeTrainingConstraints(previous.trainingConstraintsJson).second == null) {
                 "Unresolved training constraints require review before replacement."
             }
-            check(previous.activeConditionsJson == profile.activeConditionsJson || activeWorkoutCount() == 0) {
+            check((previous.activeConditionsJson == profile.activeConditionsJson &&
+                previous.reportedConditionsJson == profile.reportedConditionsJson) || activeWorkoutCount() == 0) {
                 "Active conditions cannot change during a workout."
             }
         }
@@ -128,12 +129,12 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao, Con
         status: SessionStatus = SessionStatus.COMPLETED
     ): Flow<List<WorkoutSessionWithExercisesAndSets>>
 
-    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = :status")
+    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = :status AND $COUNTS_AS_TRAINING_SESSION")
     fun observeCompletedSessionCount(
         status: SessionStatus = SessionStatus.COMPLETED
     ): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = :status AND completedAtTimestamp >= :startTimestamp AND completedAtTimestamp < :endTimestampExclusive")
+    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = :status AND completedAtTimestamp >= :startTimestamp AND completedAtTimestamp < :endTimestampExclusive AND $COUNTS_AS_TRAINING_SESSION")
     fun observeCompletedSessionCountInRange(
         startTimestamp: Long,
         endTimestampExclusive: Long,
@@ -228,6 +229,7 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao, Con
         if (pending.isNotEmpty()) throw ConditionStartRefused(pending.map {
             ConditionViolation("pending-reassessment", setOf(it.conditionId), setOf(it.exerciseId))
         })
+        if (profile.reportedConditions.isNotEmpty()) throw ConditionStartRefused("legacy-condition-report")
         if (conditionCheck == null && (profile.activeConditions.isNotEmpty() ||
                 session.conditionContextJson != null || exercises.any { it.purpose != PrescriptionPurpose.ORDINARY.name })) {
             throw ConditionStartRefused("missing-condition-context", profile.activeConditions.map { it.conditionId }.toSet())

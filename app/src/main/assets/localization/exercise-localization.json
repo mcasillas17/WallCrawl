@@ -56,6 +56,62 @@
     }
   },
   "exercises": {
+    "tendon-gliding-sequence": {
+      "es": {
+        "name": "Secuencia de deslizamiento de los dedos en cinco posiciones",
+        "aliases": [],
+        "coachingSummary": "Mantén recta la muñeca. Empieza con los dedos extendidos. Para formar el gancho, dobla las articulaciones medias y las de las puntas sin doblar los nudillos de la base. Para cerrar el puño, dobla todas las articulaciones. Para formar la mesa, dobla solo los nudillos de la base y deja rectos los dedos. Para el puño largo, dobla los nudillos de la base y las articulaciones medias, manteniendo rectas las puntas. Extiende por completo los dedos entre cada posición."
+      }
+    },
+    "wrist-extensor-stretch": {
+      "es": {
+        "name": "Estiramiento de los extensores de la muñeca",
+        "aliases": [],
+        "coachingSummary": "Extiende un brazo hacia delante con la palma hacia abajo. Flexiona la muñeca para que los dedos apunten al suelo. Con la otra mano, acerca suavemente el dorso de la mano hacia ti hasta sentir un estiramiento en la parte externa del antebrazo. Mantén la posición y luego suelta."
+      }
+    },
+    "straight-leg-raise": {
+      "es": {
+        "name": "Elevación de pierna recta en el suelo",
+        "aliases": [],
+        "coachingSummary": "Túmbate boca arriba con una rodilla flexionada y ese pie apoyado en el suelo. Contrae el muslo de la pierna estirada y eleva el talón unos 30 cm. Mantén la pelvis quieta y la rodilla extendida mientras bajas la pierna."
+      }
+    },
+    "side-lying-isometric-hip-abduction-hold": {
+      "es": {
+        "name": "Abducción isométrica de cadera de lado",
+        "aliases": [],
+        "coachingSummary": "Túmbate de lado con la pierna que vas a trabajar arriba. Flexiona la rodilla inferior y coloca una o dos almohadas entre las rodillas. Mantén una cadera sobre la otra. Con la rodilla estirada, eleva la pierna superior de lado unos 30 grados sin adelantarla. Mantén la posición y vuelve a bajar la pierna hasta el apoyo."
+      }
+    },
+    "standing-isometric-gluteal-contraction": {
+      "es": {
+        "name": "Contracción de glúteos de pie con elevación de la pierna contraria",
+        "aliases": [],
+        "coachingSummary": "Apóyate sobre una pierna y sujeta una silla estable con la mano contraria. Mantén firme la cadera de la pierna de apoyo y la pelvis nivelada. Separa la pierna libre hacia el lado y vuelve a acercarla sin que el pie toque el suelo."
+      }
+    },
+    "lying-piriformis-stretch": {
+      "es": {
+        "name": "Estiramiento acostado con la rodilla hacia el hombro opuesto",
+        "aliases": [],
+        "coachingSummary": "Acuéstate boca arriba con una pierna estirada. Flexiona la otra rodilla y sujétala por fuera con la mano contraria. Acércala suavemente al hombro opuesto sin levantar la cabeza ni los hombros. Suelta antes de cambiar de lado."
+      }
+    },
+    "supine-supported-chin-nod": {
+      "es": {
+        "name": "Asentimiento tumbado con apoyo de almohada",
+        "aliases": [],
+        "coachingSummary": "Túmbate boca arriba con las rodillas flexionadas y la cabeza y el cuello sobre una almohada blanda. Haz un pequeño gesto de asentimiento sin despegar la cabeza. Relaja el cuello y vuelve a la posición inicial."
+      }
+    },
+    "hsd-supine-dumbbell-scapular-protraction": {
+      "es": {
+        "name": "Alcance vertical tumbado con mancuerna y brazo recto",
+        "aliases": [],
+        "coachingSummary": "Túmbate boca arriba sobre una camilla estable con las piernas extendidas y la mano libre sobre el abdomen. Con el codo recto, sujeta la mancuerna justo encima del hombro. Alcanza hacia arriba elevando la escápula y vuelve a apoyar el hombro. Mantén la cabeza y la espalda apoyadas."
+      }
+    },
     "leap-offset-bridge": {"es": {"name": "Puente en el suelo con pies escalonados", "aliases": [], "coachingSummary": "Túmbate boca arriba con las rodillas flexionadas y un pie más cerca de las caderas que el otro. Mantén ambas plantas y los hombros apoyados mientras elevas las caderas y vuelves a bajarlas."}},
     "standing-dumbbell-scaption": {"es": {"name": "Elevación de mancuerna de pie en el plano escapular", "aliases": [], "coachingSummary": "De pie, sujeta una mancuerna al costado con la palma ligeramente orientada hacia delante. Eleva el brazo en diagonal, a medio camino entre el frente y el costado, hasta la altura del hombro. Bájalo por el mismo recorrido."}},
     "insertional-chair-seated-neutral-heel-raise": {"es": {"name": "Elevación de talones en silla desde el suelo", "aliases": [], "coachingSummary": "Siéntate en una silla con las caderas y las rodillas en ángulo recto. Apoya las manos en las rodillas e inclínate un poco hacia delante. Eleva ambos talones mientras mantienes los antepiés apoyados y vuelve a bajar los talones al suelo."}},

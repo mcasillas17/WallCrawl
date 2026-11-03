@@ -57,8 +57,8 @@ WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light The
 
 - **Today Recommendation**: Offline planner-generated routine tailored to equipment and training goals, with instant regeneration and custom routine shortcuts.
 - **My Workouts & Templates**: Manage and launch saved custom routines with total sets, exercise counts, and quick-start actions.
-- **Custom Workout Builder**: Interactive routine editor with full 319-exercise bottom sheet picker, move controls for ordering, type-aware editing of every prescription target, unit-safe loads, and unsaved drafts recovered after configuration change or background process death.
-- **Exercise Library**: Searchable catalog of 319 exercises across all muscle groups and equipment types.
+- **Custom Workout Builder**: Interactive routine editor with full 327-exercise bottom sheet picker, move controls for ordering, type-aware editing of every prescription target, unit-safe loads, and unsaved drafts recovered after configuration change or background process death.
+- **Exercise Library**: Searchable catalog of 327 exercises across all muscle groups and equipment types.
 - **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with one-tap set completion, plus/minus and text entry for every value, a local rest countdown, optional RPE/RIR, animated SVG movement previews, and previous performance comparisons.
 - **Workout Summary**: The existing Finish flow shows recorded duration, external-load volume, completed sets, and records against genuinely earlier performance. View workout details opens the read-only record; Done returns to Progress.
 - **Progress Tracking & History**: Calendar-week activity and separately labelled reviewed dose, weekly streaks, and strength trends, plus an Over time card that charts 4–52 calendar weeks for all exercises, one exercise or one muscle, whose week rows list the workouts behind each week and whose data points open their workout. Tap a completed-workout card to reopen its frozen targets, performed sets, feedback and recorded decision reasons. View all workouts browses older sessions in fixed 20-workout pages.
@@ -330,7 +330,7 @@ Bundled catalog ─────────┤  profile + bounded history
                          │  hard filter → WorkoutPlanner → validator
                          │
                          └─ manual template
-                            all 319 exercises → local template
+                            all 327 exercises → local template
                                           │
                                           ▼
                               transactional active session
@@ -367,7 +367,7 @@ gym never adds them**. A band, wall, doorway or chair does not establish an
 anchor. The seated band pulldown additionally requires Chair. The source row's
 off-image anchor remains unresolved and is excluded from automatic workouts.
 
-Unanchored band work remains available. All 319 exercises remain browseable and
+Unanchored band work remains available. All 327 exercises remain browseable and
 manually selectable, with accurate missing-equipment or unresolved-setup warnings.
 Existing profiles and archives acquire no new selections; new confirmations use
 the existing canonical equipment list and export/restore format. Older clients
@@ -949,8 +949,8 @@ codename and gender together in one card; the menu marks the current choice and
 closes after selection. Exercise artwork follows that
 single profile setting: female artwork for Woman, male artwork for the other
 options. Exercise screens have no separate gender or illustration selector.
-Both current artwork sets contain 319 three-frame sequences: the historical
-302-exercise upstream set and 17 neutral additions. Some historical drafts
+Both current artwork sets contain 327 three-frame sequences: the historical
+302-exercise upstream set and 25 neutral additions. Some historical drafts
 still have continuity corrections reserved for a later iteration.
 
 <p align="center">
@@ -962,6 +962,6 @@ See [artwork packaging, provenance, and known limitations](docs/exercise-illustr
 
 ### Condition-aware planning
 
-Open **Exercises → Condition reference** to browse 50 conditions, 196 citation records and their 187 distinct sources. The reference supports English and Spanish search. Each source links to the illustrated movements that match its study description.
+Open **Exercises → Condition reference** to browse 50 conditions, 196 citation records and their 187 distinct sources. Eight pages also offer related reading from the merged search. The reference supports English and Spanish search. Each source links to the illustrated movements that match its study description.
 
-The exercise catalog includes 17 neutral WallCrawl additions with both illustration variants. All 50 conditions await qualified clinical review, so zero conditions are enabled as workout restrictions. [Artwork and PNG masters](docs/art/condition-exercises.md) · [Workout generation and verification](docs/condition-aware-workouts.md)
+The exercise catalog includes 25 neutral WallCrawl additions with both illustration variants. All 50 conditions await qualified clinical review, so zero conditions are enabled as workout restrictions. [Artwork and PNG masters](docs/art/condition-exercises.md) · [Workout generation and verification](docs/condition-aware-workouts.md)

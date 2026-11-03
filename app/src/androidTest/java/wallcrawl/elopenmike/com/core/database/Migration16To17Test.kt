@@ -47,9 +47,9 @@ class Migration16To17Test {
         helper.writableDatabase
         helper.close()
         val database = Room.databaseBuilder(context, WallCrawlDatabase::class.java, name)
-            .addMigrations(WallCrawlDatabase.MIGRATION_16_17).build()
+            .addMigrations(*WallCrawlDatabase.ALL_MIGRATIONS).build()
         try {
-            assertEquals(17, database.openHelper.writableDatabase.version)
+            assertEquals(WALLCRAWL_SCHEMA_VERSION, database.openHelper.writableDatabase.version)
             val profile = database.userProfileDao().getProfile("default_user")!!
             assertEquals("[]", profile.activeConditionsJson)
             val session = database.workoutSessionDao().getSessionWithDetails("session-7")!!

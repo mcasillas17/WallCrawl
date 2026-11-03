@@ -286,7 +286,7 @@ class OfflineWorkoutRepository(
         if (pending.isNotEmpty()) throw ConditionStartRefused(pending.map {
             ConditionViolation("pending-reassessment", setOf(it.conditionId), setOf(it.exerciseId))
         })
-        val needsConditions = userProfile.activeConditions.isNotEmpty() || recommendation?.conditionContext != null ||
+        val needsConditions = userProfile.hasConditionReports || recommendation?.conditionContext != null ||
             exercises.any { it.prescription.purpose != PrescriptionPurpose.ORDINARY }
         if (generated != null && needsConditions) {
             if (recommendation?.conditionContext == null) throw ConditionStartRefused("missing-condition-context")
@@ -342,7 +342,8 @@ class OfflineWorkoutRepository(
                     effortMaxRir = genEx.prescription.effortTarget?.maxRir,
                     restClass = genEx.prescription.restClass,
                     restTargetSource = genEx.prescription.restTargetSource,
-                    purpose = genEx.prescription.purpose.name
+                    purpose = genEx.prescription.purpose.name,
+                    targetHoldSeconds = genEx.prescription.holdSeconds
                 )
             )
 

@@ -1,0 +1,2088 @@
+{
+  "id": "nonspecific_low_back_pain",
+  "name": "Nonspecific low back pain",
+  "evidenceGrade": "moderate",
+  "diagnosisContested": {
+    "contested": false,
+    "note": "The label itself is not seriously disputed, but it is a diagnosis of exclusion: WHO defines chronic primary low back pain as pain lasting more than 3 months that is not due to an underlying disease or other condition. It covers a mixed population, and it presumes serious pathology has been ruled out, which an app cannot do. The guideline's movement control impairment subgroup is a clinician classification and cannot be self-assigned in an app (expert opinion, this review)."
+  },
+  "avoidOrModify": [
+    {
+      "movement": "Prolonged bed rest or stopping ordinary activity because of back pain",
+      "action": "avoid",
+      "rationale": "Advice to stay active gave small improvements over advice to rest in bed for acute low back pain (2 trials, N = 401: pain SMD 0.22, 95% CI 0.02 to 0.41; function SMD 0.29, 0.09 to 0.49; moderate quality). For sciatica there was little or no difference, so this is weaker with leg symptoms. Advice to stay active alone has little benefit, but there is no evidence of harm from it and potential harm from prolonged bed rest. NICE recommends encouraging normal activities, and the George guideline retains text against education promoting extended bed rest. The Dahm search ended in May 2009.",
+      "evidenceStrength": "systematic_review",
+      "sourceIds": [
+        "dahm2022",
+        "hagen2002",
+        "nice_ng59",
+        "george2021"
+      ]
+    },
+    {
+      "movement": "Lumbar flexion (rounding the lower back) while lifting, only where it provokes the person's symptoms",
+      "action": "modify",
+      "rationale": "Do not apply this as a blanket ban. Low-quality evidence found greater lumbar flexion during lifting is not a risk factor for onset or persistence (peak flexion difference 1.5 degrees, -0.7 to 3.7, longitudinal). An umbrella review of 41 reviews found no consensus on causality for bending or lifting. Against that, occupational lifting/carrying (OR 1.7, 1.4 to 2.2) and non-neutral postures (OR 1.5, 1.2 to 1.9) are associated with chronic pain, which is association from highest-versus-lowest work exposure and not evidence on gym loading. In a modelling study stoop lifting had lower compression but higher shear than squat lifting, so neither style is simply safe. The modify rule itself rests on individual symptom response (expert opinion).",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "saraceni2020",
+        "swain2020",
+        "jahn2023",
+        "vonarx2021",
+        "nolan2020"
+      ]
+    },
+    {
+      "movement": "Loaded spinal flexion or lifting in a person with known osteoporosis, long-term corticosteroid use or previous spinal fracture",
+      "action": "modify",
+      "rationale": "A secondary summary of the IFOMPT framework describes spinal fracture as often following a fall or lifting in flexion, with these as risk factors. Applying that to exercise selection is an inference, not a tested rule. Such users should get clinician clearance.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "pogo_finucane_summary"
+      ]
+    },
+    {
+      "movement": "Heavy spinal loading during a flare, such as heavily loaded hinges or squats, or heavy deadlifting with high current pain or low back-extensor endurance",
+      "action": "modify",
+      "rationale": "Not a prohibition. Supervised heavy deadlifting was neither better nor worse than low-load motor control on pain and disability at 2, 12 or 24 months. But within the deadlift arm, higher pain, more disability and poorer Biering-Sorensen endurance predicted less benefit, and the authors advise sufficient back-extensor capacity and a low enough pain level first. That trial progressed training if pain had not increased. In one loaded-training trial, a transient flare-up in each group was managed by temporarily reducing load or repetitions. The prediction models are small and not validated, and no source gives a safe load limit. Fatigue protocols increased trunk range of motion, and higher load increased spinal flexion, in studies cited by a narrative review. Extending the deadlift findings to hinges and squats is an inference.",
+      "evidenceStrength": "observational",
+      "sourceIds": [
+        "michaelson2016",
+        "berglund2015",
+        "ranzani2025",
+        "cherni2026"
+      ]
+    },
+    {
+      "movement": "Using stretching as the entire exercise programme",
+      "action": "modify",
+      "rationale": "Stretching is not contraindicated, but it did not differ from true control for pain or function in one network meta-analysis, was the one type not beating control for pain in another, and showed no effect on disability in older adults (MD -0.3, -9.53 to 8.93). Specific trunk activation outperformed stretching in small trials in a movement control impairment subgroup. Contrary evidence exists: flexibility exercise had a moderate-to-important function effect in Hayden 2021 NMA and hamstring stretching reduced pain in Gou 2024 (SMD -0.72, I2 89%). Combine it with strengthening or general exercise.",
+      "evidenceStrength": "systematic_review",
+      "sourceIds": [
+        "owen2020",
+        "george2021",
+        "fernandez2022",
+        "zhang2023",
+        "hayden2021_nma",
+        "gou2024"
+      ]
+    },
+    {
+      "movement": "Exercise that keeps worsening the pain, or progressing load while pain is rising",
+      "action": "modify",
+      "rationale": "Re-added on new sources. A deadlift trial progressed training if pain had not increased. A narrative review reports the Canadian guideline rule: when exercise exacerbates pain, have a physical therapist assess the programme, and if it still does, a physician assess the patient. Pain alone need not stop exercise: KNGF advises time-contingent rather than pain-contingent build-up, and accepts increased pain of short duration (part of a day) with moderately irritable radicular syndrome. One trial reported transient soreness under 24 hours. No trial tested a pain threshold.",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "michaelson2016",
+        "nicol2023",
+        "apeldoorn2024",
+        "rodriguez_lopez2026"
+      ]
+    },
+    {
+      "movement": "High-intensity Pilates when low intensity is available",
+      "action": "modify",
+      "rationale": "In a 168-person trial higher intensity added no pain or disability benefit but more side effects (absolute risk reduction with low intensity 0.20, 0.10 to 0.31). Authors recommend low intensity. The abstract does not define intensity or adverse event types, and the result applies to clinical Pilates only.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "coelho2025"
+      ]
+    },
+    {
+      "movement": "Deliberate abdominal contraction as a constant cue during Pilates",
+      "action": "modify",
+      "rationale": "Cueing a relaxed abdomen beat cueing core contraction on disability by a slight amount (-1.4 on a 0-24 scale, -2.6 to -0.2), not clearly on pain (-0.6, -1.4 to 0.2). One trial, abstract only, and it does not address bracing under heavy load.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "lunkes2026"
+      ]
+    },
+    {
+      "movement": "End-range spinal flexion or extension in Pilates or yoga",
+      "action": "modify",
+      "rationale": "A national consensus says patients 'should avoid excessive spinal flexion or extension movements' in Pilates and yoga; this is advice and not a trial result, and it sits uneasily with the lifting-flexion evidence above. Yoga carried more adverse events than no exercise at 6-12 months, primarily increased back pain (RR 4.76, 2.08 to 10.89; 43 vs 9 per 1000; low certainty), though not more than other exercise (RR 0.93, 0.56 to 1.53).",
+      "evidenceStrength": "expert_opinion",
+      "sourceIds": [
+        "gao2026",
+        "wieland2022"
+      ]
+    },
+    {
+      "movement": "Relying on a lumbar belt, brace or corset as treatment",
+      "action": "avoid",
+      "rationale": "NICE says do not offer belts or corsets; the WHO summary lists lumbar braces, belts and supports as not for routine care (very low certainty). Back belts did not prevent episodes (RR 1.01, 0.71 to 1.44). These sources address treatment and prevention, and none addresses a lifting belt worn for heavy strength training. Not a movement property, so it needs an education or rule mechanism.",
+      "evidenceStrength": "guideline",
+      "sourceIds": [
+        "nice_ng59",
+        "who2023_summary",
+        "steffens2016"
+      ]
+    }
+  ],
+  "candidateExercises": [
+    {
+      "name": "Forearm plank",
+      "catalog": "catalog:plank",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 2,
+        "reps": null,
+        "holdSeconds": 30,
+        "frequency": "3 sessions per week for 6 weeks",
+        "notes": "Progressed to 2 x 60 s. Kanli 2024 gives the same frequency with no hold time."
+      },
+      "doseBasis": "Kshirsagar 2026: non-randomised trial, odd-even allocation, 36 male recreational runners aged 18-25.",
+      "bodyweightOrHold": true,
+      "cautions": "Kshirsagar's 30 s and 60 s holds were knee-supported planks, with a later progression to the feet and no hold reported for it. Kanli says 'prone plank', and Asik 2025 names forearm plank without a dose. So this dose does not describe a toes-supported forearm plank. Neither trial shows an independent effect of this exercise. Holds of 30 s and 60 s were tested in young men; set by tolerance otherwise. Adverse events not reported.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "asik2025",
+        "kanli2024",
+        "kshirsagar2026",
+        "george2021"
+      ]
+    },
+    {
+      "name": "Side plank",
+      "catalog": "catalog:side-plank",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 2,
+        "reps": null,
+        "holdSeconds": 30,
+        "frequency": "3 sessions per week for 6 weeks",
+        "notes": "Progressed to 2 x 60 s."
+      },
+      "doseBasis": "Kshirsagar 2026: non-randomised trial, odd-even allocation, 36 male recreational runners aged 18-25.",
+      "bodyweightOrHold": true,
+      "cautions": "Same limits as plank: Kshirsagar's 30 s and 60 s holds were knee-supported, with a later progression to the feet. The catalog rates it intermediate, so it may be too hard for a first choice during symptoms.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "kanli2024",
+        "asik2025",
+        "kshirsagar2026",
+        "george2021"
+      ]
+    },
+    {
+      "name": "Bird dog",
+      "catalog": "catalog:bird-dog",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 2,
+        "reps": 15,
+        "holdSeconds": null,
+        "frequency": "2 sessions per week for 8 weeks"
+      },
+      "alternateDoses": [
+        {
+          "sets": 2,
+          "reps": null,
+          "holdSeconds": 30,
+          "frequency": "3 sessions per week for 6 weeks, progressing to 4 x 30 s",
+          "sourceId": "kshirsagar2026",
+          "notes": "Reported as 'quadruped arm and leg raise'; match to bird dog assumed."
+        }
+      ],
+      "doseBasis": "Park 2026: randomized pilot, 30 men aged 30-39, all arms; pilot not powered for efficacy.",
+      "bodyweightOrHold": true,
+      "cautions": "Re-added now that a dose is reported. Programme component with no independent effect shown. Motor control exercise is not clinically superior to other exercise.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "park2026",
+        "kshirsagar2026",
+        "saragiotto2016"
+      ]
+    },
+    {
+      "name": "Dead bug",
+      "catalog": "catalog:dead-bug",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 2,
+        "reps": 15,
+        "holdSeconds": null,
+        "frequency": "2 sessions per week for 8 weeks"
+      },
+      "doseBasis": "Park 2026: randomized pilot, 30 men aged 30-39, all arms; pilot not powered for efficacy.",
+      "bodyweightOrHold": true,
+      "cautions": "One small pilot in men only. Programme component with no independent effect shown.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "park2026"
+      ]
+    },
+    {
+      "name": "Glute bridge",
+      "catalog": "catalog:glute-bridge",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "3 sessions per week for 6 weeks"
+      },
+      "doseBasis": "Kshirsagar 2026: non-randomised trial, odd-even allocation, 36 male recreational runners aged 18-25.",
+      "bodyweightOrHold": true,
+      "cautions": "Re-added now that a dose is reported. The dose comes from a low-quality non-randomised trial. Reported as 'bridge'; match to the catalog entry assumed. A single-leg bridge was the later progression. No hold time reported.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "kshirsagar2026",
+        "kanli2024",
+        "asik2025"
+      ]
+    },
+    {
+      "name": "Abdominal bracing, supine and standing",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": null,
+        "reps": 20,
+        "holdSeconds": 10,
+        "frequency": "2 sessions per week for 8 weeks"
+      },
+      "doseBasis": "Park 2026: randomized pilot, 30 men aged 30-39, all arms; pilot not powered for efficacy.",
+      "bodyweightOrHold": true,
+      "cautions": "Not the same as the abdominal drawing-in item removed earlier. Lunkes 2026 found cueing a relaxed abdomen slightly better than contraction during Pilates, so the case for bracing is open.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "park2026",
+        "lunkes2026"
+      ]
+    },
+    {
+      "name": "Curl-up (partial trunk raise, not a full sit-up)",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": null,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "3 sessions per week for 6 weeks in one trial; repetitions not reported"
+      },
+      "bodyweightOrHold": true,
+      "cautions": "No repetitions or hold were reported. The catalog crunch is not treated as the same movement, so the crunch dose in Park 2026 (2 x 15) is not carried over.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "kanli2024",
+        "george2021"
+      ]
+    },
+    {
+      "name": "Thoracic elevation (as reported; start position not captured)",
+      "catalog": "new",
+      "kind": "strengthening",
+      "dose": {
+        "sets": null,
+        "reps": 5,
+        "holdSeconds": 30,
+        "frequency": "3 sessions per week for 6 weeks",
+        "notes": "Hold progressed to 45 s."
+      },
+      "doseBasis": "Kshirsagar 2026: non-randomised trial, odd-even allocation, 36 male recreational runners aged 18-25.",
+      "bodyweightOrHold": true,
+      "cautions": "Single low-quality non-randomised trial. The paper says 'hands straight at the front' but not the body position, so do not map it to a catalog back extension.",
+      "evidenceStrength": "observational",
+      "sourceIds": [
+        "kshirsagar2026"
+      ]
+    },
+    {
+      "name": "Romanian deadlift",
+      "catalog": "catalog:romanian-deadlift",
+      "kind": "strengthening",
+      "dose": {
+        "sets": 3,
+        "reps": 15,
+        "holdSeconds": null,
+        "frequency": "2 sessions per week for 8 weeks",
+        "notes": "40-50% of estimated 1RM. Supervisors adjusted intensity individually by perceived exertion and performance; rest and velocity not recorded. Added to a core programme."
+      },
+      "doseBasis": "Park 2026: randomized pilot, 30 men aged 30-39, all arms; pilot not powered for efficacy.",
+      "bodyweightOrHold": false,
+      "cautions": "Adding it did not beat core work alone (core-only pain reduction exceeded the RDL arm, p = 0.042; disability between groups p = 0.226). Baseline ODI differed. Supervised trial; adverse events were a predefined safety outcome and no intervention-related events were reported in 30 men.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "park2026"
+      ]
+    },
+    {
+      "name": "Barbell deadlift (supervised)",
+      "catalog": "catalog:barbell-deadlift",
+      "kind": "strengthening",
+      "dose": {
+        "sets": "5+",
+        "reps": "1-10",
+        "holdSeconds": null,
+        "frequency": "12 supervised sessions over 8 weeks: 2 per week in month 1, then 1 per week",
+        "notes": "Start at 10 kg including bar. Rest 5 min (Tataryn table only; Michaelson states no rest). Add lifts, weight or sets at the same load once technique is correct, and only if pain has not increased. Physiotherapist estimated about 70-85% 1RM; no 1RM test. Highest load lifted: men mean 100 kg (range 55-200), women mean 53 kg (range 15-102.5)."
+      },
+      "doseBasis": "Protocol from Michaelson 2016, which gives no exact sets or reps. The 5+ x 1-10 figure comes from Table 4 of Tataryn 2021, describing the same Aasa trial.",
+      "bodyweightOrHold": false,
+      "cautions": "No better than low-load motor control at 2, 12 or 24 months, and worse on one activity measure at 2 months (Aasa 2015). Results apply to supervision, Valsalva, bracing and neutral-spine technique, which an app cannot reproduce. High pain and low Biering-Sorensen performance predicted poorer outcome. Two participants reported adverse effects, one of whom dropped out. Not for self-directed starts.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "michaelson2016",
+        "aasa2015",
+        "berglund2015",
+        "tataryn2021"
+      ]
+    },
+    {
+      "name": "Pelvic tilt",
+      "catalog": "new",
+      "kind": "mobility",
+      "dose": {
+        "sets": null,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "Warm-up within sessions 3 times per week; repetitions not reported"
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Warm-up component only, with no independent evidence of effect.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "asik2025"
+      ]
+    },
+    {
+      "name": "Cat-cow",
+      "catalog": "catalog:cat-cow-stretch",
+      "kind": "mobility",
+      "dose": {
+        "sets": null,
+        "reps": 10,
+        "holdSeconds": null,
+        "frequency": "3 sessions per week for 6 weeks",
+        "notes": "Progressed to 15 reps. Sets not reported. Asik 2025 used it as a warm-up 3 times per week, reps not reported."
+      },
+      "doseBasis": "Kshirsagar 2026: non-randomised trial, odd-even allocation, 36 male recreational runners aged 18-25.",
+      "bodyweightOrHold": true,
+      "cautions": "Reported as 'cat-camel'; match to catalog assumed. No independent evidence of effect. Trunk mobility exercise carries a weaker guideline grade (B) than strengthening (A) in chronic pain.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "asik2025",
+        "kshirsagar2026",
+        "george2021"
+      ]
+    },
+    {
+      "name": "Trunk rotation",
+      "catalog": "new",
+      "kind": "mobility",
+      "dose": {
+        "sets": null,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "Within home sessions 3 times per week; repetitions not reported"
+      },
+      "bodyweightOrHold": true,
+      "cautions": "The source does not describe the position, so the catalog Torso Twists entry is not assumed to match. Programme component only.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "asik2025"
+      ]
+    },
+    {
+      "name": "Hamstring stretch",
+      "catalog": "catalog:hamstring-stretch",
+      "kind": "stretch",
+      "dose": {
+        "sets": null,
+        "reps": 5,
+        "holdSeconds": 30,
+        "frequency": "Twice weekly for 6 weeks"
+      },
+      "alternateDoses": [
+        {
+          "sets": 5,
+          "reps": null,
+          "holdSeconds": 40,
+          "frequency": "3 times per week for 3 weeks",
+          "sourceId": "gou2024",
+          "notes": "Lee 2017, as tabulated by Gou 2024."
+        },
+        {
+          "sets": null,
+          "reps": 5,
+          "holdSeconds": 10,
+          "frequency": "Daily for 3 weeks",
+          "sourceId": "gou2024",
+          "notes": "Li 1996, as tabulated by Gou 2024."
+        },
+        {
+          "sets": null,
+          "reps": 3,
+          "holdSeconds": 60,
+          "frequency": "Not captured",
+          "sourceId": "gou2024",
+          "notes": "Kage 2015, as tabulated by Gou 2024."
+        }
+      ],
+      "doseBasis": "Nagrale 2012 as tabulated by Gou 2024. The primary trial was not opened.",
+      "bodyweightOrHold": true,
+      "cautions": "Use as a complement only. Gou 2024 had very high heterogeneity (I2 89%) with mostly active comparators, and stretching did not differ from control in Owen 2020.",
+      "evidenceStrength": "systematic_review",
+      "sourceIds": [
+        "gou2024",
+        "asik2025",
+        "owen2020"
+      ]
+    },
+    {
+      "name": "Child's pose",
+      "catalog": "catalog:childs-pose",
+      "kind": "stretch",
+      "dose": {
+        "sets": null,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "Cool-down within sessions 3 times per week; hold time not reported"
+      },
+      "bodyweightOrHold": true,
+      "cautions": "Cool-down in the Pilates arm of one trial only, so its specific effect is unknown.",
+      "evidenceStrength": "rct",
+      "sourceIds": [
+        "asik2025"
+      ]
+    },
+    {
+      "name": "Walking",
+      "catalog": "catalog:walking",
+      "kind": "mobility",
+      "dose": {
+        "sets": null,
+        "reps": null,
+        "holdSeconds": null,
+        "frequency": "Start with at least 3 walks per week, building to at least 5 per week for at least 30 minutes",
+        "notes": "Raise frequency first, then intensity through faster walking, hills or stairs, or jogging. The protocol text gives the minimum starting frequency; each person's first prescription came from a supplementary tool that was not read. Delivered with 6 physiotherapist sessions over 6 months, plus an activity tracker and diary."
+      },
+      "alternateDoses": [
+        {
+          "sets": null,
+          "reps": null,
+          "holdSeconds": null,
+          "frequency": "3 days per week for 6 weeks at 75% of age-predicted maximum heart rate, combined with cycling",
+          "sourceId": "kanli2024",
+          "notes": "No between-group difference in that trial."
+        }
+      ],
+      "doseBasis": "WalkBack protocol (Pocovi 2020) behind the Pocovi 2024 RCT.",
+      "bodyweightOrHold": true,
+      "cautions": "WalkBack enrolled people recently recovered from pain and measured recurrence (HR 0.72, 0.60 to 0.85), so it is not a treatment dose for current pain. More lower-extremity adverse events with walking (100 vs 54). Walking was similar to other exercise in Vanti 2019, whose authors call for dose studies. Aerobic exercise has no matching kind in this schema, so mobility is a forced label.",
+      "evidenceStrength": "systematic_review",
+      "sourceIds": [
+        "pocovi2024",
+        "pocovi2020",
+        "vanti2019",
+        "george2021",
+        "kanli2024"
+      ]
+    }
+  ],
+  "redFlags": [
+    {
+      "sign": "With back or leg pain: new or worsening trouble starting or maintaining urination, or not emptying the bladder",
+      "action": "Stop and seek emergency help immediately; possible cauda equina syndrome.",
+      "sourceIds": [
+        "somerset_ces"
+      ]
+    },
+    {
+      "sign": "With back or leg pain: new or worsening loss of bowel control or of the sensation of needing to pass stool",
+      "action": "Stop and seek emergency help immediately; possible cauda equina syndrome.",
+      "sourceIds": [
+        "somerset_ces"
+      ]
+    },
+    {
+      "sign": "New or worsening altered feeling around the buttocks, genitals or between the legs",
+      "action": "Stop and seek emergency help immediately; possible cauda equina syndrome.",
+      "sourceIds": [
+        "somerset_ces",
+        "iatrox_vadod",
+        "alshanqity2025"
+      ]
+    },
+    {
+      "sign": "New or worsening changes in sexual sensation or function, with back or leg pain",
+      "action": "Stop and seek emergency help immediately; possible cauda equina syndrome.",
+      "sourceIds": [
+        "somerset_ces"
+      ]
+    },
+    {
+      "sign": "New or worsening severe pain in both legs, or rapidly progressive leg weakness",
+      "action": "Stop and seek emergency help immediately; possible cauda equina syndrome or other serious nerve involvement.",
+      "sourceIds": [
+        "somerset_ces",
+        "iatrox_vadod",
+        "alshanqity2025"
+      ]
+    },
+    {
+      "sign": "Back pain after significant trauma, or severe localised pain with osteoporosis, long-term corticosteroid use or previous spinal fracture",
+      "action": "Stop exercising and get prompt medical assessment for possible fracture. The urgency wording is expert opinion, since the opened summaries set no timeframe.",
+      "sourceIds": [
+        "pogo_finucane_summary",
+        "iatrox_vadod"
+      ]
+    },
+    {
+      "sign": "Back pain with a past history of cancer, unexplained weight loss or night pain",
+      "action": "Stop exercising and get prompt medical assessment for possible malignancy. The urgency wording is expert opinion, since the opened summaries set no timeframe.",
+      "sourceIds": [
+        "pogo_finucane_summary",
+        "iatrox_vadod"
+      ]
+    },
+    {
+      "sign": "Back pain with fever, immunosuppression, injection-drug use, recent infection or a recent spinal procedure. Absence of fever does not exclude infection.",
+      "action": "Stop exercising and seek urgent medical assessment for possible spinal infection.",
+      "sourceIds": [
+        "pogo_finucane_summary",
+        "iatrox_vadod"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "hayden2021",
+      "citation": "Hayden JA, Ellis J, Ogilvie R, Malmivaara A, van Tulder MW. Exercise therapy for chronic low back pain. Cochrane Database Syst Rev. 2021;9:CD009790.",
+      "doi": "10.1002/14651858.CD009790.pub2",
+      "pmid": "34580864",
+      "pmcid": "PMC8477273",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8477273/",
+      "type": "systematic_review",
+      "accessLevel": "full_text",
+      "note": "First 100,000 of about 553,000 characters via a summarising fetch, plus the abstract; a second fetch returned HTTP 500. Per-trial dose tables not read."
+    },
+    {
+      "id": "george2021",
+      "citation": "George SZ, Fritz JM, Silfies SP, et al. Interventions for the Management of Acute and Chronic Low Back Pain: Revision 2021. J Orthop Sports Phys Ther. 2021;51(11):CPG1-CPG60.",
+      "doi": "10.2519/jospt.2021.0304",
+      "pmid": "34719942",
+      "pmcid": "PMC10508241",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10508241",
+      "type": "guideline",
+      "accessLevel": "full_text",
+      "note": "PMC author manuscript; publisher pages returned 403, appendices not read. Letter grades derived from the guideline wording map in its Table 2."
+    },
+    {
+      "id": "who2023_news",
+      "citation": "World Health Organization. WHO releases guidelines on chronic low back pain. News item, 7 December 2023.",
+      "doi": null,
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://www.who.int/news/item/07-12-2023-who-releases-guidelines-on-chronic-low-back-pain",
+      "type": "guideline_summary",
+      "accessLevel": "registry_or_summary"
+    },
+    {
+      "id": "iatrox_vadod",
+      "citation": "iatroX. Educational summary of the VA/DoD 2022 low back pain guideline, source check 20 August 2026. Secondary and not an official guideline.",
+      "doi": null,
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://iatrox.com/guidelines/low-back-pain-and-sciatica",
+      "type": "guideline_summary",
+      "accessLevel": "registry_or_summary"
+    },
+    {
+      "id": "owen2020",
+      "citation": "Owen PJ, Miller CT, Mundell NL, et al. Which specific modes of exercise training are most effective for treating low back pain? Network meta-analysis. Br J Sports Med. 2020;54(21):1279-1287.",
+      "doi": "10.1136/bjsports-2019-100886",
+      "pmid": "31666220",
+      "pmcid": "PMC7588406",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7588406/",
+      "type": "network_meta_analysis",
+      "accessLevel": "full_text",
+      "note": "Keyword-targeted excerpts; per-trial doses in an unopened supplement."
+    },
+    {
+      "id": "owen2020_eoc",
+      "citation": "Expression of concern for Owen et al., Br J Sports Med 2020. PubMed record states it was rescinded in an editorial dated 27 July 2020.",
+      "doi": "10.1136/bjsports-2019-100886eoc1",
+      "pmid": "32139370",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32139370/",
+      "type": "editorial_notice",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "saragiotto2016",
+      "citation": "Saragiotto BT, Maher CG, Yamato TP, et al. Motor control exercise for chronic non-specific low-back pain. Cochrane Database Syst Rev. 2016;(1):CD012004.",
+      "doi": "10.1002/14651858.CD012004",
+      "pmid": "26742533",
+      "pmcid": "PMC8761501",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26742533/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "ijzelenberg2024",
+      "citation": "IJzelenberg W, Oosterhuis T, Hayden JA, et al. Exercise Therapy for Treatment of Acute Non-specific Low Back Pain: A Cochrane Systematic Review and Meta-analysis. Arch Phys Med Rehabil. 2024;105(8):1571-1584.",
+      "doi": "10.1016/j.apmr.2024.02.732",
+      "pmid": "38513994",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38513994/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "karlsson2020",
+      "citation": "Karlsson M, Bergenheim A, Larsson MEH, et al. Effects of exercise therapy in patients with acute low back pain: a systematic review of systematic reviews. Syst Rev. 2020;9:182.",
+      "doi": "10.1186/s13643-020-01412-8",
+      "pmid": "32795336",
+      "pmcid": "PMC7427286",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7427286/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "dahm2022",
+      "citation": "Dahm KT, Brurberg KG, Jamtvedt G, Hagen KB. Advice to rest in bed versus advice to stay active for acute low-back pain and sciatica. Cochrane Database Syst Rev. 2010;(6):CD007612. Search to May 2009.",
+      "doi": "10.1002/14651858.CD007612.pub2",
+      "pmid": "20556780",
+      "pmcid": "PMC12161166",
+      "url": "https://www.cochrane.org/CD007612",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "saraceni2020",
+      "citation": "Saraceni N, Kent P, Ng L, Campbell A, Straker L, O'Sullivan P. To Flex or Not to Flex? J Orthop Sports Phys Ther. 2020;50(3):121-130.",
+      "doi": "10.2519/jospt.2020.9218",
+      "pmid": "31775556",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31775556/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "finucane2020",
+      "citation": "Finucane LM, Downie A, Mercer C, et al. International Framework for Red Flags for Potential Serious Spinal Pathologies. J Orthop Sports Phys Ther. 2020;50(7):350-372. Abstract only read.",
+      "doi": "10.2519/jospt.2020.9971",
+      "pmid": "32438853",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32438853/",
+      "type": "consensus_framework",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "pogo_finucane_summary",
+      "citation": "POGO Physio. Red Flags for Spinal Pathology. Secondary summary attributing only part of its content, including fracture risk factors, to Finucane et al. 2020.",
+      "doi": null,
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://www.pogophysio.com.au/?p=8582",
+      "type": "secondary_summary",
+      "accessLevel": "registry_or_summary"
+    },
+    {
+      "id": "somerset_ces",
+      "citation": "Somerset NHS Foundation Trust. Cauda Equina Syndrome. Patient information page.",
+      "doi": null,
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://www.somersetft.nhs.uk/trauma-and-orthopaedics/trauma-and-orthopaedics/spinal-surgery-service/cauda-equina-syndrome/",
+      "type": "patient_information",
+      "accessLevel": "registry_or_summary"
+    },
+    {
+      "id": "kanli2024",
+      "citation": "Kanli K, Hare Yigitoglu P, Ozgul A. Investigation of the effects of different treatment approaches on lumbar stabilizer muscles and diaphragm motility in individuals with chronic low back pain. Turk J Phys Med Rehabil. 2024;70(3):358-369.",
+      "doi": "10.5606/tftrd.2024.13257",
+      "pmid": "39679113",
+      "pmcid": "PMC11639492",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11639492/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "asik2025",
+      "citation": "Asik HK, Sahbaz T. Preventing chronic low back pain: investigating the role of Pilates in subacute management, a randomized controlled trial. Ir J Med Sci. 2025;194(3):949-956.",
+      "doi": "10.1007/s11845-025-03939-y",
+      "pmid": "40183915",
+      "pmcid": "PMC12276093",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12276093/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "nice_ng59",
+      "citation": "National Institute for Health and Care Excellence. Low back pain and sciatica in over 16s: assessment and management. NICE guideline NG59. Recommendations page, current version (recommendations dated 2016-2020, with 2026 amendments).",
+      "doi": null,
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://www.nice.org.uk/guidance/ng59/chapter/Recommendations",
+      "type": "guideline",
+      "accessLevel": "full_text",
+      "note": "Recommendations page only; evidence reviews not read."
+    },
+    {
+      "id": "who2023_summary",
+      "citation": "World Health Organization. WHO guideline for non-surgical management of chronic primary low back pain in adults in primary and community care settings: summary brochure. Geneva: WHO; 2023.",
+      "doi": null,
+      "pmid": "38198579",
+      "pmcid": null,
+      "url": "https://cdn.who.int/media/docs/default-source/mca-documents/ageing/lbp/summary_who_guideline_lower-back-pain_brochure_v7.pdf",
+      "type": "guideline_summary",
+      "accessLevel": "registry_or_summary",
+      "note": "Official summary; full guideline could not be retrieved. Certainty letters were re-extracted from the PDF text stream, whose layout is flattened: lumbar braces, belts and supports, traction and TENS carry c (very low), and therapeutic ultrasound b (low)."
+    },
+    {
+      "id": "briggs2025",
+      "citation": "Briggs AM, Sumi Y, Banerjee A, et al. The World Health Organization guideline for non-surgical management of chronic primary low back pain in adults: implications for equitable care and strengthening health systems globally. Glob Health Res Policy. 2025;10:26.",
+      "doi": "10.1186/s41256-025-00426-w",
+      "pmid": "40624581",
+      "pmcid": "PMC12232859",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12232859/",
+      "type": "guideline_summary",
+      "accessLevel": "full_text",
+      "note": "Secondary description of the WHO guideline by a policy overview. Title and first author confirmed from PubMed."
+    },
+    {
+      "id": "verville2023",
+      "citation": "Verville L, Ogilvie R, Hincapie CA, et al. Systematic review to inform a World Health Organization (WHO) clinical practice guideline: benefits and harms of structured exercise programs for chronic primary low back pain in adults. J Occup Rehabil. 2023;33(4):636-650.",
+      "doi": "10.1007/s10926-023-10124-4",
+      "pmid": "37991647",
+      "pmcid": "PMC10684665",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10684665/",
+      "type": "systematic_review",
+      "accessLevel": "full_text",
+      "note": "About 100,000 of 182,000 characters read."
+    },
+    {
+      "id": "apeldoorn2024",
+      "citation": "Apeldoorn AT, Swart NM, Conijn D, Meerhoff GA, et al. Management of low back pain and lumbosacral radicular syndrome: the Guideline of the Royal Dutch Society for Physical Therapy (KNGF). Eur J Phys Rehabil Med. 2024;60:292-318.",
+      "doi": "10.23736/S1973-9087.24.08352-7",
+      "pmid": "38407016",
+      "pmcid": "PMC11112513",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11112513/",
+      "type": "guideline",
+      "accessLevel": "full_text",
+      "note": "Read by keyword-targeted sections. DOI and first author added from PubMed."
+    },
+    {
+      "id": "qaseem2017",
+      "citation": "Qaseem A, Wilt TJ, McLean RM, Forciea MA; Clinical Guidelines Committee of the American College of Physicians. Noninvasive Treatments for Acute, Subacute, and Chronic Low Back Pain: A Clinical Practice Guideline From the American College of Physicians. Ann Intern Med. 2017;166(7):514-530.",
+      "doi": "10.7326/M16-2367",
+      "pmid": "28192789",
+      "pmcid": null,
+      "url": "https://www.acpjournals.org/doi/10.7326/M16-2367",
+      "type": "guideline",
+      "accessLevel": "abstract_only",
+      "note": "Publisher full text returned 403."
+    },
+    {
+      "id": "stochkendahl2018",
+      "citation": "Stochkendahl MJ, Kjaer P, Hartvigsen J, et al. National Clinical Guidelines for non-surgical treatment of patients with recent onset low back pain or lumbar radiculopathy. Eur Spine J. 2018;27(1):60-75.",
+      "doi": "10.1007/s00586-017-5099-2",
+      "pmid": "28429142",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28429142/",
+      "type": "guideline",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "gao2026",
+      "citation": "Gao B, Chai R, Wang G, et al; Chinese Society for the Study of the Lumbar Spine, Chinese Association of Spine. Multidisciplinary expert consensus on clinical diagnosis and therapies for low back pain. Bone Res. 2026;14(1):92.",
+      "doi": "10.1038/s41413-026-00572-y",
+      "pmid": "42660880",
+      "pmcid": "PMC13522480",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13522480/",
+      "type": "consensus_statement",
+      "accessLevel": "full_text",
+      "note": "Read selectively. Trial doses are secondary reports."
+    },
+    {
+      "id": "zhou2024",
+      "citation": "Zhou T, et al. Recent clinical practice guidelines for the management of low back pain: a global comparison. BMC Musculoskelet Disord. 2024.",
+      "doi": "10.1186/s12891-024-07468-0",
+      "pmid": "38693474",
+      "pmcid": "PMC11061926",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11061926/",
+      "type": "guideline_comparison",
+      "accessLevel": "full_text",
+      "note": "First author and DOI added from PubMed."
+    },
+    {
+      "id": "nicol2023",
+      "citation": "Nicol V, et al. Chronic Low Back Pain: A Narrative Review of Recent International Guidelines for Diagnosis and Conservative Treatment. J Clin Med. 2023.",
+      "doi": "10.3390/jcm12041685",
+      "pmid": "36836220",
+      "pmcid": "PMC9964474",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9964474/",
+      "type": "narrative_review",
+      "accessLevel": "full_text",
+      "note": "Underlying Canadian, ACOEM, NASS, German and French guidelines were not opened. First author and DOI added from PubMed."
+    },
+    {
+      "id": "corp2021",
+      "citation": "Corp N, et al. Evidence-based treatment recommendations for neck and low back pain across Europe: A systematic review of guidelines. Eur J Pain. 2021.",
+      "doi": "10.1002/ejp.1679",
+      "pmid": "33064878",
+      "pmcid": "PMC7839780",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7839780/",
+      "type": "guideline_comparison",
+      "accessLevel": "abstract_only",
+      "note": "Searcher had full-text access but read only abstract-level sections in detail, so recorded as abstract_only. First author and DOI added from PubMed."
+    },
+    {
+      "id": "oliveira2026",
+      "citation": "Oliveira CB, Koes BW, Pinto RZ, et al. Towards global clinical practice guidelines for the management of non-specific low back pain in primary care: a review of current guideline recommendations and how they have changed over the last 30 years. Lancet Rheumatol. 2026;8(6):e470-e485.",
+      "doi": "10.1016/S2665-9913(26)00077-9",
+      "pmid": "42203385",
+      "pmcid": null,
+      "url": "https://doi.org/10.1016/S2665-9913(26)00077-9",
+      "type": "guideline_comparison",
+      "accessLevel": "abstract_only",
+      "note": "Publisher page returned 403; worth a manual read."
+    },
+    {
+      "id": "skelly2026",
+      "citation": "Skelly AC, Kansagara D, Oswald J, Chou R; Acute Low Back Pain Guideline Project Guideline Development Group. Assessment and Treatment of Acute Low Back Pain: A Multidisciplinary Clinical Practice Guideline. Pain Med. 2026 (online ahead of print).",
+      "doi": "10.1093/pm/pnag110",
+      "pmid": "42687437",
+      "pmcid": null,
+      "url": "https://doi.org/10.1093/pm/pnag110",
+      "type": "guideline",
+      "accessLevel": "abstract_only",
+      "note": "Abstract states methods only. Recommendations known only via a trade news report."
+    },
+    {
+      "id": "mhe2026_news",
+      "citation": "Managed Healthcare Executive. New acute low back pain guideline steers clinicians away from routine imaging and opioids. 8 October 2026. Trade news report on Skelly 2026.",
+      "doi": null,
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://www.managedhealthcareexecutive.com/view/new-acute-low-back-pain-guideline-steers-clinicians-away-from-routine-imaging-and-opioids",
+      "type": "news_report",
+      "accessLevel": "registry_or_summary",
+      "note": "Verify against the guideline before use."
+    },
+    {
+      "id": "macedo2024_vadod",
+      "citation": "Macedo F, Annaswamy T, Coller R, Buelt A, et al. Diagnosis and Treatment of Low Back Pain: Synopsis of the 2021 US Department of Veterans Affairs and US Department of Defense Clinical Practice Guideline. Am J Phys Med Rehabil. 2024;103:350-355.",
+      "doi": "10.1097/PHM.0000000000002356",
+      "pmid": "37903622",
+      "pmcid": null,
+      "url": "https://www.healthquality.va.gov/guidelines/Pain/lbp/",
+      "type": "guideline_summary",
+      "accessLevel": "registry_or_summary",
+      "note": "Synopsis abstract and VA landing page only. The original guideline PDF was not read; exact Strong/Weak grades for exercise are unverified and not reported."
+    },
+    {
+      "id": "aafp2023_vadod",
+      "citation": "American Family Physician. Practice guidelines: low back pain. Summary of the VA/DoD guideline. 2023.",
+      "doi": null,
+      "pmid": null,
+      "pmcid": null,
+      "url": "https://www.aafp.org/afp/2023/0400/practice-guidelines-low-back-pain",
+      "type": "guideline_summary",
+      "accessLevel": "registry_or_summary",
+      "note": "Secondary summary; no frequency, duration or intensity stated."
+    },
+    {
+      "id": "wang2024_delphi",
+      "citation": "Wang XQ, Wang YL, Witchalls J, et al. Physical therapy for acute and sub-acute low back pain: A systematic review and expert consensus. Clin Rehabil. 2024;38(6):715-731.",
+      "doi": "10.1177/02692155241229398",
+      "pmid": "38317586",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38317586/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "aldera2026",
+      "citation": "Aldera M, et al. Saudi Clinical Practice Guideline for the Assessment and Management of Low Back Pain and Sciatica in Adults. J Clin Med. 2026.",
+      "doi": "10.3390/jcm15020528",
+      "pmid": "41598467",
+      "pmcid": "PMC12842004",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12842004/",
+      "type": "guideline",
+      "accessLevel": "full_text",
+      "note": "Read by keyword search, so differently worded exercise recommendations could be missed. First author and DOI added from PubMed."
+    },
+    {
+      "id": "ijzelenberg2023",
+      "citation": "IJzelenberg W, Oosterhuis T, Hayden JA, et al. Exercise therapy for treatment of acute non-specific low back pain. Cochrane Database Syst Rev. 2023;8(8):CD009365.",
+      "doi": "10.1002/14651858.CD009365.pub2",
+      "pmid": "37646368",
+      "pmcid": "PMC10467021",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37646368/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "arora2026",
+      "citation": "Arora NK, Saueressig T, Schleimer T, et al. Optimal exercise dose in adults with chronic low back pain disorders: systematic review with dose-response network meta-analysis. Br J Sports Med. 2026; online ahead of print.",
+      "doi": "10.1136/bjsports-2026-111988",
+      "pmid": "42785965",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42785965/",
+      "type": "network_meta_analysis",
+      "accessLevel": "abstract_only",
+      "note": "Journal page returned 403; abstract gives no numeric effect estimates."
+    },
+    {
+      "id": "liang2024",
+      "citation": "Liang Z, et al. The Best Exercise Modality and Dose for Reducing Pain in Adults With Low Back Pain: A Systematic Review With Model-Based Bayesian Network Meta-analysis. J Orthop Sports Phys Ther. 2024;54(5):315-327.",
+      "doi": "10.2519/jospt.2024.12153",
+      "pmid": "38457134",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38457134/",
+      "type": "network_meta_analysis",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "wang2026",
+      "citation": "Wang L, Zhou C, Zhai C. Comparative effects of exercise modalities and dose parameters on chronic low back pain in adults: a systematic review and network meta-analysis. Front Physiol. 2026;17:1836061.",
+      "doi": "10.3389/fphys.2026.1836061",
+      "pmid": "42222290",
+      "pmcid": "PMC13215899",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13215899/",
+      "type": "network_meta_analysis",
+      "accessLevel": "full_text",
+      "note": "Keyword-targeted excerpts of the XML, not read end to end."
+    },
+    {
+      "id": "tan2026",
+      "citation": "Tan T, Tan X, Xie J, et al. Effects of exercise dose based on the ACSM recommendations on pain and disability in non-specific low back pain patients: a systematic review and meta-analysis of randomized controlled trials. Front Physiol. 2026;17:1725132.",
+      "doi": "10.3389/fphys.2026.1725132",
+      "pmid": "41889797",
+      "pmcid": "PMC13013067",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13013067/",
+      "type": "systematic_review",
+      "accessLevel": "full_text",
+      "note": "About 100,000 of 178,000 characters read."
+    },
+    {
+      "id": "hayden2021_nma",
+      "citation": "Hayden JA, et al. Some types of exercise are more effective than others in people with chronic low back pain: a network meta-analysis. J Physiother. 2021;67(4):252-262.",
+      "doi": "10.1016/j.jphys.2021.09.004",
+      "pmid": "34538747",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34538747/",
+      "type": "network_meta_analysis",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "fernandez2022",
+      "citation": "Fernandez-Rodriguez R, et al. Best Exercise Options for Reducing Pain and Disability in Adults With Chronic Low Back Pain: Pilates, Strength, Core-Based, and Mind-Body. A Network Meta-analysis. J Orthop Sports Phys Ther. 2022;52(8):505-521.",
+      "doi": "10.2519/jospt.2022.10671",
+      "pmid": "35722759",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35722759/",
+      "type": "network_meta_analysis",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "li2023",
+      "citation": "Li Y, et al. Exercise intervention for patients with chronic low back pain: a systematic review and network meta-analysis. Front Public Health. 2023;11:1155225.",
+      "doi": "10.3389/fpubh.2023.1155225",
+      "pmid": "38035307",
+      "pmcid": "PMC10687566",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10687566/",
+      "type": "network_meta_analysis",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "grooten2022",
+      "citation": "Grooten WJA, et al. Summarizing the effects of different exercise types in chronic low back pain - a systematic review of systematic reviews. BMC Musculoskelet Disord. 2022;23(1):801.",
+      "doi": "10.1186/s12891-022-05722-x",
+      "pmid": "35996124",
+      "pmcid": "PMC9394044",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9394044/",
+      "type": "umbrella_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "wieland2022",
+      "citation": "Wieland LS, et al. Yoga for chronic non-specific low back pain. Cochrane Database Syst Rev. 2022;11(11):CD010671.",
+      "doi": "10.1002/14651858.CD010671.pub3",
+      "pmid": "36398843",
+      "pmcid": "PMC9673466",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9673466/",
+      "type": "systematic_review",
+      "accessLevel": "full_text",
+      "note": "Dose data came through a summarising fetch over 100,000 of about 549,000 characters; verify against Table 4 before quoting."
+    },
+    {
+      "id": "yamato2015",
+      "citation": "Yamato TP, et al. Pilates for low back pain. Cochrane Database Syst Rev. 2015;2015(7):CD010265.",
+      "doi": "10.1002/14651858.CD010265.pub2",
+      "pmid": "26133923",
+      "pmcid": "PMC8078578",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8078578/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "macedo2016",
+      "citation": "Macedo LG, et al. Motor control exercise for acute non-specific low back pain. Cochrane Database Syst Rev. 2016;2(2):CD012085.",
+      "doi": "10.1002/14651858.CD012085",
+      "pmid": "26863390",
+      "pmcid": "PMC8734597",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8734597/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "almeida2023",
+      "citation": "Almeida MO, et al. The McKenzie method for (sub)acute non-specific low back pain. Cochrane Database Syst Rev. 2023;4(4):CD009711.",
+      "doi": "10.1002/14651858.CD009711.pub2",
+      "pmid": "37017272",
+      "pmcid": "PMC10076480",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10076480/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "hagen2002",
+      "citation": "Hagen KB, et al. The Cochrane review of advice to stay active as a single treatment for low back pain and sciatica. Spine. 2002;27(16):1736-41.",
+      "doi": "10.1097/00007632-200208150-00010",
+      "pmid": "12195064",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/12195064/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only",
+      "note": "Superseded by Dahm 2010."
+    },
+    {
+      "id": "hayden2005_strategies",
+      "citation": "Hayden JA, et al. Systematic review: strategies for using exercise therapy to improve outcomes in chronic low back pain. Ann Intern Med. 2005;142(9):776-85.",
+      "doi": "10.7326/0003-4819-142-9-200505030-00014",
+      "pmid": "15867410",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/15867410/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "hayden2005_cochrane",
+      "citation": "Hayden JA, et al. Exercise therapy for treatment of non-specific low back pain. Cochrane Database Syst Rev. 2005;2005(3):CD000335.",
+      "doi": "10.1002/14651858.CD000335.pub2",
+      "pmid": "16034851",
+      "pmcid": "PMC10068907",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/16034851/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only",
+      "note": "Superseded by the 2021 and 2023 updates."
+    },
+    {
+      "id": "gianola2022",
+      "citation": "Gianola S, et al. Effectiveness of treatments for acute and subacute mechanical non-specific low back pain: a systematic review with network meta-analysis. Br J Sports Med. 2022;56(1):41-50.",
+      "doi": "10.1136/bjsports-2020-103596",
+      "pmid": "33849907",
+      "pmcid": "PMC8685632",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8685632/",
+      "type": "network_meta_analysis",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "tataryn2021",
+      "citation": "Tataryn N, et al. Posterior-Chain Resistance Training Compared to General Exercise and Walking Programmes for the Treatment of Chronic Low Back Pain in the General Population: A Systematic Review and Meta-Analysis. Sports Med Open. 2021;7(1):17.",
+      "doi": "10.1186/s40798-021-00306-w",
+      "pmid": "33683497",
+      "pmcid": "PMC7940464",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7940464/",
+      "type": "systematic_review",
+      "accessLevel": "full_text",
+      "note": "Keyword-targeted excerpts."
+    },
+    {
+      "id": "rodriguez_dominguez2026",
+      "citation": "Rodriguez-Dominguez AJ, et al. Does resistance training improve pain intensity, quality of life, and disability in people with chronic nonspecific low back pain? A systematic review and meta-analysis. Disabil Rehabil. 2026;48(6):1532-1545.",
+      "doi": "10.1080/09638288.2025.2566275",
+      "pmid": "41065407",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41065407/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "trybulski2025",
+      "citation": "Trybulski R, Michal W, Malgorzata S, et al. Impact of isolated lumbar extension strength training on reducing nonspecific low back pain, disability, and improving function: a systematic review and meta-analysis. Sci Rep. 2025;15:6426.",
+      "doi": "10.1038/s41598-025-90699-5",
+      "pmid": "39984628",
+      "pmcid": "PMC11845604",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11845604/",
+      "type": "systematic_review",
+      "accessLevel": "full_text",
+      "note": "About 100,000 of 162,000 characters read; Table 3 only partly read."
+    },
+    {
+      "id": "searle2015",
+      "citation": "Searle A, et al. Exercise interventions for the treatment of chronic low back pain: a systematic review and meta-analysis of randomised controlled trials. Clin Rehabil. 2015;29(12):1155-67.",
+      "doi": "10.1177/0269215515570379",
+      "pmid": "25681408",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25681408/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "vanti2019",
+      "citation": "Vanti C, et al. The effectiveness of walking versus exercise on pain and function in chronic low back pain: a systematic review and meta-analysis of randomized trials. Disabil Rehabil. 2019;41(6):622-632.",
+      "doi": "10.1080/09638288.2017.1410730",
+      "pmid": "29207885",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29207885/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "dezoete2024",
+      "citation": "de Zoete A, et al. Aerobic exercise therapy for chronic low back pain. Cochrane Database Syst Rev. 2024;6(6):CD015503 (protocol).",
+      "doi": "10.1002/14651858.CD015503",
+      "pmid": "39804115",
+      "pmcid": "PMC11145739",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11145739/",
+      "type": "review_protocol",
+      "accessLevel": "registry_or_summary",
+      "note": "Protocol only, no results."
+    },
+    {
+      "id": "gou2024",
+      "citation": "Gou Y, et al. The effects of hamstring stretching exercises on pain intensity and function in low back pain patients: A systematic review with meta-analysis of randomized controlled trials. SAGE Open Med. 2024;12:20503121241252251.",
+      "doi": "10.1177/20503121241252251",
+      "pmid": "39086556",
+      "pmcid": "PMC11289822",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11289822/",
+      "type": "systematic_review",
+      "accessLevel": "full_text",
+      "note": "Keyword-targeted excerpts."
+    },
+    {
+      "id": "pourahmadi2019",
+      "citation": "Pourahmadi M, et al. Effectiveness of Slump Stretching on Low Back Pain: A Systematic Review and Meta-analysis. Pain Med. 2019;20(2):378-396.",
+      "doi": "10.1093/pm/pny208",
+      "pmid": "30590849",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30590849/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "ceballos2023",
+      "citation": "Ceballos-Laita L, et al. The effectiveness of hip interventions in patients with low-back pain: A systematic review and meta-analysis. Braz J Phys Ther. 2023;27(2):100502.",
+      "doi": "10.1016/j.bjpt.2023.100502",
+      "pmid": "37037144",
+      "pmcid": "PMC10120300",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10120300/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "quentin2021",
+      "citation": "Quentin C, et al. Effect of Home Exercise Training in Patients with Nonspecific Low-Back Pain: A Systematic Review and Meta-Analysis. Int J Environ Res Public Health. 2021;18(16):8430.",
+      "doi": "10.3390/ijerph18168430",
+      "pmid": "34444189",
+      "pmcid": "PMC8391468",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8391468/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "zhang2023",
+      "citation": "Zhang SK, et al. Effects of exercise therapy on disability, mobility, and quality of life in the elderly with chronic low back pain: a systematic review and meta-analysis of randomized controlled trials. J Orthop Surg Res. 2023;18(1):513.",
+      "doi": "10.1186/s13018-023-03988-y",
+      "pmid": "37468931",
+      "pmcid": "PMC10357808",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10357808/",
+      "type": "systematic_review",
+      "accessLevel": "full_text",
+      "note": "Keyword-targeted excerpts. PubMed lists the first author as Zhang SK, correcting the searcher entry (Zhang C)."
+    },
+    {
+      "id": "steffens2016",
+      "citation": "Steffens D, et al. Prevention of Low Back Pain: A Systematic Review and Meta-analysis. JAMA Intern Med. 2016;176(2):199-208.",
+      "doi": "10.1001/jamainternmed.2015.7431",
+      "pmid": "26752509",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26752509/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "shiri2018",
+      "citation": "Shiri R, Coggon D, Falah-Hassani K. Exercise for the Prevention of Low Back Pain: Systematic Review and Meta-Analysis of Controlled Trials. Am J Epidemiol. 2018;187(5):1093-1101.",
+      "doi": "10.1093/aje/kwx337",
+      "pmid": "29053873",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29053873/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only",
+      "note": "Author names confirmed from PubMed."
+    },
+    {
+      "id": "swain2020",
+      "citation": "Swain CTV, Pan F, Owen PJ, Schmidt H, Belavy DL. No consensus on causality of spine postures or physical exposure and low back pain: a systematic review of systematic reviews. J Biomech. 2020;102:109312.",
+      "doi": "10.1016/j.jbiomech.2019.08.006",
+      "pmid": "31451200",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31451200/",
+      "type": "umbrella_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "jahn2023",
+      "citation": "Jahn A, et al. Occupational mechanical exposures as risk factor for chronic low-back pain: a systematic review and meta-analysis. Scand J Work Environ Health. 2023;49(7):453-465.",
+      "doi": "10.5271/sjweh.4114",
+      "pmid": "37581384",
+      "pmcid": "PMC10838064",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10838064/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "innocenti2023",
+      "citation": "Innocenti T, et al. Bias in the measurement of the outcome is associated with effect sizes in randomized clinical trials on exercise therapy for chronic low back pain: a meta-epidemiological study. J Clin Epidemiol. 2023;162:145-155.",
+      "doi": "10.1016/j.jclinepi.2023.09.001",
+      "pmid": "37704114",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37704114/",
+      "type": "meta_epidemiological",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "chou2017",
+      "citation": "Chou R, et al. Nonpharmacologic Therapies for Low Back Pain: A Systematic Review for an American College of Physicians Clinical Practice Guideline. Ann Intern Med. 2017;166(7):493-505.",
+      "doi": "10.7326/M16-2459",
+      "pmid": "28192793",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28192793/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "michaelson2016",
+      "citation": "Michaelson P, Holmberg D, Aasa B, Aasa U. High load lifting exercise and low load motor control exercises as interventions for patients with mechanical low back pain: a randomized controlled trial with 24-month follow-up. J Rehabil Med. 2016;48(5):456-463.",
+      "doi": "10.2340/16501977-2091",
+      "pmid": "27097785",
+      "pmcid": null,
+      "url": "https://www.medicaljournals.se/jrm/content/html/10.2340/16501977-2091",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "aasa2015",
+      "citation": "Aasa B, Berglund L, Michaelson P, Aasa U. Individualized low-load motor control exercises and education versus a high-load lifting exercise and education to improve activity, pain intensity, and physical performance in patients with low back pain: a randomized controlled trial. J Orthop Sports Phys Ther. 2015;45(2):77-85.",
+      "doi": "10.2519/jospt.2015.5021",
+      "pmid": "25641309",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25641309/",
+      "type": "rct",
+      "accessLevel": "abstract_only",
+      "note": "Publisher page returned 403."
+    },
+    {
+      "id": "berglund2015",
+      "citation": "Berglund L, Aasa B, Hellqvist J, Michaelson P, Aasa U. Which patients with low back pain benefit from deadlift training? J Strength Cond Res. 2015;29(7):1803-1811.",
+      "doi": "10.1519/JSC.0000000000000837",
+      "pmid": "25559899",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25559899/",
+      "type": "secondary_analysis",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "berglund2018",
+      "citation": "Berglund L, Aasa B, Michaelson P, Aasa U. Sagittal lumbopelvic alignment in patients with low back pain and the effects of a high-load lifting exercise and individualized low-load motor control exercises: a randomized controlled trial. Spine J. 2018;18(3):399-406.",
+      "doi": "10.1016/j.spinee.2017.07.178",
+      "pmid": "28757287",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28757287/",
+      "type": "secondary_analysis",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "tomschi2026",
+      "citation": "Tomschi F, Meder K, Hilberg T. Effects of whole-body strength training on pain and strength in chronic low back pain. A randomized controlled trial. J Back Musculoskelet Rehabil. 2026;39(6):2109-2120.",
+      "doi": "10.1177/10538127261448967",
+      "pmid": "42117614",
+      "pmcid": "PMC13687626",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13687626/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "park2026",
+      "citation": "Park JW, So WY, Oh JK, Lim DC. Effects of adding MedX lumbar extension or deadlift exercises to a core stabilization program on extensor strength, disability, and pain in men with chronic low back pain: a randomized pilot trial. Healthcare (Basel). 2026;14(16):2550.",
+      "doi": "10.3390/healthcare14162550",
+      "pmid": "42651319",
+      "pmcid": "PMC13511766",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13511766/",
+      "type": "rct",
+      "accessLevel": "full_text",
+      "note": "Randomized pilot. Summarising fetch over 100,000 of about 265,000 characters."
+    },
+    {
+      "id": "rodriguez_lopez2026",
+      "citation": "Rodriguez-Lopez M, Losada-Baz L, Arias-Gomez FA, Cigarroa I, Marzetti E, Arroyo-Fernandez R, Bravo-Esteban E. Effects of a combined lumbar motor control and hip strengthening program on pain and function in chronic non-specific low back pain: a randomized clinical trial. Sports (Basel). 2026;14(10):456.",
+      "doi": "10.3390/sports14100456",
+      "pmid": "42931593",
+      "pmcid": "PMC13709891",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13709891/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "tottoli2024",
+      "citation": "Tottoli CR, Ben AJ, da Silva EN, Bosmans JE, van Tulder M, Carregaro RL. Effectiveness of Pilates compared with home-based exercises in individuals with chronic non-specific low back pain: randomised controlled trial. Clin Rehabil. 2024;38(11):1495-1505.",
+      "doi": "10.1177/02692155241277041",
+      "pmid": "39275840",
+      "pmcid": "PMC11528976",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11528976/",
+      "type": "rct",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "coelho2025",
+      "citation": "Coelho ACS, Dourado JF, Lima POP. High-intensity and low-intensity Pilates have similar effects on pain and disability in people with chronic non-specific low back pain: a randomised trial. J Physiother. 2025;71(2):100-107.",
+      "doi": "10.1016/j.jphys.2025.03.002",
+      "pmid": "40122758",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40122758/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "lunkes2026",
+      "citation": "Lunkes LC, Dias Neto MA, Barra LF, de Castro LR, de Sa Ferreira A, Meziat-Filho N. Keeping the abdomen relaxed versus contracted during Pilates improves disability slightly and may improve other outcomes in chronic non-specific low back pain: a randomised trial. J Physiother. 2026;72(2):116-121.",
+      "doi": "10.1016/j.jphys.2026.03.007",
+      "pmid": "41935896",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41935896/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "farragher2024",
+      "citation": "Farragher JB, Pranata A, Williams GP, et al. Neuromuscular control and resistance training for people with chronic low back pain: a randomized controlled trial. J Orthop Sports Phys Ther. 2024;54(5):350-359.",
+      "doi": "10.2519/jospt.2024.12349",
+      "pmid": "38497906",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38497906/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "kshirsagar2026",
+      "citation": "Kshirsagar SS, Patil SC. Effectiveness of posterior chain resistance exercises and spinal stabilization exercises on pain, strength, and disability in runners with non-specific low back pain. Cureus. 2026;18(8):e114958.",
+      "doi": "10.7759/cureus.114958",
+      "pmid": "42769553",
+      "pmcid": "PMC13591025",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13591025/",
+      "type": "non_randomised_trial",
+      "accessLevel": "full_text",
+      "note": "The authors call it randomized, but odd-even allocation is quasi-random, so it is treated here as non-randomised; low quality. The abstract says sessions ran every three days; the methods and Table 1 say three times per week."
+    },
+    {
+      "id": "pocovi2024",
+      "citation": "Pocovi NC, Lin CC, French SD, et al. Effectiveness and cost-effectiveness of an individualised, progressive walking and education intervention for the prevention of low back pain recurrence in Australia (WalkBack): a randomised controlled trial. Lancet. 2024;404(10448):134-144.",
+      "doi": "10.1016/S0140-6736(24)00755-4",
+      "pmid": "38908392",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38908392/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "pocovi2020",
+      "citation": "Pocovi NC, et al. Effectiveness and cost-effectiveness of a progressive, individualised walking and education programme for prevention of low back pain recurrence in adults: study protocol for the WalkBack randomised controlled trial. BMJ Open. 2020.",
+      "doi": "10.1136/bmjopen-2020-037149",
+      "pmid": "33033088",
+      "pmcid": "PMC7545638",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7545638/",
+      "type": "trial_protocol",
+      "accessLevel": "full_text",
+      "note": "Journal and DOI added from PubMed. Supplementary Appendix 2 (starting-dose tool) not read."
+    },
+    {
+      "id": "ranzani2025",
+      "citation": "Ranzani M, Pozzi A, Fornasari D, Ristori D, Testa M. Is resistance training with external loads superior to unloaded exercise in the management of chronic low back pain? A systematic review and meta-analysis. Arch Physiother. 2025;15:297-313.",
+      "doi": "10.33393/aop.2025.3533",
+      "pmid": "41356326",
+      "pmcid": "PMC12680015",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12680015/",
+      "type": "systematic_review",
+      "accessLevel": "full_text",
+      "note": "About 100,000 of 257,000 characters read; Appendix C not read."
+    },
+    {
+      "id": "jackson2011",
+      "citation": "Jackson JK, Shepherd TR, Kell RT. The influence of periodized resistance training on recreationally active males with chronic nonspecific low back pain. J Strength Cond Res. 2011;25(1):242-251.",
+      "doi": "10.1519/JSC.0b013e3181b2c83d",
+      "pmid": "20093971",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20093971/",
+      "type": "non_randomised_trial",
+      "accessLevel": "abstract_only",
+      "note": "Groups formed by age."
+    },
+    {
+      "id": "kell2011",
+      "citation": "Kell RT, Risi AD, Barden JM. The response of persons with chronic nonspecific low back pain to three different volumes of periodized musculoskeletal rehabilitation. J Strength Cond Res. 2011;25(4):1052-1064.",
+      "doi": "10.1519/JSC.0b013e3181d09df7",
+      "pmid": "20647943",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20647943/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "kell2009",
+      "citation": "Kell RT, Asmundson GJ. A comparison of two forms of periodized exercise rehabilitation programs in the management of chronic nonspecific low-back pain. J Strength Cond Res. 2009;23(2):513-523.",
+      "doi": "10.1519/JSC.0b013e3181918a6e",
+      "pmid": "19209082",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19209082/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "belavy2026",
+      "citation": "Belavy DL, Saueressig T, Arora NK, et al. Conservative treatments for chronic non-specific low back pain: time course network meta-analysis. BMJ Med. 2026;5(1):e001908.",
+      "doi": "10.1136/bmjmed-2025-001908",
+      "pmid": "42404251",
+      "pmcid": "PMC13331119",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42404251/",
+      "type": "network_meta_analysis",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "comachio2025",
+      "citation": "Comachio J, Beckenkamp PR, Ho EK, et al. Benefits and harms of exercise therapy and physical activity for low back pain: an umbrella review. J Sport Health Sci. 2025;14:101038.",
+      "doi": "10.1016/j.jshs.2025.101038",
+      "pmid": "40180212",
+      "pmcid": "PMC12191304",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12191304/",
+      "type": "umbrella_review",
+      "accessLevel": "full_text",
+      "note": "About 100,000 of 243,000 characters read."
+    },
+    {
+      "id": "hennemann2025",
+      "citation": "Hennemann V, Ziegelmann PK, Marcolino MAZ, Duncan BB. The McKenzie Method delivered by credentialed therapists for chronic low back pain with directional preference: systematic review with meta-analysis. J Man Manip Ther. 2025;33(2):96-111.",
+      "doi": "10.1080/10669817.2024.2408084",
+      "pmid": "39383118",
+      "pmcid": "PMC11924268",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39383118/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only",
+      "note": "Full-text fetch returned HTTP 500."
+    },
+    {
+      "id": "halliday2016",
+      "citation": "Halliday MH, Pappas E, Hancock MJ, et al. A randomized controlled trial comparing the McKenzie method to motor control exercises in people with chronic low back pain and a directional preference. J Orthop Sports Phys Ther. 2016;46(7):514-522.",
+      "doi": "10.2519/jospt.2016.6379",
+      "pmid": "27170524",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27170524/",
+      "type": "rct",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "nolan2020",
+      "citation": "Nolan D, O'Sullivan K, Newton C, Singh G, Smith BE. Are there differences in lifting technique between those with and without low back pain? A systematic review. Scand J Pain. 2020;20(2):215-227.",
+      "doi": "10.1515/sjpain-2019-0089",
+      "pmid": "31730537",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31730537/",
+      "type": "systematic_review",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "vonarx2021",
+      "citation": "von Arx M, Liechti M, Connolly L, Bangerter C, Meier ML, Schmid S. From stoop to squat: a comprehensive analysis of lumbar loading among different lifting styles. Front Bioeng Biotechnol. 2021;9:769117.",
+      "doi": "10.3389/fbioe.2021.769117",
+      "pmid": "34805121",
+      "pmcid": "PMC8599159",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8599159/",
+      "type": "biomechanical_study",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "armstrong2024",
+      "citation": "Armstrong DP, Davidson JB, Fischer SL. Determining whether biomechanical variables that describe common 'safe lifting' cues are associated with low back loads. J Electromyogr Kinesiol. 2024;75:102867.",
+      "doi": "10.1016/j.jelekin.2024.102867",
+      "pmid": "38325138",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38325138/",
+      "type": "biomechanical_study",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "mcgill2012",
+      "citation": "McGill SM, Marshall LW. Kettlebell swing, snatch, and bottoms-up carry: back and hip muscle activation, motion, and low back loads. J Strength Cond Res. 2012;26(1):16-27.",
+      "doi": "10.1519/JSC.0b013e31823a4063",
+      "pmid": "21997449",
+      "pmcid": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/21997449/",
+      "type": "biomechanical_study",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "yanagisawa2021",
+      "citation": "Yanagisawa O, Oshikawa T, Matsunaga N, Adachi G, Kaneoka K. Acute physiological response of lumbar intervertebral discs to high-load deadlift exercise. Magn Reson Med Sci. 2021;20(3):290-294.",
+      "doi": "10.2463/mrms.mp.2020-0052",
+      "pmid": "32879259",
+      "pmcid": "PMC8424024",
+      "url": "https://doi.org/10.2463/mrms.mp.2020-0052",
+      "type": "observational_study",
+      "accessLevel": "abstract_only"
+    },
+    {
+      "id": "shoji2025",
+      "citation": "Shoji K, Nakayama K, Shiouchi M, Manabe Y. Load-dependent increase in lumbar kyphosis is associated with posterior pelvic tilt during deadlift. Front Sports Act Living. 2025;7:1682991.",
+      "doi": "10.3389/fspor.2025.1682991",
+      "pmid": "41195113",
+      "pmcid": "PMC12583097",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12583097/",
+      "type": "biomechanical_study",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "mcgowen2024",
+      "citation": "McGowen JM, Albin SR, Hoppes CW, Forsse JS, Abt J, Koppenhaver SL. Physically active adults with low back pain do not demonstrate altered deadlift mechanics: a novel application of myotonometry to estimate inter-muscular load sharing. Int J Sports Phys Ther. 2024;19(1):1462-1472.",
+      "doi": "10.26603/001c.90707",
+      "pmid": "38179583",
+      "pmcid": "PMC10761629",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10761629/",
+      "type": "cross_sectional",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "stock2022",
+      "citation": "Stock MS, Bodden ME, Bloch JM, Starnes KL, Rodriguez G, Girts RM. Acute, non-specific low back pain does not impair isometric deadlift force or electromyographic excitation: a cross-sectional study. Sports (Basel). 2022;10(11):168.",
+      "doi": "10.3390/sports10110168",
+      "pmid": "36355819",
+      "pmcid": "PMC9696011",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9696011/",
+      "type": "cross_sectional",
+      "accessLevel": "full_text"
+    },
+    {
+      "id": "rezaei2026",
+      "citation": "Rezaei A, Cheng CH, Nikkhoo M, Dashtdar B, Lu L, Kaufman K. From intradiscal pressure to multimodal estimation of lumbar spinal loads. Biomed J. 2026;49(5):101012.",
+      "doi": "10.1016/j.bj.2026.101012",
+      "pmid": "42314971",
+      "pmcid": "PMC13626791",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13626791/",
+      "type": "narrative_review",
+      "accessLevel": "full_text",
+      "note": "About 100,000 of 161,000 characters read."
+    },
+    {
+      "id": "cherni2026",
+      "citation": "Cherni B, Marzouki H, Selmi O, Attar WA, Chamari K, Suzuki K. Beyond the neutral spine: a narrative review and modern framework for low back injury prevention in deadlifting. Sports (Basel). 2026;14(4):151.",
+      "doi": "10.3390/sports14040151",
+      "pmid": "42043083",
+      "pmcid": "PMC13120164",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13120164/",
+      "type": "narrative_review",
+      "accessLevel": "full_text",
+      "note": "Do not cite its secondary Ramirez figures without opening the primary paper."
+    },
+    {
+      "id": "alshanqity2025",
+      "citation": "Alshanqity M, Sabbagh AY, Abdulmuttalib JA. Massive lumbar disc extrusion and cauda equina syndrome in a female athlete following deadlift training. Cureus. 2025;17(12):e100428.",
+      "doi": "10.7759/cureus.100428",
+      "pmid": "41625865",
+      "pmcid": "PMC12854390",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12854390/",
+      "type": "case_report",
+      "accessLevel": "full_text"
+    }
+  ],
+  "limitations": "The moderate grade is narrow. It covers short-term pain versus no treatment, usual care or placebo in chronic pain (Hayden 2021, searches to April 2018). Function fell short of the review threshold, benefits fade (Verville 2023: intermediate pain SMD -0.08, -0.29 to 0.13) and no treatment reached clinical significance long term (Belavy 2026). No established dose. Every dose in this file describes what a trial did or what a model predicted. Arora 2026 states the evidence does not support a single optimal dose, and 84% of its trials were at high risk of bias. No guideline read gives a numeric prescription. Exercises were tested inside programmes. No trial here isolates the effect of plank, bird dog, dead bug, bridge or cat-cow. Exercise-level doses come mainly from Park 2026 (pilot in men) and Kshirsagar 2026 (non-randomised, young male runners), so transfer to other people is untested. Home delivery is a real gap for this app. Programme supervision beat home-only exercise in Hayden 2005 strategies and Quentin 2021, and Nicol 2023 reports insufficient evidence that home programmes differ from no care. Most deadlift evidence is supervised. Harms are under-reported. Adverse events appeared in 28.5% of trials in Arora 2026 and under 31% of reviews in Comachio 2025. IJzelenberg 2023 could reach no conclusion on safety in acute pain. In Hayden 2021, the median was 0.14 events per participant vs 0.12, mostly minor. Verville 2023 reported mixed-exercise harms OR 4.24 (0.69 to 25.95, 2 RCTs, very low certainty). Biomechanics are not outcomes. Load figures in Rezaei 2026, McGill 2012 and von Arx 2021, disc changes in Yanagisawa 2021 and flexion changes in Shoji 2025 come from healthy or trained people and set no safe limit. McGowen 2024 used body weight only, so its title should not be generalized to loaded lifts. The landmark Wilke and Callaghan load papers and powerlifting injury epidemiology were not retrieved. Implausible effects were not used. Pourahmadi 2019 (disability SMD -8.03) and the large effects in Tan 2026 and Rodriguez-Dominguez 2026 did not inform doses or claims. Access limits. Many records are abstract only, and long reviews were read in part (see each reference). WHO 2023 summary is a summary, since the full WHO guideline could not be retrieved, and all WHO recommendations are conditional (Briggs 2025). The original VA/DoD guideline was not read, so VA/DoD synopsis (Macedo 2024) and AAFP 2023 summary stand in and no grades are reported. Skelly 2026 recommendations are known only from Managed Healthcare Executive 2026. Oliveira 2026 content is unread. Nothing can be said about AAOS, because no search targeted it. Red flags are still partly secondary. Non-emergency flags rest on POGO Physio summary and iatroX VA/DoD summary, and their urgency wording is partly expert opinion. Finucane 2020 notes most red flags lack strong diagnostic accuracy evidence. Alshanqity 2025 is one case and cannot show causation or incidence. Owen 2020 notice records an expression of concern on Owen 2020, rescinded by a journal editorial note dated 27 July 2020. Screening. The movement control impairment subgroup is a clinician classification and cannot be self-assigned. The app cannot screen for serious pathology, and this is general information, not treatment. Contradictions: (1) Stretching. Owen 2020 (no difference from true control, p>0.095) and Fernandez-Rodriguez 2022 (only type not beating control for pain) against Hayden 2021 NMA (flexibility important for function), Hayden 2005 strategies (stretching and strengthening largest gains) and Gou 2024 (hamstring stretching SMD -0.72, I2 89%). Quentin 2021 also favours stretching, on pre-post effects. (2) McKenzie. Hayden 2021 NMA found moderate to important effects, and Hennemann 2025 found short-term benefit in people with a directional preference (lead author is a McKenzie Institute instructor). Owen 2020 and Fernandez-Rodriguez 2022 did not, and Almeida 2023 concluded it is not effective for (sub)acute pain. Halliday 2016 found no difference from motor control. Gao 2026 still grades it strong. (3) Dose frequency and length. Arora 2026 (3-4/week, 25-30 min, 8-13 weeks, limited benefit at higher exposure) against Wang L 2026 (6-7/week, 15-20 min, 16+ weeks), Fernandez-Rodriguez 2022 (1-2/week, 3-9 weeks), Zhang 2023 (60+ min suggested in older adults, while under-60 had a larger VAS estimate) and Kell 2011 (4 days/week best). Liang 2024 reports a U-shape. Hayden 2005 strategies found no clear dose effect. (4) Acute pain. IJzelenberg 2023, Karlsson 2020 and KNGF guideline (Apeldoorn 2024) found no clinically relevant benefit; Gianola 2022 found SMD -1.40 (-2.41 to -0.40) at immediate term against inert therapy. Qaseem 2017 and Wang XQ 2024 do not name exercise for acute pain, while George 2021 gives it can/C and Stochkendahl 2018 suggests supervised exercise if treatment is needed. Zhou 2024 counts 9 of 13 guidelines recommending it. (5) Aerobic exercise. George 2021 grades it should/A and Verville 2023 found a pain signal (very low certainty), but Searle 2015 calls cardiorespiratory programmes ineffective and Kell 2009 saw no significant improvement. No completed Cochrane review surfaced, only de Zoete 2024. (6) Core and motor control. George 2021 gives should/A to specific trunk activation; Gao 2026 only weakly recommends core stabilization; Saragiotto 2016 and KNGF guideline (Apeldoorn 2024) find it no better than other exercise. Macedo 2016 is null for acute pain. Wang XQ 2024 allows it for subacute pain. (7) Bracing. Effective protocols used bracing (Michaelson 2016, Park 2026), while Lunkes 2026 found relaxed cueing slightly better in Pilates. (8) Pilates ranking. Network analyses rank it top (Owen 2020, Fernandez-Rodriguez 2022, Liang 2024), but Yamato 2015 found no conclusive superiority over other exercise (short-term disability MD -3.29, -6.82 to 0.24) and Gao 2026 grades it weak. Tottoli 2024 found its advantage over home exercise not clinically relevant. (9) Yoga size. Li 2023 gives SMD -1.76 for pain, far above Wieland 2022 (MD -4.53/100, clinically unimportant). AAFP 2023 summary reports that yoga does not improve outcomes more than physical therapy or strength training. (10) Mind-body and aquatic. Gao 2026 strongly recommends aquatic exercise, tai chi and qigong, yet Verville 2023 found no low or unclear risk-of-bias trial for them. Li 2023 ranks tai chi highly with a wide interval. (11) Resistance size. Rodriguez-Dominguez 2026 (pain SMD -1.15, disability -2.76, GRADE moderate) against Ranzani 2025 (small, fragile), Verville 2023 (strength training immediate pain MD -0.39, -1.16 to 0.38) and Tomschi 2026 (no added benefit from one session a week). (12) Prevention. Comachio 2025 reports short-term RR 0.67 but long-term RR 1.04 (0.73 to 1.49), and no added benefit from high leisure activity. The 0.67 short-term figure matches Shiri 2018, so the two may not be independent. (13) Certainty of the headline claim. Hayden 2021 and Verville 2023 rate pain effects moderate certainty. Belavy 2026, with 551 studies, rates comparisons low (1.4%) to very low (98.6%). Innocenti 2023 shows outcome-measurement bias may slightly overestimate function effects. (14) Deadlift set and rep reporting. Michaelson 2016 gives no exact sets or reps; Tataryn 2021 tabulates 5+ x 1-10 for the same trial population. The primary Aasa 2015 report was abstract only, so this is unresolved. Michaelson 2016, Aasa 2015, Berglund 2015 and Berglund 2018 share a trial population and count as one trial. (15) Non-exercise conflicts, recorded only. Acupuncture or needling: NICE NG59 and Stochkendahl 2018 against, WHO 2023 summary and Qaseem 2017 for. NSAIDs: Stochkendahl 2018 against, Qaseem 2017 and WHO 2023 summary for. Aldera 2026 keeps the psychological-package wording that NICE NG59 removed in July 2026.",
+  "evidenceGradeNote": "Moderate applies only to short-term pain with exercise versus no treatment, usual care or placebo in chronic nonspecific low back pain. Very low to low for dose, single exercises and acute pain. A 2026 time-course network meta-analysis rated nearly all comparisons very low, so this grade is at the upper end of what the evidence allows.",
+  "doseEvidence": [
+    {
+      "group": "Dose analyses across trials",
+      "programme": "Dose-response NMA, 239 trials",
+      "sourceId": "arora2026",
+      "dose": "Model-predicted optimum: short-term disability 4 sessions/week, 25 min/session over 13 weeks; short-term pain 3 sessions/week, 30 min/session over 8 weeks.",
+      "result": "Predictions, not tested regimens. Credible intervals of most doses overlap; authors say no single optimal dose. Very low to low certainty."
+    },
+    {
+      "group": "Dose analyses across trials",
+      "programme": "Model-based Bayesian NMA, 82 trials",
+      "sourceId": "liang2024",
+      "dose": "Maximum response at 920 MET minutes (abstract omits \"per week\"); MCID at 520 MET minutes per week.",
+      "result": "Nonlinear U-shape; SMD -1.74 (95% CrI -2.43 to -1.04). Pain only."
+    },
+    {
+      "group": "Dose analyses across trials",
+      "programme": "NMA, 24 RCTs",
+      "sourceId": "wang2026",
+      "dose": "Trials ran 6-24 weeks, 1-7 sessions/week. Highest ranked: 15-20 min/session (SUCRA 91.6), 6-7 sessions/week (91.5), 16 weeks or more (97.9).",
+      "result": "All durations and frequencies effective. Authors say not a definitive optimum. Stated 30-120 min session range conflicts with its own 15-20 min category."
+    },
+    {
+      "group": "Dose analyses across trials",
+      "programme": "Meta-analysis by ACSM adherence, 36 RCTs",
+      "sourceId": "tan2026",
+      "dose": "Programmes 10 days to 12 weeks, 2-7 days/week. Flexibility criterion: static hold 10-30 s, 2-4 repetitions. High adherence means 75% or more of the score.",
+      "result": "VAS high -1.98 vs low -0.72; ODI -1.31 vs -0.99; RDQ -1.39 vs -0.54. Post hoc, publication bias, healthy-adult criteria."
+    },
+    {
+      "group": "Dose analyses across trials",
+      "programme": "NMA, 118 trials",
+      "sourceId": "fernandez2022",
+      "dose": "Most beneficial: at least 1-2 sessions/week of Pilates or strength; under 60 min sessions; 3-9 week programmes of Pilates and core.",
+      "result": "Abstract gives no effect sizes for dose."
+    },
+    {
+      "group": "Dose analyses across trials",
+      "programme": "WHO review, 13 RCTs",
+      "sourceId": "verville2023",
+      "dose": "8 to 30 sessions, 15 to 105 min each.",
+      "result": "Dosage subgroups not analysed."
+    },
+    {
+      "group": "Dose analyses across trials",
+      "programme": "Cochrane, 249 trials",
+      "sourceId": "hayden2021",
+      "dose": "Low dose under 20 hours total; high dose 20 hours or more. 68% of exercise groups were low dose.",
+      "result": "No single dose recommended in the portion read."
+    },
+    {
+      "group": "Dose analyses across trials",
+      "programme": "Meta-regression, 43 trials",
+      "sourceId": "hayden2005_strategies",
+      "dose": "Hours of intervention; high vs low dose 1.8 points (95% CrI -2.1 to 5.5).",
+      "result": "Not clearly different. Individually designed (5.4 points) and individually supervised (5.9) beat home-only."
+    },
+    {
+      "group": "Dose analyses across trials",
+      "programme": "Older adults, 18 RCTs, age 60+",
+      "sourceId": "zhang2023",
+      "dose": "4-21 weeks, 1-7 times/week, 25-90 min. Authors suggest 12 weeks or more, 3 times/week or more, 60 min or more.",
+      "result": "VAS 3+/week -1.97 vs 1-2/week -0.71; under 60 min -2.06 vs 60 min+ -1.21, so the 60-minute suggestion is not clearly supported for pain."
+    },
+    {
+      "group": "Dose analyses across trials",
+      "programme": "Loaded vs unloaded, 13 RCTs",
+      "sourceId": "ranzani2025",
+      "dose": "Typically about 8 weeks (3-16); average 3 sessions/week (1-7); median 12 sessions.",
+      "result": "Pain at 7+ weeks MD -0.52/10 (-0.92 to -0.08), non-significant without Kell."
+    },
+    {
+      "group": "Dose analyses across trials",
+      "programme": "Prevention, 16 controlled trials",
+      "sourceId": "shiri2018",
+      "dose": "Strengthening with stretching or aerobic exercise, 2-3 times/week (authors' recommendation).",
+      "result": "Exercise alone RR 0.67 (0.53 to 0.85)."
+    },
+    {
+      "group": "Dose analyses across trials",
+      "programme": "Home exercise, 33 studies",
+      "sourceId": "quentin2021",
+      "dose": "Insufficient data for conclusions on duration and frequency.",
+      "result": "Pre-post effects only."
+    },
+    {
+      "group": "Resistance and deadlift trials",
+      "programme": "Deadlift",
+      "sourceId": "michaelson2016",
+      "dose": "12 supervised sessions over 8 weeks (2/week in month 1, then 1/week), start 10 kg, progressing if pain had not increased; about 70-85% 1RM estimated. Sets and reps not reported.",
+      "result": "No difference vs motor control at 2, 12 or 24 months (Group x Time p = 0.98)."
+    },
+    {
+      "group": "Resistance and deadlift trials",
+      "programme": "Deadlift, Aasa 2015 as tabulated",
+      "sourceId": "tataryn2021",
+      "dose": "1-2/week, 5+ x 1-10, 5 min rest, barbell deadlift.",
+      "result": "Table entry for the same trial."
+    },
+    {
+      "group": "Resistance and deadlift trials",
+      "programme": "Other posterior-chain arms as tabulated",
+      "sourceId": "tataryn2021",
+      "dose": "Atalay 2017: 3/week, 2 x 6-12 or 5 s holds. Cai 2015: clinic 2/week and home 5/week, 3 x 10, 2 min rest. Suh 2019: 5/week, 5 x 30 s holds. Cortell-Tormo 2018: 2/week, 1-2 x 20 with 0 s rest, then 2-3 x 15 with 30 s, then 3 x 12 with 30 s. Hurley 2015: 1/week, 1 x max reps in 60 s at 70% RPE. Jackson 2011: 4/week, 3-6 x 10-12, 1-2 min rest. Kell 2009: 4/week, 2-3 x 8-15, 1-3 min rest.",
+      "result": "Pooled vs general exercise: pain SMD -0.61 (-1.21 to 0.00); disability -0.53 (-0.97 to -0.09)."
+    },
+    {
+      "group": "Resistance and deadlift trials",
+      "programme": "Whole-body machine circuit",
+      "sourceId": "tomschi2026",
+      "dose": "One 45-min session/week for 12 weeks plus rehab. 9-min elliptical warm-up at RPE 10-13. 8 machines at chest press 44%, back extensor 63%, leg press 56%, torso rotation 54%, knee extensor 40%, knee flexor 55%, abdominal 64%, lat pulldown 55% of 1RM; 20 reps in 60 s, two rounds, 80 s rest. From week 6: 15 reps in 60 s with extended eccentric.",
+      "result": "No added pain benefit over rehab (interaction p = 0.737). No adverse events."
+    },
+    {
+      "group": "Resistance and deadlift trials",
+      "programme": "Romanian deadlift or MedX added to core",
+      "sourceId": "park2026",
+      "dose": "2/week for 8 weeks. RDL or MedX 3 x 15 at 40-50% of 1RM or maximal strength. All arms: hip stretch 10 s x 2 sets; bracing 10 s x 20 reps; dead bug, bird dog, crunch, leg raise 2 x 15; 5-min cycling.",
+      "result": "Core-only pain reduction exceeded both add-ons. Pilot."
+    },
+    {
+      "group": "Resistance and deadlift trials",
+      "programme": "Isolated lumbar extension machine",
+      "sourceId": "trybulski2025",
+      "dose": "Fortin 12 weeks, 2/week, 2 x 15-20 at 55% 1RM, +5% when reps met. Harts 8 weeks, 1-2/week, 15-20 reps at 50% or 20% max isometric. Helmhout 10 weeks, 2/week, 15-20 reps at about 50-70% 1RM. Bruce-Low 12 weeks, 1-2/week, 8-12 reps at about 80% max torque, 70-105 s. Smith 12 weeks, 1/week, 1 x 8-12 to volitional fatigue (2 s up, 4 s down). Steele 12 weeks, 1/week, 1 set to failure at 80% max torque.",
+      "result": "Pain g -0.633 (-1.06 to -0.20); disability g -0.292 (-0.73 to 0.14). Very low certainty. Machine with pelvic restraint, not transferable to home."
+    },
+    {
+      "group": "Resistance and deadlift trials",
+      "programme": "Periodized volume comparison",
+      "sourceId": "kell2011",
+      "dose": "13 weeks after 3 weeks familiarization: 4 days/week (1,563 reps/week), 3 days (1,344), 2 days (564).",
+      "result": "4 days/week outperformed other volumes by weeks 9 and 13; all improved."
+    },
+    {
+      "group": "Resistance and deadlift trials",
+      "programme": "Periodized whole body",
+      "sourceId": "jackson2011",
+      "dose": "3 weeks familiarization, 13 weeks training; 5RM tests at baseline, weeks 8 and 12.",
+      "result": "Improved across time points. Not described as randomized."
+    },
+    {
+      "group": "Resistance and deadlift trials",
+      "programme": "Resistance vs neuromuscular retraining",
+      "sourceId": "farragher2024",
+      "dose": "12-week resistance programme; sets and reps not in abstract.",
+      "result": "Adding retraining: ODI MD -4.4 (-10.2 to 1.4)."
+    },
+    {
+      "group": "Resistance and deadlift trials",
+      "programme": "Band posterior chain",
+      "sourceId": "kshirsagar2026",
+      "dose": "3/week for 6 weeks. Red band 10 reps (weeks 1-3), blue 15 reps (weeks 4-6); thoracic elevation 5 reps with 30 s then 45 s hold; band deadlift 7 then 14 reps.",
+      "result": "NPRS A 2.72 vs B 3.27 (p = 0.025); MODI p = 0.723. Non-randomised."
+    },
+    {
+      "group": "Motor control, core and Pilates trials",
+      "programme": "Spinal stabilization",
+      "sourceId": "kshirsagar2026",
+      "dose": "3/week for 6 weeks. Bridge 3 x 10; plank and side plank 2 x 30 s then 2 x 60 s; quadruped arm and leg raise 2 x 30 s then 4 x 30 s; cat-camel 10 then 15 reps.",
+      "result": "Comparator arm. Young men."
+    },
+    {
+      "group": "Motor control, core and Pilates trials",
+      "programme": "Motor control plus hip strengthening",
+      "sourceId": "rodriguez_lopez2026",
+      "dose": "24 sessions over 8 weeks, 3/week, about 1 hour. Motor control 2 x 10-15, starting 2 x 10, add 1 rep if Borg CR-10 below 4, 5 s holds, 60-90 s rest. Hips (weeks 4-8): 7 glute exercises, 2 sets per limb of 10-15, TheraBand Green, tempo 2-1-2 s, Borg 4-6.",
+      "result": "Adding hips: VAS -11.03 mm (-26.73 to 4.67); ODI -3.41 (-11.13 to 4.32). Soreness under 24 hours in a few."
+    },
+    {
+      "group": "Motor control, core and Pilates trials",
+      "programme": "Low-load motor control",
+      "sourceId": "michaelson2016",
+      "dose": "3-stage individualized, 1-3 home exercises daily; 12 sessions offered, mean attended 6.1.",
+      "result": "Comparator to deadlift, equivalent long term."
+    },
+    {
+      "group": "Motor control, core and Pilates trials",
+      "programme": "McKenzie or motor control, directional preference",
+      "sourceId": "halliday2016",
+      "dose": "12 treatments over 8 weeks.",
+      "result": "No difference in pain (P = .99) or function (P = .26)."
+    },
+    {
+      "group": "Motor control, core and Pilates trials",
+      "programme": "Pilates vs home",
+      "sourceId": "tottoli2024",
+      "dose": "Pilates: 2 x 50 min/week for 6 weeks, 7-10 exercises, 2 x 8, then 2 x 10, then 2 x 12 (2 weeks each), 1 min rest. Home: same frequency, 3 x 10 (3 weeks) then 3 x 15 (3 weeks).",
+      "result": "Post pain MD -1.14 (-2.05 to -0.23); not clinically relevant; 6-month pain -0.58 (-1.82 to 0.66)."
+    },
+    {
+      "group": "Motor control, core and Pilates trials",
+      "programme": "Pilates intensity",
+      "sourceId": "coelho2025",
+      "dose": "1-hour clinical Pilates, twice per week, 6 weeks, high or low intensity (not defined in abstract).",
+      "result": "Similar effects; more side effects at high intensity."
+    },
+    {
+      "group": "Motor control, core and Pilates trials",
+      "programme": "Pilates cueing",
+      "sourceId": "lunkes2026",
+      "dose": "12 weeks, twice a week, 60 minutes.",
+      "result": "Relaxed vs contracted disability -1.4/24 (-2.6 to -0.2)."
+    },
+    {
+      "group": "Yoga, stretching and walking",
+      "programme": "Yoga, trial arms in Cochrane Table 4",
+      "sourceId": "wieland2022",
+      "dose": "Saper 2017: 75 min 1/week for 12 weeks plus 30 min/day home. Sherman 2011: 75 min 1/week for 12 weeks plus 20 min home. Groessl 2017: 60 min 2/week for 12 weeks plus 15-20 min home. Williams 2009: 90 min 2/week for 24 weeks plus 30 min/day home. Bramberg 2017: 60 min 2/week for 6 weeks plus home at least 2/week. Teut 2016: 24 x 45 min over 3 months.",
+      "result": "vs no exercise at 3 months: function -1.69 RMDQ (-2.73 to -0.65), pain -4.53 (-6.61 to -2.46), both clinically unimportant."
+    },
+    {
+      "group": "Yoga, stretching and walking",
+      "programme": "Hamstring stretching arms",
+      "sourceId": "gou2024",
+      "dose": "Nagrale 2012: 5 x 30 s, 2/week for 6 weeks. Lee 2017: 5 sets of 40 s, 3/week for 3 weeks. Li 1996: 5 x 10 s, daily for 3 weeks. Kage 2015: 3 x 1 min. Han 2016: 3/week for 6 weeks. Shamsi 2022: 3/week for 4 weeks. Hassan 2022: 2/week for 2 weeks. Shivani 2020: 5 days/week for 2 weeks.",
+      "result": "Pain SMD -0.72 (-1.35 to -0.09, I2 89%); ODI MD -6.97 (-13.34 to -0.60, I2 95%)."
+    },
+    {
+      "group": "Yoga, stretching and walking",
+      "programme": "Walking, WalkBack",
+      "sourceId": "pocovi2020",
+      "dose": "Start at least 3 walks/week, target at least 5/week for at least 30 min; frequency then intensity. Six sessions: three face to face, three by phone.",
+      "result": "Recurrence HR 0.72 (0.60 to 0.85), median 208 vs 112 days (Pocovi 2024)."
+    },
+    {
+      "group": "Yoga, stretching and walking",
+      "programme": "Tai chi, Baduanjin (secondary reports)",
+      "sourceId": "gao2026",
+      "dose": "Baduanjin 30 min, 3-5 times weekly over 4-12 weeks. Tai chi more than 3 times per week may help more; optimal dose uncertain. Low-load blood flow restriction 30% 1RM and 70% occlusion, 4 sessions/week for 4 weeks (26 male athletes). Group exercise and education up to 6 classes over 6-8 weeks.",
+      "result": "Secondary citation of trials; not used for candidates."
+    },
+    {
+      "group": "Guideline and consensus statements on dose",
+      "programme": "US physical therapy guideline",
+      "sourceId": "george2021",
+      "dose": "No numeric prescription: duration, dosing and intensity 'were highly variable'. Retained 2012 text: moderate-to-high intensity without generalized pain; progressive low-intensity, submaximal fitness and endurance with generalized pain.",
+      "result": "No harm reported from exercise training."
+    },
+    {
+      "group": "Guideline and consensus statements on dose",
+      "programme": "Dutch guideline",
+      "sourceId": "apeldoorn2024",
+      "dose": "Low-risk profile: 'a maximum of three sessions'. Other profiles: no treatment ranges. Radicular: expand to prior level in 6-12 weeks. When tapering supervision, do not decrease exercise frequency and intensity.",
+      "result": "No numeric weekly dose in the sections read."
+    },
+    {
+      "group": "Guideline and consensus statements on dose",
+      "programme": "NICE",
+      "sourceId": "nice_ng59",
+      "dose": "No dose. Consider a group exercise programme; type chosen by needs, preferences and capabilities.",
+      "result": "Weak-form \"consider\"."
+    },
+    {
+      "group": "Guideline and consensus statements on dose",
+      "programme": "WHO",
+      "sourceId": "who2023_summary",
+      "dose": "No dose in the summary.",
+      "result": "Structured exercise may be offered, low certainty."
+    }
+  ],
+  "searches": [
+    {
+      "database": "PubMed E-utilities",
+      "query": "(low back pain[ti]) AND (guideline[pt] OR practice guideline[pt] OR \"clinical practice guideline\"[ti] OR \"guideline\"[ti] OR \"consensus\"[ti])",
+      "hits": "217 total; newest 60 titles screened. Listing includes a 2026 retraction notice (PMID 41625965) for an EClinicalMedicine implementation-strategies review, which was not used."
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "TITLE:\"low back pain\" AND (TITLE:guideline OR TITLE:guidelines) AND OPEN_ACCESS:y",
+      "hits": "91 total; 50 titles screened"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "(\"low back pain\"[ti]) AND (exercise[ti]) AND (guideline[ti] OR guidelines[ti] OR consensus[ti] OR recommendations[ti])",
+      "hits": "14 PMIDs returned; not opened or screened further"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "EXT_ID:34719942 OR EXT_ID:28192789 OR EXT_ID:28636831 (resultType=core)",
+      "hits": "3 records; 2 relevant (28636831 was an unrelated NEJM paper from a wrong guessed ID)"
+    },
+    {
+      "database": "Web search",
+      "query": "Qaseem 2017 Noninvasive Treatments for Acute, Subacute, and Chronic Low Back Pain ACP guideline Annals acpjournals recommendation exercise grade",
+      "hits": "10 links; publisher full text returned 403, so the grade was taken from the PubMed/Europe PMC abstract"
+    },
+    {
+      "database": "Web search",
+      "query": "WHO guideline chronic primary low back pain recommendations structured exercise programmes conditional recommendation against lumbar braces traction spinal manipulation",
+      "hits": "10 links; led to the WHO summary brochure, which was opened"
+    },
+    {
+      "database": "Web search",
+      "query": "VA/DoD Clinical Practice Guideline Diagnosis and Treatment of Low Back Pain 2022 recommendations exercise strong for weak for healthquality.va.gov pdf",
+      "hits": "10 links; VA landing page and AAFP summary opened; the VA clinician summary PDF download returned HTML, not the PDF"
+    },
+    {
+      "database": "Web search",
+      "query": "Assessment and Treatment of Acute Low Back Pain multidisciplinary clinical practice guideline Skelly 2026 Pain Medicine exercise recommendation; AAOS low back pain guideline nonspecific existence",
+      "hits": "10 links; a news report on the guideline was opened. No AAOS material appeared and no separate AAOS search was run, so nothing can be said about AAOS."
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "low back pain[Title] AND exercise[Title] AND (Cochrane Database Syst Rev[Journal])",
+      "hits": "8"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "\"low back pain\"[Title] AND (exercise OR \"exercise therapy\")[Title] AND (network meta-analysis OR meta-analysis OR systematic review)[Title] AND 2011:2026[dp]",
+      "hits": "504 (top 25 by relevance screened)"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "\"low back pain\"[Title] AND (dose OR dosage OR \"dose-response\" OR frequency)[Title] AND exercise[Title/Abstract] AND (meta-analysis OR systematic review)[Title/Abstract]",
+      "hits": "91 (top 25 screened)"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "\"low back pain\"[Title] AND (stretching OR yoga OR pilates OR \"motor control\" OR McKenzie)[Title] AND (meta-analysis OR systematic review OR Cochrane)[Title/Abstract] AND 2011:2026[dp]",
+      "hits": "168 (top 25 screened)"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "\"low back pain\"[Title] AND (\"bed rest\" OR \"stay active\" OR \"activity modification\" OR \"advice\")[Title/Abstract] AND (Cochrane OR meta-analysis OR systematic review)[Title]",
+      "hits": "80 (top 25 screened)"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "\"low back pain\"[Title] AND stretching[Title/Abstract] AND (meta-analysis OR systematic review)[Title] AND 2011:2026[dp]",
+      "hits": "17"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "\"low back pain\"[Title] AND (\"physical activity\" OR walking)[Title] AND (dose-response OR meta-analysis OR systematic review)[Title] AND 2015:2026[dp]",
+      "hits": "103 (top 25 screened)"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "\"low back pain\"[Title] AND (resistance OR strength OR \"lumbar extension\" OR deadlift)[Title] AND (meta-analysis OR systematic review OR \"dose\")[Title] AND 2011:2026[dp]",
+      "hits": "137 (top 25 screened)"
+    },
+    {
+      "database": "PubMed E-utilities",
+      "query": "\"low back pain\"[Title] AND exercise[Title] AND (\"strategies\" OR \"meta-regression\" OR \"supervised\" OR \"physical activity levels\") AND (systematic review OR meta-analysis)[Title] AND (Hayden JA[Author] OR Alzahrani H[Author] OR Wun A[Author])",
+      "hits": "3"
+    },
+    {
+      "database": "Europe PMC REST",
+      "query": "TITLE:\"low back pain\" AND (TITLE:\"dose-response\" OR TITLE:\"dose\") AND TITLE:exercise AND (TITLE:\"meta-analysis\" OR TITLE:\"systematic review\")",
+      "hits": "5"
+    },
+    {
+      "database": "Cochrane Library",
+      "query": "Not searched directly. Cochrane reviews were found through the PubMed journal filter and read through PubMed or PMC.",
+      "hits": "n/a"
+    },
+    {
+      "database": "Crossref",
+      "query": "Not used. DOIs come from PubMed esummary and Europe PMC records.",
+      "hits": "n/a"
+    },
+    {
+      "database": "Europe PMC",
+      "query": "TITLE:\"low back pain\" AND TITLE:(deadlift OR \"resistance training\" OR \"strength training\" OR \"progressive resistance\")",
+      "hits": "43"
+    },
+    {
+      "database": "Europe PMC",
+      "query": "TITLE:\"low back pain\" AND (TITLE:\"adverse events\" OR TITLE:harms OR TITLE:\"adverse effects\") AND exercise",
+      "hits": "7"
+    },
+    {
+      "database": "Europe PMC",
+      "query": "(\"spine loading\" OR \"spinal loading\" OR \"spine loads\" OR \"lumbar compression\") AND (squat OR deadlift OR \"sit-up\" OR \"bird dog\" OR plank)",
+      "hits": "184"
+    },
+    {
+      "database": "Europe PMC",
+      "query": "TITLE:\"low back pain\" AND TITLE:(exercise) AND (TITLE:network OR TITLE:Cochrane OR TITLE:meta-analysis) AND FIRST_PDATE:[2018 TO 2026]",
+      "hits": "92"
+    },
+    {
+      "database": "Europe PMC",
+      "query": "TITLE:\"low back pain\" AND TITLE:(McKenzie OR \"motor control\" OR \"directional preference\" OR Pilates OR walking) AND TITLE:(trial)",
+      "hits": "129"
+    },
+    {
+      "database": "Europe PMC",
+      "query": "(TITLE:\"back pain\" OR TITLE:lumbar OR TITLE:spine) AND (TITLE:\"abdominal exercises\" OR TITLE:\"bird dog\" OR TITLE:sit-up OR TITLE:\"stabilization exercises\" OR TITLE:\"intradiscal pressure\" OR TITLE:\"flex or not to flex\" OR TITLE:powerlifting OR TITLE:powerlifters)",
+      "hits": "161"
+    },
+    {
+      "database": "Europe PMC",
+      "query": "(TITLE:\"back\" OR TITLE:lumbar) AND (TITLE:squat OR TITLE:deadlift) AND (injury OR compression OR shear) AND FIRST_PDATE:[2010 TO 2026] AND (powerlifting OR \"L4\" OR \"L5\")",
+      "hits": "27"
+    },
+    {
+      "database": "Europe PMC",
+      "query": "\"high load lifting\" AND \"back pain\" OR (TITLE:powerlift* AND TITLE:injur*) OR (EXT_ID:33033088 AND SRC:MED)",
+      "hits": "27"
+    },
+    {
+      "database": "PubMed",
+      "query": "\"low back pain\"[Title] AND (\"deadlift\"[Title/Abstract] OR \"loaded lifting\"[Title/Abstract] OR \"kettlebell\"[Title/Abstract]) AND randomized controlled trial[pt]",
+      "hits": "3"
+    },
+    {
+      "database": "PubMed",
+      "query": "(\"Exercise therapy for chronic low back pain\"[Title] OR \"WalkBack\"[Title/Abstract] OR (\"To flex or not to flex\"[Title]) OR (\"motor control exercise\"[Title] AND Cochrane[Journal]) OR (\"low back loads\"[Title]) OR (\"intradiscal pressure\"[Title] AND \"daily life\"[Title]) OR (\"lifting\"[Title] AND \"back pain\"[Title] AND systematic review[pt]) OR (\"directional preference\"[Title] AND \"low back pain\"[Title]))",
+      "hits": "44 (40 titles listed; PubMed reported two quoted title phrases not found and ignored the Cochrane[Journal] phrase)"
+    },
+    {
+      "database": "PubMed",
+      "query": "(\"exercise therapy\"[Title] AND \"low back pain\"[Title] AND Hayden JA[Author]) OR (Saraceni N[Author] AND flex[Title]) OR (Wilke HJ[Author] AND \"new in vivo measurements\"[Title]) OR (Cholewicki J[Author] AND powerlifters[Title]) OR (Kell RT[Author] AND \"back pain\"[Title]) OR (Bengtsson V[Author] AND powerlifters[Title]) OR (Callaghan JP[Author] AND \"Low back three-dimensional joint forces\"[Title]) OR (Axler CT[Author]) OR (Long A[Author] AND \"directional preference\"[Title]) OR (Swain CTV[Author] AND back pain[Title]) OR (Saragiotto BT[Author] AND \"motor control exercise\"[Title]) OR (Owen PJ[Author] AND \"network meta-analysis\"[Title])",
+      "hits": "36 (30 listed; the Wilke and Callaghan title phrases were not found, so those landmark in vivo and bird-dog load papers were not retrieved)"
+    },
+    {
+      "database": "PubMed",
+      "query": "(Michaelson P[Author] AND \"high load lifting\"[Title]) OR (Welch N[Author] AND \"free-weight\"[Title] AND back pain[Title]) OR (Ramirez VJ[Author] AND deadlift[Title]) OR (Bengtsson V[Author] AND powerlift*[Title]) OR (Strömbäck E[Author] AND powerlift*[Title]) OR (\"powerlifting\"[Title] AND \"injur*\"[Title] AND systematic review[pt])",
+      "hits": "Failed: HTTP 400, no results. Powerlifting injury epidemiology was therefore not covered; the Michaelson paper was found through Europe PMC instead"
+    },
+    {
+      "database": "PubMed",
+      "query": "(sit-up[Title/Abstract] OR curl-up[Title/Abstract] OR crunch[Title/Abstract]) AND (\"lumbar compression\"[Title/Abstract] OR \"spine compression\"[Title/Abstract] OR \"compressive load\"[Title/Abstract] OR \"compressive force\"[Title/Abstract])",
+      "hits": "1 (PMID 26223457, not opened, so not reported)"
+    },
+    {
+      "database": "PubMed E-utilities esummary",
+      "query": "Identifier check during the merge: 89 PMIDs from this record plus the Owen notice and the retraction notice, comparing first author, journal, year, DOI and PMCID.",
+      "hits": "All records returned; no conflicts with DOIs or PMCIDs supplied. Added missing DOIs for Apeldoorn 2024, Zhou 2024, Nicol 2023, Corp 2021, Aldera 2026 and Pocovi 2020; corrected Zhang C to Zhang SK. This check confirms bibliographic identity only and opened no paper."
+    }
+  ],
+  "verification": {
+    "sourcesChecked": 102,
+    "itemsRemoved": [
+      {
+        "item": "Source mcgill1998 and its citation on the heavy spinal loading item",
+        "reason": "The abstract does not address flares, fatigue, load limits or outcomes, and the fatigue statement comes from Cherni 2026."
+      },
+      {
+        "item": "Romanian deadlift caution: 'no formal adverse event collection'",
+        "reason": "Contradicted by Park 2026, which lists number and severity of adverse events as a safety outcome and reports none related to the intervention."
+      },
+      {
+        "item": "Romanian deadlift note: 'No formal progression'",
+        "reason": "Park 2026 says supervisors individually adjusted intensity by perceived exertion and performance."
+      },
+      {
+        "item": "Stretching item: '(low-quality evidence)' attached to the Owen 2020 null finding",
+        "reason": "The Owen 2020 low-quality statement in the sections checked concerns the modalities it found effective, not stretching."
+      },
+      {
+        "item": "Michaelson 2016 as the source of the 5 min deadlift rest, and the claim that it 'says exact sets and reps were not reported'",
+        "reason": "The paper states no rest and has no such sentence. It simply gives no prescription; the 5 min rest appears only in the Tataryn 2021 table."
+      }
+    ],
+    "valuesCorrected": [
+      "Plank and side plank: the 30 s and 60 s holds were knee-supported in Kshirsagar 2026 Table 1, with feet-supported work as a later progression. Asik 2025 added as the source naming forearm plank.",
+      "Barbell deadlift loads: 100 kg and 53 kg are the mean highest load lifted, not an average training load.",
+      "Verville 2023 harms OR 4.24 applies to mixed exercise in 2 RCTs, not to pooled exercise.",
+      "Ranzani 2025 flare-up management: one trial (one flare-up per group), not several trials.",
+      "Cherni 2026: fatigue protocols increased trunk range of motion; higher load increased spinal flexion.",
+      "Michaelson 2016 no-difference statement limited to pain and disability, because Aasa 2015 favoured motor control on activity at 2 months.",
+      "WalkBack starting frequency: the protocol text states it, so the note saying it came only from an unread supplement was wrong.",
+      "Macedo 2016: no benefit over other treatments and no firm conclusions from three small trials, replacing 'no clinically important benefit'.",
+      "Stock 2022: pain was mild-to-moderate, not only mild.",
+      "Berglund 2018: no change at group level; subgroups did change.",
+      "Thoracic elevation: the paper gives 'hands straight at the front'.",
+      "Access levels set from what was opened: kanli2024 and asik2025 full_text; finucane2020, ijzelenberg2024 and owen2020_eoc abstract_only; who2023_news, iatrox_vadod, pogo_finucane_summary and somerset_ces registry_or_summary.",
+      "WHO 2023 summary links in the .md now go to the brochure named in the citation, not the PubMed record of the full guideline."
+    ],
+    "unverifiable": [
+      "Revision scope could not be read from history because git was out of scope, so all 102 sources were opened. PubMed records confirmed identity and DOI for every source with a PMID; the others were opened at their URL. Sources behind no avoid, dose or red-flag item were checked at abstract level, and their minor summary statements were not all traced line by line.",
+      "qaseem2017, oliveira2026, arora2026, skelly2026: publisher text not reachable, so these were checked at abstract level. Skelly 2026 recommendations rest on the Managed Healthcare Executive report alone.",
+      "hayden2021 and wieland2022: only the first 100,000 characters were read through a summarising fetch; the cited values were found there.",
+      "who2023_summary: the PDF text stream is flattened, so category membership comes from the WHO news item and letter order, not from a rendered table.",
+      "Tataryn 2021 tabulates a 5+ x 1-10 deadlift dose and 5 min rest for Aasa 2015, but the primary trial reports were not available to confirm it.",
+      "Kshirsagar 2026: thoracic elevation is labelled '4-6 weeks' yet has doses in both table columns, so its timing is unclear. Bridge is 3 x 10 in both columns.",
+      "evidenceStrength rct on plank, side plank, glute bridge and cat-cow reflects use within the Kanli 2024 and Asik 2025 randomized programmes; the numeric dose comes from Kshirsagar 2026, which is non-randomised.",
+      "pogo_finucane_summary blocks plain scripted requests with 403 but opened through the fetch tool. It does not name IFOMPT; the Finucane 2020 abstract does.",
+      "Red flag on bowel sensation: Somerset's wording was paraphrased by the fetch tool, and the item's meaning matches it."
+    ]
+  }
+}

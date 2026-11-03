@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.exercise.visual
 
 import java.util.Locale
+import wallcrawl.elopenmike.com.core.model.WallStretchIdentity
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSource
 import wallcrawl.elopenmike.com.core.model.IllustrationVariant
 
@@ -16,13 +17,13 @@ class WorkoutGuideVisualProvider(
     override fun framesFor(exerciseId: String): List<ExerciseVisual> =
         source.currentSnapshot()
             ?.framesByExerciseId
-            ?.get(exerciseId.trim().lowercase(Locale.ROOT))
+            ?.get(WallStretchIdentity.forLookup(exerciseId.trim().lowercase(Locale.ROOT)))
             .orEmpty()
 
     override suspend fun framesFor(exerciseId: String, variant: IllustrationVariant): List<ExerciseVisual> {
         val originals = framesFor(exerciseId)
         if (originals.isEmpty()) return emptyList()
-        val id = exerciseId.trim().lowercase(Locale.ROOT)
+        val id = WallStretchIdentity.forLookup(exerciseId.trim().lowercase(Locale.ROOT))
         val paths = illustrations?.framesFor(id, variant).orEmpty()
         // A whole sequence falls back together, so an incomplete variant never alternates people.
         return if (paths.size == 3) paths.mapIndexed { index, path ->

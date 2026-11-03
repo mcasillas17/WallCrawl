@@ -18,7 +18,9 @@ data class ExercisePrescription(
     val effortTarget: EffortTarget? = null,
     val restClass: RestClass? = null,
     val restTargetSource: RestTargetSource? = null,
-    val purpose: PrescriptionPurpose = PrescriptionPurpose.ORDINARY
+    val purpose: PrescriptionPurpose = PrescriptionPurpose.ORDINARY,
+    /** A hold on each bodyweight repetition. The logged performance still measures reps. */
+    val holdSeconds: Int? = null
 ) {
     init {
         require(targetSets in MIN_TARGET_SETS..MAX_TARGET_SETS) {
@@ -41,6 +43,12 @@ data class ExercisePrescription(
         targetDurationSeconds?.let { seconds ->
             require(seconds in MIN_DURATION_SECONDS..MAX_DURATION_SECONDS) {
                 "Target duration must be between $MIN_DURATION_SECONDS and $MAX_DURATION_SECONDS seconds."
+            }
+        }
+
+        holdSeconds?.let { seconds ->
+            require(exerciseType == ExerciseType.BODYWEIGHT_REPS && seconds in MIN_DURATION_SECONDS..MAX_DURATION_SECONDS) {
+                "A hold requires bodyweight repetitions and a valid duration."
             }
         }
 
@@ -100,6 +108,14 @@ data class ExercisePrescription(
             }
         }
     }
+
+    // Recommendation identities include this text. Keep the pre-hold encoding for an absent hold.
+    override fun toString(): String =
+        "ExercisePrescription(exerciseType=$exerciseType, targetSets=$targetSets, repRange=$repRange, " +
+            "targetWeight=$targetWeight, targetAssistanceWeight=$targetAssistanceWeight, " +
+            "targetDurationSeconds=$targetDurationSeconds, targetDistanceMeters=$targetDistanceMeters, " +
+            "restSeconds=$restSeconds, effortTarget=$effortTarget, restClass=$restClass, " +
+            "restTargetSource=$restTargetSource, purpose=$purpose" + (holdSeconds?.let { ", holdSeconds=$it" } ?: "") + ")"
 
     fun withUserRestPreference(preference: UserRestPreference): ExercisePrescription =
         copy(

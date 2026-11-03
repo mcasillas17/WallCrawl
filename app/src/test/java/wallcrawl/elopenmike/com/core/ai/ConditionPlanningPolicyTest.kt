@@ -185,6 +185,12 @@ class ConditionPlanningPolicyTest {
         val ex = exercise.copy(id = "banded-row")
         blocked(resolve(listOf(record(rules = listOf(rule(ex)))), exercises = listOf(ex)))
     }
+    @Test fun importedConditionNeedsReviewEvenWhenTheOldIdIsUnknownToThisBuild() {
+        val result = resolve(profile = UserProfile(reportedConditions = setOf("opaque report with spaces")))
+        assertThat((result as ConditionPlanningResult.Blocked).reasons.map { it.reason })
+            .containsExactly("legacy-condition-report")
+    }
+
     @Test fun pendingCannotBeHiddenByRemovingLastConditionOrSelectingAnother() {
         val marker = PendingConditionReassessment("default_user", "removed", "fictional", "event", "a".repeat(64), 1, now - 1, null)
         blocked(resolve(profile = UserProfile(), history = history(pending = listOf(marker))))
