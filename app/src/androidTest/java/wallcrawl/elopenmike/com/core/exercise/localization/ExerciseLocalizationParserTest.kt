@@ -24,12 +24,10 @@ class ExerciseLocalizationParserTest {
         val assets = androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().targetContext.assets
         val localization = assets.open("localization/exercise-localization.json").bufferedReader()
             .use { parser.parse(it) }
-        val ids = listOf(
-            "supine-wall-supported-piriformis-stretch",
-            "pht-single-leg-calf-supported-isometric-hamstring-bridge",
-            "seated-hand-resisted-cervical-rotation-isometric",
-            "seated-short-foot-arch-hold-no-toe-flexion"
-        )
+        val entries = assets.open("wallcrawl/catalog.json").bufferedReader().use {
+            org.json.JSONObject(it.readText()).getJSONArray("exercises")
+        }
+        val ids = List(entries.length()) { entries.getJSONObject(it).getString("id") }
         ids.forEach { id ->
             assertThat(localization.exerciseName(id, "es")).isNotEmpty()
             assertThat(localization.coachingSummary(id, "es")).isNotEmpty()
@@ -39,6 +37,8 @@ class ExerciseLocalizationParserTest {
         assertThat(localization.muscle("Foot Intrinsics", "es")).isEqualTo("Músculos intrínsecos del pie")
         assertThat(localization.equipment("Padded Plinth", "es")).isEqualTo("Camilla acolchada")
         assertThat(localization.equipment("Calf Support", "es")).isEqualTo("Apoyo para la pantorrilla")
+        assertThat(localization.equipment("Pillow", "es")).isEqualTo("Almohada")
+        assertThat(localization.equipment("Upper-Arm Support Roll", "es")).isEqualTo("Rodillo de apoyo para el brazo")
     }
 
     @Test

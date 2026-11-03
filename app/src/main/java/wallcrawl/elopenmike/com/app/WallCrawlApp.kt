@@ -49,6 +49,7 @@ import wallcrawl.elopenmike.com.feature.backup.LocalDataViewModel
 import wallcrawl.elopenmike.com.feature.backup.RestoreFromArchiveButton
 import wallcrawl.elopenmike.com.feature.credits.CreditsScreen
 import wallcrawl.elopenmike.com.feature.credits.CreditsViewModel
+import wallcrawl.elopenmike.com.feature.conditions.ConditionReferenceScreen
 import wallcrawl.elopenmike.com.feature.exercises.ExercisesScreen
 import wallcrawl.elopenmike.com.feature.exercises.ExercisesViewModel
 import wallcrawl.elopenmike.com.feature.onboarding.OnboardingScreen
@@ -349,8 +350,13 @@ private fun WallCrawlAppContent(
                 )
                 ExercisesScreen(
                     viewModel = exercisesViewModel,
-                    visualProvider = container.exerciseVisualProvider
+                    visualProvider = container.exerciseVisualProvider,
+                    onOpenConditionReference = { navController.navigate(AppRoutes.CONDITION_REFERENCE) }
                 )
+            }
+
+            composable(AppRoutes.CONDITION_REFERENCE) {
+                ConditionReferenceScreen(container.exerciseCatalog, container.exerciseVisualProvider, onBack = { navController.popBackStack() })
             }
 
             composable(AppRoutes.PROFILE) {

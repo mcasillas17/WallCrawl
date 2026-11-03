@@ -1,0 +1,2567 @@
+{
+  "schemaVersion": 1,
+  "frames": [
+    {
+      "exerciseId": "supine-wall-supported-piriformis-stretch",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "supine-wall-supported-piriformis-stretch/references/shamsi-figure-2.jpg",
+        "sha256": "b5def3f887d0ea3d91361e5f8aebe6ec8ae9f85fb7154f71fac148e8e591555c"
+      },
+      "master": {
+        "path": "masters/supine-wall-supported-piriformis-stretch/male/frame-1.png",
+        "sha256": "3e733e1bb90a924d9f30f05a0401cbe28c549f3976804eaee3a487eb31bd55c9"
+      },
+      "derived": {
+        "path": "supine-wall-supported-piriformis-stretch/derived-source-resolution/male/frame-1.svg",
+        "sha256": "59518c46cca039b426bab894aebe8c86f18f00e8b5e02cdeeefef6161acd45ee"
+      },
+      "trace": {
+        "path": "supine-wall-supported-piriformis-stretch/derived-source-resolution/male/frame-1.svg.trace.json",
+        "sha256": "35c62f505fd3ced680870bb48c73c505d89755ff85597dd58ca66f089a934273"
+      },
+      "generation": {
+        "path": "supine-wall-supported-piriformis-stretch/packaging-records/male/generation.json",
+        "sha256": "af739a3576cb27a4204120e6c7dd448e367f8f4b60f43c1f41b81e2780942d84"
+      }
+    },
+    {
+      "exerciseId": "supine-wall-supported-piriformis-stretch",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "supine-wall-supported-piriformis-stretch/references/shamsi-figure-2.jpg",
+        "sha256": "b5def3f887d0ea3d91361e5f8aebe6ec8ae9f85fb7154f71fac148e8e591555c"
+      },
+      "master": {
+        "path": "masters/supine-wall-supported-piriformis-stretch/male/frame-2.png",
+        "sha256": "3e733e1bb90a924d9f30f05a0401cbe28c549f3976804eaee3a487eb31bd55c9"
+      },
+      "derived": {
+        "path": "supine-wall-supported-piriformis-stretch/derived-source-resolution/male/frame-1.svg",
+        "sha256": "59518c46cca039b426bab894aebe8c86f18f00e8b5e02cdeeefef6161acd45ee"
+      },
+      "trace": {
+        "path": "supine-wall-supported-piriformis-stretch/derived-source-resolution/male/frame-1.svg.trace.json",
+        "sha256": "35c62f505fd3ced680870bb48c73c505d89755ff85597dd58ca66f089a934273"
+      },
+      "generation": {
+        "path": "supine-wall-supported-piriformis-stretch/packaging-records/male/generation.json",
+        "sha256": "af739a3576cb27a4204120e6c7dd448e367f8f4b60f43c1f41b81e2780942d84"
+      }
+    },
+    {
+      "exerciseId": "supine-wall-supported-piriformis-stretch",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "supine-wall-supported-piriformis-stretch/references/shamsi-figure-2.jpg",
+        "sha256": "b5def3f887d0ea3d91361e5f8aebe6ec8ae9f85fb7154f71fac148e8e591555c"
+      },
+      "master": {
+        "path": "masters/supine-wall-supported-piriformis-stretch/male/frame-3.png",
+        "sha256": "3e733e1bb90a924d9f30f05a0401cbe28c549f3976804eaee3a487eb31bd55c9"
+      },
+      "derived": {
+        "path": "supine-wall-supported-piriformis-stretch/derived-source-resolution/male/frame-1.svg",
+        "sha256": "59518c46cca039b426bab894aebe8c86f18f00e8b5e02cdeeefef6161acd45ee"
+      },
+      "trace": {
+        "path": "supine-wall-supported-piriformis-stretch/derived-source-resolution/male/frame-1.svg.trace.json",
+        "sha256": "35c62f505fd3ced680870bb48c73c505d89755ff85597dd58ca66f089a934273"
+      },
+      "generation": {
+        "path": "supine-wall-supported-piriformis-stretch/packaging-records/male/generation.json",
+        "sha256": "af739a3576cb27a4204120e6c7dd448e367f8f4b60f43c1f41b81e2780942d84"
+      }
+    },
+    {
+      "exerciseId": "supine-wall-supported-piriformis-stretch",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "supine-wall-supported-piriformis-stretch/references/shamsi-figure-2.jpg",
+        "sha256": "b5def3f887d0ea3d91361e5f8aebe6ec8ae9f85fb7154f71fac148e8e591555c"
+      },
+      "master": {
+        "path": "masters/supine-wall-supported-piriformis-stretch/female/frame-1.png",
+        "sha256": "4affae19311c6b5d2a7ef3dfcc64a077f4f15df0a9550a2235ef6bf048c8f90a"
+      },
+      "derived": {
+        "path": "supine-wall-supported-piriformis-stretch/derived-source-resolution/female/frame-1.svg",
+        "sha256": "29e1fb9bb0f63d844be9c41362a074782d1f8268138eb0d6d0cb9154b4b7da18"
+      },
+      "trace": {
+        "path": "supine-wall-supported-piriformis-stretch/derived-source-resolution/female/frame-1.svg.trace.json",
+        "sha256": "69659735b3232db3420bf2fb49b928575ae6cffdd923fcb63589c3694b2e416e"
+      },
+      "generation": {
+        "path": "supine-wall-supported-piriformis-stretch/packaging-records/female/generation.json",
+        "sha256": "2d9b2f8d2be3f852378f710bfe5d4488c2f6579878ff57995352acf188191266"
+      }
+    },
+    {
+      "exerciseId": "supine-wall-supported-piriformis-stretch",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "supine-wall-supported-piriformis-stretch/references/shamsi-figure-2.jpg",
+        "sha256": "b5def3f887d0ea3d91361e5f8aebe6ec8ae9f85fb7154f71fac148e8e591555c"
+      },
+      "master": {
+        "path": "masters/supine-wall-supported-piriformis-stretch/female/frame-2.png",
+        "sha256": "4affae19311c6b5d2a7ef3dfcc64a077f4f15df0a9550a2235ef6bf048c8f90a"
+      },
+      "derived": {
+        "path": "supine-wall-supported-piriformis-stretch/derived-source-resolution/female/frame-1.svg",
+        "sha256": "29e1fb9bb0f63d844be9c41362a074782d1f8268138eb0d6d0cb9154b4b7da18"
+      },
+      "trace": {
+        "path": "supine-wall-supported-piriformis-stretch/derived-source-resolution/female/frame-1.svg.trace.json",
+        "sha256": "69659735b3232db3420bf2fb49b928575ae6cffdd923fcb63589c3694b2e416e"
+      },
+      "generation": {
+        "path": "supine-wall-supported-piriformis-stretch/packaging-records/female/generation.json",
+        "sha256": "2d9b2f8d2be3f852378f710bfe5d4488c2f6579878ff57995352acf188191266"
+      }
+    },
+    {
+      "exerciseId": "supine-wall-supported-piriformis-stretch",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "supine-wall-supported-piriformis-stretch/references/shamsi-figure-2.jpg",
+        "sha256": "b5def3f887d0ea3d91361e5f8aebe6ec8ae9f85fb7154f71fac148e8e591555c"
+      },
+      "master": {
+        "path": "masters/supine-wall-supported-piriformis-stretch/female/frame-3.png",
+        "sha256": "4affae19311c6b5d2a7ef3dfcc64a077f4f15df0a9550a2235ef6bf048c8f90a"
+      },
+      "derived": {
+        "path": "supine-wall-supported-piriformis-stretch/derived-source-resolution/female/frame-1.svg",
+        "sha256": "29e1fb9bb0f63d844be9c41362a074782d1f8268138eb0d6d0cb9154b4b7da18"
+      },
+      "trace": {
+        "path": "supine-wall-supported-piriformis-stretch/derived-source-resolution/female/frame-1.svg.trace.json",
+        "sha256": "69659735b3232db3420bf2fb49b928575ae6cffdd923fcb63589c3694b2e416e"
+      },
+      "generation": {
+        "path": "supine-wall-supported-piriformis-stretch/packaging-records/female/generation.json",
+        "sha256": "2d9b2f8d2be3f852378f710bfe5d4488c2f6579878ff57995352acf188191266"
+      }
+    },
+    {
+      "exerciseId": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/pht-bridge.png",
+        "sha256": "2a8daa660e6ef5e231fed61e3f7d39ee33aa20d3a10d7990c7014fd5338ceb69"
+      },
+      "master": {
+        "path": "masters/pht-single-leg-calf-supported-isometric-hamstring-bridge/male/frame-1.png",
+        "sha256": "70466a5213de654a06262a36f1cbb07a8644334901f146a745b61898a00fb376"
+      },
+      "derived": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/derived-source-resolution/male/frame-1.svg",
+        "sha256": "568d4e83a5c409d287d0ed02612bef0e57c51b054c6a66e763b8f91272b83070"
+      },
+      "trace": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/derived-source-resolution/male/frame-1.svg.trace.json",
+        "sha256": "0b43305cc3f023973f89a85a9da61f3ecc9cf19fbeddc760302d54fddd0fd828"
+      },
+      "generation": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/packaging-records/male/generation.json",
+        "sha256": "eedf2a5c449fe5b365ad86eba08046e0440869eb3c6e103816ead3070e65944b"
+      }
+    },
+    {
+      "exerciseId": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/pht-bridge.png",
+        "sha256": "2a8daa660e6ef5e231fed61e3f7d39ee33aa20d3a10d7990c7014fd5338ceb69"
+      },
+      "master": {
+        "path": "masters/pht-single-leg-calf-supported-isometric-hamstring-bridge/male/frame-2.png",
+        "sha256": "70466a5213de654a06262a36f1cbb07a8644334901f146a745b61898a00fb376"
+      },
+      "derived": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/derived-source-resolution/male/frame-1.svg",
+        "sha256": "568d4e83a5c409d287d0ed02612bef0e57c51b054c6a66e763b8f91272b83070"
+      },
+      "trace": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/derived-source-resolution/male/frame-1.svg.trace.json",
+        "sha256": "0b43305cc3f023973f89a85a9da61f3ecc9cf19fbeddc760302d54fddd0fd828"
+      },
+      "generation": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/packaging-records/male/generation.json",
+        "sha256": "eedf2a5c449fe5b365ad86eba08046e0440869eb3c6e103816ead3070e65944b"
+      }
+    },
+    {
+      "exerciseId": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/pht-bridge.png",
+        "sha256": "2a8daa660e6ef5e231fed61e3f7d39ee33aa20d3a10d7990c7014fd5338ceb69"
+      },
+      "master": {
+        "path": "masters/pht-single-leg-calf-supported-isometric-hamstring-bridge/male/frame-3.png",
+        "sha256": "70466a5213de654a06262a36f1cbb07a8644334901f146a745b61898a00fb376"
+      },
+      "derived": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/derived-source-resolution/male/frame-1.svg",
+        "sha256": "568d4e83a5c409d287d0ed02612bef0e57c51b054c6a66e763b8f91272b83070"
+      },
+      "trace": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/derived-source-resolution/male/frame-1.svg.trace.json",
+        "sha256": "0b43305cc3f023973f89a85a9da61f3ecc9cf19fbeddc760302d54fddd0fd828"
+      },
+      "generation": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/packaging-records/male/generation.json",
+        "sha256": "eedf2a5c449fe5b365ad86eba08046e0440869eb3c6e103816ead3070e65944b"
+      }
+    },
+    {
+      "exerciseId": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/pht-bridge.png",
+        "sha256": "2a8daa660e6ef5e231fed61e3f7d39ee33aa20d3a10d7990c7014fd5338ceb69"
+      },
+      "master": {
+        "path": "masters/pht-single-leg-calf-supported-isometric-hamstring-bridge/female/frame-1.png",
+        "sha256": "2587721b3863c4a97c1d453cfd3ec600f380810ab960cb31a0721994c1e3957c"
+      },
+      "derived": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/derived-source-resolution/female/frame-1.svg",
+        "sha256": "611595225ad6234775f8e93feccd70991b96cc135a711e9b0da2449ee9790e6a"
+      },
+      "trace": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/derived-source-resolution/female/frame-1.svg.trace.json",
+        "sha256": "e91fc74960a2c76502b2c30502c40aeb3103ecc6bcff740ecee0bafff5c88888"
+      },
+      "generation": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/packaging-records/female/generation.json",
+        "sha256": "81c2018bc06648b840c77891e825c2fcf118725179a1cbdfc5469740745d9bd6"
+      }
+    },
+    {
+      "exerciseId": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/pht-bridge.png",
+        "sha256": "2a8daa660e6ef5e231fed61e3f7d39ee33aa20d3a10d7990c7014fd5338ceb69"
+      },
+      "master": {
+        "path": "masters/pht-single-leg-calf-supported-isometric-hamstring-bridge/female/frame-2.png",
+        "sha256": "2587721b3863c4a97c1d453cfd3ec600f380810ab960cb31a0721994c1e3957c"
+      },
+      "derived": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/derived-source-resolution/female/frame-1.svg",
+        "sha256": "611595225ad6234775f8e93feccd70991b96cc135a711e9b0da2449ee9790e6a"
+      },
+      "trace": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/derived-source-resolution/female/frame-1.svg.trace.json",
+        "sha256": "e91fc74960a2c76502b2c30502c40aeb3103ecc6bcff740ecee0bafff5c88888"
+      },
+      "generation": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/packaging-records/female/generation.json",
+        "sha256": "81c2018bc06648b840c77891e825c2fcf118725179a1cbdfc5469740745d9bd6"
+      }
+    },
+    {
+      "exerciseId": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/pht-bridge.png",
+        "sha256": "2a8daa660e6ef5e231fed61e3f7d39ee33aa20d3a10d7990c7014fd5338ceb69"
+      },
+      "master": {
+        "path": "masters/pht-single-leg-calf-supported-isometric-hamstring-bridge/female/frame-3.png",
+        "sha256": "2587721b3863c4a97c1d453cfd3ec600f380810ab960cb31a0721994c1e3957c"
+      },
+      "derived": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/derived-source-resolution/female/frame-1.svg",
+        "sha256": "611595225ad6234775f8e93feccd70991b96cc135a711e9b0da2449ee9790e6a"
+      },
+      "trace": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/derived-source-resolution/female/frame-1.svg.trace.json",
+        "sha256": "e91fc74960a2c76502b2c30502c40aeb3103ecc6bcff740ecee0bafff5c88888"
+      },
+      "generation": {
+        "path": "pht-single-leg-calf-supported-isometric-hamstring-bridge/packaging-records/female/generation.json",
+        "sha256": "81c2018bc06648b840c77891e825c2fcf118725179a1cbdfc5469740745d9bd6"
+      }
+    },
+    {
+      "exerciseId": "seated-hand-resisted-cervical-rotation-isometric",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/references/sira-guideline-2014-mirror.pdf",
+        "sha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31"
+      },
+      "master": {
+        "path": "masters/seated-hand-resisted-cervical-rotation-isometric/male/frame-1.png",
+        "sha256": "f051a6b69b54b07406f5cdde6c8ccec5dbe7a085adb6dd83abdfc72eaeec10fa"
+      },
+      "derived": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/derived-source-resolution/male/frame-1.svg",
+        "sha256": "6547f14bb735992d62bab24b5d25afacb316080f3831ee7db4314b1999f710c0"
+      },
+      "trace": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/derived-source-resolution/male/frame-1.svg.trace.json",
+        "sha256": "a7f0541df5a30cb87c3f43913cc3b81a1f5d0dd86041e2816179cc6f65b30645"
+      },
+      "generation": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/packaging-records/male/generation.json",
+        "sha256": "b1f42f6a477c030a931b64349b9db853f90b7cf1ab07313c881fda7a321866d2"
+      }
+    },
+    {
+      "exerciseId": "seated-hand-resisted-cervical-rotation-isometric",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/references/sira-guideline-2014-mirror.pdf",
+        "sha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31"
+      },
+      "master": {
+        "path": "masters/seated-hand-resisted-cervical-rotation-isometric/male/frame-2.png",
+        "sha256": "f051a6b69b54b07406f5cdde6c8ccec5dbe7a085adb6dd83abdfc72eaeec10fa"
+      },
+      "derived": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/derived-source-resolution/male/frame-1.svg",
+        "sha256": "6547f14bb735992d62bab24b5d25afacb316080f3831ee7db4314b1999f710c0"
+      },
+      "trace": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/derived-source-resolution/male/frame-1.svg.trace.json",
+        "sha256": "a7f0541df5a30cb87c3f43913cc3b81a1f5d0dd86041e2816179cc6f65b30645"
+      },
+      "generation": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/packaging-records/male/generation.json",
+        "sha256": "b1f42f6a477c030a931b64349b9db853f90b7cf1ab07313c881fda7a321866d2"
+      }
+    },
+    {
+      "exerciseId": "seated-hand-resisted-cervical-rotation-isometric",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/references/sira-guideline-2014-mirror.pdf",
+        "sha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31"
+      },
+      "master": {
+        "path": "masters/seated-hand-resisted-cervical-rotation-isometric/male/frame-3.png",
+        "sha256": "f051a6b69b54b07406f5cdde6c8ccec5dbe7a085adb6dd83abdfc72eaeec10fa"
+      },
+      "derived": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/derived-source-resolution/male/frame-1.svg",
+        "sha256": "6547f14bb735992d62bab24b5d25afacb316080f3831ee7db4314b1999f710c0"
+      },
+      "trace": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/derived-source-resolution/male/frame-1.svg.trace.json",
+        "sha256": "a7f0541df5a30cb87c3f43913cc3b81a1f5d0dd86041e2816179cc6f65b30645"
+      },
+      "generation": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/packaging-records/male/generation.json",
+        "sha256": "b1f42f6a477c030a931b64349b9db853f90b7cf1ab07313c881fda7a321866d2"
+      }
+    },
+    {
+      "exerciseId": "seated-hand-resisted-cervical-rotation-isometric",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/references/sira-guideline-2014-mirror.pdf",
+        "sha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31"
+      },
+      "master": {
+        "path": "masters/seated-hand-resisted-cervical-rotation-isometric/female/frame-1.png",
+        "sha256": "a49f0810bf0ade2c47a5a914b7426b15c1ef31b308362d9cca3da4a41a7bd139"
+      },
+      "derived": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/derived-source-resolution/female/frame-1.svg",
+        "sha256": "261f41fa80e99becd3c80834aba559f9a0c0dc793ef081dd49cb237d8b4d6629"
+      },
+      "trace": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/derived-source-resolution/female/frame-1.svg.trace.json",
+        "sha256": "958245ca8d3c44254cbc312b3fe53931ff9605f88be27c7c400a88b0e53a1f93"
+      },
+      "generation": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/packaging-records/female/generation.json",
+        "sha256": "85c0abf8dcf37ec4f96ddb726b1a57fb5c40d981ee0f33c7ff5dd4c666bb143d"
+      }
+    },
+    {
+      "exerciseId": "seated-hand-resisted-cervical-rotation-isometric",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/references/sira-guideline-2014-mirror.pdf",
+        "sha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31"
+      },
+      "master": {
+        "path": "masters/seated-hand-resisted-cervical-rotation-isometric/female/frame-2.png",
+        "sha256": "a49f0810bf0ade2c47a5a914b7426b15c1ef31b308362d9cca3da4a41a7bd139"
+      },
+      "derived": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/derived-source-resolution/female/frame-1.svg",
+        "sha256": "261f41fa80e99becd3c80834aba559f9a0c0dc793ef081dd49cb237d8b4d6629"
+      },
+      "trace": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/derived-source-resolution/female/frame-1.svg.trace.json",
+        "sha256": "958245ca8d3c44254cbc312b3fe53931ff9605f88be27c7c400a88b0e53a1f93"
+      },
+      "generation": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/packaging-records/female/generation.json",
+        "sha256": "85c0abf8dcf37ec4f96ddb726b1a57fb5c40d981ee0f33c7ff5dd4c666bb143d"
+      }
+    },
+    {
+      "exerciseId": "seated-hand-resisted-cervical-rotation-isometric",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/references/sira-guideline-2014-mirror.pdf",
+        "sha256": "c8c9ed5f59a436016cec240ae4aee8cca2f8fe44dabdc13c80ac344d4a40bc31"
+      },
+      "master": {
+        "path": "masters/seated-hand-resisted-cervical-rotation-isometric/female/frame-3.png",
+        "sha256": "a49f0810bf0ade2c47a5a914b7426b15c1ef31b308362d9cca3da4a41a7bd139"
+      },
+      "derived": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/derived-source-resolution/female/frame-1.svg",
+        "sha256": "261f41fa80e99becd3c80834aba559f9a0c0dc793ef081dd49cb237d8b4d6629"
+      },
+      "trace": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/derived-source-resolution/female/frame-1.svg.trace.json",
+        "sha256": "958245ca8d3c44254cbc312b3fe53931ff9605f88be27c7c400a88b0e53a1f93"
+      },
+      "generation": {
+        "path": "seated-hand-resisted-cervical-rotation-isometric/packaging-records/female/generation.json",
+        "sha256": "85c0abf8dcf37ec4f96ddb726b1a57fb5c40d981ee0f33c7ff5dd4c666bb143d"
+      }
+    },
+    {
+      "exerciseId": "seated-short-foot-arch-hold-no-toe-flexion",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/references/PMC11826869.xml",
+        "sha256": "f83a4b52bf72ba2e46255d9edb60733d8fcb41f81e4dc9063e660257976279c2"
+      },
+      "master": {
+        "path": "masters/seated-short-foot-arch-hold-no-toe-flexion/male/frame-1.png",
+        "sha256": "fef456e4e428dc97734426656313e4a244f9bb8c8fd9d5d350123b59a4caab15"
+      },
+      "derived": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/derived-source-resolution/male/frame-1.svg",
+        "sha256": "d275e375fbebb309770d260c682bc8c81d46ca5704a591cb800e4cbb850afee0"
+      },
+      "trace": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/derived-source-resolution/male/frame-1.svg.trace.json",
+        "sha256": "d656f80668156d7262cf3be247d2c3f81a0c07a0c717d079380b19186e36d3d4"
+      },
+      "generation": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/packaging-records/male/generation.json",
+        "sha256": "3d48a63498eda98d79d8fc715ff73fd691177982c4ad277bb0d3cc6bbfa1c3db"
+      }
+    },
+    {
+      "exerciseId": "seated-short-foot-arch-hold-no-toe-flexion",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/references/PMC11826869.xml",
+        "sha256": "f83a4b52bf72ba2e46255d9edb60733d8fcb41f81e4dc9063e660257976279c2"
+      },
+      "master": {
+        "path": "masters/seated-short-foot-arch-hold-no-toe-flexion/male/frame-2.png",
+        "sha256": "fef456e4e428dc97734426656313e4a244f9bb8c8fd9d5d350123b59a4caab15"
+      },
+      "derived": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/derived-source-resolution/male/frame-1.svg",
+        "sha256": "d275e375fbebb309770d260c682bc8c81d46ca5704a591cb800e4cbb850afee0"
+      },
+      "trace": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/derived-source-resolution/male/frame-1.svg.trace.json",
+        "sha256": "d656f80668156d7262cf3be247d2c3f81a0c07a0c717d079380b19186e36d3d4"
+      },
+      "generation": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/packaging-records/male/generation.json",
+        "sha256": "3d48a63498eda98d79d8fc715ff73fd691177982c4ad277bb0d3cc6bbfa1c3db"
+      }
+    },
+    {
+      "exerciseId": "seated-short-foot-arch-hold-no-toe-flexion",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/references/PMC11826869.xml",
+        "sha256": "f83a4b52bf72ba2e46255d9edb60733d8fcb41f81e4dc9063e660257976279c2"
+      },
+      "master": {
+        "path": "masters/seated-short-foot-arch-hold-no-toe-flexion/male/frame-3.png",
+        "sha256": "fef456e4e428dc97734426656313e4a244f9bb8c8fd9d5d350123b59a4caab15"
+      },
+      "derived": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/derived-source-resolution/male/frame-1.svg",
+        "sha256": "d275e375fbebb309770d260c682bc8c81d46ca5704a591cb800e4cbb850afee0"
+      },
+      "trace": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/derived-source-resolution/male/frame-1.svg.trace.json",
+        "sha256": "d656f80668156d7262cf3be247d2c3f81a0c07a0c717d079380b19186e36d3d4"
+      },
+      "generation": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/packaging-records/male/generation.json",
+        "sha256": "3d48a63498eda98d79d8fc715ff73fd691177982c4ad277bb0d3cc6bbfa1c3db"
+      }
+    },
+    {
+      "exerciseId": "seated-short-foot-arch-hold-no-toe-flexion",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/references/PMC11826869.xml",
+        "sha256": "f83a4b52bf72ba2e46255d9edb60733d8fcb41f81e4dc9063e660257976279c2"
+      },
+      "master": {
+        "path": "masters/seated-short-foot-arch-hold-no-toe-flexion/female/frame-1.png",
+        "sha256": "97dc7c8f22f6826bf4c76646e11235b7ba6e7a2fef803fe9c92f47036698b53e"
+      },
+      "derived": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/derived-source-resolution/female/frame-1.svg",
+        "sha256": "27e7a5266e5f931bfa843d542226fd94fcceec46d09758c645ad9d4d80f3de56"
+      },
+      "trace": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/derived-source-resolution/female/frame-1.svg.trace.json",
+        "sha256": "60e3010a5993af3dc91a430fe48758349add88d044f347e620d661d43078c78c"
+      },
+      "generation": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/packaging-records/female/generation.json",
+        "sha256": "b7e6019ec02ac3d3227ed4dde8f41157dee2bcc467e7f2f065e27f20bf35aec7"
+      }
+    },
+    {
+      "exerciseId": "seated-short-foot-arch-hold-no-toe-flexion",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/references/PMC11826869.xml",
+        "sha256": "f83a4b52bf72ba2e46255d9edb60733d8fcb41f81e4dc9063e660257976279c2"
+      },
+      "master": {
+        "path": "masters/seated-short-foot-arch-hold-no-toe-flexion/female/frame-2.png",
+        "sha256": "97dc7c8f22f6826bf4c76646e11235b7ba6e7a2fef803fe9c92f47036698b53e"
+      },
+      "derived": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/derived-source-resolution/female/frame-1.svg",
+        "sha256": "27e7a5266e5f931bfa843d542226fd94fcceec46d09758c645ad9d4d80f3de56"
+      },
+      "trace": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/derived-source-resolution/female/frame-1.svg.trace.json",
+        "sha256": "60e3010a5993af3dc91a430fe48758349add88d044f347e620d661d43078c78c"
+      },
+      "generation": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/packaging-records/female/generation.json",
+        "sha256": "b7e6019ec02ac3d3227ed4dde8f41157dee2bcc467e7f2f065e27f20bf35aec7"
+      }
+    },
+    {
+      "exerciseId": "seated-short-foot-arch-hold-no-toe-flexion",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/references/PMC11826869.xml",
+        "sha256": "f83a4b52bf72ba2e46255d9edb60733d8fcb41f81e4dc9063e660257976279c2"
+      },
+      "master": {
+        "path": "masters/seated-short-foot-arch-hold-no-toe-flexion/female/frame-3.png",
+        "sha256": "97dc7c8f22f6826bf4c76646e11235b7ba6e7a2fef803fe9c92f47036698b53e"
+      },
+      "derived": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/derived-source-resolution/female/frame-1.svg",
+        "sha256": "27e7a5266e5f931bfa843d542226fd94fcceec46d09758c645ad9d4d80f3de56"
+      },
+      "trace": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/derived-source-resolution/female/frame-1.svg.trace.json",
+        "sha256": "60e3010a5993af3dc91a430fe48758349add88d044f347e620d661d43078c78c"
+      },
+      "generation": {
+        "path": "seated-short-foot-arch-hold-no-toe-flexion/packaging-records/female/generation.json",
+        "sha256": "b7e6019ec02ac3d3227ed4dde8f41157dee2bcc467e7f2f065e27f20bf35aec7"
+      }
+    },
+    {
+      "exerciseId": "leap-offset-bridge",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/PMC4852446.xml",
+        "sha256": "46b683fd1f2346e73dbbdc2a511eabc785cfee2bdceb6855d7458a85178ed473"
+      },
+      "master": {
+        "path": "masters/leap-offset-bridge/male/frame-1.png",
+        "sha256": "23a2b4fb5b97a59ed32b701269a6e41257da675b392b31f06399fc558ab82bfe"
+      },
+      "derived": {
+        "path": "catalog-expansion/leap-offset-bridge/male/derived/frame-1.svg",
+        "sha256": "2ff810624b3c4dddaf206dd539adf49aa5aa52b77f176e756bff23ba65351f1a"
+      },
+      "trace": {
+        "path": "catalog-expansion/leap-offset-bridge/male/derived/frame-1.svg.trace.json",
+        "sha256": "2a20788e0f21eaaf700cca15d3c6b3b6e21cbd1f3acc5b68d020be264b5d188a"
+      },
+      "generation": {
+        "path": "masters/leap-offset-bridge/male/generation.json",
+        "sha256": "7f9d9bccb6e47a6c842f82420dc571210fa6893988a8bd638c9846a5c0556693"
+      }
+    },
+    {
+      "exerciseId": "leap-offset-bridge",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/PMC4852446.xml",
+        "sha256": "46b683fd1f2346e73dbbdc2a511eabc785cfee2bdceb6855d7458a85178ed473"
+      },
+      "master": {
+        "path": "masters/leap-offset-bridge/male/frame-2.png",
+        "sha256": "e648881c35ee5d30fa52e0a302dee096e53c9358b76506a40f47c648a0cc40c2"
+      },
+      "derived": {
+        "path": "catalog-expansion/leap-offset-bridge/male/derived/frame-2.svg",
+        "sha256": "e97ab61fca11f57bd9bd5f657c6815c6b4ac06a687aaf96e10c9b2f6f38b621d"
+      },
+      "trace": {
+        "path": "catalog-expansion/leap-offset-bridge/male/derived/frame-2.svg.trace.json",
+        "sha256": "cc80670dbe85353781125c199c52995344a8116006a2f3755182c9169eeb456d"
+      },
+      "generation": {
+        "path": "masters/leap-offset-bridge/male/generation.json",
+        "sha256": "7f9d9bccb6e47a6c842f82420dc571210fa6893988a8bd638c9846a5c0556693"
+      }
+    },
+    {
+      "exerciseId": "leap-offset-bridge",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/PMC4852446.xml",
+        "sha256": "46b683fd1f2346e73dbbdc2a511eabc785cfee2bdceb6855d7458a85178ed473"
+      },
+      "master": {
+        "path": "masters/leap-offset-bridge/male/frame-3.png",
+        "sha256": "2d53501aeaa82351b857e1c9c8c8f324d6151d2f01cc4fba16dca582c4597e5a"
+      },
+      "derived": {
+        "path": "catalog-expansion/leap-offset-bridge/male/derived/frame-3.svg",
+        "sha256": "847b90a73ad2640978e324e7bf4a7ece193db735383a6b6777c7d922d262dbb4"
+      },
+      "trace": {
+        "path": "catalog-expansion/leap-offset-bridge/male/derived/frame-3.svg.trace.json",
+        "sha256": "f0084f53b562cf0cfbc9059bf9fdd270c6e7d3913086026849bd8ef35e18e871"
+      },
+      "generation": {
+        "path": "masters/leap-offset-bridge/male/generation.json",
+        "sha256": "7f9d9bccb6e47a6c842f82420dc571210fa6893988a8bd638c9846a5c0556693"
+      }
+    },
+    {
+      "exerciseId": "leap-offset-bridge",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/PMC4852446.xml",
+        "sha256": "46b683fd1f2346e73dbbdc2a511eabc785cfee2bdceb6855d7458a85178ed473"
+      },
+      "master": {
+        "path": "masters/leap-offset-bridge/female/frame-1.png",
+        "sha256": "5e654376a34f0b33861e6146a2ee5fe3d1d2d93a30327b9ceb8562ba9194bc9a"
+      },
+      "derived": {
+        "path": "catalog-expansion/leap-offset-bridge/female/derived/frame-1.svg",
+        "sha256": "734615faa6d03cc02caedd7646d8cf6f22231f7a5eb7420fa5d3ef143b444d89"
+      },
+      "trace": {
+        "path": "catalog-expansion/leap-offset-bridge/female/derived/frame-1.svg.trace.json",
+        "sha256": "856d6d7ef06af60c8d779059ea5469baec07c3b686b9130468a6d48e8acac58a"
+      },
+      "generation": {
+        "path": "masters/leap-offset-bridge/female/generation.json",
+        "sha256": "a828763d685a40f58daf1f8381c80322dbd82b567713cb3d83a8aa0aff0b6d93"
+      }
+    },
+    {
+      "exerciseId": "leap-offset-bridge",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/PMC4852446.xml",
+        "sha256": "46b683fd1f2346e73dbbdc2a511eabc785cfee2bdceb6855d7458a85178ed473"
+      },
+      "master": {
+        "path": "masters/leap-offset-bridge/female/frame-2.png",
+        "sha256": "4a8841659a442e8636de4c5330dd82112b818c31a5192f41e9ec8852d3f092f9"
+      },
+      "derived": {
+        "path": "catalog-expansion/leap-offset-bridge/female/derived/frame-2.svg",
+        "sha256": "af46a63f842297ce0e8e144a2523f210990f1c0187fd0c06d28f0aed9980a594"
+      },
+      "trace": {
+        "path": "catalog-expansion/leap-offset-bridge/female/derived/frame-2.svg.trace.json",
+        "sha256": "ce9f7ebe96a94bd86dbf7184fdcda5f62c18cb46192ff8ba111227f6211eabae"
+      },
+      "generation": {
+        "path": "masters/leap-offset-bridge/female/generation.json",
+        "sha256": "a828763d685a40f58daf1f8381c80322dbd82b567713cb3d83a8aa0aff0b6d93"
+      }
+    },
+    {
+      "exerciseId": "leap-offset-bridge",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/PMC4852446.xml",
+        "sha256": "46b683fd1f2346e73dbbdc2a511eabc785cfee2bdceb6855d7458a85178ed473"
+      },
+      "master": {
+        "path": "masters/leap-offset-bridge/female/frame-3.png",
+        "sha256": "8329f9b96707212aa849f6182f45e5eb0a9b6c01e5f44ab01d310dfbda1e95d9"
+      },
+      "derived": {
+        "path": "catalog-expansion/leap-offset-bridge/female/derived/frame-3.svg",
+        "sha256": "eaee9b0a352d428e59f3cd14ce5c6c113add0ba7e79d914d3274e595ef9ba6fe"
+      },
+      "trace": {
+        "path": "catalog-expansion/leap-offset-bridge/female/derived/frame-3.svg.trace.json",
+        "sha256": "bcf1a4b935d04539702fd86080902cc0b006ae60efd2152f7257a981506e95f0"
+      },
+      "generation": {
+        "path": "masters/leap-offset-bridge/female/generation.json",
+        "sha256": "a828763d685a40f58daf1f8381c80322dbd82b567713cb3d83a8aa0aff0b6d93"
+      }
+    },
+    {
+      "exerciseId": "standing-dumbbell-scaption",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/PMC5576542.xml",
+        "sha256": "bd59a2a0918059df6a5873e3e8322f522d730ec9546e988db4104e9e6f0669f6"
+      },
+      "master": {
+        "path": "masters/standing-dumbbell-scaption/male/frame-1.png",
+        "sha256": "90256e8b14503d814b4d6bf91cb5eac555055ac90fa3ad90e76b25892ee2ec89"
+      },
+      "derived": {
+        "path": "catalog-expansion/standing-dumbbell-scaption/male/derived/frame-1.svg",
+        "sha256": "baf5b5f5d7c6edb1187b2768fab7410a109747360cff6eb35939daf5d2512794"
+      },
+      "trace": {
+        "path": "catalog-expansion/standing-dumbbell-scaption/male/derived/frame-1.svg.trace.json",
+        "sha256": "2e156c040ce918f7709285dbbda7c723fbdd17fa1f3aa643feb2250bde2e676a"
+      },
+      "generation": {
+        "path": "masters/standing-dumbbell-scaption/male/generation.json",
+        "sha256": "a5b76ecf1ef4c25b2afa01d41e42b197b69118046c1bbf745d76ee7f57ac573e"
+      }
+    },
+    {
+      "exerciseId": "standing-dumbbell-scaption",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/PMC5576542.xml",
+        "sha256": "bd59a2a0918059df6a5873e3e8322f522d730ec9546e988db4104e9e6f0669f6"
+      },
+      "master": {
+        "path": "masters/standing-dumbbell-scaption/male/frame-2.png",
+        "sha256": "e51368ceab98a90fe0a557d8665899fa7d905d2332dfba8f8b7d9fbe935844d5"
+      },
+      "derived": {
+        "path": "catalog-expansion/standing-dumbbell-scaption/male/derived/frame-2.svg",
+        "sha256": "7e6cee7137d25d02be1a859792218ac2038c22aa7118afcd9e33044ff1e67611"
+      },
+      "trace": {
+        "path": "catalog-expansion/standing-dumbbell-scaption/male/derived/frame-2.svg.trace.json",
+        "sha256": "6b84fb3785b9103891a36020b61f39e877ead712ca7a03bff8b439f73b7f950c"
+      },
+      "generation": {
+        "path": "masters/standing-dumbbell-scaption/male/generation.json",
+        "sha256": "a5b76ecf1ef4c25b2afa01d41e42b197b69118046c1bbf745d76ee7f57ac573e"
+      }
+    },
+    {
+      "exerciseId": "standing-dumbbell-scaption",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/PMC5576542.xml",
+        "sha256": "bd59a2a0918059df6a5873e3e8322f522d730ec9546e988db4104e9e6f0669f6"
+      },
+      "master": {
+        "path": "masters/standing-dumbbell-scaption/male/frame-3.png",
+        "sha256": "69720b79be3accf64dc9dbcb5dac01954a0570b804fb8de88d923e60bc0c51cf"
+      },
+      "derived": {
+        "path": "catalog-expansion/standing-dumbbell-scaption/male/derived/frame-3.svg",
+        "sha256": "c8d4afe94e5ed81509462852df8b62ad536a36f272f0869c8b28403d9e44aa0a"
+      },
+      "trace": {
+        "path": "catalog-expansion/standing-dumbbell-scaption/male/derived/frame-3.svg.trace.json",
+        "sha256": "2450f74f362219a49a04e7ebb25b1dbe5d5f74289d8c437b1a67b7dd8e407b39"
+      },
+      "generation": {
+        "path": "masters/standing-dumbbell-scaption/male/generation.json",
+        "sha256": "a5b76ecf1ef4c25b2afa01d41e42b197b69118046c1bbf745d76ee7f57ac573e"
+      }
+    },
+    {
+      "exerciseId": "standing-dumbbell-scaption",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/PMC5576542.xml",
+        "sha256": "bd59a2a0918059df6a5873e3e8322f522d730ec9546e988db4104e9e6f0669f6"
+      },
+      "master": {
+        "path": "masters/standing-dumbbell-scaption/female/frame-1.png",
+        "sha256": "f680f0ec178764b63d01ef86f8a06d1a7ba9c4c737bef2757ef49b743ac5e9a5"
+      },
+      "derived": {
+        "path": "catalog-expansion/standing-dumbbell-scaption/female/derived/frame-1.svg",
+        "sha256": "7383f6b99fd0f619ba47dd443bb1c60e8664c5cd72ce320f0d14357913c8e93f"
+      },
+      "trace": {
+        "path": "catalog-expansion/standing-dumbbell-scaption/female/derived/frame-1.svg.trace.json",
+        "sha256": "48382fc39606295ec582ec196cfeaaf78be67734dcfb26c4c3c5ccb38446417c"
+      },
+      "generation": {
+        "path": "masters/standing-dumbbell-scaption/female/generation.json",
+        "sha256": "801fa0c7e79c7169189cd18be26e7e7221a47378f0af168ffd2fac41f682538c"
+      }
+    },
+    {
+      "exerciseId": "standing-dumbbell-scaption",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/PMC5576542.xml",
+        "sha256": "bd59a2a0918059df6a5873e3e8322f522d730ec9546e988db4104e9e6f0669f6"
+      },
+      "master": {
+        "path": "masters/standing-dumbbell-scaption/female/frame-2.png",
+        "sha256": "819977b6b8699cd231a5b7014aa71158e9171c2af7d8d80d49bc9d3c0a13d892"
+      },
+      "derived": {
+        "path": "catalog-expansion/standing-dumbbell-scaption/female/derived/frame-2.svg",
+        "sha256": "ffdc943e55db7439c0efdbd28d0c027e594db8920f59cd452e32ea1de6d6e881"
+      },
+      "trace": {
+        "path": "catalog-expansion/standing-dumbbell-scaption/female/derived/frame-2.svg.trace.json",
+        "sha256": "4d63278e0f46029b7d4c23b3fe4f08040e83e47ffd1be0bb0b56cbe002c15776"
+      },
+      "generation": {
+        "path": "masters/standing-dumbbell-scaption/female/generation.json",
+        "sha256": "801fa0c7e79c7169189cd18be26e7e7221a47378f0af168ffd2fac41f682538c"
+      }
+    },
+    {
+      "exerciseId": "standing-dumbbell-scaption",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/PMC5576542.xml",
+        "sha256": "bd59a2a0918059df6a5873e3e8322f522d730ec9546e988db4104e9e6f0669f6"
+      },
+      "master": {
+        "path": "masters/standing-dumbbell-scaption/female/frame-3.png",
+        "sha256": "850ce7a5fd58f60e41e90a44dcfc73c48d6a086d00b692f7437a7119093a398d"
+      },
+      "derived": {
+        "path": "catalog-expansion/standing-dumbbell-scaption/female/derived/frame-3.svg",
+        "sha256": "ca6d885c75f2b69775f6855d212eeafc72d8b0ca347e6c076238cd73d63e84c3"
+      },
+      "trace": {
+        "path": "catalog-expansion/standing-dumbbell-scaption/female/derived/frame-3.svg.trace.json",
+        "sha256": "e976c58ffa14f84db0baef6c584b40a69d4369697097141d6091969dbaa513de"
+      },
+      "generation": {
+        "path": "masters/standing-dumbbell-scaption/female/generation.json",
+        "sha256": "801fa0c7e79c7169189cd18be26e7e7221a47378f0af168ffd2fac41f682538c"
+      }
+    },
+    {
+      "exerciseId": "insertional-chair-seated-neutral-heel-raise",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-chair-seated-neutral-heel-raise/male/frame-1.png",
+        "sha256": "810ef138264ce17efc50219009cfd418b54ca6e971aaed399d7b4f32b382045b"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-chair-seated-neutral-heel-raise/male/derived/frame-1.svg",
+        "sha256": "f0288ab1106a0725b003a63b8a94994beff660dc07ed36237bd0b66c39d551d1"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-chair-seated-neutral-heel-raise/male/derived/frame-1.svg.trace.json",
+        "sha256": "fb13137793c60a78626e335a2c480a66101762d268586169935a6726c42972de"
+      },
+      "generation": {
+        "path": "masters/insertional-chair-seated-neutral-heel-raise/male/generation.json",
+        "sha256": "d56ec8dfd9f076a0cd3883b6bfb8480d04982ec0e3d0a873a93dc0bfb32a0754"
+      }
+    },
+    {
+      "exerciseId": "insertional-chair-seated-neutral-heel-raise",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-chair-seated-neutral-heel-raise/male/frame-2.png",
+        "sha256": "2a937038f1937cf94a6161ebd94d6e0f648626795195f9dceec5e5b66d7ae100"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-chair-seated-neutral-heel-raise/male/derived/frame-2.svg",
+        "sha256": "9ca424f845c52dd46ff7a8632dc873923c997ebde04ddef5361800a15559b3ff"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-chair-seated-neutral-heel-raise/male/derived/frame-2.svg.trace.json",
+        "sha256": "52b7fb2cf7ffc7d5282daa7963436580773e592b318462ea12058d2dc6a27d36"
+      },
+      "generation": {
+        "path": "masters/insertional-chair-seated-neutral-heel-raise/male/generation.json",
+        "sha256": "d56ec8dfd9f076a0cd3883b6bfb8480d04982ec0e3d0a873a93dc0bfb32a0754"
+      }
+    },
+    {
+      "exerciseId": "insertional-chair-seated-neutral-heel-raise",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-chair-seated-neutral-heel-raise/male/frame-3.png",
+        "sha256": "49c3804db055da2b595dfe8f3d22bd0a9742fa90081daecd3ecb5ceabe772540"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-chair-seated-neutral-heel-raise/male/derived/frame-3.svg",
+        "sha256": "412832bc930f86a22cd53563075d98214b519fe1440f1c80cda8717c1414bcdb"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-chair-seated-neutral-heel-raise/male/derived/frame-3.svg.trace.json",
+        "sha256": "129d67c65041c68221bfc2e5960edac59130a33334185d0110eb0ccce9d1ca2f"
+      },
+      "generation": {
+        "path": "masters/insertional-chair-seated-neutral-heel-raise/male/generation.json",
+        "sha256": "d56ec8dfd9f076a0cd3883b6bfb8480d04982ec0e3d0a873a93dc0bfb32a0754"
+      }
+    },
+    {
+      "exerciseId": "insertional-chair-seated-neutral-heel-raise",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-chair-seated-neutral-heel-raise/female/frame-1.png",
+        "sha256": "4ddb1be9a02defc98b55bf9bc7530aff82c89add5a1fa49be81c4d2aae91f12d"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-chair-seated-neutral-heel-raise/female/derived/frame-1.svg",
+        "sha256": "01b9fd20f46dfbc8b64154d8c05b0195e8c0b7b363ef58bd8dca0d1e26f0417b"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-chair-seated-neutral-heel-raise/female/derived/frame-1.svg.trace.json",
+        "sha256": "27487abedd1561eb226cc346463abbcdbbfea58ba4c23e85d664939ee025e0b8"
+      },
+      "generation": {
+        "path": "masters/insertional-chair-seated-neutral-heel-raise/female/generation.json",
+        "sha256": "08b93a6a8a9a6e23de3942085a247345f995dff7f0f2f47f28b30b1f48d895ec"
+      }
+    },
+    {
+      "exerciseId": "insertional-chair-seated-neutral-heel-raise",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-chair-seated-neutral-heel-raise/female/frame-2.png",
+        "sha256": "e93792a5bcae73b596d72635da49a3f0f3ab2e8a83599c48632b05731fd35269"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-chair-seated-neutral-heel-raise/female/derived/frame-2.svg",
+        "sha256": "849b34ec606cfe54f3167cd0946cc32964700b09f4d2058652307d7e25f41248"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-chair-seated-neutral-heel-raise/female/derived/frame-2.svg.trace.json",
+        "sha256": "a86de16379c2b3277e8fa788f38a448b5f0f98266eac1dbbbcc38eec83c35575"
+      },
+      "generation": {
+        "path": "masters/insertional-chair-seated-neutral-heel-raise/female/generation.json",
+        "sha256": "08b93a6a8a9a6e23de3942085a247345f995dff7f0f2f47f28b30b1f48d895ec"
+      }
+    },
+    {
+      "exerciseId": "insertional-chair-seated-neutral-heel-raise",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-chair-seated-neutral-heel-raise/female/frame-3.png",
+        "sha256": "09fb0705386e5191a63f0c20c28fa05946371ae5719c8bfb99ce1850b419c50c"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-chair-seated-neutral-heel-raise/female/derived/frame-3.svg",
+        "sha256": "2b88f4486b8535a9917c8dd434ac6356315b847be0aeff284c2c206023bbbdc0"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-chair-seated-neutral-heel-raise/female/derived/frame-3.svg.trace.json",
+        "sha256": "5473616f1dbccf97ec94e2ffd6a3fbee6ff19c0e5c21478fab4ff372ba3ea2b4"
+      },
+      "generation": {
+        "path": "masters/insertional-chair-seated-neutral-heel-raise/female/generation.json",
+        "sha256": "08b93a6a8a9a6e23de3942085a247345f995dff7f0f2f47f28b30b1f48d895ec"
+      }
+    },
+    {
+      "exerciseId": "insertional-neutral-band-plantarflexion-straight-knee",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-neutral-band-plantarflexion-straight-knee/male/frame-1.png",
+        "sha256": "ea2160359517232ff37cd660c3bc3d6f8051d050bdd3b97ead2c6a7acfed2a87"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-straight-knee/male/derived/frame-1.svg",
+        "sha256": "a9a91f9755749faa0a8612df84825e6e244564d4bd2eb94939656d7eb35c590c"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-straight-knee/male/derived/frame-1.svg.trace.json",
+        "sha256": "6fa199e98768ec437345901ff6042ddfb8da7a28e14efecc6e3b7b78881978d6"
+      },
+      "generation": {
+        "path": "masters/insertional-neutral-band-plantarflexion-straight-knee/male/generation.json",
+        "sha256": "e34ce071a4762ad9a5172713e50bc7d9dfd59a65b176163ddfaafd1baa05e8c4"
+      }
+    },
+    {
+      "exerciseId": "insertional-neutral-band-plantarflexion-straight-knee",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-neutral-band-plantarflexion-straight-knee/male/frame-2.png",
+        "sha256": "d0b9a206c9cbe286aa54e38ae4f93a75937f14533c9bf2198eaf15e23994d3ea"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-straight-knee/male/derived/frame-2.svg",
+        "sha256": "fa724c8298ca9949083a850fbca09b53f48184aba5156b6cde5ec1f8d5f07c95"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-straight-knee/male/derived/frame-2.svg.trace.json",
+        "sha256": "02b472f162fe518515a44dbf2fbc4b55b8b0d4c0ce7906c56fee879e45039dc2"
+      },
+      "generation": {
+        "path": "masters/insertional-neutral-band-plantarflexion-straight-knee/male/generation.json",
+        "sha256": "e34ce071a4762ad9a5172713e50bc7d9dfd59a65b176163ddfaafd1baa05e8c4"
+      }
+    },
+    {
+      "exerciseId": "insertional-neutral-band-plantarflexion-straight-knee",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-neutral-band-plantarflexion-straight-knee/male/frame-3.png",
+        "sha256": "f08e7374f8e6b2c52740afb864633acc91f85898d2cceae109a076fddb5f72c1"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-straight-knee/male/derived/frame-3.svg",
+        "sha256": "89c4698f0127b277924848b0dbf589141bf673d8a559deec5c8c78ea06391166"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-straight-knee/male/derived/frame-3.svg.trace.json",
+        "sha256": "201afb44f59c36ecef0a131325054b6ad07c56c6e8e637da6b780c3d4cef8186"
+      },
+      "generation": {
+        "path": "masters/insertional-neutral-band-plantarflexion-straight-knee/male/generation.json",
+        "sha256": "e34ce071a4762ad9a5172713e50bc7d9dfd59a65b176163ddfaafd1baa05e8c4"
+      }
+    },
+    {
+      "exerciseId": "insertional-neutral-band-plantarflexion-straight-knee",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-neutral-band-plantarflexion-straight-knee/female/frame-1.png",
+        "sha256": "e8dd0b1f10f16498114c0dcac95025e97b42b963a319dcbc57c31606012f98ae"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-straight-knee/female/derived/frame-1.svg",
+        "sha256": "1724f55b8f93f93817328b95c95da6fa34608aa43ee94b04a79d33ef3a946ace"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-straight-knee/female/derived/frame-1.svg.trace.json",
+        "sha256": "9c6ef052f2560e77b396a2db3086abf9c5a38a5b0443927f5c0aa298dea6129d"
+      },
+      "generation": {
+        "path": "masters/insertional-neutral-band-plantarflexion-straight-knee/female/generation.json",
+        "sha256": "4fde7e1dae76c311fac5c047610b82f86e35314673c4a9ee3f0620379ecfea9f"
+      }
+    },
+    {
+      "exerciseId": "insertional-neutral-band-plantarflexion-straight-knee",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-neutral-band-plantarflexion-straight-knee/female/frame-2.png",
+        "sha256": "e0bafa9a73fb364c566e9ad264e50b28bdb4451ed192d053864d87a9f427264b"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-straight-knee/female/derived/frame-2.svg",
+        "sha256": "dee131604bd4022df823e471955f482947d0a4c1831ac0c98c87a0158f1eb5c3"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-straight-knee/female/derived/frame-2.svg.trace.json",
+        "sha256": "6758293ff77b6f66708bba387c183469fe605f857fb83b4cd619b0b2e6c1ec6e"
+      },
+      "generation": {
+        "path": "masters/insertional-neutral-band-plantarflexion-straight-knee/female/generation.json",
+        "sha256": "4fde7e1dae76c311fac5c047610b82f86e35314673c4a9ee3f0620379ecfea9f"
+      }
+    },
+    {
+      "exerciseId": "insertional-neutral-band-plantarflexion-straight-knee",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-neutral-band-plantarflexion-straight-knee/female/frame-3.png",
+        "sha256": "c1031ecdb7cc5bbde8418e3546f195be8a342c969a5705509c92c7671313548f"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-straight-knee/female/derived/frame-3.svg",
+        "sha256": "6981da0a5affcaad6096009f0abb73f4320bf6b4dc15f30413dbff9e35303750"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-straight-knee/female/derived/frame-3.svg.trace.json",
+        "sha256": "f58e5ae6e0721d29039ed4e892d3a6fc9d51f91809526c7633a903ec747f27b4"
+      },
+      "generation": {
+        "path": "masters/insertional-neutral-band-plantarflexion-straight-knee/female/generation.json",
+        "sha256": "4fde7e1dae76c311fac5c047610b82f86e35314673c4a9ee3f0620379ecfea9f"
+      }
+    },
+    {
+      "exerciseId": "hsd-prone-horizontal-abduction-er",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/heavy-06.png",
+        "sha256": "696cce5d81dc24d8feefac7831009d0ba89a8d028fbe488758233218204a8890"
+      },
+      "master": {
+        "path": "masters/hsd-prone-horizontal-abduction-er/male/frame-1.png",
+        "sha256": "a2061524a8119323c99eeb806b6bf008d969f81ac4cb3a3615dc0aca78e8271b"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-prone-horizontal-abduction-er/male/derived/frame-1.svg",
+        "sha256": "d84c584b1457b424fa7632d7f7786931416cd2c6563473d22ed266e2654a4c69"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-prone-horizontal-abduction-er/male/derived/frame-1.svg.trace.json",
+        "sha256": "93db462a014c0e704833dbb2792648794677d351770da1538824a91984a35121"
+      },
+      "generation": {
+        "path": "masters/hsd-prone-horizontal-abduction-er/male/generation.json",
+        "sha256": "1de571a2886943f1faa38b206c94298961da8ed2882c2ff3254436b5a71a7d3d"
+      }
+    },
+    {
+      "exerciseId": "hsd-prone-horizontal-abduction-er",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/heavy-06.png",
+        "sha256": "696cce5d81dc24d8feefac7831009d0ba89a8d028fbe488758233218204a8890"
+      },
+      "master": {
+        "path": "masters/hsd-prone-horizontal-abduction-er/male/frame-2.png",
+        "sha256": "104d2f92fd7295c63f1ac51f3da924630b9f0d1d0cd5bc70aa3fdedfa681ca81"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-prone-horizontal-abduction-er/male/derived/frame-2.svg",
+        "sha256": "bf36f29347907abb66fdf287deb5e45c990b0a4ecac50795e162c1c4aabab3c7"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-prone-horizontal-abduction-er/male/derived/frame-2.svg.trace.json",
+        "sha256": "36c96fa3292eac99d8a21380bfdd6b72a7c5c6de03c41f01ff80fd23e99dad1a"
+      },
+      "generation": {
+        "path": "masters/hsd-prone-horizontal-abduction-er/male/generation.json",
+        "sha256": "1de571a2886943f1faa38b206c94298961da8ed2882c2ff3254436b5a71a7d3d"
+      }
+    },
+    {
+      "exerciseId": "hsd-prone-horizontal-abduction-er",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/heavy-06.png",
+        "sha256": "696cce5d81dc24d8feefac7831009d0ba89a8d028fbe488758233218204a8890"
+      },
+      "master": {
+        "path": "masters/hsd-prone-horizontal-abduction-er/male/frame-3.png",
+        "sha256": "79030c2b758fabf9c1796efd62edb603271bec0f34335e43de23974a43ecb481"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-prone-horizontal-abduction-er/male/derived/frame-3.svg",
+        "sha256": "721ad864ce45e9072deb28ad25d6a6c72f87e4a8a4318ebe1edffef194c34e1b"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-prone-horizontal-abduction-er/male/derived/frame-3.svg.trace.json",
+        "sha256": "875973ad352ccc7576c6dd09791bd2d4fc6ef471f7507fc552922eda0e5b21c3"
+      },
+      "generation": {
+        "path": "masters/hsd-prone-horizontal-abduction-er/male/generation.json",
+        "sha256": "1de571a2886943f1faa38b206c94298961da8ed2882c2ff3254436b5a71a7d3d"
+      }
+    },
+    {
+      "exerciseId": "hsd-prone-horizontal-abduction-er",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/heavy-06.png",
+        "sha256": "696cce5d81dc24d8feefac7831009d0ba89a8d028fbe488758233218204a8890"
+      },
+      "master": {
+        "path": "masters/hsd-prone-horizontal-abduction-er/female/frame-1.png",
+        "sha256": "36d6b17af3006479bebbe7bace6c1f9f4522bc459e7edbc8b0b3b785a097b8bf"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-prone-horizontal-abduction-er/female/derived/frame-1.svg",
+        "sha256": "98c528463887b7197c66982adacec01f4b720f7ce29368c361cd3cdea7380c9e"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-prone-horizontal-abduction-er/female/derived/frame-1.svg.trace.json",
+        "sha256": "1b78d2db27fed700455b9b1dffe5d411c712bb27244e910800144a1235903f32"
+      },
+      "generation": {
+        "path": "masters/hsd-prone-horizontal-abduction-er/female/generation.json",
+        "sha256": "65fbb41fbae1c04c0aaf0552433a1d153d5e983302a1b421125ce3296634e119"
+      }
+    },
+    {
+      "exerciseId": "hsd-prone-horizontal-abduction-er",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/heavy-06.png",
+        "sha256": "696cce5d81dc24d8feefac7831009d0ba89a8d028fbe488758233218204a8890"
+      },
+      "master": {
+        "path": "masters/hsd-prone-horizontal-abduction-er/female/frame-2.png",
+        "sha256": "caafec832213b4e10ea0a7690ed0dd4687d0f044ac62e5183b4715d3476e29f6"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-prone-horizontal-abduction-er/female/derived/frame-2.svg",
+        "sha256": "b26a1b0c234f813da570693ecdc62ce35f60c917e96ac4eec5af263085a1f457"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-prone-horizontal-abduction-er/female/derived/frame-2.svg.trace.json",
+        "sha256": "5cab9eb2ab8447f3f1932e5590edb2bf087d2ec0972af6b602d0e35e41c1d2da"
+      },
+      "generation": {
+        "path": "masters/hsd-prone-horizontal-abduction-er/female/generation.json",
+        "sha256": "65fbb41fbae1c04c0aaf0552433a1d153d5e983302a1b421125ce3296634e119"
+      }
+    },
+    {
+      "exerciseId": "hsd-prone-horizontal-abduction-er",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/heavy-06.png",
+        "sha256": "696cce5d81dc24d8feefac7831009d0ba89a8d028fbe488758233218204a8890"
+      },
+      "master": {
+        "path": "masters/hsd-prone-horizontal-abduction-er/female/frame-3.png",
+        "sha256": "95d488ca686fc6405da3e6d76c8fb250c362fb5646e3d1cedb02ed957d698b4e"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-prone-horizontal-abduction-er/female/derived/frame-3.svg",
+        "sha256": "033ad82dce73020e4982b3adb6e169a9e589691b07c76839110ab329243b307a"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-prone-horizontal-abduction-er/female/derived/frame-3.svg.trace.json",
+        "sha256": "b7e39cc1e506afe4d58ab4ae70f945c088ca53321a02c743ee767804a5f003fe"
+      },
+      "generation": {
+        "path": "masters/hsd-prone-horizontal-abduction-er/female/generation.json",
+        "sha256": "65fbb41fbae1c04c0aaf0552433a1d153d5e983302a1b421125ce3296634e119"
+      }
+    },
+    {
+      "exerciseId": "hsd-seated-dumbbell-scaption",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/heavy-07.png",
+        "sha256": "f08f38ac3a9d829a9bb9aa29680e28cdf39fcdfa12cbd4327e14d0c6c4c6ccdf"
+      },
+      "master": {
+        "path": "masters/hsd-seated-dumbbell-scaption/male/frame-1.png",
+        "sha256": "b22dcf4b1eb2197cc597d367071bcb8bb0a87cd892b0ffcc85ca6c11fc9bd08d"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-seated-dumbbell-scaption/male/derived/frame-1.svg",
+        "sha256": "bf96c7dca3878140c9bb8739e5ee8d7ab56ed656aa56c54ed13e735f3ab44b6d"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-seated-dumbbell-scaption/male/derived/frame-1.svg.trace.json",
+        "sha256": "41a9c4616123e9416d76342a6ef0e684be422dc3ca59429aa1e52ee2e70ce08b"
+      },
+      "generation": {
+        "path": "masters/hsd-seated-dumbbell-scaption/male/generation.json",
+        "sha256": "474a6c76c20ed1ea421f6cc8ed38f6d200d686391135015ccff0c2ec19cfbdda"
+      }
+    },
+    {
+      "exerciseId": "hsd-seated-dumbbell-scaption",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/heavy-07.png",
+        "sha256": "f08f38ac3a9d829a9bb9aa29680e28cdf39fcdfa12cbd4327e14d0c6c4c6ccdf"
+      },
+      "master": {
+        "path": "masters/hsd-seated-dumbbell-scaption/male/frame-2.png",
+        "sha256": "ad99b1f0d48c0eb1358c5eb7efb0d43a9cbc3d8625629f2c9ce11fb0a475e453"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-seated-dumbbell-scaption/male/derived/frame-2.svg",
+        "sha256": "c2d1107c56bd5005445e6164d34872343bc1b62cc4dba003d00f3c2225c4c062"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-seated-dumbbell-scaption/male/derived/frame-2.svg.trace.json",
+        "sha256": "16ced9a5f011923654d5ed7dd9dda3f786acbeb4a579e29fa5653f7e5fdaa1c2"
+      },
+      "generation": {
+        "path": "masters/hsd-seated-dumbbell-scaption/male/generation.json",
+        "sha256": "474a6c76c20ed1ea421f6cc8ed38f6d200d686391135015ccff0c2ec19cfbdda"
+      }
+    },
+    {
+      "exerciseId": "hsd-seated-dumbbell-scaption",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/heavy-07.png",
+        "sha256": "f08f38ac3a9d829a9bb9aa29680e28cdf39fcdfa12cbd4327e14d0c6c4c6ccdf"
+      },
+      "master": {
+        "path": "masters/hsd-seated-dumbbell-scaption/male/frame-3.png",
+        "sha256": "2e6b6ba6c3683b47e9ba08470a2a86716bc078d1e80038d66a5da954fb1a4a0e"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-seated-dumbbell-scaption/male/derived/frame-3.svg",
+        "sha256": "32e73d55e14ab1e0425736292a080f3a32887d4977917e2e2062a3d0e66d2f30"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-seated-dumbbell-scaption/male/derived/frame-3.svg.trace.json",
+        "sha256": "1f1195cd138c1b5c54bbbe63343019e3648f8b899a72ea677863e99f19f5781a"
+      },
+      "generation": {
+        "path": "masters/hsd-seated-dumbbell-scaption/male/generation.json",
+        "sha256": "474a6c76c20ed1ea421f6cc8ed38f6d200d686391135015ccff0c2ec19cfbdda"
+      }
+    },
+    {
+      "exerciseId": "hsd-seated-dumbbell-scaption",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/heavy-07.png",
+        "sha256": "f08f38ac3a9d829a9bb9aa29680e28cdf39fcdfa12cbd4327e14d0c6c4c6ccdf"
+      },
+      "master": {
+        "path": "masters/hsd-seated-dumbbell-scaption/female/frame-1.png",
+        "sha256": "c7662ac434e09d506550742253df815011bb9f14327f8c6a6076df5dba0cf628"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-seated-dumbbell-scaption/female/derived/frame-1.svg",
+        "sha256": "d483d7ea4b4c887a974d87bb41267d4a4693d89cb51d53da54ed456df9357cc3"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-seated-dumbbell-scaption/female/derived/frame-1.svg.trace.json",
+        "sha256": "d63ddec6f914aa614f4400a4854d3423f1c37db47bb61cb4588a1045d15ef89b"
+      },
+      "generation": {
+        "path": "masters/hsd-seated-dumbbell-scaption/female/generation.json",
+        "sha256": "0e4f301ed9e2e89fb91825be34669698a52fd53d8f95b203bad9501c615ff25a"
+      }
+    },
+    {
+      "exerciseId": "hsd-seated-dumbbell-scaption",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/heavy-07.png",
+        "sha256": "f08f38ac3a9d829a9bb9aa29680e28cdf39fcdfa12cbd4327e14d0c6c4c6ccdf"
+      },
+      "master": {
+        "path": "masters/hsd-seated-dumbbell-scaption/female/frame-2.png",
+        "sha256": "1b43aa8660a8e936999189f486eb2287c9abd2e1e4acba2b8ec97b60f1b8e950"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-seated-dumbbell-scaption/female/derived/frame-2.svg",
+        "sha256": "e8d91e14768af4ebd7cd7d839a5f9fbfa614deacefa6093423755dc2eea48239"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-seated-dumbbell-scaption/female/derived/frame-2.svg.trace.json",
+        "sha256": "99ed3278b7ba38384616efbc7d08216d17f155e0fa743c2afeaf5355511f3d58"
+      },
+      "generation": {
+        "path": "masters/hsd-seated-dumbbell-scaption/female/generation.json",
+        "sha256": "0e4f301ed9e2e89fb91825be34669698a52fd53d8f95b203bad9501c615ff25a"
+      }
+    },
+    {
+      "exerciseId": "hsd-seated-dumbbell-scaption",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/heavy-07.png",
+        "sha256": "f08f38ac3a9d829a9bb9aa29680e28cdf39fcdfa12cbd4327e14d0c6c4c6ccdf"
+      },
+      "master": {
+        "path": "masters/hsd-seated-dumbbell-scaption/female/frame-3.png",
+        "sha256": "e06b97dd224d8620e657a1a77bfb687dcf37966f3f69159002699e76307423f4"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-seated-dumbbell-scaption/female/derived/frame-3.svg",
+        "sha256": "5bea4d3f72d533c466d7d5c9131ce5b2c836e606023fec5d504320b5585247f7"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-seated-dumbbell-scaption/female/derived/frame-3.svg.trace.json",
+        "sha256": "477832b44f330a6fb8dd4deedbd53077b150c27a3dba83a0e5f5ee4ddf80897e"
+      },
+      "generation": {
+        "path": "masters/hsd-seated-dumbbell-scaption/female/generation.json",
+        "sha256": "0e4f301ed9e2e89fb91825be34669698a52fd53d8f95b203bad9501c615ff25a"
+      }
+    },
+    {
+      "exerciseId": "hsd-prone-er-shoulder-elbow-90",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/heavy-08.png",
+        "sha256": "be5b35acfa1bffbf278baeea6139533cffc529e53c8db1fd9efdedc6019eb3c8"
+      },
+      "master": {
+        "path": "masters/hsd-prone-er-shoulder-elbow-90/male/frame-1.png",
+        "sha256": "86991481d4213ac3708ae6d2500e4b0ccdd19c5ecad09e2f91734d684942b9cb"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-prone-er-shoulder-elbow-90/male/derived/frame-1.svg",
+        "sha256": "ea9b78b5307ff0c4008dca417931bb68fce57250bb6e9079769973a7dfa2be4b"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-prone-er-shoulder-elbow-90/male/derived/frame-1.svg.trace.json",
+        "sha256": "52699d7e6b621573b84cc7f4f33c6dee9f97a54ae12758452d8efaeb8ddd70a4"
+      },
+      "generation": {
+        "path": "masters/hsd-prone-er-shoulder-elbow-90/male/generation.json",
+        "sha256": "9009dcaf1d0957f1c268fd8d3a9ea46b86b43a26ae947c80a217bfde2aff064d"
+      }
+    },
+    {
+      "exerciseId": "hsd-prone-er-shoulder-elbow-90",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/heavy-08.png",
+        "sha256": "be5b35acfa1bffbf278baeea6139533cffc529e53c8db1fd9efdedc6019eb3c8"
+      },
+      "master": {
+        "path": "masters/hsd-prone-er-shoulder-elbow-90/male/frame-2.png",
+        "sha256": "57d1788f6ef4c4930402d707c1b8b6e02524732ea4740668db875623e62b2f67"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-prone-er-shoulder-elbow-90/male/derived/frame-2.svg",
+        "sha256": "c6686f43f0ac9c47ddde9bc4661a59ad14643221736d1d8339f369ba1312b5f5"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-prone-er-shoulder-elbow-90/male/derived/frame-2.svg.trace.json",
+        "sha256": "01098303d44de99916c0f7728375e265409eee190d51b4cc4e9758024dc7b915"
+      },
+      "generation": {
+        "path": "masters/hsd-prone-er-shoulder-elbow-90/male/generation.json",
+        "sha256": "9009dcaf1d0957f1c268fd8d3a9ea46b86b43a26ae947c80a217bfde2aff064d"
+      }
+    },
+    {
+      "exerciseId": "hsd-prone-er-shoulder-elbow-90",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/heavy-08.png",
+        "sha256": "be5b35acfa1bffbf278baeea6139533cffc529e53c8db1fd9efdedc6019eb3c8"
+      },
+      "master": {
+        "path": "masters/hsd-prone-er-shoulder-elbow-90/male/frame-3.png",
+        "sha256": "0b7c7e7ef905a7a7d88230b60b94ed592696363f18ee31a4d9c68d1821889fa6"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-prone-er-shoulder-elbow-90/male/derived/frame-3.svg",
+        "sha256": "dd329bee9169fc60cbc17ac69eb0df54962b4becbae09916e68216f6a60710d7"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-prone-er-shoulder-elbow-90/male/derived/frame-3.svg.trace.json",
+        "sha256": "106d614fabeb0242d4b5b0bb9fe8600a882ff779ecd16b847c894031bcaa8fb8"
+      },
+      "generation": {
+        "path": "masters/hsd-prone-er-shoulder-elbow-90/male/generation.json",
+        "sha256": "9009dcaf1d0957f1c268fd8d3a9ea46b86b43a26ae947c80a217bfde2aff064d"
+      }
+    },
+    {
+      "exerciseId": "hsd-prone-er-shoulder-elbow-90",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/heavy-08.png",
+        "sha256": "be5b35acfa1bffbf278baeea6139533cffc529e53c8db1fd9efdedc6019eb3c8"
+      },
+      "master": {
+        "path": "masters/hsd-prone-er-shoulder-elbow-90/female/frame-1.png",
+        "sha256": "5f45a5c5bd0b8accf70849e0256aa99557f9afb3935577d535a47ec990b0a22a"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-prone-er-shoulder-elbow-90/female/derived/frame-1.svg",
+        "sha256": "87664cb9fa085f833411273c211320d9efaf15a1dbeb125ddc9a54493e2f27c7"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-prone-er-shoulder-elbow-90/female/derived/frame-1.svg.trace.json",
+        "sha256": "92f78aec0cef64646efd94317b00b2097bcf2d23882ea7568cba5c81fce55878"
+      },
+      "generation": {
+        "path": "masters/hsd-prone-er-shoulder-elbow-90/female/generation.json",
+        "sha256": "21aca7ed2be3326f18cd9226dcf931f176c049d8e2441cd508840a820c34cfc7"
+      }
+    },
+    {
+      "exerciseId": "hsd-prone-er-shoulder-elbow-90",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/heavy-08.png",
+        "sha256": "be5b35acfa1bffbf278baeea6139533cffc529e53c8db1fd9efdedc6019eb3c8"
+      },
+      "master": {
+        "path": "masters/hsd-prone-er-shoulder-elbow-90/female/frame-2.png",
+        "sha256": "cf21c516daf4757f6485df4b67425ee2fd6f2a0a9ee86d5e0d1c2f4a24113202"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-prone-er-shoulder-elbow-90/female/derived/frame-2.svg",
+        "sha256": "daeadb51df74a27377487c6ba1de02165370768a0dd86a8a4ea2cbc26aee9493"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-prone-er-shoulder-elbow-90/female/derived/frame-2.svg.trace.json",
+        "sha256": "94ddbb47abd783fafa6b2a2ce51ae87c57ba425bba00c056d184069882183de2"
+      },
+      "generation": {
+        "path": "masters/hsd-prone-er-shoulder-elbow-90/female/generation.json",
+        "sha256": "21aca7ed2be3326f18cd9226dcf931f176c049d8e2441cd508840a820c34cfc7"
+      }
+    },
+    {
+      "exerciseId": "hsd-prone-er-shoulder-elbow-90",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/heavy-08.png",
+        "sha256": "be5b35acfa1bffbf278baeea6139533cffc529e53c8db1fd9efdedc6019eb3c8"
+      },
+      "master": {
+        "path": "masters/hsd-prone-er-shoulder-elbow-90/female/frame-3.png",
+        "sha256": "839d7f6ee8c7275eb3a89af199eca017675ebf8c574688d699a9e90c413864ef"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-prone-er-shoulder-elbow-90/female/derived/frame-3.svg",
+        "sha256": "a700fbc7130f696461a1812fd8038c0b6506aa590dc38643b414875bf7a2c079"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-prone-er-shoulder-elbow-90/female/derived/frame-3.svg.trace.json",
+        "sha256": "2fb24da550eb16610fce697eab11ce6b7190b2e9027ddc147f0bdfe2859b5b05"
+      },
+      "generation": {
+        "path": "masters/hsd-prone-er-shoulder-elbow-90/female/generation.json",
+        "sha256": "21aca7ed2be3326f18cd9226dcf931f176c049d8e2441cd508840a820c34cfc7"
+      }
+    },
+    {
+      "exerciseId": "standing-straight-arm-band-shoulder-extension",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/PMC5576542.xml",
+        "sha256": "bd59a2a0918059df6a5873e3e8322f522d730ec9546e988db4104e9e6f0669f6"
+      },
+      "master": {
+        "path": "masters/standing-straight-arm-band-shoulder-extension/male/frame-1.png",
+        "sha256": "bd46c25b1af5943fd2d3447dba1dd27d20c2c34d8b898bcb5b84237a38d6596f"
+      },
+      "derived": {
+        "path": "catalog-expansion/standing-straight-arm-band-shoulder-extension/male/derived/frame-1.svg",
+        "sha256": "9e85c162edaf6d619aa9bde82b104f2469393d49431798404483bb0dcf1f1e62"
+      },
+      "trace": {
+        "path": "catalog-expansion/standing-straight-arm-band-shoulder-extension/male/derived/frame-1.svg.trace.json",
+        "sha256": "8825156760bc9ce277a6fe3d4f6c4553f4bad6fe016b10d995d8dae60b88b572"
+      },
+      "generation": {
+        "path": "masters/standing-straight-arm-band-shoulder-extension/male/generation.json",
+        "sha256": "8e1265f0fce8dfd2f1f7722bc9eaaccac15db2132e09a6c789169484d187ffd9"
+      }
+    },
+    {
+      "exerciseId": "standing-straight-arm-band-shoulder-extension",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/PMC5576542.xml",
+        "sha256": "bd59a2a0918059df6a5873e3e8322f522d730ec9546e988db4104e9e6f0669f6"
+      },
+      "master": {
+        "path": "masters/standing-straight-arm-band-shoulder-extension/male/frame-2.png",
+        "sha256": "4e6fa13a0c76117425752c2763f61ba8110083c6a9a061255b6ad7988aea3559"
+      },
+      "derived": {
+        "path": "catalog-expansion/standing-straight-arm-band-shoulder-extension/male/derived/frame-2.svg",
+        "sha256": "1887022dce43ef562693262101175ae629833f1c4fddeae1274f41e420235b8b"
+      },
+      "trace": {
+        "path": "catalog-expansion/standing-straight-arm-band-shoulder-extension/male/derived/frame-2.svg.trace.json",
+        "sha256": "52b91e4f4d4c699a9bbae80f87af859d6dffaf03fbd50b2ad560024cdf0345a3"
+      },
+      "generation": {
+        "path": "masters/standing-straight-arm-band-shoulder-extension/male/generation.json",
+        "sha256": "8e1265f0fce8dfd2f1f7722bc9eaaccac15db2132e09a6c789169484d187ffd9"
+      }
+    },
+    {
+      "exerciseId": "standing-straight-arm-band-shoulder-extension",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/PMC5576542.xml",
+        "sha256": "bd59a2a0918059df6a5873e3e8322f522d730ec9546e988db4104e9e6f0669f6"
+      },
+      "master": {
+        "path": "masters/standing-straight-arm-band-shoulder-extension/male/frame-3.png",
+        "sha256": "d8c5e7f029dc02fc7e40998225ffec4ae2b693a164445727c443cd1f5d363af1"
+      },
+      "derived": {
+        "path": "catalog-expansion/standing-straight-arm-band-shoulder-extension/male/derived/frame-3.svg",
+        "sha256": "5c92c27103d0cbd5a933e48f48dfcbb2da0ce8eca2ccc30de84f15e3c87a4ebe"
+      },
+      "trace": {
+        "path": "catalog-expansion/standing-straight-arm-band-shoulder-extension/male/derived/frame-3.svg.trace.json",
+        "sha256": "e2265a8b7870165bccfc8d94a072851641b1208120dba204ca8470a4473bc415"
+      },
+      "generation": {
+        "path": "masters/standing-straight-arm-band-shoulder-extension/male/generation.json",
+        "sha256": "8e1265f0fce8dfd2f1f7722bc9eaaccac15db2132e09a6c789169484d187ffd9"
+      }
+    },
+    {
+      "exerciseId": "standing-straight-arm-band-shoulder-extension",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/PMC5576542.xml",
+        "sha256": "bd59a2a0918059df6a5873e3e8322f522d730ec9546e988db4104e9e6f0669f6"
+      },
+      "master": {
+        "path": "masters/standing-straight-arm-band-shoulder-extension/female/frame-1.png",
+        "sha256": "6b23bcc677468d417c04a9b8d8c1a98e7d4e84ce203d671640146370b5424f47"
+      },
+      "derived": {
+        "path": "catalog-expansion/standing-straight-arm-band-shoulder-extension/female/derived/frame-1.svg",
+        "sha256": "d3ce331dff7aaac7635653309fa901079061a23b82822288acc33d1aa154ccd0"
+      },
+      "trace": {
+        "path": "catalog-expansion/standing-straight-arm-band-shoulder-extension/female/derived/frame-1.svg.trace.json",
+        "sha256": "f7b61d607997e8aae2c7cad22b2f6eddfb7c27e2fb9d8d4b74e864ab0a27c546"
+      },
+      "generation": {
+        "path": "masters/standing-straight-arm-band-shoulder-extension/female/generation.json",
+        "sha256": "eb0efa74a11ab967c6ff98cb49d3c46d77c63cafbca709806398c5b2bcab34a5"
+      }
+    },
+    {
+      "exerciseId": "standing-straight-arm-band-shoulder-extension",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/PMC5576542.xml",
+        "sha256": "bd59a2a0918059df6a5873e3e8322f522d730ec9546e988db4104e9e6f0669f6"
+      },
+      "master": {
+        "path": "masters/standing-straight-arm-band-shoulder-extension/female/frame-2.png",
+        "sha256": "080436edb74dc28647fb5e686464701add0a95f738909cd28de12c91f8e362b6"
+      },
+      "derived": {
+        "path": "catalog-expansion/standing-straight-arm-band-shoulder-extension/female/derived/frame-2.svg",
+        "sha256": "970862f1c2c20be345cfff3032af58b7748eff3dd6f7609b197e9367d3c16b49"
+      },
+      "trace": {
+        "path": "catalog-expansion/standing-straight-arm-band-shoulder-extension/female/derived/frame-2.svg.trace.json",
+        "sha256": "a20ba863688acc8a949918974a4d2d49cf20c7f1b54c847a75a3ad4fb18af9b3"
+      },
+      "generation": {
+        "path": "masters/standing-straight-arm-band-shoulder-extension/female/generation.json",
+        "sha256": "eb0efa74a11ab967c6ff98cb49d3c46d77c63cafbca709806398c5b2bcab34a5"
+      }
+    },
+    {
+      "exerciseId": "standing-straight-arm-band-shoulder-extension",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/PMC5576542.xml",
+        "sha256": "bd59a2a0918059df6a5873e3e8322f522d730ec9546e988db4104e9e6f0669f6"
+      },
+      "master": {
+        "path": "masters/standing-straight-arm-band-shoulder-extension/female/frame-3.png",
+        "sha256": "c39c07d1ad65adf578406a3b32adc505a2cb660f0aa8ef30df8949866057ffa9"
+      },
+      "derived": {
+        "path": "catalog-expansion/standing-straight-arm-band-shoulder-extension/female/derived/frame-3.svg",
+        "sha256": "0309390ad706c455999e4a683ef191e3acd8c02270353ae4f6941cb3c1a029d6"
+      },
+      "trace": {
+        "path": "catalog-expansion/standing-straight-arm-band-shoulder-extension/female/derived/frame-3.svg.trace.json",
+        "sha256": "e8b8034a89b05d902220733ec8d2b9c08bc97e92c9e00b7307414d7bbcd1a04d"
+      },
+      "generation": {
+        "path": "masters/standing-straight-arm-band-shoulder-extension/female/generation.json",
+        "sha256": "eb0efa74a11ab967c6ff98cb49d3c46d77c63cafbca709806398c5b2bcab34a5"
+      }
+    },
+    {
+      "exerciseId": "quadruped-straight-arm-scapular-retraction-protraction",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/harris-2012.pdf",
+        "sha256": "7bf0d792214f4073f27767f83eb12fa8ba4a1ba62a86e6f8f01017565c423b68"
+      },
+      "master": {
+        "path": "masters/quadruped-straight-arm-scapular-retraction-protraction/male/frame-1.png",
+        "sha256": "51d78efc6fcb055fe8bef212f5a941ac233659ec2e2cd7d106a71eed82359adb"
+      },
+      "derived": {
+        "path": "catalog-expansion/quadruped-straight-arm-scapular-retraction-protraction/male/derived/frame-1.svg",
+        "sha256": "542863847d9472a3c3f9228fb7864c21a4570fd791db94d669c694e4f024e47c"
+      },
+      "trace": {
+        "path": "catalog-expansion/quadruped-straight-arm-scapular-retraction-protraction/male/derived/frame-1.svg.trace.json",
+        "sha256": "67bdbe16d6589e63cb6ee6dc1b6dfd352751f00c28c87add5cc7fcf757739798"
+      },
+      "generation": {
+        "path": "masters/quadruped-straight-arm-scapular-retraction-protraction/male/generation.json",
+        "sha256": "7dcb53a97f6439362ffc8eacc7aed0ecf8703af8e47585b2c7011238f6815d94"
+      }
+    },
+    {
+      "exerciseId": "quadruped-straight-arm-scapular-retraction-protraction",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/harris-2012.pdf",
+        "sha256": "7bf0d792214f4073f27767f83eb12fa8ba4a1ba62a86e6f8f01017565c423b68"
+      },
+      "master": {
+        "path": "masters/quadruped-straight-arm-scapular-retraction-protraction/male/frame-2.png",
+        "sha256": "f92f4bbcf6958dda5f47c8c248535abfe0768575b4241ba765fabd1e119bf3f8"
+      },
+      "derived": {
+        "path": "catalog-expansion/quadruped-straight-arm-scapular-retraction-protraction/male/derived/frame-2.svg",
+        "sha256": "7c530e6d06ab2c6877d17eefd013a4e12372f8c32fa564259c49c427d34c0532"
+      },
+      "trace": {
+        "path": "catalog-expansion/quadruped-straight-arm-scapular-retraction-protraction/male/derived/frame-2.svg.trace.json",
+        "sha256": "6fe88e09c4158e2180693c6dd01247ac7897478e1789e9ee935b2e6f21705aaa"
+      },
+      "generation": {
+        "path": "masters/quadruped-straight-arm-scapular-retraction-protraction/male/generation.json",
+        "sha256": "7dcb53a97f6439362ffc8eacc7aed0ecf8703af8e47585b2c7011238f6815d94"
+      }
+    },
+    {
+      "exerciseId": "quadruped-straight-arm-scapular-retraction-protraction",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/harris-2012.pdf",
+        "sha256": "7bf0d792214f4073f27767f83eb12fa8ba4a1ba62a86e6f8f01017565c423b68"
+      },
+      "master": {
+        "path": "masters/quadruped-straight-arm-scapular-retraction-protraction/male/frame-3.png",
+        "sha256": "86a262943053d7c273dd878c6b83c614913cd0d3308c81e526a893f09e6a4e76"
+      },
+      "derived": {
+        "path": "catalog-expansion/quadruped-straight-arm-scapular-retraction-protraction/male/derived/frame-3.svg",
+        "sha256": "8febbedaaad47d0dd1fd7934ae84aa3483dcbf120e1321e0b47d66907a526a06"
+      },
+      "trace": {
+        "path": "catalog-expansion/quadruped-straight-arm-scapular-retraction-protraction/male/derived/frame-3.svg.trace.json",
+        "sha256": "205ce1241d0113f95a988b1cbc0ace68a8aabc7c26eab9bc0ae5b006402a4513"
+      },
+      "generation": {
+        "path": "masters/quadruped-straight-arm-scapular-retraction-protraction/male/generation.json",
+        "sha256": "7dcb53a97f6439362ffc8eacc7aed0ecf8703af8e47585b2c7011238f6815d94"
+      }
+    },
+    {
+      "exerciseId": "quadruped-straight-arm-scapular-retraction-protraction",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/harris-2012.pdf",
+        "sha256": "7bf0d792214f4073f27767f83eb12fa8ba4a1ba62a86e6f8f01017565c423b68"
+      },
+      "master": {
+        "path": "masters/quadruped-straight-arm-scapular-retraction-protraction/female/frame-1.png",
+        "sha256": "a54337696d2dfdc0fe49fc61cd097490a874829818d5c861ff30da9d0d526ed5"
+      },
+      "derived": {
+        "path": "catalog-expansion/quadruped-straight-arm-scapular-retraction-protraction/female/derived/frame-1.svg",
+        "sha256": "53b435ec1ecfcb0c7108638eea0d2a119eac8dc80185e15531f0f15ef2474cc4"
+      },
+      "trace": {
+        "path": "catalog-expansion/quadruped-straight-arm-scapular-retraction-protraction/female/derived/frame-1.svg.trace.json",
+        "sha256": "744a5a2a59b19c21c809bd48390592b6153193cb21c3140b2bc1b07f3861e671"
+      },
+      "generation": {
+        "path": "masters/quadruped-straight-arm-scapular-retraction-protraction/female/generation.json",
+        "sha256": "fc316947980879efe282f2187a8c3d1cf02001c2cf8ddb659706e1e65b1d32eb"
+      }
+    },
+    {
+      "exerciseId": "quadruped-straight-arm-scapular-retraction-protraction",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/harris-2012.pdf",
+        "sha256": "7bf0d792214f4073f27767f83eb12fa8ba4a1ba62a86e6f8f01017565c423b68"
+      },
+      "master": {
+        "path": "masters/quadruped-straight-arm-scapular-retraction-protraction/female/frame-2.png",
+        "sha256": "2d8ca630e4326ba099a4b17cfc07c842e9c89764f16492ea35d5fc9c56b5b5a0"
+      },
+      "derived": {
+        "path": "catalog-expansion/quadruped-straight-arm-scapular-retraction-protraction/female/derived/frame-2.svg",
+        "sha256": "d0261cc2025db08756cd9b8463f6425c1fe7e5a52f4dead760ed9728bae28a3d"
+      },
+      "trace": {
+        "path": "catalog-expansion/quadruped-straight-arm-scapular-retraction-protraction/female/derived/frame-2.svg.trace.json",
+        "sha256": "38f7f4e9c3fae514298b75508c842587312fde53021342eacdded70a17a478ef"
+      },
+      "generation": {
+        "path": "masters/quadruped-straight-arm-scapular-retraction-protraction/female/generation.json",
+        "sha256": "fc316947980879efe282f2187a8c3d1cf02001c2cf8ddb659706e1e65b1d32eb"
+      }
+    },
+    {
+      "exerciseId": "quadruped-straight-arm-scapular-retraction-protraction",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/harris-2012.pdf",
+        "sha256": "7bf0d792214f4073f27767f83eb12fa8ba4a1ba62a86e6f8f01017565c423b68"
+      },
+      "master": {
+        "path": "masters/quadruped-straight-arm-scapular-retraction-protraction/female/frame-3.png",
+        "sha256": "01749f66550b0a1c498a064f813eae2df8336baea7a5ccac1eca79252f2e75ec"
+      },
+      "derived": {
+        "path": "catalog-expansion/quadruped-straight-arm-scapular-retraction-protraction/female/derived/frame-3.svg",
+        "sha256": "2086f421d44c02c22c6bf39fbd3796a9cb9d94040df5ab81d9da8dd940203974"
+      },
+      "trace": {
+        "path": "catalog-expansion/quadruped-straight-arm-scapular-retraction-protraction/female/derived/frame-3.svg.trace.json",
+        "sha256": "f717048c48405667f1c700efc2c13a0e574bc10c5ec8af149e746dfdebc0e3d2"
+      },
+      "generation": {
+        "path": "masters/quadruped-straight-arm-scapular-retraction-protraction/female/generation.json",
+        "sha256": "fc316947980879efe282f2187a8c3d1cf02001c2cf8ddb659706e1e65b1d32eb"
+      }
+    },
+    {
+      "exerciseId": "phoenix-chair-sit-to-stand",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/phoenix.pdf",
+        "sha256": "99cf00d453237d1a876b7977f49a1bf1829cf081a314b470695647a37b393bde"
+      },
+      "master": {
+        "path": "masters/phoenix-chair-sit-to-stand/male/frame-1.png",
+        "sha256": "cac7dc3ed70402256572433d1593613cc1c6bff799d04b074c288f9bfd327263"
+      },
+      "derived": {
+        "path": "catalog-expansion/phoenix-chair-sit-to-stand/male/derived/frame-1.svg",
+        "sha256": "e6ad7f605f104a3d7504ce82fc441a9a7360ac7427a6f732567c986047daad5c"
+      },
+      "trace": {
+        "path": "catalog-expansion/phoenix-chair-sit-to-stand/male/derived/frame-1.svg.trace.json",
+        "sha256": "d8626adb50bbc8d8ca8035d05557afa6991350f9a2d063fc86fc6136b8b437db"
+      },
+      "generation": {
+        "path": "masters/phoenix-chair-sit-to-stand/male/generation.json",
+        "sha256": "1d79bf6ed1306ba120a34b73354151539d63f34514165371f2b5737d89e1e52c"
+      }
+    },
+    {
+      "exerciseId": "phoenix-chair-sit-to-stand",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/phoenix.pdf",
+        "sha256": "99cf00d453237d1a876b7977f49a1bf1829cf081a314b470695647a37b393bde"
+      },
+      "master": {
+        "path": "masters/phoenix-chair-sit-to-stand/male/frame-2.png",
+        "sha256": "8fa5c2ca0eb90447a2462ee8069b7bb69fae440ee989916bf9b7fbf0f72c3c8c"
+      },
+      "derived": {
+        "path": "catalog-expansion/phoenix-chair-sit-to-stand/male/derived/frame-2.svg",
+        "sha256": "695908efc8523be7663a935b462d8d17972e9f22ad1737fa1cc5f1dcc46a4878"
+      },
+      "trace": {
+        "path": "catalog-expansion/phoenix-chair-sit-to-stand/male/derived/frame-2.svg.trace.json",
+        "sha256": "d85abf67ebde27f7e99ee2dbe30856cc9be808de48c04e24eacfc5ad836d0c4b"
+      },
+      "generation": {
+        "path": "masters/phoenix-chair-sit-to-stand/male/generation.json",
+        "sha256": "1d79bf6ed1306ba120a34b73354151539d63f34514165371f2b5737d89e1e52c"
+      }
+    },
+    {
+      "exerciseId": "phoenix-chair-sit-to-stand",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/phoenix.pdf",
+        "sha256": "99cf00d453237d1a876b7977f49a1bf1829cf081a314b470695647a37b393bde"
+      },
+      "master": {
+        "path": "masters/phoenix-chair-sit-to-stand/male/frame-3.png",
+        "sha256": "84c380db989ba9c4526d44ba48e894c957be83f7a987284560fc68256ba987e8"
+      },
+      "derived": {
+        "path": "catalog-expansion/phoenix-chair-sit-to-stand/male/derived/frame-3.svg",
+        "sha256": "7bd661c8721025dcb6b51572c26d90930a3e0b3e219815b589614f2753c13306"
+      },
+      "trace": {
+        "path": "catalog-expansion/phoenix-chair-sit-to-stand/male/derived/frame-3.svg.trace.json",
+        "sha256": "81df5402b44b064b67cb0f848a65f130ced892935f91a54bed8ba702dd76e594"
+      },
+      "generation": {
+        "path": "masters/phoenix-chair-sit-to-stand/male/generation.json",
+        "sha256": "1d79bf6ed1306ba120a34b73354151539d63f34514165371f2b5737d89e1e52c"
+      }
+    },
+    {
+      "exerciseId": "phoenix-chair-sit-to-stand",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/phoenix.pdf",
+        "sha256": "99cf00d453237d1a876b7977f49a1bf1829cf081a314b470695647a37b393bde"
+      },
+      "master": {
+        "path": "masters/phoenix-chair-sit-to-stand/female/frame-1.png",
+        "sha256": "269970f6a631c47a6a164cfe66b238e098e28b5f57f2da22f5d34a3d8a87d61c"
+      },
+      "derived": {
+        "path": "catalog-expansion/phoenix-chair-sit-to-stand/female/derived/frame-1.svg",
+        "sha256": "3172e770c2f0b6d8090b734cbc167389ef26b179263746f6b69511a1a4187314"
+      },
+      "trace": {
+        "path": "catalog-expansion/phoenix-chair-sit-to-stand/female/derived/frame-1.svg.trace.json",
+        "sha256": "3cfa696edc628a84609e54fa126cd1346873f50a9d366dfd590294f352180da8"
+      },
+      "generation": {
+        "path": "masters/phoenix-chair-sit-to-stand/female/generation.json",
+        "sha256": "d84a7d3c22d1c8b5ecb326b88fde01630cf16da6d785907114e2ca07f1356d7b"
+      }
+    },
+    {
+      "exerciseId": "phoenix-chair-sit-to-stand",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/phoenix.pdf",
+        "sha256": "99cf00d453237d1a876b7977f49a1bf1829cf081a314b470695647a37b393bde"
+      },
+      "master": {
+        "path": "masters/phoenix-chair-sit-to-stand/female/frame-2.png",
+        "sha256": "eb11d9425c09602f3c5f9ea045b0a585434bc8106213d9cfbff28a065636339f"
+      },
+      "derived": {
+        "path": "catalog-expansion/phoenix-chair-sit-to-stand/female/derived/frame-2.svg",
+        "sha256": "799c1c4e862698ac3b187cb99a6474df200f7c7d3683e7a57318b875a0929cb4"
+      },
+      "trace": {
+        "path": "catalog-expansion/phoenix-chair-sit-to-stand/female/derived/frame-2.svg.trace.json",
+        "sha256": "451f2169248e403345c44fd3f69da4e22e0d1e623dd9e30224fb2e60e67d2181"
+      },
+      "generation": {
+        "path": "masters/phoenix-chair-sit-to-stand/female/generation.json",
+        "sha256": "d84a7d3c22d1c8b5ecb326b88fde01630cf16da6d785907114e2ca07f1356d7b"
+      }
+    },
+    {
+      "exerciseId": "phoenix-chair-sit-to-stand",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/phoenix.pdf",
+        "sha256": "99cf00d453237d1a876b7977f49a1bf1829cf081a314b470695647a37b393bde"
+      },
+      "master": {
+        "path": "masters/phoenix-chair-sit-to-stand/female/frame-3.png",
+        "sha256": "058672026a765740d02ddf15e005402f0a9fc9d3c97edf2aa781f47587e6643f"
+      },
+      "derived": {
+        "path": "catalog-expansion/phoenix-chair-sit-to-stand/female/derived/frame-3.svg",
+        "sha256": "7d5f0f75aa3c56ba940e39b6fdae0f6e932dfed9aac3352de70fb64d6b2020c6"
+      },
+      "trace": {
+        "path": "catalog-expansion/phoenix-chair-sit-to-stand/female/derived/frame-3.svg.trace.json",
+        "sha256": "35246a081a383580f97483ae57943b0d9b8fb68de190feb5e052e7eac07df58f"
+      },
+      "generation": {
+        "path": "masters/phoenix-chair-sit-to-stand/female/generation.json",
+        "sha256": "d84a7d3c22d1c8b5ecb326b88fde01630cf16da6d785907114e2ca07f1356d7b"
+      }
+    },
+    {
+      "exerciseId": "insertional-neutral-band-plantarflexion-bent-knee",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-neutral-band-plantarflexion-bent-knee/male/frame-1.png",
+        "sha256": "9c5cb25c965e3761565cceb0411d76cb864e08c56ed45ef31f8e1dee9ab2f933"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-bent-knee/male/derived/frame-1.svg",
+        "sha256": "cdf5793df163a1f8d7331b0fbfd5b21e0a45a2151ef333338e5cbfa207c827b6"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-bent-knee/male/derived/frame-1.svg.trace.json",
+        "sha256": "8741be2d4c687198717e2c3f97c72e03c80d493850aa4aba1debcdaddc1d4fca"
+      },
+      "generation": {
+        "path": "masters/insertional-neutral-band-plantarflexion-bent-knee/male/generation.json",
+        "sha256": "3b523cfaed93d4395eced1bd55c7e58396eb7d89804a298d88b26f2cc2103b09"
+      }
+    },
+    {
+      "exerciseId": "insertional-neutral-band-plantarflexion-bent-knee",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-neutral-band-plantarflexion-bent-knee/male/frame-2.png",
+        "sha256": "150427a693087f7fca6b86138f9f80a97b00b39f35dc19c515b7bfaced5029c4"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-bent-knee/male/derived/frame-2.svg",
+        "sha256": "1ff6b990d35236c8b3586c51c952f5c1423b8c227f4dad1ea056839802408613"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-bent-knee/male/derived/frame-2.svg.trace.json",
+        "sha256": "7dc75fb631ae64110389ff29e0966ffb4b741717b8261eb463e2b37391e5d817"
+      },
+      "generation": {
+        "path": "masters/insertional-neutral-band-plantarflexion-bent-knee/male/generation.json",
+        "sha256": "3b523cfaed93d4395eced1bd55c7e58396eb7d89804a298d88b26f2cc2103b09"
+      }
+    },
+    {
+      "exerciseId": "insertional-neutral-band-plantarflexion-bent-knee",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-neutral-band-plantarflexion-bent-knee/male/frame-3.png",
+        "sha256": "cf7d0fa3b9b579c6846cbdc16852a60f08bc982cd4ee755b05d634470418f6e7"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-bent-knee/male/derived/frame-3.svg",
+        "sha256": "7e6a44c963bce0bf7e683dcbfda134c0496bb73614d63b1dd3c7d796a7ed8419"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-bent-knee/male/derived/frame-3.svg.trace.json",
+        "sha256": "fdc07ec11f8bbf229f99834d4b84bb5e97d463fa5bcd73e157d6604e86944a2a"
+      },
+      "generation": {
+        "path": "masters/insertional-neutral-band-plantarflexion-bent-knee/male/generation.json",
+        "sha256": "3b523cfaed93d4395eced1bd55c7e58396eb7d89804a298d88b26f2cc2103b09"
+      }
+    },
+    {
+      "exerciseId": "insertional-neutral-band-plantarflexion-bent-knee",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-neutral-band-plantarflexion-bent-knee/female/frame-1.png",
+        "sha256": "8a3a97643c65fbae2dbcd67b1078863d5b331190be7cca0820f63b186df97dfa"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-bent-knee/female/derived/frame-1.svg",
+        "sha256": "e38835f3f6edbce56b082e165867b3041481eb294005717f1254952a5582a980"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-bent-knee/female/derived/frame-1.svg.trace.json",
+        "sha256": "f8947e741e27e74dc44b209c22883b1f43ea677e4d3c2184bd4f56a4e4ded0e8"
+      },
+      "generation": {
+        "path": "masters/insertional-neutral-band-plantarflexion-bent-knee/female/generation.json",
+        "sha256": "9be7695827e56cac5ee44f515005447bd2d7c22b69eb33f8961b03003575e909"
+      }
+    },
+    {
+      "exerciseId": "insertional-neutral-band-plantarflexion-bent-knee",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-neutral-band-plantarflexion-bent-knee/female/frame-2.png",
+        "sha256": "1062ce5d34022ce34a877381337c2afa87487e13b6aeccd8d793880897266014"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-bent-knee/female/derived/frame-2.svg",
+        "sha256": "0aa7bb49b71cc0a65525fa150d025ce36a841e83966ca54155d40211645631af"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-bent-knee/female/derived/frame-2.svg.trace.json",
+        "sha256": "c9af03ca3dc37b8d0b15656e6e0def2f3c17ee78507d5c9244049ad7a9ad16d9"
+      },
+      "generation": {
+        "path": "masters/insertional-neutral-band-plantarflexion-bent-knee/female/generation.json",
+        "sha256": "9be7695827e56cac5ee44f515005447bd2d7c22b69eb33f8961b03003575e909"
+      }
+    },
+    {
+      "exerciseId": "insertional-neutral-band-plantarflexion-bent-knee",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "insertional-chair-seated-neutral-heel-raise/references/bjsports-59-9-s003.pdf",
+        "sha256": "6f8c48b6aa9c7c0ff5cb07bcbdc63f21cff3af2e07e46459b1a62c689845c1b0"
+      },
+      "master": {
+        "path": "masters/insertional-neutral-band-plantarflexion-bent-knee/female/frame-3.png",
+        "sha256": "5bace4dad789401fda745b51cbd0fa34c39d47ff488f1b42ac055586d4027544"
+      },
+      "derived": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-bent-knee/female/derived/frame-3.svg",
+        "sha256": "20d14cee4d56e4be6fd28968ea6801fbd15c0181ecb341b33000fdc52e484128"
+      },
+      "trace": {
+        "path": "catalog-expansion/insertional-neutral-band-plantarflexion-bent-knee/female/derived/frame-3.svg.trace.json",
+        "sha256": "d6e249d080616bb54768d4608b8bb5f73a8c55a2beb13a2326a8723b25073624"
+      },
+      "generation": {
+        "path": "masters/insertional-neutral-band-plantarflexion-bent-knee/female/generation.json",
+        "sha256": "9be7695827e56cac5ee44f515005447bd2d7c22b69eb33f8961b03003575e909"
+      }
+    },
+    {
+      "exerciseId": "seated-hand-assisted-plantar-fascia-stretch",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "seated-hand-assisted-plantar-fascia-stretch/references/rathleff-2014.pdf",
+        "sha256": "a99e94305a33a265821e90360cc58708bfb0278279dfebab557037946d44677d"
+      },
+      "master": {
+        "path": "masters/seated-hand-assisted-plantar-fascia-stretch/male/frame-1.png",
+        "sha256": "ff59adf434f0dfb1255a9865fe1557bfaff13a9a88174157d29584daba54f4e5"
+      },
+      "derived": {
+        "path": "catalog-expansion/seated-hand-assisted-plantar-fascia-stretch/male/derived/frame-1.svg",
+        "sha256": "1c9c6556ddff739553f82c479733f14a16ce7ca63ffa2ada1d1a5b7961ded385"
+      },
+      "trace": {
+        "path": "catalog-expansion/seated-hand-assisted-plantar-fascia-stretch/male/derived/frame-1.svg.trace.json",
+        "sha256": "68cbc610cfc9cca2a813b0ee726a788dd0ae94843ab6c27f7a625560cdb2fa61"
+      },
+      "generation": {
+        "path": "masters/seated-hand-assisted-plantar-fascia-stretch/male/generation.json",
+        "sha256": "4d1a29466f11d5fd6c1cabbf42be349435269332a4fbb29c351c23d9b14ef648"
+      }
+    },
+    {
+      "exerciseId": "seated-hand-assisted-plantar-fascia-stretch",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "seated-hand-assisted-plantar-fascia-stretch/references/rathleff-2014.pdf",
+        "sha256": "a99e94305a33a265821e90360cc58708bfb0278279dfebab557037946d44677d"
+      },
+      "master": {
+        "path": "masters/seated-hand-assisted-plantar-fascia-stretch/male/frame-2.png",
+        "sha256": "ff59adf434f0dfb1255a9865fe1557bfaff13a9a88174157d29584daba54f4e5"
+      },
+      "derived": {
+        "path": "catalog-expansion/seated-hand-assisted-plantar-fascia-stretch/male/derived/frame-1.svg",
+        "sha256": "1c9c6556ddff739553f82c479733f14a16ce7ca63ffa2ada1d1a5b7961ded385"
+      },
+      "trace": {
+        "path": "catalog-expansion/seated-hand-assisted-plantar-fascia-stretch/male/derived/frame-1.svg.trace.json",
+        "sha256": "68cbc610cfc9cca2a813b0ee726a788dd0ae94843ab6c27f7a625560cdb2fa61"
+      },
+      "generation": {
+        "path": "masters/seated-hand-assisted-plantar-fascia-stretch/male/generation.json",
+        "sha256": "4d1a29466f11d5fd6c1cabbf42be349435269332a4fbb29c351c23d9b14ef648"
+      }
+    },
+    {
+      "exerciseId": "seated-hand-assisted-plantar-fascia-stretch",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "seated-hand-assisted-plantar-fascia-stretch/references/rathleff-2014.pdf",
+        "sha256": "a99e94305a33a265821e90360cc58708bfb0278279dfebab557037946d44677d"
+      },
+      "master": {
+        "path": "masters/seated-hand-assisted-plantar-fascia-stretch/male/frame-3.png",
+        "sha256": "ff59adf434f0dfb1255a9865fe1557bfaff13a9a88174157d29584daba54f4e5"
+      },
+      "derived": {
+        "path": "catalog-expansion/seated-hand-assisted-plantar-fascia-stretch/male/derived/frame-1.svg",
+        "sha256": "1c9c6556ddff739553f82c479733f14a16ce7ca63ffa2ada1d1a5b7961ded385"
+      },
+      "trace": {
+        "path": "catalog-expansion/seated-hand-assisted-plantar-fascia-stretch/male/derived/frame-1.svg.trace.json",
+        "sha256": "68cbc610cfc9cca2a813b0ee726a788dd0ae94843ab6c27f7a625560cdb2fa61"
+      },
+      "generation": {
+        "path": "masters/seated-hand-assisted-plantar-fascia-stretch/male/generation.json",
+        "sha256": "4d1a29466f11d5fd6c1cabbf42be349435269332a4fbb29c351c23d9b14ef648"
+      }
+    },
+    {
+      "exerciseId": "seated-hand-assisted-plantar-fascia-stretch",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "seated-hand-assisted-plantar-fascia-stretch/references/rathleff-2014.pdf",
+        "sha256": "a99e94305a33a265821e90360cc58708bfb0278279dfebab557037946d44677d"
+      },
+      "master": {
+        "path": "masters/seated-hand-assisted-plantar-fascia-stretch/female/frame-1.png",
+        "sha256": "2e87895eb7d442433937e3b899dcaf222e1e302c12d52befd8f85dc5d088ab33"
+      },
+      "derived": {
+        "path": "catalog-expansion/seated-hand-assisted-plantar-fascia-stretch/female/derived/frame-1.svg",
+        "sha256": "5a2b5a46062b67ed505c3860cea6b7c3db174eda6aed97ccb60ed5db7f5e81a1"
+      },
+      "trace": {
+        "path": "catalog-expansion/seated-hand-assisted-plantar-fascia-stretch/female/derived/frame-1.svg.trace.json",
+        "sha256": "e18d825e8d32980495c261c7b3f32943ae07442f21ed7c4178d376c3e79ca3ce"
+      },
+      "generation": {
+        "path": "masters/seated-hand-assisted-plantar-fascia-stretch/female/generation.json",
+        "sha256": "81b87c9f9a2c80a037e75ad1dbd526953c9e938ec32dd1fc6404e8a10edac9e6"
+      }
+    },
+    {
+      "exerciseId": "seated-hand-assisted-plantar-fascia-stretch",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "seated-hand-assisted-plantar-fascia-stretch/references/rathleff-2014.pdf",
+        "sha256": "a99e94305a33a265821e90360cc58708bfb0278279dfebab557037946d44677d"
+      },
+      "master": {
+        "path": "masters/seated-hand-assisted-plantar-fascia-stretch/female/frame-2.png",
+        "sha256": "2e87895eb7d442433937e3b899dcaf222e1e302c12d52befd8f85dc5d088ab33"
+      },
+      "derived": {
+        "path": "catalog-expansion/seated-hand-assisted-plantar-fascia-stretch/female/derived/frame-1.svg",
+        "sha256": "5a2b5a46062b67ed505c3860cea6b7c3db174eda6aed97ccb60ed5db7f5e81a1"
+      },
+      "trace": {
+        "path": "catalog-expansion/seated-hand-assisted-plantar-fascia-stretch/female/derived/frame-1.svg.trace.json",
+        "sha256": "e18d825e8d32980495c261c7b3f32943ae07442f21ed7c4178d376c3e79ca3ce"
+      },
+      "generation": {
+        "path": "masters/seated-hand-assisted-plantar-fascia-stretch/female/generation.json",
+        "sha256": "81b87c9f9a2c80a037e75ad1dbd526953c9e938ec32dd1fc6404e8a10edac9e6"
+      }
+    },
+    {
+      "exerciseId": "seated-hand-assisted-plantar-fascia-stretch",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "seated-hand-assisted-plantar-fascia-stretch/references/rathleff-2014.pdf",
+        "sha256": "a99e94305a33a265821e90360cc58708bfb0278279dfebab557037946d44677d"
+      },
+      "master": {
+        "path": "masters/seated-hand-assisted-plantar-fascia-stretch/female/frame-3.png",
+        "sha256": "2e87895eb7d442433937e3b899dcaf222e1e302c12d52befd8f85dc5d088ab33"
+      },
+      "derived": {
+        "path": "catalog-expansion/seated-hand-assisted-plantar-fascia-stretch/female/derived/frame-1.svg",
+        "sha256": "5a2b5a46062b67ed505c3860cea6b7c3db174eda6aed97ccb60ed5db7f5e81a1"
+      },
+      "trace": {
+        "path": "catalog-expansion/seated-hand-assisted-plantar-fascia-stretch/female/derived/frame-1.svg.trace.json",
+        "sha256": "e18d825e8d32980495c261c7b3f32943ae07442f21ed7c4178d376c3e79ca3ce"
+      },
+      "generation": {
+        "path": "masters/seated-hand-assisted-plantar-fascia-stretch/female/generation.json",
+        "sha256": "81b87c9f9a2c80a037e75ad1dbd526953c9e938ec32dd1fc6404e8a10edac9e6"
+      }
+    },
+    {
+      "exerciseId": "hsd-side-lying-dumbbell-er-pillow",
+      "variant": "male",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/heavy-05.png",
+        "sha256": "8e4497c7576db099ded4aedfc85a8197a21c3436698aa5c1e9c2fa2a47c8948b"
+      },
+      "master": {
+        "path": "masters/hsd-side-lying-dumbbell-er-pillow/male/frame-1.png",
+        "sha256": "9ae73df69a44148f2648dc353d9834480f01682d443a6b90c70dc383d9c82caf"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-side-lying-dumbbell-er-pillow/male/derived/frame-1.svg",
+        "sha256": "b57008109fac2cc2e059bca6913ffbc5e9a89e894c017987d76746b45e701aef"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-side-lying-dumbbell-er-pillow/male/derived/frame-1.svg.trace.json",
+        "sha256": "443a72cc9dec05bed4f6fb70cee17dfc578bf4a21306fd2917fc1654cab6865f"
+      },
+      "generation": {
+        "path": "masters/hsd-side-lying-dumbbell-er-pillow/male/generation.json",
+        "sha256": "d121f44093745bce3bd84a0e2215f3ca551e706e3f30ab63b7831669ffcdcb57"
+      }
+    },
+    {
+      "exerciseId": "hsd-side-lying-dumbbell-er-pillow",
+      "variant": "male",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/heavy-05.png",
+        "sha256": "8e4497c7576db099ded4aedfc85a8197a21c3436698aa5c1e9c2fa2a47c8948b"
+      },
+      "master": {
+        "path": "masters/hsd-side-lying-dumbbell-er-pillow/male/frame-2.png",
+        "sha256": "c027ff43b29456d4cccdb6bd746d227cc95a40f5b35f82e1cd0566be8ee92452"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-side-lying-dumbbell-er-pillow/male/derived/frame-2.svg",
+        "sha256": "57f972ca2af38ee77040a1e01037f347b4ce69cc0b056d67903d62582f99f504"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-side-lying-dumbbell-er-pillow/male/derived/frame-2.svg.trace.json",
+        "sha256": "6c0eb25f98d5a17d270c1b4cf0d2c91395a9988cd5cb9ab1aa7fd234fd175627"
+      },
+      "generation": {
+        "path": "masters/hsd-side-lying-dumbbell-er-pillow/male/generation.json",
+        "sha256": "d121f44093745bce3bd84a0e2215f3ca551e706e3f30ab63b7831669ffcdcb57"
+      }
+    },
+    {
+      "exerciseId": "hsd-side-lying-dumbbell-er-pillow",
+      "variant": "male",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/heavy-05.png",
+        "sha256": "8e4497c7576db099ded4aedfc85a8197a21c3436698aa5c1e9c2fa2a47c8948b"
+      },
+      "master": {
+        "path": "masters/hsd-side-lying-dumbbell-er-pillow/male/frame-3.png",
+        "sha256": "fe2344883c07f63b0bd1b6a0f2fce9f179ec6d7363b268f319865166023b92ac"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-side-lying-dumbbell-er-pillow/male/derived/frame-3.svg",
+        "sha256": "54e154295118a937b221959b2a35689c920b98211310629782da0e137d7980c1"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-side-lying-dumbbell-er-pillow/male/derived/frame-3.svg.trace.json",
+        "sha256": "bb2b77b621963b3511b62f975845009b68fd7ddd720d4d421c6c16f58ee1e3dc"
+      },
+      "generation": {
+        "path": "masters/hsd-side-lying-dumbbell-er-pillow/male/generation.json",
+        "sha256": "d121f44093745bce3bd84a0e2215f3ca551e706e3f30ab63b7831669ffcdcb57"
+      }
+    },
+    {
+      "exerciseId": "hsd-side-lying-dumbbell-er-pillow",
+      "variant": "female",
+      "frameNumber": 1,
+      "source": {
+        "path": "source-references/heavy-05.png",
+        "sha256": "8e4497c7576db099ded4aedfc85a8197a21c3436698aa5c1e9c2fa2a47c8948b"
+      },
+      "master": {
+        "path": "masters/hsd-side-lying-dumbbell-er-pillow/female/frame-1.png",
+        "sha256": "7586d2eb595bfd60b24dcdc10d0dc2e355f9d6f1b02bf24803db82a30bcaccca"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-side-lying-dumbbell-er-pillow/female/selection-0a424d6e4e1f/derived/frame-1.svg",
+        "sha256": "4ffda7bcab46638da7fbb92c6b4613fac00f2ac6053027c3a465cb93aa2251c9"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-side-lying-dumbbell-er-pillow/female/selection-0a424d6e4e1f/derived/frame-1.svg.trace.json",
+        "sha256": "6a83a641105b3c8e67525c879ff5cee95fc448a3b15ff28c1fb9bbfb00da4487"
+      },
+      "generation": {
+        "path": "masters/hsd-side-lying-dumbbell-er-pillow/female/generation.json",
+        "sha256": "46c17a2e67f6f369be449adbd61c999270c02348b63e59509197c5c111fd5c5b"
+      }
+    },
+    {
+      "exerciseId": "hsd-side-lying-dumbbell-er-pillow",
+      "variant": "female",
+      "frameNumber": 2,
+      "source": {
+        "path": "source-references/heavy-05.png",
+        "sha256": "8e4497c7576db099ded4aedfc85a8197a21c3436698aa5c1e9c2fa2a47c8948b"
+      },
+      "master": {
+        "path": "masters/hsd-side-lying-dumbbell-er-pillow/female/frame-2.png",
+        "sha256": "4b9a162c762d3b8c38ad91965271f91b65ba1a412b76cab32fd71420322b11ea"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-side-lying-dumbbell-er-pillow/female/selection-0a424d6e4e1f/derived/frame-2.svg",
+        "sha256": "0a5e0d99f5527941390d833966415efd6a1b1d0e07060cc6f095efb73ab51100"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-side-lying-dumbbell-er-pillow/female/selection-0a424d6e4e1f/derived/frame-2.svg.trace.json",
+        "sha256": "7596b7b7ddeeb3679f84b7f26c6ad67bd30d85da394a9a33885052e1777f1e7e"
+      },
+      "generation": {
+        "path": "masters/hsd-side-lying-dumbbell-er-pillow/female/generation.json",
+        "sha256": "46c17a2e67f6f369be449adbd61c999270c02348b63e59509197c5c111fd5c5b"
+      }
+    },
+    {
+      "exerciseId": "hsd-side-lying-dumbbell-er-pillow",
+      "variant": "female",
+      "frameNumber": 3,
+      "source": {
+        "path": "source-references/heavy-05.png",
+        "sha256": "8e4497c7576db099ded4aedfc85a8197a21c3436698aa5c1e9c2fa2a47c8948b"
+      },
+      "master": {
+        "path": "masters/hsd-side-lying-dumbbell-er-pillow/female/frame-3.png",
+        "sha256": "536c0a88eee215266d11c6c9a935beac57543d649b549a267194107d1c6edad6"
+      },
+      "derived": {
+        "path": "catalog-expansion/hsd-side-lying-dumbbell-er-pillow/female/selection-0a424d6e4e1f/derived/frame-3.svg",
+        "sha256": "a49a068d9fec6c6941047f069bf8112550372990773c56df2a7d0fe14e0aa905"
+      },
+      "trace": {
+        "path": "catalog-expansion/hsd-side-lying-dumbbell-er-pillow/female/selection-0a424d6e4e1f/derived/frame-3.svg.trace.json",
+        "sha256": "6426922f55baf8ce6947e495336f41ae14efe31883673721eea51c63fd1b293a"
+      },
+      "generation": {
+        "path": "masters/hsd-side-lying-dumbbell-er-pillow/female/generation.json",
+        "sha256": "46c17a2e67f6f369be449adbd61c999270c02348b63e59509197c5c111fd5c5b"
+      }
+    }
+  ],
+  "source": {
+    "id": "wallcrawl",
+    "version": 1,
+    "repository": "https://github.com/mcasillas17/WallCrawl",
+    "assetLicense": "CC-BY-SA-4.0",
+    "attribution": {
+      "creator": "WallCrawl contributors",
+      "creatorUrl": "https://github.com/mcasillas17/WallCrawl",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+    }
+  }
+}

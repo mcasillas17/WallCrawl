@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +35,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -73,7 +75,8 @@ import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 fun ExercisesScreen(
     viewModel: ExercisesViewModel,
     visualProvider: ExerciseVisualProvider,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onOpenConditionReference: (() -> Unit)? = null
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -103,7 +106,8 @@ fun ExercisesScreen(
                     onQueryChanged = { viewModel.onQueryChanged(it) },
                     onSelectMuscle = { viewModel.selectMuscle(it) },
                     onSelectEquipment = { viewModel.selectEquipment(it) },
-                    onOpenDetail = { viewModel.openExerciseDetail(it) }
+                    onOpenDetail = { viewModel.openExerciseDetail(it) },
+                    onOpenConditionReference = onOpenConditionReference
                 )
 
                 // Exercise Detail Modal Bottom Sheet
@@ -125,7 +129,8 @@ private fun ExercisesContent(
     onQueryChanged: (String) -> Unit,
     onSelectMuscle: (String?) -> Unit,
     onSelectEquipment: (String?) -> Unit,
-    onOpenDetail: (Exercise) -> Unit
+    onOpenDetail: (Exercise) -> Unit,
+    onOpenConditionReference: (() -> Unit)?
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val vocabulary = LocalExerciseVocabulary.current
@@ -150,6 +155,14 @@ private fun ExercisesContent(
                 fontWeight = FontWeight.Black,
                 color = MaterialTheme.colorScheme.onSurface
             )
+        }
+
+        if (onOpenConditionReference != null) item {
+            OutlinedButton(onClick = onOpenConditionReference) {
+                Icon(Icons.AutoMirrored.Filled.LibraryBooks, contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(R.string.condition_reference_title), color = MaterialTheme.colorScheme.onSurface)
+            }
         }
 
         // Search Bar
@@ -407,7 +420,7 @@ private fun ExerciseListItem(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-private fun ExerciseDetailSheet(
+internal fun ExerciseDetailSheet(
     exercise: Exercise,
     visualProvider: ExerciseVisualProvider,
     onDismiss: () -> Unit

@@ -1141,4 +1141,21 @@
     <string name="editor_support_changed">El apoyo ha cambiado o no está disponible. Revisa las indicaciones actuales antes de añadirlo de nuevo. El borrador no ha cambiado.</string>
     <string name="editor_support_precision">Esta dosis exacta no se puede guardar con las unidades o la precisión de medida actuales de la plantilla. Prueba otra unidad o solicita un entrenamiento generado. El borrador no ha cambiado.</string>
     <string name="condition_workout_changed">Tu historial de entrenamientos, perfil o indicaciones para tus afecciones ha cambiado. Solicita un nuevo entrenamiento antes de empezar.</string>
+    <string name="condition_reference_title">Guía de afecciones</string>
+    <string name="condition_reference_search">Buscar afecciones o regiones del cuerpo</string>
+    <string name="condition_reference_about">Consulta las investigaciones sobre cada afección. En Perfil aparecen las afecciones con pautas de entrenamiento revisadas clínicamente.</string>
+    <string name="condition_reference_unavailable">No se pudo cargar la guía de afecciones.</string>
+    <string name="condition_reference_empty">Ninguna afección coincide con tu búsqueda.</string>
+    <string name="condition_reference_publications">Publicaciones</string>
+    <string name="condition_reference_access_note">Los resultados describen los grupos y las intervenciones estudiadas. Las etiquetas indican qué material se pudo consultar. Las notas de investigación están en inglés.</string>
+    <string name="condition_reference_full">Se consultó el texto completo</string>
+    <string name="condition_reference_partial">Se consultó el resumen o parte del texto</string>
+    <string name="condition_reference_show_notes">Ver notas de investigación</string>
+    <string name="condition_reference_hide_notes">Ocultar notas de investigación</string>
+    <string name="condition_reference_population">Población estudiada</string>
+    <string name="condition_reference_findings">Resultados publicados</string>
+    <string name="condition_reference_limits">Limitaciones</string>
+    <string name="condition_reference_open">Abrir publicación</string>
+    <string name="condition_reference_link_error">No se pudo abrir esta publicación en un navegador.</string>
+    <string name="condition_reference_illustrations">Ilustraciones del catálogo de movimientos de esta publicación</string>
 </resources>

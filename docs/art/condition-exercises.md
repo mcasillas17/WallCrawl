@@ -1,57 +1,43 @@
-# Four neutral condition-exercise illustrations
+# Condition research exercises and artwork
 
-The current batch adds four catalog IDs, each matching the same ID in the
-historical research request inventory: `supine-wall-supported-piriformis-stretch`,
-`pht-single-leg-calf-supported-isometric-hamstring-bridge`,
-`seated-hand-resisted-cervical-rotation-isometric`, and
-`seated-short-foot-arch-hold-no-toe-flexion`. They are catalog entries for local
-art and neutral execution text. The research inventory and its draft therapeutic
-mappings are not a supported-condition list. No condition is released until a
-qualified reviewer settles the combined evidence, restrictions, dose, and mapping.
+The exercise catalog contains 319 movements. Its 17 WallCrawl additions have 102 published PNG frame slots, with 82 distinct frame images. The Android player displays a 512-pixel SVG traced from each selected PNG. Each row below opens the original study or guideline and the versioned artwork for both app variants.
 
-The source-readiness register contains 19 pose briefs, not 19 promised catalog
-exercises. The other 15 remain research-only or unsettled for this batch. In
-particular, chair generation was blocked; the plantar-fascia draft has incorrect
-hand roles; the supported chin-nod pose remains unresolved; and heel-raise contact
-drifted. The remaining 11 have no selected generated sequence. Those attempts and
-reasons are retained under `art/condition-exercises/` and the SDD art reports;
-none is represented as completed art or as an equivalent substitute.
+Open **Exercises → Condition reference** to search all 50 conditions in English or Spanish. Each publication lists the catalog illustrations for the precise movements described by that source. The research reference is available offline. Opening a publication uses the device’s browser.
 
-## Retention and reproduction
+| Catalog exercise | Execution source | PNGs and generation records |
+| --- | --- | --- |
+| Supine Wall-Supported Piriformis Stretch | [10.1186/s13102-023-00802-4](https://link.springer.com/article/10.1186/s13102-023-00802-4) | [Male](../../art/condition-exercises/masters/supine-wall-supported-piriformis-stretch/male/) · [Female](../../art/condition-exercises/masters/supine-wall-supported-piriformis-stretch/female/) |
+| Single-Leg Calf-Supported Isometric Hamstring Bridge | [10.26603/001c.138308](https://pmc.ncbi.nlm.nih.gov/articles/PMC12129629/) | [Male](../../art/condition-exercises/masters/pht-single-leg-calf-supported-isometric-hamstring-bridge/male/) · [Female](../../art/condition-exercises/masters/pht-single-leg-calf-supported-isometric-hamstring-bridge/female/) |
+| Seated Hand-Resisted Cervical Rotation Isometric | [Source](https://www.sira.nsw.gov.au/resources-library/motor-accident-resources/publications/for-professionals/whiplash-resources/SIRA08104-Whiplash-Guidelines-1117-396479.pdf) | [Male](../../art/condition-exercises/masters/seated-hand-resisted-cervical-rotation-isometric/male/) · [Female](../../art/condition-exercises/masters/seated-hand-resisted-cervical-rotation-isometric/female/) |
+| Seated Short-Foot Arch Hold | [10.1177/23259671241311849](https://pmc.ncbi.nlm.nih.gov/articles/PMC11826869/) | [Male](../../art/condition-exercises/masters/seated-short-foot-arch-hold-no-toe-flexion/male/) · [Female](../../art/condition-exercises/masters/seated-short-foot-arch-hold-no-toe-flexion/female/) |
+| Staggered-Foot Floor Bridge | [10.1186/s12891-016-1043-6](https://pmc.ncbi.nlm.nih.gov/articles/PMC4852446/) | [Male](../../art/condition-exercises/masters/leap-offset-bridge/male/) · [Female](../../art/condition-exercises/masters/leap-offset-bridge/female/) |
+| Standing Dumbbell Scaption to Shoulder Height | [10.1177/2325967117723292](https://pmc.ncbi.nlm.nih.gov/articles/PMC5576542/) | [Male](../../art/condition-exercises/masters/standing-dumbbell-scaption/male/) · [Female](../../art/condition-exercises/masters/standing-dumbbell-scaption/female/) |
+| Seated Heel Raise From Level Ground | [10.1136/bjsports-2024-109138](https://pmc.ncbi.nlm.nih.gov/articles/PMC12171478/) | [Male](../../art/condition-exercises/masters/insertional-chair-seated-neutral-heel-raise/male/) · [Female](../../art/condition-exercises/masters/insertional-chair-seated-neutral-heel-raise/female/) |
+| Seated Band Plantar Flexion With a Straight Knee | [10.1136/bjsports-2024-109138](https://pmc.ncbi.nlm.nih.gov/articles/PMC12171478/) | [Male](../../art/condition-exercises/masters/insertional-neutral-band-plantarflexion-straight-knee/male/) · [Female](../../art/condition-exercises/masters/insertional-neutral-band-plantarflexion-straight-knee/female/) |
+| Prone Dumbbell Raise With Outward Rotation | [10.1186/s13063-020-04892-0](https://pmc.ncbi.nlm.nih.gov/articles/PMC7705859/) | [Male](../../art/condition-exercises/masters/hsd-prone-horizontal-abduction-er/male/) · [Female](../../art/condition-exercises/masters/hsd-prone-horizontal-abduction-er/female/) |
+| Seated Dumbbell Scaption With Shoulder Blade Contact | [10.1186/s13063-020-04892-0](https://pmc.ncbi.nlm.nih.gov/articles/PMC7705859/) | [Male](../../art/condition-exercises/masters/hsd-seated-dumbbell-scaption/male/) · [Female](../../art/condition-exercises/masters/hsd-seated-dumbbell-scaption/female/) |
+| Prone Dumbbell External Rotation With Upper-Arm Support | [10.1186/s13063-020-04892-0](https://pmc.ncbi.nlm.nih.gov/articles/PMC7705859/) | [Male](../../art/condition-exercises/masters/hsd-prone-er-shoulder-elbow-90/male/) · [Female](../../art/condition-exercises/masters/hsd-prone-er-shoulder-elbow-90/female/) |
+| Straight-Arm Band Shoulder Extension | [10.1177/2325967117723292](https://pmc.ncbi.nlm.nih.gov/articles/PMC5576542/) | [Male](../../art/condition-exercises/masters/standing-straight-arm-band-shoulder-extension/male/) · [Female](../../art/condition-exercises/masters/standing-straight-arm-band-shoulder-extension/female/) |
+| Shoulder Blade Glide on Hands and Knees | [10.2519/jospt.2012.3866](https://doi.org/10.2519/jospt.2012.3866) | [Male](../../art/condition-exercises/masters/quadruped-straight-arm-scapular-retraction-protraction/male/) · [Female](../../art/condition-exercises/masters/quadruped-straight-arm-scapular-retraction-protraction/female/) |
+| Chair Sit-to-Stand | [10.1186/s12891-022-05282-0](https://pmc.ncbi.nlm.nih.gov/articles/PMC9014787/) | [Male](../../art/condition-exercises/masters/phoenix-chair-sit-to-stand/male/) · [Female](../../art/condition-exercises/masters/phoenix-chair-sit-to-stand/female/) |
+| Seated Band Plantar Flexion With a Supported Bent Knee | [10.1136/bjsports-2024-109138](https://pmc.ncbi.nlm.nih.gov/articles/PMC12171478/) | [Male](../../art/condition-exercises/masters/insertional-neutral-band-plantarflexion-bent-knee/male/) · [Female](../../art/condition-exercises/masters/insertional-neutral-band-plantarflexion-bent-knee/female/) |
+| Seated Hand-Assisted Plantar Fascia Stretch | [10.1111/sms.12313](https://pubmed.ncbi.nlm.nih.gov/25145882/) | [Male](../../art/condition-exercises/masters/seated-hand-assisted-plantar-fascia-stretch/male/) · [Female](../../art/condition-exercises/masters/seated-hand-assisted-plantar-fascia-stretch/female/) |
+| Side-Lying Dumbbell External Rotation With Pillow Support | [10.1186/s13063-020-04892-0](https://pmc.ncbi.nlm.nih.gov/articles/PMC7705859/) | [Male](../../art/condition-exercises/masters/hsd-side-lying-dumbbell-er-pillow/male/) · [Female](../../art/condition-exercises/masters/hsd-side-lying-dumbbell-er-pillow/female/) |
 
-The ignored `art/condition-exercises/` directory holds the complete native PNG
-masters, exact generation prompts, source-reference copies, initial and edited
-histories, browser comparisons, source-resolution SVG derivatives and trace
-sidecars. `packaging-ledger.json` there is the 24-slot complete input ledger. Its
-source object is identical to `app/src/main/assets/wallcrawl/catalog.json`'s
-source object. Each frame descriptor records relative source/master/derived/trace/
-generation paths and SHA-256 values. The retained references are privately
-inspected documents or images, not shipped artwork or generation inputs.
 
-For each of the four folders, the retained `male/masters/frame-{1,2,3}.png` and
-`female/masters/frame-{1,2,3}.png` are actual 1254-square native PNG copies. The
-three PNGs of each variant have identical bytes because the selected exercise is a
-still hold. The one reviewed source-resolution derivative per variant is reused
-for three app-ready SVG files. The 1→2→3→2 player therefore shows no invented
-movement or alternating-side prescription. Male app frames are the canonical
-fallback. Fine contours are sharper and some faint detail is lost after alpha
-thresholding; static art cannot establish isometric effort, intrinsic-foot muscle
-activation, or every hidden contact.
+## Coverage
 
-Run from the repo root, with the retained art directory present:
+The [research register](../research/conditions/exercise-requests.json) contains 89 requests. Of the 19 movements with a source description detailed enough to illustrate, 17 have complete catalog artwork. Two further requests are possible matches for existing exercises. The side-lying hip abduction study leaves the support position unspecified and the published male bridge sequence does not establish the PHOENIX floor-return endpoint. The other 68 requests still have unresolved equipment, movement, measurement or program details.
 
-```sh
-python3 tools/workout-guide/package_illustrations.py --supplement-ledger art/condition-exercises/packaging-ledger.json --check
-python3 tools/workout-guide/package_illustrations.py --check-bundled
-```
+- **Pillow-Supported Chin Nod**. The earlier male drawing shows a pronounced tuck. The newer male drawing fails the transparency check, and the image service blocked its replacement. The female hold is retained for review.
+- **Supine Straight-Arm Dumbbell Reach**. The drawings show disproportionate changes in shoulder-to-hand length during the reach.
 
-To regenerate a selected unique SVG from a retained PNG, use the reviewed pinned
-Task6A authoring installation (`cd tools/workout-guide/authoring && npm ci`;
-see its `README.md`) and run
-`node tools/workout-guide/trace_condition_art.mjs <master.png> <derived.svg>`.
-The sidecar records the actual versions/options; regenerating to a fresh path
-avoids overwriting retained selected bytes. `--check-bundled` works in a clone
-without the ignored workspace and checks the shipped index, art and compact
-provenance. The notice in `app/src/main/assets/wallcrawl/NOTICE.md` supplies
-source titles, publication years/DOIs or primary location, changes, licenses and
-non-endorsement. The existing MIT code license is distinct from CC BY-SA art.
+## Retention and verification
+
+The [versioned PNG masters](../../art/condition-exercises/masters/) include three frames and a generation record with the actual prompt for each variant. For moving exercises, `native-strip.png` preserves the original three-position drawing. Fixed-width cuts preserve the camera and scale across its three positions. The 1→2→3→2 player supplies the return phase. Static positions repeat the same PNG in their three slots.
+
+The [packaging ledger](../../art/condition-exercises/packaging-ledger.json) records the source, PNG master, generation record, traced SVG and trace metadata for each slot. Private source copies, earlier attempts and trace intermediates stay in the retained authoring workspace. The [local asset notice](../../app/src/main/assets/wallcrawl/NOTICE.md) records attribution and the CC BY-SA 4.0 artwork license.
+
+From a checkout, run `python3 tools/workout-guide/package_illustrations.py --check-bundled` and the workout-guide Python tests. The tests compare each published PNG to its recorded master hash. With the full retained workspace, run `python3 tools/workout-guide/package_illustrations.py --supplement-ledger art/condition-exercises/packaging-ledger.json --check` to reproduce the strip-to-frame checks as well.
+
+The small shoulder-blade glide and foot-arch hold rely on subtle contours. The opposite hand in seated scaption is partly hidden behind the torso. Static art cannot measure force, prove intrinsic foot activation or establish the appropriate range for an individual. Qualified clinical review is still outstanding for workout restrictions and condition-specific prescriptions.

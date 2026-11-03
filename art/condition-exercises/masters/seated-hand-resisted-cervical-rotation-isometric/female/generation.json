@@ -1,0 +1,6 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Medical exercise illustration, one adult woman in plain sports top and shorts with tied hair seated tall on a stable plain chair, both feet flat. Near-frontal full-body view, square canvas with ample margins. Head faces straight ahead aligned over sternum, chin relaxed and slightly lowered, no actual head rotation or side bend. Her RIGHT hand rests on her RIGHT cheek (viewer LEFT); fingers contact cheek beside jaw/cheekbone, elbow out on that same side. This is one still hand-resisted neck-rotation isometric pose with no movement. Left hand relaxed on thigh. Natural proportions and coherent hand contact, chair/feet grounded. Clean thin WHITE single contour lines with sparse anatomical details, transparent canvas and transparent body/clothing/chair interiors. No fill/shading/glow/texture, no text/arrows/angles, no exercise equipment beyond chair.",
+  "outputSha256": "a49f0810bf0ade2c47a5a914b7426b15c1ef31b308362d9cca3da4a41a7bd139",
+  "generationMode": "text-only"
+}

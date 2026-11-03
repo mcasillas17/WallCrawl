@@ -107,19 +107,6 @@ it. Archive format 3 round-trips those legacy values without changing their chec
 Formats 1 and 2 remain readable with their original canonical checksums and receive
 unspecified gender. Newer unknown archive versions are rejected.
 
-## Four neutral condition-research additions
+## Neutral research catalog additions
 
-The historical 302-exercise set above remains unchanged. Four authored neutral
-entries add 24 held SVG slots (both variants × three slots), for 306 illustrated
-exercises and 1,836 adapted app SVG files. Eight unique PNG masters remain under
-`art/condition-exercises/<id>/{male,female}/masters/`; they are deliverables, not
-discarded intermediates. Fifteen further pose candidates remain research-only.
-
-See [selected sources, per-pose limitations and reproduction](art/condition-exercises.md)
-and [integration verification](condition-aware-workouts.md). The three selected
-slots per variant are identical holds, so playback does not imply motion or side
-alternation. Existing real app-size captures cover all eight variants; production
-Spanish detail recreation and Close-action readability are separately verified.
-The clone-safe `package_illustrations.py --check-bundled` validates current shipped
-bytes; retained-ledger validation additionally checks actual PNG/source/trace
-lineage. No art or source revision inherits clinical approval.
+The 17 WallCrawl exercises add 102 SVG slots across the two variants, bringing the app to 319 illustrated exercises and 1,914 variant SVG files. Moving exercises use three positions. Holds use one pose across all three slots. The PNG masters, prompts and execution references are in the [artwork index](art/condition-exercises.md).

@@ -1270,8 +1270,4 @@ retaining all 14 historical inputs and adding nine clearly fictional scenarios.
 The [integration contract](docs/condition-aware-workouts.md) maps each scenario to
 the existing planner, lifecycle and Room suites.
 
-Clinical content release remains outstanding: **0 released conditions**, 50
-research dossiers, 187 distinct sources with explicit access limits. Four neutral
-catalog/art additions are available; their PNG masters are retained. Fifteen other
-pose candidates remain research-only/unsettled. No real condition is authorized by
-a passing software test, strength metadata acceptance or AI artwork/source review.
+**Exercises → Condition reference** exposes all 50 researched conditions and their 187 distinct sources. Each source links to any matching illustrated movement in the catalog. The 17 neutral supplemental exercises have versioned PNG masters and both app illustration variants. All condition-specific prescriptions and restrictions await qualified clinical review. [Catalog and artwork coverage](docs/art/condition-exercises.md)

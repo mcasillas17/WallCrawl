@@ -102,6 +102,247 @@
       "exerciseType": "duration",
       "isStretch": false,
       "executionGuidance": "Sit with both feet on the floor. Draw the metatarsal heads toward the heels to raise the inner arches while the heels and forefeet remain down and the toes stay long rather than curling. The drawing shows a still seated position."
+    },
+    {
+      "id": "leap-offset-bridge",
+      "sourceId": "leap-offset-bridge",
+      "sourceSlug": "leap-offset-bridge",
+      "name": "Staggered-Foot Floor Bridge",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Glutes"
+      ],
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
+      "listedEquipment": [
+        "Bodyweight"
+      ],
+      "exerciseType": "bodyweight_reps",
+      "isStretch": false,
+      "executionGuidance": "Lie on your back with both knees bent. Set one foot closer to your hips than the other. Keep both soles and your shoulders on the floor as you raise your hips, then lower them."
+    },
+    {
+      "id": "standing-dumbbell-scaption",
+      "sourceId": "standing-dumbbell-scaption",
+      "sourceSlug": "standing-dumbbell-scaption",
+      "name": "Standing Dumbbell Scaption to Shoulder Height",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Shoulders"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Dumbbell"
+      ],
+      "exerciseType": "weight_reps",
+      "isStretch": false,
+      "executionGuidance": "Stand with a dumbbell at your side, palm angled slightly forward. Raise the arm diagonally, about halfway between directly forward and directly sideways. Bring it to shoulder height and lower it along the same path."
+    },
+    {
+      "id": "insertional-chair-seated-neutral-heel-raise",
+      "sourceId": "insertional-chair-seated-neutral-heel-raise",
+      "sourceSlug": "insertional-chair-seated-neutral-heel-raise",
+      "name": "Seated Heel Raise From Level Ground",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Calves"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Chair",
+        "Bodyweight"
+      ],
+      "exerciseType": "bodyweight_reps",
+      "isStretch": false,
+      "executionGuidance": "Sit on a chair with your hips and knees bent at right angles. Rest your hands on your knees and lean forward slightly. Lift both heels, keeping your forefeet planted, then lower your heels to the level floor."
+    },
+    {
+      "id": "insertional-neutral-band-plantarflexion-straight-knee",
+      "sourceId": "insertional-neutral-band-plantarflexion-straight-knee",
+      "sourceSlug": "insertional-neutral-band-plantarflexion-straight-knee",
+      "name": "Seated Band Plantar Flexion With a Straight Knee",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Calves"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Resistance Band"
+      ],
+      "exerciseType": "bodyweight_reps",
+      "isStretch": false,
+      "executionGuidance": "Sit with the working leg extended and loop a resistance band around the forefoot. Hold the ends. Starting with the ankle neutral, press the forefoot away against the band, then return to neutral with the knee straight."
+    },
+    {
+      "id": "hsd-prone-horizontal-abduction-er",
+      "sourceId": "hsd-prone-horizontal-abduction-er",
+      "sourceSlug": "hsd-prone-horizontal-abduction-er",
+      "name": "Prone Dumbbell Raise With Outward Rotation",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Rear Delts"
+      ],
+      "secondaryMuscles": [
+        "Upper Back"
+      ],
+      "listedEquipment": [
+        "Dumbbell",
+        "Padded Plinth"
+      ],
+      "exerciseType": "weight_reps",
+      "isStretch": false,
+      "executionGuidance": "Lie face down on a stable padded table with your head supported. Let the straight working arm hang toward the floor holding a dumbbell. Raise it out to the side to horizontal while turning it outward. Finish the outward rotation there, then reverse the movement as you lower the arm."
+    },
+    {
+      "id": "hsd-seated-dumbbell-scaption",
+      "sourceId": "hsd-seated-dumbbell-scaption",
+      "sourceSlug": "hsd-seated-dumbbell-scaption",
+      "name": "Seated Dumbbell Scaption With Shoulder Blade Contact",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Shoulders"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Dumbbell",
+        "Bench"
+      ],
+      "exerciseType": "weight_reps",
+      "isStretch": false,
+      "executionGuidance": "Sit tall on a stable backless seat, feet hip-width apart. Hold the dumbbell at your side with the thumb angled outward. Rest the opposite index and middle fingers at the lower part of the working shoulder blade. Raise the weighted arm diagonally forward and overhead, then lower it with control."
+    },
+    {
+      "id": "hsd-prone-er-shoulder-elbow-90",
+      "sourceId": "hsd-prone-er-shoulder-elbow-90",
+      "sourceSlug": "hsd-prone-er-shoulder-elbow-90",
+      "name": "Prone Dumbbell External Rotation With Upper-Arm Support",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Shoulders"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Dumbbell",
+        "Padded Plinth",
+        "Upper-Arm Support Roll"
+      ],
+      "exerciseType": "weight_reps",
+      "isStretch": false,
+      "executionGuidance": "Lie face down on a stable padded table with your head on the opposite forearm. Support the working upper arm on a roll out to the side at shoulder level. With the elbow bent to a right angle, start with the dumbbell hanging below it. Rotate the forearm upward and lower it again while keeping the upper arm supported."
+    },
+    {
+      "id": "standing-straight-arm-band-shoulder-extension",
+      "sourceId": "standing-straight-arm-band-shoulder-extension",
+      "sourceSlug": "standing-straight-arm-band-shoulder-extension",
+      "name": "Straight-Arm Band Shoulder Extension",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Lats"
+      ],
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
+      "listedEquipment": [
+        "Resistance Band",
+        "Band Anchor - Upper Body"
+      ],
+      "exerciseType": "bodyweight_reps",
+      "isStretch": false,
+      "executionGuidance": "Face a band secured in front of you at shoulder height. Hold one end in each hand and stand upright. Keeping the elbows straight, draw both hands down and back to the outsides of your hips, then return with control while keeping tension on the band."
+    },
+    {
+      "id": "quadruped-straight-arm-scapular-retraction-protraction",
+      "sourceId": "quadruped-straight-arm-scapular-retraction-protraction",
+      "sourceSlug": "quadruped-straight-arm-scapular-retraction-protraction",
+      "name": "Shoulder Blade Glide on Hands and Knees",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Upper Back"
+      ],
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
+      "listedEquipment": [
+        "Bodyweight"
+      ],
+      "exerciseType": "bodyweight_reps",
+      "isStretch": false,
+      "executionGuidance": "Start on your hands and knees with your elbows straight. Let the shoulder blades move toward each other, then press through your hands to move the shoulder blades apart while keeping the elbows straight."
+    },
+    {
+      "id": "phoenix-chair-sit-to-stand",
+      "sourceId": "phoenix-chair-sit-to-stand",
+      "sourceSlug": "phoenix-chair-sit-to-stand",
+      "name": "Chair Sit-to-Stand",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Quadriceps"
+      ],
+      "secondaryMuscles": [
+        "Glutes"
+      ],
+      "listedEquipment": [
+        "Chair",
+        "Bodyweight"
+      ],
+      "exerciseType": "bodyweight_reps",
+      "isStretch": false,
+      "executionGuidance": "Sit on a stable chair with your feet about shoulder-width apart. Keep both feet planted as you rise to standing and lower yourself back onto the seat."
+    },
+    {
+      "id": "insertional-neutral-band-plantarflexion-bent-knee",
+      "sourceId": "insertional-neutral-band-plantarflexion-bent-knee",
+      "sourceSlug": "insertional-neutral-band-plantarflexion-bent-knee",
+      "name": "Seated Band Plantar Flexion With a Supported Bent Knee",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Calves"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Resistance Band",
+        "Towel"
+      ],
+      "exerciseType": "bodyweight_reps",
+      "isStretch": false,
+      "executionGuidance": "Sit with the working knee slightly bent over a rolled towel. Loop the band around your forefoot and hold the ends. Press the forefoot away from neutral against the band. Return the ankle to neutral while keeping your knee supported."
+    },
+    {
+      "id": "seated-hand-assisted-plantar-fascia-stretch",
+      "sourceId": "seated-hand-assisted-plantar-fascia-stretch",
+      "sourceSlug": "seated-hand-assisted-plantar-fascia-stretch",
+      "name": "Seated Hand-Assisted Plantar Fascia Stretch",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Mobility"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Chair"
+      ],
+      "exerciseType": "duration",
+      "isStretch": true,
+      "executionGuidance": "Sit and cross the ankle of the foot you want to stretch over the opposite leg. Use the hand on the same side as that foot to draw the toes toward the shin. With the other hand, feel the band of tissue along the arch."
+    },
+    {
+      "id": "hsd-side-lying-dumbbell-er-pillow",
+      "sourceId": "hsd-side-lying-dumbbell-er-pillow",
+      "sourceSlug": "hsd-side-lying-dumbbell-er-pillow",
+      "name": "Side-Lying Dumbbell External Rotation With Pillow Support",
+      "searchAliases": [],
+      "primaryMuscles": [
+        "Shoulders"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Dumbbell",
+        "Padded Plinth",
+        "Pillow"
+      ],
+      "exerciseType": "weight_reps",
+      "isStretch": false,
+      "executionGuidance": "Lie on your side on a stable padded table, knees bent and head supported. Place a pillow between the upper arm and your side, bend that elbow to a right angle, and start with the dumbbell near your abdomen. Rotate the forearm upward, then lower it with the upper arm supported and the trunk still."
     }
   ]
 }

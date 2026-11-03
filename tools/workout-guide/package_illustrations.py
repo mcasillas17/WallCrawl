@@ -6,6 +6,7 @@ import json
 import math
 import re
 import struct
+import subprocess
 import zlib
 from pathlib import Path
 import xml.etree.ElementTree as ET
@@ -269,6 +270,8 @@ def collect_supplement(ledger_path: Path) -> dict[str, bytes]:
     frames = ledger.get("frames")
     require(isinstance(frames, list) and len(frames) <= 30000, "Invalid bounded frame ledger")
     files, entries, identities = {}, [], set()
+    panel_hashes = {}
+    variant_strips = {}
     for frame in frames:
         require(isinstance(frame, dict), "Invalid frame")
         exercise_id, variant, number = frame.get("exerciseId"), frame.get("variant"), frame.get("frameNumber")
@@ -284,7 +287,26 @@ def collect_supplement(ledger_path: Path) -> dict[str, bytes]:
         require(trace.get("schemaVersion") == 1 and trace.get("inputSha256") == frame["master"]["sha256"] and trace.get("outputSha256") == frame["derived"]["sha256"], "Trace does not bind master and derived SVG")
         versions, options = trace.get("toolVersions"), trace.get("options")
         require(isinstance(versions, dict) and all(isinstance(versions.get(key), str) and versions[key] for key in ["sharp", "potrace", "svgo", "node"]) and isinstance(options, dict) and options, "Missing effective trace versions/options")
-        require(generation.get("tool") == "native-imagegen" and isinstance(generation.get("prompt"), str) and generation["prompt"].strip() and generation.get("outputSha256") == frame["master"]["sha256"], "Generation record must bind the retained master")
+        require(generation.get("tool") == "native-imagegen" and isinstance(generation.get("prompt"), str) and generation["prompt"].strip(), "Missing native generation record")
+        strip_id = None
+        if "nativeStrip" in generation:
+            strip = generation["nativeStrip"]
+            strip_bytes = verified_file(ledger_path.parent, strip)
+            require(generation.get("exerciseId") == exercise_id and generation.get("variant") == variant,
+                    "Native strip belongs to a different exercise or variant")
+            require(generation.get("outputSha256") == strip["sha256"], "Generation record must bind the original strip")
+            strip_id = strip["sha256"]
+            if strip["sha256"] not in panel_hashes:
+                validate_png(strip_bytes)
+                splitter = Path(__file__).with_name("split_condition_strip.mjs")
+                result = subprocess.run(["node", str(splitter), "-"], input=strip_bytes,
+                                        capture_output=True, check=True, timeout=60)
+                panel_hashes[strip["sha256"]] = json.loads(result.stdout)
+            require(panel_hashes[strip["sha256"]][number - 1] == frame["master"]["sha256"], "Master differs from its native strip cell")
+        else:
+            require(generation.get("outputSha256") == frame["master"]["sha256"], "Generation record must bind the retained master")
+        require(variant_strips.setdefault((exercise_id, variant), strip_id) == strip_id,
+                "A moving sequence must use one native strip for all three cells")
         asset_path = f"exercise-illustrations/{variant}/{exercise_id}/frame-{number}.svg"
         files[asset_path] = inputs["derived"]
         entries.append({"exerciseId": exercise_id, "variant": variant, "frameNumber": number, "path": asset_path, "sha256": frame["derived"]["sha256"],

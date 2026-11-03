@@ -1,0 +1,8 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Edit this male demonstrator's exercise illustration to correct the hand roles and preserve a clearly visible seated figure-four. Show the right ankle resting directly on the left thigh. Right knee opens out to the demonstrator's right; left lower leg goes straight down to the planted foot. Rotate the raised RIGHT foot so its sole tilts upward and toward the viewer: the toes are closer to the middle of the lap, heel a little farther from the midline. Then show RIGHT hand grasping toes of that raised RIGHT foot, pulling toes gently toward shin, and LEFT fingertips touching the arch nearer the heel. On the picture, visually trace the arm that starts at the viewer-LEFT shoulder: that arm must end in the grasping hand around toes. Visually trace the arm that starts at the viewer-RIGHT shoulder: its wrist and two fingertips must be visibly connected from that elbow to the arch. Exactly two hands, both hands and both wrists separately readable. Show from slightly above the front for visibility of leg support, wrists, sole and both points of contact. Keep the shirt, shorts, chair and full visible figure. Clean white contour strokes only, transparent interiors and background, square canvas, no text or arrows.",
+  "outputSha256": "ff59adf434f0dfb1255a9865fe1557bfaff13a9a88174157d29584daba54f4e5",
+  "layout": "hold",
+  "variant": "male",
+  "exerciseId": "seated-hand-assisted-plantar-fascia-stretch"
+}

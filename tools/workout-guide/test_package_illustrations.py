@@ -24,6 +24,16 @@ PNG = png(b'\0' + b'\xff' * 4 + b'\0' * 4 + b'\0' + b'\0' * 8)
 
 
 class PngValidationTest(unittest.TestCase):
+    def test_catalog_has_the_recorded_png_master_for_every_published_frame(self):
+        public = p.ROOT / 'art/condition-exercises/masters'
+        provenance = json.loads((p.ROOT / 'app/src/main/assets/wallcrawl/illustration-provenance.json').read_text())
+        for frame in provenance['frames']:
+            name = f"{frame['exerciseId']}/{frame['variant']}/frame-{frame['frameNumber']}.png"
+            with self.subTest(master=name):
+                master = p.read_bytes(p.safe_path(public, name))
+                p.validate_png(master)
+                self.assertEqual(p.digest(master), frame['masterSha256'])
+
     def test_rgba8_rows_accept_each_defined_filter(self):
         for filter_number in range(5):
             p.validate_png(png((bytes([filter_number]) + b'\xff' * 8) * 2))
@@ -108,6 +118,48 @@ class PackagingTest(unittest.TestCase):
         with patch.object(p, 'PILOT', self.root / 'unavailable'):
             p.validate_bundled_illustrations(self.destination)
         self.assertEqual(before, self.state())
+
+    def test_native_strip_cannot_substitute_a_different_phase(self):
+        frame = self.document['frames'][0]
+        record = {'tool': 'native-imagegen', 'prompt': 'Artificial geometry', 'nativeStrip': frame['source'],
+                  'exerciseId': frame['exerciseId'], 'variant': frame['variant'],
+                  'outputSha256': frame['source']['sha256']}
+        data = json.dumps(record).encode()
+        (self.ledger.parent / frame['generation']['path']).write_bytes(data)
+        frame['generation']['sha256'] = p.digest(data)
+        self.save()
+        split = subprocess.CompletedProcess([], 0, json.dumps(['0' * 64, frame['master']['sha256'], '1' * 64]).encode())
+        with patch.object(p.subprocess, 'run', return_value=split), self.assertRaisesRegex(ValueError, 'native strip cell'):
+            p.collect_supplement(self.ledger)
+
+    def test_one_variant_cannot_mix_three_individually_valid_strip_cells(self):
+        for index, frame in enumerate(self.document['frames'][:3]):
+            strip = PNG if index != 1 else png(b'\0' * 18)
+            path = self.ledger.parent / f'strip-{index}.png'
+            path.write_bytes(strip)
+            record = {'tool': 'native-imagegen', 'prompt': 'Artificial geometry', 'exerciseId': frame['exerciseId'],
+                      'variant': frame['variant'], 'nativeStrip': {'path': path.name, 'sha256': p.digest(strip)},
+                      'outputSha256': p.digest(strip)}
+            generation = json.dumps(record).encode()
+            (self.ledger.parent / frame['generation']['path']).write_bytes(generation)
+            frame['generation']['sha256'] = p.digest(generation)
+        self.save()
+        split = subprocess.CompletedProcess([], 0, json.dumps([p.digest(PNG)] * 3).encode())
+        with patch.object(p.subprocess, 'run', return_value=split), self.assertRaisesRegex(ValueError, 'one native strip'):
+            p.collect_supplement(self.ledger)
+
+    def test_native_strip_names_its_exercise_and_variant(self):
+        frame = self.document['frames'][0]
+        for exercise, variant in [(frame['exerciseId'], 'female'), ('another-exercise', frame['variant'])]:
+            with self.subTest(exercise=exercise, variant=variant):
+                record = {'tool': 'native-imagegen', 'prompt': 'Artificial geometry', 'nativeStrip': frame['source'],
+                          'exerciseId': exercise, 'variant': variant, 'outputSha256': frame['source']['sha256']}
+                generation = json.dumps(record).encode()
+                (self.ledger.parent / frame['generation']['path']).write_bytes(generation)
+                frame['generation']['sha256'] = p.digest(generation)
+                self.save()
+                with self.assertRaisesRegex(ValueError, 'different exercise or variant'):
+                    p.collect_supplement(self.ledger)
 
     def test_supplement_is_additive_and_preserves_all_historical_bytes(self):
         before = self.state()

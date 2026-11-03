@@ -80,6 +80,7 @@ class IllustrationSelectionUiTest {
     @Test fun phtBridgeHoldLoadsBothLocalVariants() = checkSelection("en", ThemePreference.DARK, "pht-single-leg-calf-supported-isometric-hamstring-bridge")
     @Test fun neckHoldLoadsBothLocalVariants() = checkSelection("en", ThemePreference.DARK, "seated-hand-resisted-cervical-rotation-isometric")
     @Test fun shortFootHoldLoadsBothLocalVariantsInSpanish() = checkSelection("es", ThemePreference.LIGHT, "seated-short-foot-arch-hold-no-toe-flexion")
+    @Test fun offsetBridgeLoadsBothMovingVariants() = checkSelection("en", ThemePreference.DARK, "leap-offset-bridge")
 
     @Test fun spanishDetailShowsNewGuidanceAndSupportLabels() {
         val base = InstrumentationRegistry.getInstrumentation().targetContext

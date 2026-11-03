@@ -1788,6 +1788,54 @@
         "exercise-illustrations/male/hollow-rock/frame-3.svg"
       ]
     },
+    "hsd-prone-er-shoulder-elbow-90": {
+      "female": [
+        "exercise-illustrations/female/hsd-prone-er-shoulder-elbow-90/frame-1.svg",
+        "exercise-illustrations/female/hsd-prone-er-shoulder-elbow-90/frame-2.svg",
+        "exercise-illustrations/female/hsd-prone-er-shoulder-elbow-90/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hsd-prone-er-shoulder-elbow-90/frame-1.svg",
+        "exercise-illustrations/male/hsd-prone-er-shoulder-elbow-90/frame-2.svg",
+        "exercise-illustrations/male/hsd-prone-er-shoulder-elbow-90/frame-3.svg"
+      ]
+    },
+    "hsd-prone-horizontal-abduction-er": {
+      "female": [
+        "exercise-illustrations/female/hsd-prone-horizontal-abduction-er/frame-1.svg",
+        "exercise-illustrations/female/hsd-prone-horizontal-abduction-er/frame-2.svg",
+        "exercise-illustrations/female/hsd-prone-horizontal-abduction-er/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hsd-prone-horizontal-abduction-er/frame-1.svg",
+        "exercise-illustrations/male/hsd-prone-horizontal-abduction-er/frame-2.svg",
+        "exercise-illustrations/male/hsd-prone-horizontal-abduction-er/frame-3.svg"
+      ]
+    },
+    "hsd-seated-dumbbell-scaption": {
+      "female": [
+        "exercise-illustrations/female/hsd-seated-dumbbell-scaption/frame-1.svg",
+        "exercise-illustrations/female/hsd-seated-dumbbell-scaption/frame-2.svg",
+        "exercise-illustrations/female/hsd-seated-dumbbell-scaption/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hsd-seated-dumbbell-scaption/frame-1.svg",
+        "exercise-illustrations/male/hsd-seated-dumbbell-scaption/frame-2.svg",
+        "exercise-illustrations/male/hsd-seated-dumbbell-scaption/frame-3.svg"
+      ]
+    },
+    "hsd-side-lying-dumbbell-er-pillow": {
+      "female": [
+        "exercise-illustrations/female/hsd-side-lying-dumbbell-er-pillow/frame-1.svg",
+        "exercise-illustrations/female/hsd-side-lying-dumbbell-er-pillow/frame-2.svg",
+        "exercise-illustrations/female/hsd-side-lying-dumbbell-er-pillow/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/hsd-side-lying-dumbbell-er-pillow/frame-1.svg",
+        "exercise-illustrations/male/hsd-side-lying-dumbbell-er-pillow/frame-2.svg",
+        "exercise-illustrations/male/hsd-side-lying-dumbbell-er-pillow/frame-3.svg"
+      ]
+    },
     "inchworm": {
       "female": [
         "exercise-illustrations/female/inchworm/frame-1.svg",
@@ -1858,6 +1906,42 @@
         "exercise-illustrations/male/incline-push-up/frame-1.svg",
         "exercise-illustrations/male/incline-push-up/frame-2.svg",
         "exercise-illustrations/male/incline-push-up/frame-3.svg"
+      ]
+    },
+    "insertional-chair-seated-neutral-heel-raise": {
+      "female": [
+        "exercise-illustrations/female/insertional-chair-seated-neutral-heel-raise/frame-1.svg",
+        "exercise-illustrations/female/insertional-chair-seated-neutral-heel-raise/frame-2.svg",
+        "exercise-illustrations/female/insertional-chair-seated-neutral-heel-raise/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/insertional-chair-seated-neutral-heel-raise/frame-1.svg",
+        "exercise-illustrations/male/insertional-chair-seated-neutral-heel-raise/frame-2.svg",
+        "exercise-illustrations/male/insertional-chair-seated-neutral-heel-raise/frame-3.svg"
+      ]
+    },
+    "insertional-neutral-band-plantarflexion-bent-knee": {
+      "female": [
+        "exercise-illustrations/female/insertional-neutral-band-plantarflexion-bent-knee/frame-1.svg",
+        "exercise-illustrations/female/insertional-neutral-band-plantarflexion-bent-knee/frame-2.svg",
+        "exercise-illustrations/female/insertional-neutral-band-plantarflexion-bent-knee/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/insertional-neutral-band-plantarflexion-bent-knee/frame-1.svg",
+        "exercise-illustrations/male/insertional-neutral-band-plantarflexion-bent-knee/frame-2.svg",
+        "exercise-illustrations/male/insertional-neutral-band-plantarflexion-bent-knee/frame-3.svg"
+      ]
+    },
+    "insertional-neutral-band-plantarflexion-straight-knee": {
+      "female": [
+        "exercise-illustrations/female/insertional-neutral-band-plantarflexion-straight-knee/frame-1.svg",
+        "exercise-illustrations/female/insertional-neutral-band-plantarflexion-straight-knee/frame-2.svg",
+        "exercise-illustrations/female/insertional-neutral-band-plantarflexion-straight-knee/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/insertional-neutral-band-plantarflexion-straight-knee/frame-1.svg",
+        "exercise-illustrations/male/insertional-neutral-band-plantarflexion-straight-knee/frame-2.svg",
+        "exercise-illustrations/male/insertional-neutral-band-plantarflexion-straight-knee/frame-3.svg"
       ]
     },
     "inverted-row": {
@@ -2050,6 +2134,18 @@
         "exercise-illustrations/male/lateral-shuffle/frame-1.svg",
         "exercise-illustrations/male/lateral-shuffle/frame-2.svg",
         "exercise-illustrations/male/lateral-shuffle/frame-3.svg"
+      ]
+    },
+    "leap-offset-bridge": {
+      "female": [
+        "exercise-illustrations/female/leap-offset-bridge/frame-1.svg",
+        "exercise-illustrations/female/leap-offset-bridge/frame-2.svg",
+        "exercise-illustrations/female/leap-offset-bridge/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/leap-offset-bridge/frame-1.svg",
+        "exercise-illustrations/male/leap-offset-bridge/frame-2.svg",
+        "exercise-illustrations/male/leap-offset-bridge/frame-3.svg"
       ]
     },
     "leg-curl": {
@@ -2352,6 +2448,18 @@
         "exercise-illustrations/male/pendlay-row/frame-3.svg"
       ]
     },
+    "phoenix-chair-sit-to-stand": {
+      "female": [
+        "exercise-illustrations/female/phoenix-chair-sit-to-stand/frame-1.svg",
+        "exercise-illustrations/female/phoenix-chair-sit-to-stand/frame-2.svg",
+        "exercise-illustrations/female/phoenix-chair-sit-to-stand/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/phoenix-chair-sit-to-stand/frame-1.svg",
+        "exercise-illustrations/male/phoenix-chair-sit-to-stand/frame-2.svg",
+        "exercise-illustrations/male/phoenix-chair-sit-to-stand/frame-3.svg"
+      ]
+    },
     "pht-single-leg-calf-supported-isometric-hamstring-bridge": {
       "female": [
         "exercise-illustrations/female/pht-single-leg-calf-supported-isometric-hamstring-bridge/frame-1.svg",
@@ -2518,6 +2626,18 @@
         "exercise-illustrations/male/push-up-shoulder-tap/frame-1.svg",
         "exercise-illustrations/male/push-up-shoulder-tap/frame-2.svg",
         "exercise-illustrations/male/push-up-shoulder-tap/frame-3.svg"
+      ]
+    },
+    "quadruped-straight-arm-scapular-retraction-protraction": {
+      "female": [
+        "exercise-illustrations/female/quadruped-straight-arm-scapular-retraction-protraction/frame-1.svg",
+        "exercise-illustrations/female/quadruped-straight-arm-scapular-retraction-protraction/frame-2.svg",
+        "exercise-illustrations/female/quadruped-straight-arm-scapular-retraction-protraction/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/quadruped-straight-arm-scapular-retraction-protraction/frame-1.svg",
+        "exercise-illustrations/male/quadruped-straight-arm-scapular-retraction-protraction/frame-2.svg",
+        "exercise-illustrations/male/quadruped-straight-arm-scapular-retraction-protraction/frame-3.svg"
       ]
     },
     "rack-pull": {
@@ -2746,6 +2866,18 @@
         "exercise-illustrations/male/seated-forward-fold-stretch/frame-1.svg",
         "exercise-illustrations/male/seated-forward-fold-stretch/frame-2.svg",
         "exercise-illustrations/male/seated-forward-fold-stretch/frame-3.svg"
+      ]
+    },
+    "seated-hand-assisted-plantar-fascia-stretch": {
+      "female": [
+        "exercise-illustrations/female/seated-hand-assisted-plantar-fascia-stretch/frame-1.svg",
+        "exercise-illustrations/female/seated-hand-assisted-plantar-fascia-stretch/frame-2.svg",
+        "exercise-illustrations/female/seated-hand-assisted-plantar-fascia-stretch/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/seated-hand-assisted-plantar-fascia-stretch/frame-1.svg",
+        "exercise-illustrations/male/seated-hand-assisted-plantar-fascia-stretch/frame-2.svg",
+        "exercise-illustrations/male/seated-hand-assisted-plantar-fascia-stretch/frame-3.svg"
       ]
     },
     "seated-hand-resisted-cervical-rotation-isometric": {
@@ -3204,6 +3336,18 @@
         "exercise-illustrations/male/standing-dumbbell-press/frame-3.svg"
       ]
     },
+    "standing-dumbbell-scaption": {
+      "female": [
+        "exercise-illustrations/female/standing-dumbbell-scaption/frame-1.svg",
+        "exercise-illustrations/female/standing-dumbbell-scaption/frame-2.svg",
+        "exercise-illustrations/female/standing-dumbbell-scaption/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/standing-dumbbell-scaption/frame-1.svg",
+        "exercise-illustrations/male/standing-dumbbell-scaption/frame-2.svg",
+        "exercise-illustrations/male/standing-dumbbell-scaption/frame-3.svg"
+      ]
+    },
     "standing-quad-stretch": {
       "female": [
         "exercise-illustrations/female/standing-quad-stretch/frame-1.svg",
@@ -3214,6 +3358,18 @@
         "exercise-illustrations/male/standing-quad-stretch/frame-1.svg",
         "exercise-illustrations/male/standing-quad-stretch/frame-2.svg",
         "exercise-illustrations/male/standing-quad-stretch/frame-3.svg"
+      ]
+    },
+    "standing-straight-arm-band-shoulder-extension": {
+      "female": [
+        "exercise-illustrations/female/standing-straight-arm-band-shoulder-extension/frame-1.svg",
+        "exercise-illustrations/female/standing-straight-arm-band-shoulder-extension/frame-2.svg",
+        "exercise-illustrations/female/standing-straight-arm-band-shoulder-extension/frame-3.svg"
+      ],
+      "male": [
+        "exercise-illustrations/male/standing-straight-arm-band-shoulder-extension/frame-1.svg",
+        "exercise-illustrations/male/standing-straight-arm-band-shoulder-extension/frame-2.svg",
+        "exercise-illustrations/male/standing-straight-arm-band-shoulder-extension/frame-3.svg"
       ]
     },
     "step-down": {

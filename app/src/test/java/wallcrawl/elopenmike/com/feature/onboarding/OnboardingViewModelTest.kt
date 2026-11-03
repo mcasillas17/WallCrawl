@@ -309,7 +309,7 @@ class OnboardingViewModelTest {
     @Test
     fun fullGymPreservesConfirmedSupportsButDoesNotGrantThem() {
         val viewModel = OnboardingViewModel(RecordingUserProfileRepository())
-        val supports = listOf("Padded Plinth", "Calf Support")
+        val supports = listOf("Padded Plinth", "Calf Support", "Pillow", "Upper-Arm Support Roll")
         viewModel.selectFullGymEquipment()
         assertThat(viewModel.uiState.value.equipment).containsNoneIn(supports)
         supports.forEach(viewModel::toggleEquipment)

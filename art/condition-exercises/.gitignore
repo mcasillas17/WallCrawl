@@ -1,0 +1,5 @@
+# Keep private paper copies, discarded drafts and local tracing workspaces on this machine.
+/*
+!/.gitignore
+!/masters/
+!/packaging-ledger.json

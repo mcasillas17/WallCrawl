@@ -19,6 +19,21 @@ Sharp 0.35.5, Potrace 2.1.8 and SVGO 4.1.0 are pinned in package.json/package-lo
 
 ## Retained ledger and additive packaging
 
+For a three-position sequence drawn as one transparent PNG, retain the original strip and
+extract its three cells into an empty directory with the pinned Sharp installation:
+
+```sh
+node tools/workout-guide/split_condition_strip.mjs native.png path/to/empty/masters
+```
+
+Each cell spans the full native height. Its horizontal bounds are the integer thirds of
+the original width, so camera and scale are preserved across playback. The generation
+record names its `exerciseId` and `variant`, binds `outputSha256` to the original strip
+and adds `nativeStrip`, a path/hash descriptor relative to the retained ledger. All three
+cells in one variant must come from that same strip. During a retained-ledger check the packager
+repeats the extraction and verifies the exact PNG for each frame number. The bundled
+check continues to verify the app assets from a clone.
+
 Keep masters, inspected references, actual prompts/generation records and trace sidecars in the retained artwork workspace. Every descriptor below has a SHA-256 and a safe path relative to the ledger's parent; no absolute paths, `..`, backslashes or symlinks. A combined ledger must live above all its referenced files. Reused held poses can reference the same retained files in multiple frame slots.
 
 ```json
@@ -40,7 +55,7 @@ Keep masters, inspected references, actual prompts/generation records and trace 
 }
 ```
 
-`source` is the distinct authored WallCrawl source object, never a borrowed upstream commit. Provide all six slots per ID (male/female × 1/2/3), and all shipped supplemental IDs in a complete ledger. A generation record has `tool: "native-imagegen"`, the actual `prompt`, and `outputSha256` matching the retained PNG. Preserve any further available factual references/tool output identifiers in that local record; do not invent unavailable metadata. Source/master/derived/generation/trace bytes are all hash-checked. Packaged PNG masters must be noninterlaced RGBA8 (8-bit channels, color type 6, interlace 0); other sample layouts/bit depths/interlace are rejected. Validation checks PNG structure/CRC, exact decoded scanline length, each row filter 0–4, and the bounded complete deflate stream. SVG namespace/dimensions/path geometry are checked; Sharp performs full raster decoding during tracing.
+`source` is the distinct authored WallCrawl source object, never a borrowed upstream commit. Provide all six slots per ID (male/female × 1/2/3), and all shipped supplemental IDs in a complete ledger. A generation record has `tool: "native-imagegen"`, the actual `prompt`, and `outputSha256` matching the native generator output. A single-pose master has those same bytes. A strip uses the verified cell extraction above. Preserve any further available factual references/tool output identifiers in that local record; do not invent unavailable metadata. Source/master/derived/generation/trace bytes are all hash-checked. Packaged PNG masters must be noninterlaced RGBA8 (8-bit channels, color type 6, interlace 0); other sample layouts/bit depths/interlace are rejected. Validation checks PNG structure/CRC, exact decoded scanline length, each row filter 0–4, and the bounded complete deflate stream. SVG namespace/dimensions/path geometry are checked; Sharp performs full raster decoding during tracing.
 
 ```sh
 python3 tools/workout-guide/package_illustrations.py --supplement-ledger /absolute/retained/provenance.json

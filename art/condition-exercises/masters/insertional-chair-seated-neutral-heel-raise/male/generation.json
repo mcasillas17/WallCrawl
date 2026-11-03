@@ -1,0 +1,12 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Scientific educational line illustration for a workout app. Landscape 3:1 sprite strip with exactly three equally wide square cells next to one another, two generous completely empty gutters, no dividers. One entire figure centered in each cell at the same scale, camera, side, and ground line. Start, middle, end phase in reading order. Each figure and all equipment wholly inside its cell, with margins. Adult man in a plain short-sleeved athletic T-shirt and knee-length exercise shorts. Bilateral seated heel raise, both ankles moving together. Adult sits on stable armless chair facing right, hips and knees near right angles, hands resting on knees, small forward torso lean. Elevated three-quarter side view clearly separates both feet with toes pointing right. Both forefeet stay on the same floor plane in the SAME locations throughout. Left: flat soles and both heels touching floor. Center: heels partly elevated about half of their eventual height, pivoting both feet around fixed balls/toes; toes stay grounded. Right: both heels distinctly higher, both forefeet still on floor. Slight natural knee rise with heels, hands remain in contact with knees. No step or weight. Chair feet stay fixed, ankle never goes below the floor-supported neutral start. Draw clean thin pure WHITE outlines with sparse interior contour details. See-through body, clothing, equipment and background; all interiors transparent, no areas of solid paint. Flat, neutral instructional drawing composed for display against a dark background. No text, arrows, panel labels, dimensions, numerals, shading, halftone, glow, decorative marks or scenery.",
+  "outputSha256": "2458a281b50fc096548262db153f22cea080ae078c6ff229fd245f631620f943",
+  "layout": "three-panels",
+  "variant": "male",
+  "exerciseId": "insertional-chair-seated-neutral-heel-raise",
+  "nativeStrip": {
+    "path": "masters/insertional-chair-seated-neutral-heel-raise/male/native-strip.png",
+    "sha256": "2458a281b50fc096548262db153f22cea080ae078c6ff229fd245f631620f943"
+  }
+}

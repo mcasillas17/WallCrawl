@@ -1149,4 +1149,21 @@
     <string name="editor_support_changed">Support has changed or is unavailable. Review the current guidance before adding it again. Your draft has not changed.</string>
     <string name="editor_support_precision">This exact dose cannot be saved with the current template units or measurement precision. Try another template unit, or request a generated workout. Your draft has not changed.</string>
     <string name="condition_workout_changed">Your workout history, profile, or condition guidance changed. Request a new workout before starting.</string>
+    <string name="condition_reference_title">Condition reference</string>
+    <string name="condition_reference_search">Search conditions or body regions</string>
+    <string name="condition_reference_about">Explore the research on each condition. Profile lists conditions with clinically reviewed workout guidance.</string>
+    <string name="condition_reference_unavailable">The condition reference could not be loaded.</string>
+    <string name="condition_reference_empty">No conditions match your search.</string>
+    <string name="condition_reference_publications">Publications</string>
+    <string name="condition_reference_access_note">Results describe the groups and interventions studied. Access labels show what was available during the review. Research notes are in English.</string>
+    <string name="condition_reference_full">Full text reviewed</string>
+    <string name="condition_reference_partial">Abstract or excerpts reviewed</string>
+    <string name="condition_reference_show_notes">Show research notes</string>
+    <string name="condition_reference_hide_notes">Hide research notes</string>
+    <string name="condition_reference_population">Population studied</string>
+    <string name="condition_reference_findings">Reported findings</string>
+    <string name="condition_reference_limits">Limitations</string>
+    <string name="condition_reference_open">Open publication</string>
+    <string name="condition_reference_link_error">This publication could not be opened in a browser.</string>
+    <string name="condition_reference_illustrations">Catalog illustrations of movements in this publication</string>
 </resources>

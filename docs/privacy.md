@@ -15,6 +15,10 @@ offline, one-time authoring and acceptance process before this build was assembl
 running the app never calls an AI model, uploads profile or workout data for review,
 or re-runs that acceptance at runtime.
 
+The condition reference bundles its bibliography and study notes for offline reading.
+Search terms and the selected condition are local screen state. Tapping **Open
+publication** passes the selected paper’s HTTPS address to the device’s browser.
+
 **Implicit Android backup stays disabled.** The application sets
 `android:allowBackup="false"` and explicitly excludes all documented app-data
 domains from legacy full backup and modern cloud backup and device-to-device

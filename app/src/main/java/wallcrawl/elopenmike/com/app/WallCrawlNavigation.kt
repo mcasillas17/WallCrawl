@@ -34,6 +34,7 @@ object AppRoutes {
     const val PROGRAM = "program"
     const val PROGRESS = "progress"
     const val EXERCISES = "exercises"
+    const val CONDITION_REFERENCE = "condition_reference"
     const val PROFILE = "profile"
     const val ACTIVE_WORKOUT = "workout_active/{sessionId}"
     const val WORKOUT_TEMPLATES = "workout_templates"

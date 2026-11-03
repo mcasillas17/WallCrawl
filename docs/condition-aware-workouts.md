@@ -60,33 +60,11 @@ measurement validation, user-confirmed loads and offline operation remain in use
 Condition selections, frozen context and pending events are sensitive local data;
 see [privacy and explicit exports](privacy.md).
 
-## Neutral catalog and retained art
+## Browsing conditions and exercises
 
-Four neutral duration entries extend the pinned 302-entry upstream catalog to
-306 browsable exercises; they do not release a condition or automatically become
-strength candidates:
+**Exercises → Condition reference** opens a searchable offline library of 50 conditions in seven regions. Each detail shows the publications, the research team's access level and expandable study notes. English and Spanish names, search and controls are available. Publication titles retain their original language and detailed extraction notes are in English. Opening a source uses the system browser. Where the cited source describes an illustrated catalog movement, tap its localized name to open the exercise detail.
 
-- `supine-wall-supported-piriformis-stretch`
-- `pht-single-leg-calf-supported-isometric-hamstring-bridge`
-- `seated-hand-resisted-cervical-rotation-isometric`
-- `seated-short-foot-arch-hold-no-toe-flexion`
-
-[Artwork provenance and retention](art/condition-exercises.md) records eight
-unique native PNG masters and eight SVG derivatives, packaged as 24 held slots.
-The actual PNGs remain under `art/condition-exercises/<id>/{male,female}/masters/`;
-`packaging-ledger.json` binds sources, prompts, masters, derivatives and trace
-records. This retained workspace is not included in an ordinary clone. Fifteen
-other pose candidates remain research-only/unsettled; they are not completed art.
-The historical 302-exercise/906-original-frame pin, 1,812 adapted SVGs and earlier
-AI acceptance audit remain separate and unchanged.
-
-Each selected pose is a still hold: the three frames per variant have identical
-bytes. Real app playback/capture coverage verifies both variants of all four IDs.
-Spanish detail verification uses the production language controller, activity
-recreation and a readable/clickable Close action. Static art cannot certify hidden
-piriformis hand contact, PHT ankle/box detail, neck isometric effort or short-foot
-activation/overlapping toes. PNG-to-SVG tracing loses some faint detail. These are
-rendering/source checks, not qualified movement review.
+The catalog contains 319 exercises, including 17 neutral WallCrawl additions with both illustration variants. Each has explicit execution guidance and PNG masters. The source-specific exercise links identify the movement studied. The condition picker and deterministic planner use the separate clinical release records, currently empty. [Exercise sources, PNG masters and remaining artwork gaps](art/condition-exercises.md)
 
 ## Integration scenarios
 
@@ -147,7 +125,7 @@ evidence, not files promised to a fresh clone. Clinical release remains outstand
 The November 2 integration recheck verified 174 local research links, 50 dossier
 anchors and all 60 hashes in the [frozen review manifest](research/conditions/review.md#frozen-candidate-record-manifest).
 It rechecked local source records, not access to every primary publication.
-The final integration-fix debug APK is 67,541,234 bytes (SHA-256
+The pre-expansion integration-fix debug APK is 67,541,234 bytes (SHA-256
 `014d110d44f55ed0edcc0811994f5ae70dcf3080cfbdb6c0a2af5c1686faf7ae`), versus
 the 66,360,669-byte Task 6B baseline: +1,180,565 bytes in this **incremental debug
 comparison**. This is not clean-build growth or a comparison with a pre-feature
@@ -175,3 +153,11 @@ unchanged Python/research/art suites were not repeated. Debug assembly, `lint`
 and explicit variant lint checks succeeded; retained lint reports and exact
 commands distinguish the current verification from the earlier full matrix.
 Warnings remain a bounded maintenance concern, not a claim of pristine output.
+
+## Reference and catalog expansion checks
+
+The expanded debug APK contains 319 exercises and 50 searchable condition references. Eleven condition pages link to the 17 illustrated supplement exercises through the publications that describe them. Seven shared body-region graphics identify the location on each reference page.
+
+The expansion passed 212 Python tests, 1,473 JVM tests and 62 focused Android API 37 tests. Device checks covered catalog parsing, Spanish names and guidance, condition reference navigation and publication links, artwork selection, and artwork binding. Debug and release lint reported zero errors. The packaged APK retained all 1,836 prior variant SVGs byte-for-byte and includes 78 new SVG frames. The versioned source-art directory contains 102 PNG frame slots for the 17 local catalog entries.
+
+Verification used an emulator. The supine chin nod and supine dumbbell scapular reach still need usable paired artwork. Condition-specific workout rules await qualified clinical review.
