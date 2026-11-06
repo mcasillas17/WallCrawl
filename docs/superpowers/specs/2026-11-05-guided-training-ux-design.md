@@ -1,7 +1,9 @@
 # Guided training UX
 
-Date: 2026-11-05  
-Status: proposed design, awaiting owner approval  
+Date: 2026-11-05
+
+Status: proposed design, awaiting owner approval
+
 Scope: Android app experience, English and Spanish, dark and light themes
 
 ## Intent and decisions
@@ -195,3 +197,5 @@ The builder may choose component boundaries, whether a preview is a sheet or a d
 Approval covers the proposed navigation, interaction, and presentation scope above. Implementation starts after owner approval of this document; the next artifact is the implementation plan.
 
 Builder check on 2026-11-05: a fresh Android/Compose reviewer read this contract and connected code and reported “nothing important left.” This checks planning clarity, not implemented behavior or native accessibility.
+
+Preview verification on 2026-11-05: browser checks exercised invalid numeric input, set logging, rest display, leave/resume, partial finish, library search, and settings return navigation. Train and active-session layouts were inspected visually; Train was captured in light and dark themes and checked for horizontal overflow at 320 and 390 px. These are checks of the sample-data design preview only. Native implementation and its acceptance checks have not started.
