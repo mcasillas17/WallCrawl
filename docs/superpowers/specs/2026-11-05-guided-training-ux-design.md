@@ -1,0 +1,197 @@
+# Guided training UX
+
+Date: 2026-11-05  
+Status: proposed design, awaiting owner approval  
+Scope: Android app experience, English and Spanish, dark and light themes
+
+## Intent and decisions
+
+WallCrawl should make the next action obvious. A person opening the app can start or resume a workout, record what they did, and understand their progress without learning how the planner is implemented.
+
+The owner asked for a drastic improvement in simplicity and intuitiveness after the Today screen became dominated by optional controls and explanations. The owner chose the guided experience from the two approaches below. This is an app-wide presentation and interaction project. “Guided” describes the experience; it does not enroll everyone in the existing optional four-week program.
+
+The following are proposed design decisions, made by the designer for approval rather than attributed to the owner: three main destinations; settings in a header action; one expanded set editor; a persistent, clearly identified workout source with a Change action; grouped settings; and visual simplification throughout the existing screens.
+
+## Approaches
+
+| Approach | Benefit | Tradeoff | Decision |
+| --- | --- | --- | --- |
+| Guided training | One recommended next action and focused set logging. Programs, custom routines, and analysis remain accessible through named actions. | Less-used controls take another tap. Their entry points must remain discoverable. | Selected by the owner. |
+| Training dashboard | Workouts, programs, custom routines, and metrics have similar prominence. | More decisions and information on every visit. | Considered and declined in favor of guided training. |
+
+## Goals and boundaries
+
+- At a normal phone width, a ready user sees Start or Resume on opening Train. At large text sizes, scrolling remains possible and nothing overlaps or becomes unreachable.
+- During training, the current exercise, relevant execution cues, and the next set's fields have priority over decoration and historical data.
+- Each screen has one dominant action. Secondary actions use clear labels and a consistent position.
+- All existing tasks remain reachable, including manual routines, program recovery, research, history, exclusions, localization, backup, restore, deletion, and credits.
+- Every user-visible proposal is checked with realistic normal, empty, blocked, loading, saving, and failed states.
+
+This project does not change workout prescription algorithms, clinical release status, exercise assets, progression rules, metric formulas, archive formats, or the database schema. It adds no account, network service, new dependency, conversational coach, readiness score, auto-completion, or automatic program enrollment. Presentation may be reorganized without deleting information needed to make a decision.
+
+## Current evidence
+
+The design follows the current Compose implementation and checked-in screenshots. The screenshots outside Today are historical evidence of layout, not proof of every current runtime state. A fresh device walkthrough is an implementation acceptance requirement.
+
+- `app/WallCrawlNavigation.kt` currently has Today, Progress, Exercises, and Profile destinations.
+- `feature/today/TodayScreen.kt` now exposes Start early after the recent local fix, but still presents program and adjustment options as separate prominent surfaces.
+- `feature/workout/ActiveWorkoutScreen.kt` places a full illustration, exercise information, and optional previous-session section before full editors for every set.
+- `core/ui/components/SetRow.kt` already provides measurement-specific inputs, decimal handling, validation, feedback, skip/stop, and previous-value copying. Reuse these behaviors.
+- `feature/profile/ProfileScreen.kt` exposes goals, preferences, movement answers, equipment, priorities, recovery, language, theme, data, and credits in one scrolling form.
+- `feature/progress/ProgressScreen.kt` places several analytic sections before workout history. Detailed metric semantics already exist and must remain accurate.
+- `feature/onboarding/OnboardingUiState.kt` has eight steps and required movement answers. Cosmetic simplification cannot silently turn unanswered items into consent or a capability claim.
+- `app/src/main/assets/conditions/support.json` currently contains zero released condition records. Research browsing must not imply that diagnosis-specific generation is enabled.
+
+## Navigation and structure
+
+Bottom navigation has **Train**, **Progress**, and **Library**, always labelled. Retain existing route identifiers `today`, `progress`, and `exercises` so restored navigation does not depend on translated labels. Each root screen has a labelled, accessible Profile and settings icon in its top bar. Profile becomes a detail destination with Back returning to the originating screen, preserving that screen's scroll position and selections.
+
+Root navigation restores each tab's existing state. Full-screen workouts, onboarding, editors, settings details, and history details do not show the bottom bar. System Back and visible Back agree. Existing `profile`, template, history, condition-reference, program, and active-workout destinations remain valid. Do not replace navigation with a second custom router.
+
+| Destination | First view | Secondary destinations |
+| --- | --- | --- |
+| Train | Next workout or active-session Resume | Workout preview, workout source chooser, My workouts, Program, workout options |
+| Progress | Weekly activity and recent workouts | All history, performance trends, muscle and dose details, existing analytics drill-downs |
+| Library | Searchable exercises, with Exercises / My workouts switch | Exercise detail, existing routine editor, clearly labelled Condition guide entry |
+| Profile and settings | Short rows with current-value summaries | Training preferences, Equipment, Movement and restrictions, App preferences, Your data, Credits |
+
+Library defaults to Exercises. Its two-option switch opens the current exercise list or saved-routine list without routing through Train. Condition guide remains a visible secondary row on the exercise-library view and opens the existing browsable reference. Train also retains a direct My workouts shortcut. Reuse one routine list implementation for both entry paths, preserving its in-flight start handling and return destination.
+
+## Train
+
+The order is a quiet header, a short calendar-week progress summary, the next action, and compact secondary links.
+
+### Ready state
+
+Show a concise workout title, focus, estimated duration, exercise count, and relevant adjustment summary. Estimates retain their approximation marker. Show the source explicitly as **Today's workout** or the existing **Program session** and position. A secondary **Change** action opens a chooser for the currently supported source choices, saved routines, and program management. It does not silently switch the planner or enroll a program.
+
+Start workout is the dominant button. View exercises opens a preview with the complete exercise order, targets, warm-up/supportive roles, and existing cues. Back or closing the preview returns to the same recommendation; no regeneration occurs as a side effect.
+
+My workouts and Program are simple secondary rows below the recommendation. When no program exists, label its entry **Explore programs**, and explain the actual four-week offering on the management screen. An active program shows its completion position. The program choice is never a compulsory question on opening Train.
+
+Keep the selected `WorkoutPlanningIntent` and its current SavedStateHandle restoration behavior. Ordinary remains the default when no previous choice exists. Program management and enrollment do not implicitly change this choice. The source displayed, generated prescription, Start label/context, and saved membership must agree. Pending generation disables Start and reports what is happening. A program failure offers retry, recovery, or an explicit switch to Today's workout; it never falls back silently.
+
+### Active workout and adjustment states
+
+An existing session replaces the new-workout hero with **Resume workout**, its recorded title, and actual set progress. No competing Start is enabled. Program read failures or unavailable new recommendations must not obscure Resume.
+
+An accepted one-workout set reduction appears as a short sentence on the workout and an accessible Details action. Details contains the current explanation and cancel action. An offered reduction still shows its effect and target prescription before explicit acceptance. Decline, dismiss, request, cancel, and acceptance retain distinct existing meanings.
+
+Workout options houses regenerate and the existing lighter-workout request where available. It must describe any replacement action and preserve generation/start locking. Do not add per-session duration/equipment overrides that the engine does not currently support.
+
+### Restrictions and failures
+
+Actionable safety or condition instructions remain above the action they qualify. Required pre-start review of condition-specific execution cues cannot be collapsed into the ordinary preview. Unsupported restrictions and reassessment keep their current refusal behavior and provide the existing next action to edit/review the profile. An inability to generate is expressed as a specific explanation and recovery action, not an empty motivational panel.
+
+Non-blocking coverage limitations use concise, accurate summaries with Details for explanation. Actual missing coverage must remain disclosed before Start; shortening wording cannot claim the requested coverage was met.
+
+## Active workout
+
+The screen answers “What do I do now?” in this order:
+
+1. Compact header with workout position, a **Leave workout** action, and secondary **Finish**.
+2. Exercise name and a compact illustration beside or beneath it, followed by the exact prescribed target. **How to do it** opens full artwork and catalog instructions without editing or restarting the session.
+3. Any applicable execution/stop cues and errors, visible before logging.
+4. A compact rest strip when applicable, using the existing deadline and rest states.
+5. One expanded set editor, followed by compact rows for the other sets in this exercise.
+6. Previous / Next exercise navigation. Next is secondary until this exercise's sets are resolved; the user may still intentionally navigate with open sets. Final exercise uses Finish workout.
+
+Use the existing set measurements, locale parser, +/- controls, previous-value copying, and repository validation. Label the primary set action **Log set**. Do not synthesize an initial load or turn a target into recorded performance without an explicit action. Type-specific inputs continue to support weighted reps, bodyweight reps, assistance, holds, and distance/time. Optional feedback stays available after logging and when reopening a completed set.
+
+On first entry to an exercise, expand its first unresolved set. Completed and stopped sets have distinct summaries and an Edit action. All rows remain reachable. If every set is resolved, show the summaries with the existing Next or Finish action, without inventing another set.
+
+After an explicitly submitted completion or skip is confirmed by persisted state, focus may advance to the next unresolved set in the same exercise. Do not change exercise automatically. A failed write leaves the same editor open with the user's input and an announced error. Disable repeat submissions while that write is pending. Pain-stop exclusion prompts retain priority, explicit acceptance, and undo through settings. Focus advancement waits until any such prompt is resolved.
+
+Numeric text drafts are keyed by session/set and preserved when changing expanded rows, opening instructions, scrolling, rotating, or restoring the same active session after process recreation. A partially typed locale decimal is text, not a zero or null write. Saveable UI drafts must not overwrite a newer persisted edit; maintain the existing set-update reconciliation contract. Empty values, invalid values, missing targets, previous units, and assistive values retain existing semantics. These are regression requirements for collapsing editors, not permission to redesign persistence.
+
+The rest strip has a visible countdown and direct +30 s / Skip rest actions. The existing Dismiss timer action remains in a labelled secondary menu; it is not merged with Skip because the events differ. Expanding instructions or editing another set does not create a second timer or reset the deadline.
+
+**Leave workout** opens an explicit choice: leave and resume later, keep training, or discard with the existing destructive confirmation. Leaving keeps the session active and returns to its originating screen. System Back follows that same choice. Finish preserves the current incomplete-workout confirmation, counts, unsupported-program handling, and program-advancement rules. Finishing or discarding never happens because of a swipe, navigation, or visual completion animation.
+
+## Completion and Progress
+
+The completion screen shows the recorded workout, duration, completed sets, and applicable achievements compactly. It distinguishes logged work from program advancement on a partial finish. It never celebrates an unperformed set or invents a record. **Done** retains the existing return to Progress; **View workout** opens the frozen history detail.
+
+Progress opens with the current week's workout count and goal, a compact consistency summary, and the most recent completed workouts with an obvious **All workouts** link. History is reachable without scrolling through analytical explanations. A new user sees an honest empty state and an action to Train; no fake chart or trend.
+
+Below the overview, **Performance trends** opens the existing range, scope, measure, and drill-down controls; **Muscle details** exposes existing muscle involvement and separately labelled reviewed primary dose. Preserve their distinct accounting, partial-week labels, unavailable comparisons, provenance, and accessible chart alternatives. Do not relabel credited work as physiological readiness or silently combine metrics. The existing Program destination is reached from Train rather than occupying the top of Progress.
+
+All historical names, targets, measurements, units, timestamps, and reasons remain frozen records. UX simplification must not re-run the planner to populate history. Existing pagination and older-session access remain.
+
+## Library and exercise detail
+
+Exercise search is first. A **Filters** action opens muscle and equipment choices, with an applied-filter count and Clear filters. Active filter summaries stay visible after closing the sheet. Closing filters preserves the search and results; no new search backend is needed.
+
+Each exercise row shows the existing illustration, name, and a concise equipment or muscle summary. Detail prioritizes the full illustration, plain-language instructions, and equipment. Supporting muscle classifications and programming metadata move to **More details**. Source citations and condition-reference links remain accessible. “How to do it” must use actual catalog/source-reviewed descriptions rather than generate medical advice.
+
+My workouts supports the existing create, edit, reorder, start, and delete flows. The routine editor keeps all prescription types, unit confirmation, unsaved-draft recovery, and active-session start restrictions. Use the new shared visual rules without weakening its existing validation.
+
+Condition guide remains explicitly educational. Each reference retains its sources, evidence limitations, linked exercises, and release status. The UI does not offer to activate an unreviewed condition or mark its exercises as automatically safe. Empty supported-condition choices are explained only where they affect a user's action, without advertising a feature that cannot run.
+
+## Profile and settings
+
+Replace the always-expanded form with these rows, each showing a brief summary:
+
+- **Training preferences** — goals, experience, frequency, preferred session length, muscle priorities.
+- **Equipment** — existing available equipment and band setup.
+- **Movement and restrictions** — movement answers, sensitivity preferences, existing condition/reassessment state, returning after a break, and excluded exercises with Remove actions.
+- **App preferences** — units, illustration preference, theme, and language. Language remains a device-only setting; theme, units, and illustration preference keep their existing profile storage and archive semantics.
+- **Your data** — export, restore, and deletion with their present scope and confirmations.
+- **About and credits** — attribution and licenses.
+
+Details are screens with Back, not successive nested modal sheets. Use existing persistence semantics: instant-save preferences continue to save immediately; draft editors keep explicit Save and Cancel. Back from a draft follows its existing cancel/unsaved-change handling. Required reassessment or legacy condition reports create a compact, actionable notice at the settings overview so regrouping cannot bury a block on training.
+
+Retain the LocalData outcome observer above scrolling/grouped content. Restore/delete completion must still route correctly if the user leaves the visible row while the operation is running. Existing write gates, confirmations, and fresh-start requirements remain.
+
+## First-run setup
+
+Apply the same visual system and plain language to the existing eight-step setup. Keep the current required answers, step order, validation, review step, draft restoration, and restore-from-file entry. Ask the current step's question prominently, then show its controls. Place supplementary explanations beside the relevant choice or under Details, except information necessary to understand a restriction or unavailable recommendation.
+
+Use **Name**, **Your goals**, and **Review your setup** in place of implementation or codename language. Do not promise an automatic routine on the final screen when selected restrictions make generation unavailable. No new branching questionnaire or reduction in required safety answers is part of this project.
+
+## Visual and accessibility rules
+
+- Reuse Jetpack Compose, Material 3, and the existing WallCrawl components. No UI framework or font package is added.
+- Preserve the red brand and white exercise contour artwork. Use opaque neutral surfaces, calmer hierarchy, and fewer bordered containers. Remove the decorative web backdrop from functional screens. Keep the wordmark compact.
+- Red identifies the primary action or selection, not every section title. Success and errors also use text/icons so color is not their only signal.
+- Establish shared semantic typography and theme tokens. Avoid fixed dark text colors in reusable type styles. Screen titles, section labels, body copy, and secondary copy are consistent across all destinations.
+- Preserve 48 dp touch targets, visible focus, meaningful TalkBack labels/order, Android back behavior, keyboard insets, and font scaling. “Compact” means less redundant content, not tiny controls.
+- No information requires hover, animation, or gesture discovery. No looping decorative animation. Existing exercise playback remains available with readable controls and static frames.
+- Verify English and Spanish, dark and light, 320/360 dp widths, and at least 1.8x font scale. A scrollable large-text layout takes priority over an arbitrary above-the-fold target.
+
+## Implementation reach and order
+
+This is one coordinated project implemented in reviewable slices. Completion means all listed surfaces use the agreed hierarchy and remain functional, not merely a recolored Train screen.
+
+1. Shared theme/type/card/button treatment, navigation labels, profile entry/return behavior, and grouped settings.
+2. Train hierarchy, source chooser, preview/options, program entry, and all actionable restriction/error states.
+3. Focused set logging, draft retention, compact rest/instructions, leave/finish behavior, and completion screen.
+4. Progress hierarchy, Library/routines access and filters, exercise/research detail, and first-run visual/copy pass.
+5. End-to-end native verification, screenshot refresh, localized documentation, and independent review.
+
+Affected implementation includes `app/WallCrawlApp.kt`, `app/WallCrawlNavigation.kt`, `core/ui/theme`, shared UI components, and the existing Today, program, workout, Progress/history, exercises/conditions, profile, onboarding, and template presentation code. Presentation ViewModels may gain focused-editor/draft or navigation state where necessary. Repositories, schemas, archive codecs, generation policy, and research data are reused unchanged unless a separate demonstrated defect is reported and scoped.
+
+Update EN/ES string resources together, navigation and Compose UI tests whose contracts change, screenshot fixtures, README navigation descriptions, and relevant accessibility/localization documentation. Do not blindly replace every “Today” in stored workout names or historical artifacts.
+
+## Acceptance and evidence
+
+- A returning user with an accepted set adjustment can see Start on Train at 360 dp default text size, in both languages; applicable blocking cues remain ahead of Start.
+- A user with an active session can resume despite errors in new workout generation or program reads.
+- Selected source and started session membership agree. Program and ordinary choices, manual templates, and paused/unavailable programs remain distinguishable.
+- A user can log each supported measurement type, correct a completed set, skip/stop, record optional feedback, leave/resume, and finish partial/full workouts without data loss.
+- A failed save, fast double tap, decimal fragment, rotation, process recreation, open keyboard, and changing the expanded set cannot silently erase or fabricate measurements.
+- The rest countdown survives ordinary UI transitions and uses the existing deadline, including background/resume behavior.
+- Recent and older history, exact prior performance, dose details, routine editing, condition citations, exclusions, and all settings/data actions remain reachable.
+- Fresh setup, restore, deletion, legacy reports, pending reassessment, zero released conditions, empty history, catalog failures, unsupported program versions, and unavailable recommendations have explicit paths.
+- Capture actual native screenshots for Train ready/active/blocked, active set/rest/failure, completion, Progress empty/populated, Library/filter/detail, grouped settings, and onboarding. Include Spanish large text and light theme examples.
+- Run focused UI/navigation tests, relevant JVM tests, build and lint after implementation. Use test failures to identify changed user contracts rather than simply removing assertions.
+
+The interactive mockup accompanying this document demonstrates hierarchy with sample data. It is not a working planner, medical restriction implementation, or substitute for the native accessibility and persistence checks above.
+
+## Builder discretion and approval
+
+The builder may choose component boundaries, whether a preview is a sheet or a detail screen, exact spacing and icon variants, and test fixture organization. These choices must preserve the specified behavior, native ergonomics, routes, and data contracts. No unresolved product decision is intentionally delegated to an implicit default.
+
+Approval covers the proposed navigation, interaction, and presentation scope above. Implementation starts after owner approval of this document; the next artifact is the implementation plan.
+
+Builder check on 2026-11-05: a fresh Android/Compose reviewer read this contract and connected code and reported “nothing important left.” This checks planning clarity, not implemented behavior or native accessibility.
