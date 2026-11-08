@@ -84,7 +84,7 @@ fun ExerciseIllustration(
     // Only a change moves it: Play, chosen with animations off, survives leaving and re-entering composition,
     // and turning animations back on starts the loop again.
     // A shared playback is owned by its caller, which follows the setting once for every illustration it serves.
-    if (playback == null) FollowAnimationSetting(animationsEnabled, ownPlayback)
+    if (playback == null && !thumbnail) FollowAnimationSetting(animationsEnabled, ownPlayback)
     key(exercise?.id, visualProvider, variant) {
         ExerciseIllustrationContent(exercise, visualProvider, variant, modifier, height, thumbnail, animationsEnabled, playing) {
             playing = !playing

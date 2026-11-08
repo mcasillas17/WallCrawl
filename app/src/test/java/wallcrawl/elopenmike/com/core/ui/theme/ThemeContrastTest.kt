@@ -26,7 +26,10 @@ class ThemeContrastTest {
         assertText("primary text", LightTextPrimary, surfaces)
         assertText("secondary text", LightTextSecondary, surfaces)
         assertText("accent", AccentTextOnLight, surfaces)
-        assertText("accent on a selected row", AccentTextOnLight, listOf(SpiderRedPrimary.copy(alpha = 0.12f).compositeOver(LightSurfaceCard)))
+        assertText("accent on onboarding's selected row", AccentTextOnLight, listOf(SpiderRedPrimary.copy(alpha = 0.12f).compositeOver(LightSurfaceCard)))
+        // The break-range menu tints its selected row with primary over surfaceVariant.
+        assertText("accent on the break range's selected row", LightColorScheme.tertiary,
+            listOf(LightColorScheme.primary.copy(alpha = 0.12f).compositeOver(LightColorScheme.surfaceVariant)))
         assertText("blue", LightSpiderBluePrimary, surfaces)
         assertText("success", SuccessGreenDeep, surfaces)
     }

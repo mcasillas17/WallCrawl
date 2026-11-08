@@ -53,6 +53,8 @@ import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.compose.ui.MotionDurationScale
+import androidx.compose.runtime.mutableFloatStateOf
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -92,8 +94,13 @@ import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
  */
 class ActiveWorkoutScreenTest {
 
+    /** The system animation scale as Compose sees it; 1 unless a test turns animations off. */
+    private val motion = object : MotionDurationScale {
+        override var scaleFactor by mutableFloatStateOf(1f)
+    }
+
     @get:Rule
-    val composeRule = createComposeRule()
+    val composeRule = createComposeRule(motion)
 
     /**
      * A label read from resources rather than repeated here. These tests are about the rest
@@ -492,6 +499,23 @@ class ActiveWorkoutScreenTest {
         composeRule.onNodeWithText(text(R.string.action_close)).performClick()
         composeRule.onNode(expand).performScrollTo().performClick()
         // A dialog-local state would start playing again; the workout's shared one stays paused.
+        composeRule.onNodeWithContentDescription(text(R.string.illustration_play)).assertExists()
+    }
+
+    /** Turning animations off during a workout stops the shared demo: the expanded demo then offers Play. */
+    @Test
+    fun turningAnimationsOffStopsTheWorkoutsDemo() {
+        showScreen()
+        val (before, after) = InstrumentationRegistry.getInstrumentation().targetContext
+            .getString(R.string.guided_expand_demo, "\u0000").split("\u0000")
+        val expand = SemanticsMatcher("expands the demo") { node ->
+            node.config.getOrNull(SemanticsProperties.ContentDescription).orEmpty()
+                .any { it.startsWith(before) && it.endsWith(after) }
+        }
+        composeRule.onNode(expand).performScrollTo().performClick()
+        composeRule.onNodeWithContentDescription(text(R.string.illustration_pause)).assertExists()
+        composeRule.runOnIdle { motion.scaleFactor = 0f }
+        composeRule.waitForIdle()
         composeRule.onNodeWithContentDescription(text(R.string.illustration_play)).assertExists()
     }
 

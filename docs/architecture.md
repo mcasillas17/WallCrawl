@@ -1451,7 +1451,7 @@ UserProfile.themePreference (SYSTEM | DARK | LIGHT)
 - **Visual Contrast & Exercise Art**: Vector SVG illustrations use a dedicated
   dark graphite elevation backing so anatomical illustration lines remain crisp
   and visible against light and dark background themes alike. Light theme card
-  and field borders use Slate 300 (`0xFFCBD5E1`) for sharp structural definition.
+  and field outlines use `LightBorder` (`0xFF9B9A9F`), and dividers `LightDivider` (`0xFFDEDCDF`).
 - **Wordmark & Typography**: Brand elements like `WallCrawlWordmark` dynamically
   render primary brand lettering in the theme's `onSurface` color,
   preserving high contrast on all screen densities.
