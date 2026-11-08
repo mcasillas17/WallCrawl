@@ -142,7 +142,7 @@ class ReviewedAcceptanceConsumerTest {
         // exercise stays legal. Absence of a clearance is not a ban.
         assertThat(isEligible(exercise, bodyweightProfile())).isTrue()
 
-        // Every applicable joint constraint is refused, one at a time: absence is not clearance.
+        // This synthetic exercise has neither a demand assessment nor an explicit clearance.
         TrainingConstraint.entries
             .filter { it != TrainingConstraint.LOW_IMPACT_ONLY }
             .forEach { constraint ->

@@ -20,13 +20,13 @@
     <string name="guided_credits_summary">Artwork, attribution and licenses</string>
     <string name="guided_review_restrictions">Review restrictions</string>
     <string name="guided_review_legacy">Workout planning is paused for a previously reported condition.</string>
-    <string name="guided_restrictions_summary">Movement limits: %1$s · Excluded exercises: %2$s</string>
+    <string name="guided_restrictions_summary">Conditions: %1$s · Movement limits: %2$s · Excluded exercises: %3$s</string>
     <string name="guided_goals">Goals</string>
     <string name="guided_muscle_priorities">Muscle priorities</string>
     <string name="guided_sensitivities">Sensitivity preferences</string>
     <string name="guided_workouts_load_error">Saved workouts could not be loaded.</string>
     <string name="guided_research_about">Browse study findings, their limitations and the exercises used in the research. These references are for education.</string>
     <string name="guided_original_restriction">Originally stored: %1$s</string>
-    <string name="guided_no_marked_limits">No limits or exclusions marked</string>
+    <string name="guided_no_marked_limits">Conditions, movement limits and exercise exclusions</string>
     <string name="guided_saved_restrictions">Recorded restrictions</string>
 </resources>

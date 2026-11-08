@@ -176,10 +176,18 @@ class ProgramValidator(
         val planning = context.conditionPlanning
         val history = context.conditionHistory
         if (history?.pending?.any { it.profileId == context.userProfile.id } == true) return listOf(violation("pending-reassessment"))
-        if (context.userProfile.reportedConditions.isNotEmpty()) return listOf(violation("legacy-condition-report"))
+        val profile = context.userProfile
+        if (!profile.demandRestrictions.recognizesReports) return listOf(violation("legacy-condition-report"))
+        if (profile.demandRestrictions.active) {
+            val policy = ConditionPlanningPolicy()
+            val invalid = workout.exercises.filterNot { planned ->
+                policy.permitsRestrictedExercise(structuralValidator.catalogExercise(planned.exerciseId), planned, profile, context.automaticEligibilityResult != null)
+            }
+            if (invalid.isNotEmpty()) return invalid.map { violation("exercise-restricted", it.exerciseId) }
+        }
         if (planning is ConditionPlanningResult.Blocked) return planning.reasons.map { violation(it.reason) }
         if (planning !is ConditionPlanningResult.Ready) {
-            return if (context.userProfile.hasConditionReports || workout.conditionDecisions.isNotEmpty() ||
+            return if (profile.activeConditions.isNotEmpty() || workout.conditionDecisions.isNotEmpty() ||
                 workout.exercises.any { it.prescription.purpose != PrescriptionPurpose.ORDINARY }) listOf(violation("missing-condition-context")) else emptyList()
         }
         val support = context.conditionSupport ?: return listOf(violation("missing-support"))

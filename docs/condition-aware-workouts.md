@@ -1,9 +1,10 @@
 # Condition-aware workouts
 
-**Released conditions: 0.** The production `conditions/support.json` is `withheld-v1`
-with an empty records array. The picker exposes only released records that the
-current engine can represent, so the research inventory is never a selectable
-condition list. No qualified clinical review has been supplied.
+**Eight reported conditions can guide ordinary exercise selection.** Open **Profile and settings → Movement and restrictions → Reported conditions**, or select them during onboarding. The choices include piriformis syndrome, gluteal tendinopathy, lumbar radiculopathy, nonspecific low back pain, rotator cuff–related shoulder pain, lateral elbow tendinopathy, carpal tunnel syndrome and patellofemoral pain.
+
+The planner uses the movement-demand assessments for 191 exercise IDs from alpha.16. It excludes unassessed exercises and exercises with an avoid demand for any selected report. It gives lower priority to exercises with a modify demand. Joint sensitivities apply independently. If the remaining exercises cannot form a workout, Train offers access to Profile and My workouts. Known reports restored from backup use the same rules. An unrecognized report stays visible for removal and blocks new starts.
+
+**There are zero released therapeutic protocols.** The bundled support catalog contains no clinically reviewed exercise doses. Checking a reported condition does not add a prescribed stretch or claim that a movement will treat it.
 
 The [research inventory](research/conditions/summary.md) covers 50 conditions and
 187 distinct publications, guidelines and notices, represented by 196 source

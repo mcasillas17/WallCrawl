@@ -131,8 +131,8 @@ class ProfileViewModel(
     }
 
     private val capabilityEditorFlow = MutableStateFlow(CapabilityEditorState())
-    // Capability saves also replace the equipment list as part of a whole-profile write.
-    private val equipmentEdits = Mutex()
+    // A whole-profile capability save must serialize with individual equipment and report edits.
+    private val profileEdits = Mutex()
 
     private val exclusionSaveFailed = MutableStateFlow(false)
 
@@ -163,14 +163,18 @@ class ProfileViewModel(
         initialValue = ProfileUiState.Loading
     )
 
-    fun removeReportedCondition(conditionId: String) {
+    fun setReportedCondition(conditionId: String, selected: Boolean) {
+        if (conditionState.value.saving) return
+        conditionState.value = conditionState.value.copy(saving = true, reportedSaveFailed = false)
         viewModelScope.launch {
             try {
-                userProfileRepository.removeReportedCondition(conditionId)
+                profileEdits.withLock { userProfileRepository.setReportedCondition(conditionId, selected) }
             } catch (error: CancellationException) {
                 throw error
             } catch (_: Exception) {
-                conditionState.value = conditionState.value.copy(saveFailed = true)
+                conditionState.value = conditionState.value.copy(reportedSaveFailed = true)
+            } finally {
+                conditionState.value = conditionState.value.copy(saving = false)
             }
         }
     }
@@ -251,7 +255,7 @@ class ProfileViewModel(
 
     fun toggleEquipment(equipment: String) {
         viewModelScope.launch {
-            equipmentEdits.withLock {
+            profileEdits.withLock {
                 val current = userProfileRepository.getProfileOnce()
                 val updated = if (equipment in current.availableEquipment) {
                     current.availableEquipment - equipment
@@ -324,7 +328,7 @@ class ProfileViewModel(
         capabilityEditorFlow.value = capabilityEditorFlow.value.copy(isSaving = true, error = null)
         viewModelScope.launch {
             try {
-                equipmentEdits.withLock {
+                profileEdits.withLock {
                     val current = userProfileRepository.getProfileOnce()
                     userProfileRepository.saveProfile(
                         current.copy(movementCapabilities = draft)

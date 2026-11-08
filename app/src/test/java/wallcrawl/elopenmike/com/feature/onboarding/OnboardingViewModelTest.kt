@@ -56,6 +56,29 @@ class OnboardingViewModelTest {
     }
 
     @Test
+    fun reportedConditionsSurviveDraftRecreationAndMergeOnlyExplicitEdits() = runTest {
+        val repository = RecordingUserProfileRepository()
+        val opaque = " future / id "
+        repository.saveUserProfile(UserProfile(reportedConditions = setOf(opaque, "gluteal_tendinopathy")))
+        val handle = SavedStateHandle()
+        val original = OnboardingViewModel(repository, handle)
+        original.setReportedCondition("piriformis_syndrome", true)
+        original.setReportedCondition("gluteal_tendinopathy", false)
+        original.setReportedCondition("reference-only", true)
+        original.updateName("Crawler")
+        answerAllCapabilities(original, CapabilityLevel.UNKNOWN)
+
+        val restored = OnboardingViewModel(repository, handle)
+        advanceUntilIdle()
+        assertThat(restored.uiState.value.reportedConditions).containsExactly(opaque, "piriformis_syndrome")
+        repository.saveUserProfile(repository.getProfileOnce().copy(reportedConditions = setOf(opaque, "new report", "gluteal_tendinopathy")))
+        restored.complete()
+        advanceUntilIdle()
+        assertThat(repository.saved.single().reportedConditions).containsExactly(opaque, "new report", "piriformis_syndrome")
+        assertThat(repository.saved.single().activeConditions).isEmpty()
+    }
+
+    @Test
     fun profileGenderSurvivesDraftRecreationAndCompletion() = runTest {
         val repository = RecordingUserProfileRepository()
         val savedState = SavedStateHandle()

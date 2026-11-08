@@ -101,36 +101,12 @@ class SafetyCopyTest {
         // flag in both directions.
         assertThat(PlannerFeatureFlags.PRODUCTION.reviewedCapabilityEligibility).isTrue()
 
-        assertWithMessage("the English hint must say the selection is read")
-            .that(english.getValue("onboarding_safety_hint"))
-            .contains("Automatic workouts read your answer")
-        assertWithMessage("the Spanish hint must say the selection is read")
-            .that(spanish.getValue("onboarding_safety_hint"))
-            .contains("leen tu respuesta")
-
-        // No accepted record clears any specific joint, so choosing one leaves no automatic
-        // workout at all. Low-impact-only is the exception — it is decided by each record's
-        // impact level rather than by a clearance — and the copy has to separate the two, or
-        // it understates one option and overstates the rest.
-        assertWithMessage("the English hint must say no automatic workout is left to offer")
-            .that(english.getValue("onboarding_safety_hint"))
-            .contains("no automatic workout to offer")
-        assertWithMessage("the English hint must say low impact only is live")
-            .that(english.getValue("onboarding_safety_hint"))
-            .contains("Low impact only takes effect today")
-        assertWithMessage("the Spanish hint must say no automatic workout is left to offer")
-            .that(spanish.getValue("onboarding_safety_hint"))
-            .contains("no tendrá entrenamientos automáticos que ofrecer")
-        assertWithMessage("the Spanish hint must say low impact only is live")
-            .that(spanish.getValue("onboarding_safety_hint"))
-            .contains("«Solo bajo impacto» ya se aplica hoy")
-
-        assertWithMessage("the English Profile card must carry the same two statements")
-            .that(english.getValue("profile_safety_description"))
-            .contains("no automatic workout to offer")
-        assertWithMessage("the Spanish Profile card must carry the same two statements")
-            .that(spanish.getValue("profile_safety_description"))
-            .contains("no tendrá entrenamientos automáticos que ofrecer")
+        listOf("onboarding_safety_hint", "profile_safety_description").forEach { key ->
+            assertThat(english.getValue(key)).contains("filter exercises by movement demand")
+            assertThat(english.getValue(key)).contains("Low impact only excludes high-impact exercises")
+            assertThat(spanish.getValue(key)).contains("filtrar ejercicios según los movimientos")
+            assertThat(spanish.getValue(key)).contains("«Solo bajo impacto» excluye los ejercicios de alto impacto")
+        }
 
         // The reviewed cohort is AI-accepted under owner authorization. Neither surface may
         // describe it as human review or as clinical validation.
@@ -158,16 +134,6 @@ class SafetyCopyTest {
             assertWithMessage("$key (es) must say the settings are read")
                 .that(spanish.getValue(key)).contains("leen estos ajustes")
         }
-
-        // The Profile card also holds the return-after-break selector, which the planner does
-        // consume. The disclaimer must name the joint selection, or it reads as a card-level
-        // note and understates what the app does with that other input.
-        assertWithMessage("the English Profile disclaimer must name what it covers")
-            .that(english.getValue("profile_safety_description"))
-            .startsWith("Your joint selection")
-        assertWithMessage("the Spanish Profile disclaimer must name what it covers")
-            .that(spanish.getValue("profile_safety_description"))
-            .startsWith("Tu selección de articulaciones")
     }
 
     @Test
@@ -191,12 +157,12 @@ class SafetyCopyTest {
         assertWithMessage("the Spanish refusal must name the reviewed automatic scope")
             .that(spanish.getValue("today_error_reviewed_no_approved_metadata"))
             .contains("alcance automático revisado")
-        assertWithMessage("the English constraint refusal must name the reviewed scope too")
+        assertWithMessage("the English constraint refusal must explain that the combination has no match")
             .that(english.getValue("today_error_reviewed_constraints"))
-            .contains("reviewed automatic scope")
-        assertWithMessage("the Spanish constraint refusal must name the reviewed scope too")
+            .contains("No reviewed exercise matches")
+        assertWithMessage("the Spanish constraint refusal must explain that the combination has no match")
             .that(spanish.getValue("today_error_reviewed_constraints"))
-            .contains("alcance automático revisado")
+            .contains("Ningún ejercicio revisado coincide")
 
         // Still no medical or diagnostic framing on a refusal a user will actually see.
         listOf(english, spanish).forEach { strings ->
@@ -243,34 +209,20 @@ class SafetyCopyTest {
             .that(spanish.getValue("profile_capability_description"))
             .isEqualTo(spanish.getValue("movement_capability_current_use"))
 
-        // Every string on both surfaces that offer the selector, not just the hint: a sibling
-        // option subtitle is just as able to imply a filter that does not run, and the Profile
-        // card edits the same inert setting after onboarding.
         val stepKeys = english.keys.filter {
             it.startsWith("onboarding_safety_") || it.startsWith("profile_safety_")
         }
         assertThat(stepKeys).contains("onboarding_safety_none_subtitle")
         assertThat(stepKeys).contains("profile_safety_description")
-        // A regression guard for the exact phrasings that were removed, not a synonym filter.
-        // A differently-worded claim would pass; this stops these ones coming back.
-        val impliedFiltering = listOf(
-            // English
-            "filters or substitutes", "joint filters", "without joint",
-            // "needs conservative exercise selection" is the same promise in softer words:
-            // it says the answer changes what gets selected, and nothing does that yet.
-            "conservative exercise selection",
-            // The step is a topic label, not a promise that the app protects a joint.
+        val protectionClaims = listOf(
             "protect sensitive joints", "areas to protect",
-            // Spanish
-            "filtra o cambia", "filtros por articulación", "filtros por articulacion",
-            "selección conservadora", "seleccion conservadora",
             "protege las articulaciones", "para proteger"
         )
         listOf("en" to english, "es" to spanish).forEach { (language, strings) ->
             stepKeys.forEach { key ->
                 val value = strings[key] ?: return@forEach
-                impliedFiltering.forEach { claim ->
-                    assertWithMessage("$key ($language) must not imply automatic filtering: $claim")
+                protectionClaims.forEach { claim ->
+                    assertWithMessage("$key ($language) must not promise joint protection: $claim")
                         .that(value.lowercase()).doesNotContain(claim)
                 }
             }

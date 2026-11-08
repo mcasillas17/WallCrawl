@@ -12,7 +12,9 @@
     "preferredDurationMinutes": 35,
     "daysPerWeek": 3,
     "availableEquipment": [
-      "Bodyweight"
+      "Barbell",
+      "Bench",
+      "Squat Rack"
     ],
     "preferredUnit": "LBS",
     "musclePriorities": {
@@ -34,12 +36,7 @@
   "reviewedEligibility": {
     "adaptationState": "BUILD",
     "syntheticApprovedExerciseIds": [
-      "push-up",
-      "knee-push-up",
-      "bodyweight-squat",
-      "glute-bridge",
-      "plank",
-      "side-plank"
+      "barbell-bench-press"
     ]
   },
   "expected": {

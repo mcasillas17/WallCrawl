@@ -206,6 +206,28 @@ class ConditionControlsTest {
         save("today-frozen-supportive-dark.png")
     }
 
+    @Test fun profileCanSelectAndRemovePiriformisWithoutReleasedSupport() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val db = androidx.room.Room.inMemoryDatabaseBuilder(context, wallcrawl.elopenmike.com.core.database.WallCrawlDatabase::class.java).build()
+        database = db
+        val repository = wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository(db.userProfileDao())
+        val vm = wallcrawl.elopenmike.com.feature.profile.ProfileViewModel(repository)
+        viewModels.put("profile", vm)
+        compose.setContent { WallCrawlTheme { wallcrawl.elopenmike.com.feature.profile.ProfileScreen(vm, {}) } }
+        compose.waitUntil(10_000) { vm.uiState.value is wallcrawl.elopenmike.com.feature.profile.ProfileUiState.Success }
+        val movement = context.getString(R.string.guided_movement_restrictions)
+        compose.onNode(hasScrollAction()).performScrollToNode(hasText(movement))
+        compose.onNodeWithText(movement).performClick()
+
+        val chip = compose.onNodeWithTag("reported-condition-piriformis_syndrome")
+        chip.performScrollTo().assertIsNotSelected().performClick()
+        fun selectedReports() = (vm.uiState.value as? wallcrawl.elopenmike.com.feature.profile.ProfileUiState.Success)?.profile?.reportedConditions
+        compose.waitUntil(10_000) { selectedReports() == setOf("piriformis_syndrome") && !vm.conditions.value.saving }
+        chip.assertIsSelected().performClick()
+        compose.waitUntil(10_000) { selectedReports() == emptySet<String>() }
+        chip.assertIsNotSelected()
+    }
+
     @Test fun realProfileRetainsConditionDraftThroughLocaleChange() {
         val base = InstrumentationRegistry.getInstrumentation().targetContext
         val db = androidx.room.Room.inMemoryDatabaseBuilder(base, wallcrawl.elopenmike.com.core.database.WallCrawlDatabase::class.java).build()

@@ -53,6 +53,7 @@ import wallcrawl.elopenmike.com.core.model.DeloadSource
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
+import wallcrawl.elopenmike.com.core.model.clearsJointSensitivities
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
@@ -1473,26 +1474,37 @@ class TodayProductionLifecycleTest {
     }
 
     @Test
-    fun aSelectedJointConstraintReportsTheReviewedRefusalRatherThanAPlan() = runTest {
-        assertThat(bundledExercises.mapNotNull { it.acceptedMetadata() }
-            .all { it.clearedTrainingConstraints.isEmpty() }).isTrue()
-
-        val viewModel = todayViewModel(
-            profileRepository = LifecycleProfileRepository(
-                freshlyOnboardedProfile().copy(
-                    availableEquipment = StandardEquipment.ALL,
-                    trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)
-                )
-            ),
-            workoutRepository = LifecycleWorkoutRepository()
+    fun aReturningLifterCanStartAnAutomaticWorkoutWithLowerBackSensitivity() = runTest {
+        val profile = UserProfile(
+            onboardingCompleted = true,
+            experienceLevel = ExperienceLevel.INTERMEDIATE,
+            returningAfterBreakWeeks = 104,
+            availableEquipment = StandardEquipment.FULL_GYM,
+            trainingConstraints = setOf(TrainingConstraint.LOWER_BACK_SENSITIVE),
+            movementCapabilities = MovementCapabilities.from(mapOf(
+                MovementCapabilityType.FLOOR_TRANSITION to CapabilityLevel.LIMITED,
+                MovementCapabilityType.UNSUPPORTED_SQUAT to CapabilityLevel.LIMITED
+            ))
         )
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.uiState.collect {}
-        }
+        val profiles = LifecycleProfileRepository(profile)
+        val workouts = LifecycleWorkoutRepository()
+        val viewModel = todayViewModel(profiles, workouts)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
         advanceUntilIdle()
 
-        assertThat((viewModel.uiState.value as TodayUiState.Error).error)
-            .isEqualTo(TodayError.REVIEWED_CONSTRAINTS_REMOVED_ALL)
+        val displayed = (viewModel.uiState.value as TodayUiState.Success).suggestedWorkout
+        assertThat(displayed.exercises).isNotEmpty()
+        val eligibleIds = bundledExercises.filter { exercise ->
+            exercise.acceptedMetadata()?.let { clearsJointSensitivities(exercise.id, profile, it.clearedTrainingConstraints) } == true
+        }.map(Exercise::id)
+        assertThat(eligibleIds).containsAtLeastElementsIn(displayed.exercises.map { it.exerciseId })
+        assertThat(eligibleIds).doesNotContain("barbell-bench-press")
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE, displayed) {}
+        advanceUntilIdle()
+        val started = workouts.startRequests.single()
+        assertThat(started.workout).isEqualTo(displayed)
+        assertThat(started.userProfile.trainingConstraints).isEqualTo(profile.trainingConstraints)
+        assertThat(profiles.getProfileOnce()).isEqualTo(profile)
     }
 
     @Test fun unreadableStoredRestrictionsExplainTheGenerationBlock() = runTest {

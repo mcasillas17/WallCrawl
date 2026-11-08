@@ -201,7 +201,8 @@ class MultiWeekProgramProductionReplayTest {
         val variants = listOf(
             profile.copy(availableEquipment = listOf(StandardEquipment.CARDIO)) to
                 AutomaticEligibilityFailure.NO_APPROVED_METADATA,
-            profile.copy(trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)) to
+            profile.copy(trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE),
+                excludedExerciseIds = byId.keys.filterNot { it == "bodyweight-squat" }) to
                 AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL,
             profile.copy(excludedExerciseIds = bundled.exercises.map { it.id }) to
                 AutomaticEligibilityFailure.USER_EXCLUSIONS_REMOVED_ALL

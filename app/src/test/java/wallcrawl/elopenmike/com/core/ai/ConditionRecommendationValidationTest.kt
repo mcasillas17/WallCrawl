@@ -20,6 +20,21 @@ class ConditionRecommendationValidationTest {
     private fun changed(plan: GeneratedWorkout, exercises: List<PlannedExercise>) = plan.copy(exercises = exercises,
         estimatedDurationMinutes = WorkoutDurationEstimator.estimateMinutes(exercises))
 
+    @Test fun reportedDemandRanksModifiedWorkAfterOtherChoicesAndForgedCandidatesAreRefused() = runTest {
+        val profile = UserProfile(reportedConditions = setOf("piriformis_syndrome", "gluteal_tendinopathy"))
+        val exercises = listOf("barbell-bench-press", "glute-bridge", "lying-piriformis-stretch", "unassessed")
+            .map { fixture.ordinary.copy(id = it) }
+        val context = WorkoutGenerationContext(userProfile = profile, allowedExercises = exercises)
+        val plan = FakeWorkoutPlanner().generateWorkout(context)
+        assertThat(plan.exercises.map { it.exerciseId }).containsExactly("glute-bridge", "barbell-bench-press").inOrder()
+        assertThat(plan.conditionDecisions).isEmpty()
+        assertThat(validate(plan, context, catalog = exercises)).isInstanceOf(ProgramValidationResult.Valid::class.java)
+        for (id in listOf("lying-piriformis-stretch", "unassessed")) {
+            val forged = plan.copy(exercises = listOf(plan.exercises.first().copy(exerciseId = id)))
+            assertThat(validate(forged, context, catalog = exercises)).isInstanceOf(ProgramValidationResult.Invalid::class.java)
+        }
+    }
+
     @Test fun separatePurposeReceiptsAndFrozenSnapshotAreAccepted() = runTest {
         val c = context()
         val plan = FakeWorkoutPlanner().generateWorkout(c)

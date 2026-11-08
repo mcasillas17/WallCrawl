@@ -179,9 +179,13 @@ internal fun TodayContent(
                         error.conditionRefusal?.let { ConditionRefusal(it.reasons) }
                         StatusText(stringResource(error.error.messageRes))
                         Spacer(Modifier.height(12.dp))
-                        WallCrawlPrimaryButton(stringResource(R.string.action_try_again), onRegenerate, enabled = !busy)
+                        if (error.error == TodayError.REVIEWED_CONSTRAINTS_REMOVED_ALL) {
+                            WallCrawlPrimaryButton(stringResource(R.string.program_edit_profile), onOpenProfile)
+                        } else {
+                            WallCrawlPrimaryButton(stringResource(R.string.action_try_again), onRegenerate, enabled = !busy)
+                            TextButton(onClick = onOpenProfile) { Text(stringResource(R.string.program_edit_profile)) }
+                        }
                         if (busy) StatusText(stringResource(R.string.guided_train_busy))
-                        TextButton(onClick = onOpenProfile) { Text(stringResource(R.string.program_edit_profile)) }
                     }
                 }
                 else -> item(key = "loading") {

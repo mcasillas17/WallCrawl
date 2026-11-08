@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reported_conditions_title">Reported conditions</string>
+    <string name="reported_conditions_hint">Select any conditions you want the workout planner to take into account when choosing exercises.</string>
+    <string name="reported_conditions_save_error">Could not update your reported conditions. If a workout is active, finish or cancel it and try again.</string>
+</resources>

@@ -286,15 +286,7 @@ after graph-only review holds (five retain five edges to four unique pending end
 and the committed reproducible
 audit artifact plus its offline verifier.
 
-Task 2's selected joint-constraint half is now closed on the implementation side and open on
-the content side. Reviewed schema version 2 adds a required `clearedTrainingConstraints`
-field, and `ExerciseEligibilityPolicy` decides each exercise — and each supported-regression
-exception — against it instead of rejecting the whole pool whenever any joint sensitivity is
-selected. No record clears anything — including the 182 `AI_ACCEPTED` ones — so a
-joint-sensitive profile still receives a typed `TRAINING_CONSTRAINTS_REMOVED_ALL` refusal in
-production; filling the field in requires genuine human review as part of the same
-field-by-field sign-off. The band-only chest gap and the fixed-anchor decisions are
-unchanged, and no clearance is inferred from a name, muscle, pattern or equipment.
+Reviewed schema version 2 records explicit joint clearances. All 182 AI-accepted records have an empty clearance list. Each candidate and supported regression can also qualify through an ID-specific movement-demand assessment compatible with every selected sensitivity. A pool with no compatible exercises produces `TRAINING_CONSTRAINTS_REMOVED_ALL`. Adding explicit clinical or human-reviewed content remains separate work. [Eligibility rules](docs/reviewed-capability-eligibility.md)
 
 **Depends on:** Human decisions for direct-primary classification and first-cohort scope.
 

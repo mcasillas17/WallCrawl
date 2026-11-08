@@ -80,6 +80,7 @@ import wallcrawl.elopenmike.com.core.model.BreakRange
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
+import wallcrawl.elopenmike.com.core.model.ReportedCondition
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.ui.components.*
@@ -838,6 +839,9 @@ private fun SafetyStep(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        WallCrawlCard(cornerRadius = 16.dp, contentPadding = 16.dp) {
+            ReportedConditionPicker(state.reportedConditions, !state.isSaving, viewModel::setReportedCondition)
+        }
         if (state.conditionLoadFailed) Text(stringResource(R.string.condition_load_error), Modifier.a11yAnnounced(), color = MaterialTheme.colorScheme.onSurface)
         ConditionSelectionControls(state.conditionRecords, state.conditionDraft ?: state.retainedConditions,
             viewModel::updateConditions, !state.isSaving)
@@ -1077,6 +1081,13 @@ private fun SummaryStep(
                     LocaleFormatting.formatCount(state.capabilityAnswers.size, locale)
                 )
             )
+            if (state.reportedConditions.isNotEmpty()) {
+                val names = state.reportedConditions.sorted().map { id ->
+                    val condition = ReportedCondition.entries.firstOrNull { it.id == id }
+                    condition?.let { stringResource(it.labelRes) } ?: id
+                }
+                SummaryRow(stringResource(R.string.reported_conditions_title), names.joinToString(separator))
+            }
             SummaryRow(
                 label = stringResource(R.string.onboarding_summary_label_sensitive),
                 value = if (state.constraints.isEmpty()) {

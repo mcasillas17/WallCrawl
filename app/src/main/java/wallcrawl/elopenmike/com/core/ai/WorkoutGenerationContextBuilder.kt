@@ -16,6 +16,7 @@ import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
 import wallcrawl.elopenmike.com.core.database.repository.ProgramRepository
+import wallcrawl.elopenmike.com.core.model.ConditionViolation
 import wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog
 import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
 import wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent
@@ -125,13 +126,13 @@ class WorkoutGenerationContextBuilder(
         val now = Instant.ofEpochMilli(transactionRead?.history?.asOfTimestamp ?: nowTimestamp())
         val zone = transactionRead?.history?.zoneId ?: zoneId()
         val initialProfile = transactionRead?.profile ?: userProfileRepository.getProfileOnce()
-        val needsConditionRead = transactionRead != null || initialProfile.hasConditionReports ||
+        val needsConditionRead = transactionRead != null || initialProfile.activeConditions.isNotEmpty() ||
             workoutRepository.hasPendingConditionReassessment(initialProfile.id)
         var support = transactionSupport ?: if (needsConditionRead) conditionSupport() else null
         var conditionRead = transactionRead ?: support?.let { workoutRepository.getConditionContext(initialProfile.id, it, now.toEpochMilli(), zone, intent == WorkoutPlanningIntent.PROGRAM) }
         val initialProgram = if (intent == WorkoutPlanningIntent.PROGRAM && conditionRead == null) programRepository?.get(initialProfile.id) else null
         // A program projection can observe a selection made after the bootstrap profile read.
-        if (conditionRead == null && initialProgram?.profile?.hasConditionReports == true) {
+        if (conditionRead == null && !initialProgram?.profile?.activeConditions.isNullOrEmpty()) {
             support = conditionSupport()
             conditionRead = workoutRepository.getConditionContext(initialProfile.id, support, now.toEpochMilli(), zone, true)
         }
@@ -222,7 +223,9 @@ class WorkoutGenerationContextBuilder(
             is AutomaticEligibilityResult.Candidates -> automaticEligibilityResult.exercises
             is AutomaticEligibilityResult.NoCandidates -> emptyList()
             null -> exerciseFilter.filterCandidates(
-                allExercises = allExercises,
+                allExercises = if (profile.demandRestrictions.active) allExercises.filter {
+                    ConditionPlanningPolicy().ordinaryEligible(it, profile, reviewed = false)
+                } else allExercises,
                 profile = profile
             )
         }
@@ -238,6 +241,8 @@ class WorkoutGenerationContextBuilder(
 
         val conditionPlanning = if (support != null && conditionRead != null) {
             ConditionPlanningPolicy().resolve(profile, allowedExercises, allExercises.associateBy { it.id }, support, conditionRead.history)
+        } else if (!profile.demandRestrictions.recognizesReports) {
+            ConditionPlanningResult.Blocked(listOf(ConditionViolation("legacy-condition-report", emptySet())))
         } else ConditionPlanningResult.NotApplicable
         val conditionCandidates = when (conditionPlanning) {
             is ConditionPlanningResult.Ready -> allowedExercises.filter { it.id in conditionPlanning.ordinaryRules }
@@ -281,7 +286,7 @@ class WorkoutGenerationContextBuilder(
             programHeader = programHeader,
             programInput = programInput,
             conditionPlanning = conditionPlanning,
-            conditionHistory = conditionRead?.history,
+            conditionHistory = conditionRead?.history?.takeIf { profile.activeConditions.isNotEmpty() || it.pending.isNotEmpty() },
             conditionSupport = support
         ).also { it.validatedProgramSession() }
     }

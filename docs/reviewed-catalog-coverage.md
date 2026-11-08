@@ -273,19 +273,12 @@ passed `ProgramValidator` without repair; typed no-plan outcomes remained explic
 | Mixed-unit history | 88 | 81 | `arnold-press`, `dumbbell-bench-press`, `dumbbell-shoulder-press`, `dumbbell-fly`, `dumbbell-lateral-raise` |
 | Sparse history | 58 | 52 | `band-pull-apart`, `prone-y-raise`, `reverse-snow-angel` |
 | Uncalibrated full gym | 185 | 167 | `barbell-bench-press`, `overhead-press`, `arnold-press`, `cable-fly`, `cable-lateral-raise`, `cable-triceps-pushdown` |
-| Selected joint constraint | 0 | 0 | `REVIEWED_ELIGIBILITY_NO_CANDIDATES` / `TRAINING_CONSTRAINTS_REMOVED_ALL` |
-| Selected joint constraint, synthetically cleared | 211 | 186 | `barbell-bench-press`, `overhead-press`, `incline-bench-press`, `cable-fly`, `cable-lateral-raise`, `cable-triceps-pushdown` |
+| Knee sensitivity, assessed movement demands | 140 | 140 | `barbell-bench-press`, `overhead-press`, `arnold-press`, `cable-fly`, `cable-lateral-raise`, `cable-triceps-pushdown` |
+| Knee sensitivity, synthetic explicit clearance | 185 | 163 | `barbell-bench-press`, `overhead-press`, `arnold-press`, `cable-fly`, `cable-lateral-raise`, `cable-triceps-pushdown` |
 | Empty equipment inventory | 0 | 0 | `REVIEWED_ELIGIBILITY_NO_CANDIDATES` / `NO_APPROVED_METADATA` |
 | Unmodified catalog, no synthetic approvals | 0 | 0 | `REVIEWED_ELIGIBILITY_NO_CANDIDATES` / `NO_APPROVED_METADATA` |
 
-The two joint-constraint rows use the identical `KNEE_SENSITIVE` profile and differ only in
-whether the synthetic approval also carries an explicit `clearedTrainingConstraints` entry
-for it. Every bundled record clears nothing, so the first row is what the reviewed path
-actually does today. The second row measures what a real clearance would unlock and is
-**synthetic test data, not a clearance**: it exists so the matrix distinguishes missing
-reviewed content from a contradictory user request. Its proposal passed whole-program
-validation with repair disabled. The uncleared row's decisions all carry
-`UNMAPPED_TRAINING_CONSTRAINT`, and no fallback workout is produced.
+The knee-sensitivity rows were rerun with movement-demand filtering. The first excludes conflicting squat demands. Explicit synthetic clearance expands the eligible pool in the second row. The [enabled rollout contract](reviewed-capability-eligibility.md#enabled-rollout-contract) covers production behavior.
 
 For empty equipment, every synthetically approved record carries
 `MISSING_EQUIPMENT`. The aggregate is nevertheless `NO_APPROVED_METADATA` under
@@ -351,14 +344,7 @@ remaining release corpus are separate gates. Neither the AI acceptance audit
 nor the passing software cases closes Roadmap Package 3, which still requires
 genuine human `APPROVED` review.
 
-Selected joint mappings now have a contract but no cleared content.
-`clearedTrainingConstraints` is a required reviewed field, and the eligibility policy
-decides each exercise against it instead of rejecting the whole pool whenever any joint
-sensitivity is selected. All 302 `reviewedMetadata` records — including the 182
-`AI_ACCEPTED` ones — clear nothing, so the observable outcome for a joint-sensitive
-profile is unchanged in production: a typed `TRAINING_CONSTRAINTS_REMOVED_ALL` refusal.
-Populating the field requires genuine human review; see the
-[enabled rollout contract](reviewed-capability-eligibility.md#enabled-rollout-contract).
+Production also checks assessed movement demands for each selected joint. Explicit clearance remains available in the schema. [Enabled rollout contract](reviewed-capability-eligibility.md#enabled-rollout-contract)
 
 ## Reproducibility boundary
 
