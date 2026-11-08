@@ -288,7 +288,7 @@ fun GymFloorSetRow(
                     { step(false) }, enabled = !saving, repeatOnHold = (parsed(field) ?: 0.0) > 0.0)
                 val shown = textFor(field).ifBlank { stringResource(R.string.value_not_available) }
                 Box(Modifier.weight(1f).heightIn(min = MIN_TOUCH_TARGET)
-                    // A description replaces what the value would speak, so it states the value itself.
+                    // The description names the field and replaces the visible text, so the value is spoken through stateDescription.
                     .semantics(mergeDescendants = true) { contentDescription = description; stateDescription = shown },
                     contentAlignment = Alignment.Center) {
                     Text(shown,

@@ -1,6 +1,5 @@
 package wallcrawl.elopenmike.com.feature.onboarding
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.key
 import wallcrawl.elopenmike.com.core.ui.components.ProfileGenderSelector
 import wallcrawl.elopenmike.com.core.model.StandardEquipment

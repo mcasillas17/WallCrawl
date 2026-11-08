@@ -506,7 +506,7 @@ class AccessibilityPatternsTest {
         compose.onNodeWithTag("next").assertWidthIsEqualTo(280.dp)
     }
 
-    /** A description replaces what the value box speaks, so it states the value itself, and follows each step. */
+    /** The description names the field, so the value is spoken through stateDescription, and it follows each step. */
     @Test fun aSetValueSpeaksItsValueAsItSteps() {
         compose.setContent {
             WallCrawlTheme {
