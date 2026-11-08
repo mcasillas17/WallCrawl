@@ -53,7 +53,8 @@ class WorkoutTemplatesViewModelTest {
     private fun viewModel(
         template: WorkoutTemplate,
         values: MutableStateFlow<List<WorkoutTemplate>> = MutableStateFlow(listOf(template)),
-        workoutRepository: WorkoutRepository = refusingStart()
+        workoutRepository: WorkoutRepository = refusingStart(),
+        onDelete: suspend () -> Unit = {}
     ) = WorkoutTemplatesViewModel(
         templateRepository = object : WorkoutTemplateRepository {
             override fun observeTemplates() = values
@@ -62,7 +63,7 @@ class WorkoutTemplatesViewModelTest {
             override suspend fun getTemplate(templateId: String) =
                 values.value.firstOrNull { it.id == templateId }
             override suspend fun saveTemplate(template: WorkoutTemplate, mustExist: Boolean) = Unit
-            override suspend fun deleteTemplate(templateId: String) = Unit
+            override suspend fun deleteTemplate(templateId: String) = onDelete()
         },
         // By default its template start is "not used": reaching it reports a start failure.
         workoutRepository = workoutRepository,
@@ -109,7 +110,7 @@ class WorkoutTemplatesViewModelTest {
         advanceUntilIdle()
 
         assertThat(viewModel.uiState.value.startedSessionId).isNull()
-        assertThat(viewModel.uiState.value.errorMessage)
+        assertThat(viewModel.uiState.value.error.message)
             .isEqualTo(R.string.template_error_unit_unconfirmed)
     }
 
@@ -128,7 +129,7 @@ class WorkoutTemplatesViewModelTest {
         advanceUntilIdle()
 
         assertThat(viewModel.uiState.value.startedSessionId).isEqualTo("in-progress")
-        assertThat(viewModel.uiState.value.errorMessage).isNull()
+        assertThat(viewModel.uiState.value.error.message).isNull()
     }
 
     @Test
@@ -145,8 +146,23 @@ class WorkoutTemplatesViewModelTest {
             advanceUntilIdle()
             assertThat(reached).containsExactly(candidate.id)
             assertThat(viewModel.uiState.value.startedSessionId).isEqualTo("session")
-            assertThat(viewModel.uiState.value.errorMessage).isNull()
+            assertThat(viewModel.uiState.value.error.message).isNull()
         }
+    }
+
+    @Test
+    fun aRepeatedDeleteFailureCountsAsANewAttempt() = runTest {
+        val viewModel = viewModel(template(WeightUnit.KG, 100.0)) { error("Refused") }
+        backgroundScope.launch { viewModel.uiState.collect {} }
+        viewModel.deleteTemplate("template")
+        advanceUntilIdle()
+        val first = viewModel.uiState.value
+        assertThat(first.error.message).isEqualTo(R.string.template_error_delete_failed)
+
+        viewModel.deleteTemplate("template")
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value.error.message).isEqualTo(R.string.template_error_delete_failed)
+        assertThat(viewModel.uiState.value.error.attempt).isEqualTo(first.error.attempt + 1)
     }
 
     @Test
@@ -157,8 +173,24 @@ class WorkoutTemplatesViewModelTest {
         val loaded = viewModel.uiState.first { it.templates.isNotEmpty() }.templates.single()
         viewModel.startTemplate(loaded)
         advanceUntilIdle()
-        assertThat(viewModel.uiState.value.errorMessage).isEqualTo(R.string.template_error_start_failed)
+        assertThat(viewModel.uiState.value.error.message).isEqualTo(R.string.template_error_start_failed)
         assertThat(viewModel.uiState.value.startedSessionId).isNull()
+    }
+
+    /** The screen keys the message on the attempt, so a repeated refused Start is announced again. */
+    @Test
+    fun aRepeatedStartFailureCountsAsANewAttempt() = runTest {
+        val viewModel = viewModel(template(WeightUnit.KG, 100.0))
+        backgroundScope.launch { viewModel.uiState.collect {} }
+        val loaded = viewModel.uiState.first { it.templates.isNotEmpty() }.templates.single()
+        viewModel.startTemplate(loaded)
+        advanceUntilIdle()
+        val first = viewModel.uiState.value.error
+
+        viewModel.startTemplate(loaded)
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value.error.message).isEqualTo(R.string.template_error_start_failed)
+        assertThat(viewModel.uiState.value.error.attempt).isEqualTo(first.attempt + 1)
     }
 
     @Test
@@ -172,7 +204,7 @@ class WorkoutTemplatesViewModelTest {
         viewModel.startTemplate(shown)
         advanceUntilIdle()
 
-        assertThat(viewModel.uiState.value.errorMessage).isEqualTo(R.string.template_error_missing)
+        assertThat(viewModel.uiState.value.error.message).isEqualTo(R.string.template_error_missing)
         assertThat(viewModel.uiState.value.startedSessionId).isNull()
     }
 
@@ -216,16 +248,16 @@ class WorkoutTemplatesViewModelTest {
         viewModel.uiState.first { it.templates.size == 2 }
         viewModel.startTemplate(legacy)
         advanceUntilIdle()
-        assertThat(viewModel.uiState.value.errorMessage).isEqualTo(R.string.template_error_unit_unconfirmed)
+        assertThat(viewModel.uiState.value.error.message).isEqualTo(R.string.template_error_unit_unconfirmed)
 
         viewModel.startTemplate(recorded)
         advanceUntilIdle()
         // Gone as soon as the new attempt begins, before its own result.
-        assertThat(viewModel.uiState.value.errorMessage).isNull()
+        assertThat(viewModel.uiState.value.error.message).isNull()
         release.complete(Unit)
         advanceUntilIdle()
         assertThat(viewModel.uiState.value.startedSessionId).isEqualTo("session")
-        assertThat(viewModel.uiState.value.errorMessage).isNull()
+        assertThat(viewModel.uiState.value.error.message).isNull()
     }
 
     @Test
@@ -237,6 +269,6 @@ class WorkoutTemplatesViewModelTest {
         advanceUntilIdle()
         viewModel.clearError()
         advanceUntilIdle()
-        assertThat(viewModel.uiState.value.errorMessage).isNull()
+        assertThat(viewModel.uiState.value.error.message).isNull()
     }
 }

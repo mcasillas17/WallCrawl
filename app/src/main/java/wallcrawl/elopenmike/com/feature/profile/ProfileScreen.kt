@@ -2,7 +2,6 @@ package wallcrawl.elopenmike.com.feature.profile
 
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.ui.components.BandSetupControls
-
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,19 +19,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -41,23 +36,23 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -78,11 +73,15 @@ import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.ui.components.BreakDurationSelector
+import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
 import wallcrawl.elopenmike.com.core.ui.components.MovementCapabilityQuestion
+import wallcrawl.elopenmike.com.core.ui.components.StackingRow
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
+import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
 import wallcrawl.elopenmike.com.core.ui.components.capabilityLevelLabel
 import wallcrawl.elopenmike.com.core.ui.components.movementCapabilityLabel
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
@@ -91,10 +90,9 @@ import wallcrawl.elopenmike.com.core.ui.localization.descriptionRes
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
 import wallcrawl.elopenmike.com.core.ui.localization.messageRes
 import wallcrawl.elopenmike.com.core.ui.localization.shortLabelRes
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
-import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
+
 
 @Composable
 fun ProfileScreen(
@@ -119,13 +117,13 @@ fun ProfileScreen(
         when (val state = uiState) {
             is ProfileUiState.Loading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = CrimsonRedPrimary)
+                    LoadingIndicator()
                 }
             }
 
             is ProfileUiState.Error -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(stringResource(state.messageRes), color = CrimsonRedLight)
+                    Text(stringResource(state.messageRes), color = MaterialTheme.colorScheme.tertiary, modifier = Modifier.a11yAnnounced())
                 }
             }
 
@@ -208,9 +206,10 @@ private fun ProfileContent(
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.5.sp,
-                color = CrimsonRedPrimary
+                color = MaterialTheme.colorScheme.tertiary
             )
             Text(
+                modifier = Modifier.a11yHeading(),
                 text = stringResource(R.string.profile_title),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Black,
@@ -225,11 +224,12 @@ private fun ProfileContent(
                 contentPadding = 16.dp
             ) {
                 Text(
+                    modifier = Modifier.a11yHeading(),
                     text = stringResource(R.string.profile_goals_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = CrimsonRedPrimary
+                    color = MaterialTheme.colorScheme.tertiary
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
@@ -245,6 +245,8 @@ private fun ProfileContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
+                            // Dimmed when it is the one goal left and cannot be cleared.
+                            .alpha(if (isSelected && profile.goals.size == 1) 0.6f else 1f)
                             .background(
                                 if (isSelected) CrimsonRedPrimary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surface,
                                 RoundedCornerShape(10.dp)
@@ -254,7 +256,8 @@ private fun ProfileContent(
                                 if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.outline,
                                 RoundedCornerShape(10.dp)
                             )
-                            .clickable { onToggleGoal(goal) }
+                            // At least one goal stays: the last one is announced as unavailable, dimmed, and the hint says why.
+                            .toggleable(value = isSelected, enabled = !(isSelected && profile.goals.size == 1), role = Role.Checkbox) { onToggleGoal(goal) }
                             .padding(12.dp)
                     ) {
                         Row(
@@ -267,7 +270,7 @@ private fun ProfileContent(
                                     text = stringResource(goal.labelRes),
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.onSurface
+                                    color = if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                     text = stringResource(goal.descriptionRes),
@@ -297,11 +300,12 @@ private fun ProfileContent(
             ) {
                 val locale = LocalConfiguration.current.locales[0]
                 Text(
+                    modifier = Modifier.a11yHeading(),
                     text = stringResource(R.string.profile_preferences_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = CrimsonRedPrimary
+                    color = MaterialTheme.colorScheme.tertiary
                 )
 
                 Spacer(modifier = Modifier.height(14.dp))
@@ -319,15 +323,16 @@ private fun ProfileContent(
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.weight(1f)
                     )
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(modifier = Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         WeightUnit.entries.forEach { unit ->
                             val isSelected = profile.preferredUnit == unit
                             Box(
                                 modifier = Modifier
                                     .background(if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
                                     .border(1.dp, if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-                                    .clickable { onUpdateUnit(unit) }
-                                    .padding(horizontal = 14.dp, vertical = 6.dp)
+                                    .selectable(selected = isSelected, role = Role.RadioButton) { onUpdateUnit(unit) }
+                                    .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+                                    .padding(horizontal = 14.dp, vertical = 12.dp)
                             ) {
                                 Text(
                                     text = stringResource(unit.shortLabelRes),
@@ -365,7 +370,13 @@ private fun ProfileContent(
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
+                    val durationLabel = stringResource(R.string.profile_preferred_duration)
+                    val durationValue = stringResource(R.string.summary_duration_value, LocaleFormatting.formatCount(profile.preferredDurationMinutes, locale))
                     Slider(
+                        modifier = Modifier.semantics {
+                            contentDescription = durationLabel
+                            stateDescription = durationValue
+                        },
                         value = profile.preferredDurationMinutes.toFloat(),
                         onValueChange = { onUpdateDuration(it.toInt()) },
                         valueRange = 30f..90f,
@@ -381,27 +392,27 @@ private fun ProfileContent(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Days per week
-                Row(
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
                         text = stringResource(R.string.profile_training_days),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.weight(1f)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    FlowRow(modifier = Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         (2..6).forEach { days ->
                             val isSelected = profile.daysPerWeek == days
+                            val daysLabel = pluralStringResource(R.plurals.a11y_days_per_week, days, LocaleFormatting.formatCount(days, locale))
                             Box(
                                 modifier = Modifier
-                                    .size(32.dp)
+                                    .size(48.dp)
                                     .background(if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
                                     .border(1.dp, if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-                                    .clickable { onUpdateDaysPerWeek(days) },
+                                    .selectable(selected = isSelected, role = Role.RadioButton) { onUpdateDaysPerWeek(days) }
+                                    .semantics { contentDescription = daysLabel },
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
@@ -438,11 +449,12 @@ private fun ProfileContent(
             ) {
                 val vocabulary = LocalExerciseVocabulary.current
                 Text(
+                    modifier = Modifier.a11yHeading(),
                     text = stringResource(R.string.profile_equipment_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = CrimsonRedPrimary
+                    color = MaterialTheme.colorScheme.tertiary
                 )
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -498,22 +510,23 @@ private fun ProfileContent(
             ) {
                 val muscleVocabulary = LocalExerciseVocabulary.current
                 Text(
+                    modifier = Modifier.a11yHeading(),
                     text = stringResource(R.string.profile_muscle_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = CrimsonRedPrimary
+                    color = MaterialTheme.colorScheme.tertiary
                 )
                 Spacer(modifier = Modifier.height(12.dp))
 
                 availableMuscles.forEach { muscle ->
                     val currentPriority = profile.musclePriorities[muscle] ?: PriorityLevel.NORMAL
-                    Row(
+                    FlowRow(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
                             // The map key stays the canonical English name; the row label
@@ -522,24 +535,27 @@ private fun ProfileContent(
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.align(Alignment.CenterVertically)
                         )
 
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Row(modifier = Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             PriorityLevel.entries.forEach { level ->
                                 val isSelected = currentPriority == level
                                 val bgColor = when {
                                     isSelected && level == PriorityLevel.HIGH -> CrimsonRedPrimary
                                     isSelected && level == PriorityLevel.NORMAL -> MaterialTheme.colorScheme.secondary
-                                    isSelected && level == PriorityLevel.LOW -> MaterialTheme.colorScheme.outline
+                                    isSelected && level == PriorityLevel.LOW -> MaterialTheme.colorScheme.onSurfaceVariant
                                     else -> MaterialTheme.colorScheme.surface
                                 }
                                 val textColor = when {
-                                    isSelected && (level == PriorityLevel.HIGH || level == PriorityLevel.NORMAL) -> TextWhite
-                                    isSelected && level == PriorityLevel.LOW -> MaterialTheme.colorScheme.onSurface
+                                    isSelected && level == PriorityLevel.HIGH -> TextWhite
+                                    isSelected && level == PriorityLevel.NORMAL -> MaterialTheme.colorScheme.onSecondary
+                                    isSelected && level == PriorityLevel.LOW -> MaterialTheme.colorScheme.surface
                                     else -> MaterialTheme.colorScheme.onSurfaceVariant
                                 }
+                                val levelLabel = stringResource(R.string.a11y_muscle_priority, muscleVocabulary.muscle(muscle), stringResource(level.labelRes))
                                 Box(
+                                    contentAlignment = Alignment.Center,
                                     modifier = Modifier
                                         .background(bgColor, RoundedCornerShape(6.dp))
                                         .border(
@@ -547,7 +563,9 @@ private fun ProfileContent(
                                             if (isSelected) bgColor else MaterialTheme.colorScheme.outline,
                                             RoundedCornerShape(6.dp)
                                         )
-                                        .clickable { onSetMusclePriority(muscle, level) }
+                                        .selectable(selected = isSelected, role = Role.RadioButton) { onSetMusclePriority(muscle, level) }
+                                        .semantics { contentDescription = levelLabel }
+                                        .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
                                         .padding(horizontal = 8.dp, vertical = 4.dp)
                                 ) {
                                     Text(
@@ -571,11 +589,12 @@ private fun ProfileContent(
                 contentPadding = 16.dp
             ) {
                 Text(
+                    modifier = Modifier.a11yHeading(),
                     text = stringResource(R.string.profile_safety_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = CrimsonRedPrimary
+                    color = MaterialTheme.colorScheme.tertiary
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 // Same honesty note the movement-capability card already carries: this input is
@@ -663,7 +682,7 @@ private fun ProfileContent(
                         BreakDurationHelper.guidanceFor(profile.returningAfterBreakWeeks).messageRes
                     ),
                     fontSize = 12.sp,
-                    color = if (profile.returningAfterBreakWeeks >= 52) CrimsonRedPrimary else MaterialTheme.colorScheme.secondary,
+                    color = if (profile.returningAfterBreakWeeks >= 52) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.Medium
                 )
             }
@@ -710,7 +729,7 @@ private fun ProfileContent(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 0.8.sp,
-                        color = CrimsonRedPrimary,
+                        color = MaterialTheme.colorScheme.tertiary,
                         modifier = Modifier.weight(1f)
                     )
                     Icon(
@@ -754,11 +773,12 @@ private fun MovementCapabilityProfileCard(
         contentPadding = 16.dp
     ) {
         Text(
+            modifier = Modifier.a11yHeading(),
             text = stringResource(wallcrawl.elopenmike.com.R.string.profile_capability_title),
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.8.sp,
-            color = CrimsonRedPrimary
+            color = MaterialTheme.colorScheme.tertiary
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
@@ -772,7 +792,7 @@ private fun MovementCapabilityProfileCard(
 
         if (draft == null) {
             MovementCapabilityType.entries.forEach { type ->
-                Row(
+                StackingRow(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 6.dp),
@@ -815,6 +835,7 @@ private fun MovementCapabilityProfileCard(
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(error.messageRes),
+                    modifier = Modifier.a11yAnnounced(),
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.error
                 )
@@ -871,11 +892,12 @@ internal fun AppPreferencesCard(
         contentPadding = 16.dp
     ) {
         Text(
+            modifier = Modifier.a11yHeading(),
             text = stringResource(R.string.profile_app_preferences_heading),
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.8.sp,
-            color = CrimsonRedPrimary
+            color = MaterialTheme.colorScheme.tertiary
         )
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -924,7 +946,7 @@ private fun PreferenceRow(
     description: String,
     control: @Composable () -> Unit
 ) {
-    Row(
+    StackingRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically

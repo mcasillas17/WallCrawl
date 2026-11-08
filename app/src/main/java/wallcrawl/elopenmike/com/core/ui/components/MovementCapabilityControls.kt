@@ -62,6 +62,7 @@ fun MovementCapabilityQuestion(
     val capabilityLabel = movementCapabilityLabel(type)
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
+            modifier = Modifier.a11yHeading(),
             text = capabilityLabel,
             fontSize = 15.sp,
             fontWeight = FontWeight.Bold,

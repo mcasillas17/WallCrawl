@@ -220,8 +220,8 @@ class WorkoutHistoryNavigationTest {
         compose.onNodeWithText(context.getString(R.string.template_action_starting)).assertIsNotEnabled()
         compose.onNodeWithContentDescription(context.getString(R.string.templates_create_content_description))
             .assertIsNotEnabled()
-        compose.onNodeWithContentDescription(context.getString(R.string.action_edit)).assertIsNotEnabled()
-        compose.onNodeWithContentDescription(context.getString(R.string.action_delete)).assertIsNotEnabled()
+        compose.onNodeWithContentDescription(context.getString(R.string.a11y_edit_named, "Nav template")).assertIsNotEnabled()
+        compose.onNodeWithContentDescription(context.getString(R.string.a11y_delete_named, "Nav template")).assertIsNotEnabled()
         // Leaving now would cancel a start that may already have written its session.
         compose.onNodeWithContentDescription(context.getString(R.string.action_back)).assertIsNotEnabled()
         androidx.test.espresso.Espresso.pressBack()
@@ -335,7 +335,7 @@ class WorkoutHistoryNavigationTest {
             hasText(message).and(hasLiveRegion())
         ).assertExists()
 
-        compose.onNodeWithContentDescription(context.getString(R.string.action_edit)).performClick()
+        compose.onNodeWithContentDescription(context.getString(R.string.a11y_edit_named, "Legacy")).performClick()
         compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.TEMPLATE_EDIT }
         compose.runOnIdle { navigation.popBackStack() }
         compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.WORKOUT_TEMPLATES }

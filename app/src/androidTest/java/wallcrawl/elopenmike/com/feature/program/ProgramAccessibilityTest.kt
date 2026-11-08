@@ -12,7 +12,13 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.compose.material3.Surface
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.toPixelMap
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
+import wallcrawl.elopenmike.com.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,11 +47,29 @@ class ProgramAccessibilityTest {
 
     @Test fun unavailableProgramOptionIsDisabledWhileOrdinaryChoiceStaysActionable() {
         var choice: WorkoutPlanningIntent? = null
-        compose.setContent { WallCrawlTheme {
+        compose.setContent { WallCrawlTheme { Surface {
             ProgramPlanningChoice(WorkoutPlanningIntent.PROGRAM, false, true) { choice = it }
-        } }
+        } } }
         compose.onNodeWithTag("planning-PROGRAM").assertIsSelected().assertIsNotEnabled()
+            .onParent().assert(androidx.compose.ui.test.SemanticsMatcher.keyIsDefined(androidx.compose.ui.semantics.SemanticsProperties.SelectableGroup))
+        // The unavailable row's label dims with its radio, not only the circle.
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val unavailable = renderedContrast(context.getString(R.string.program_session_choice))
+        val available = renderedContrast(context.getString(R.string.program_ordinary_choice))
+        assertWithMessage("unavailable $unavailable vs available $available").that(unavailable).isLessThan(available / 2)
         compose.onNodeWithTag("planning-ORDINARY").assertIsEnabled().performClick()
         assertThat(choice).isEqualTo(WorkoutPlanningIntent.ORDINARY)
+    }
+
+    /** The strongest contrast any glyph pixel has against the label's own background. */
+    private fun renderedContrast(text: String): Double {
+        val pixels = compose.onNodeWithText(text, useUnmergedTree = true).captureToImage().toPixelMap()
+        val background = pixels[0, 0].luminance()
+        var contrast = 1.0
+        for (x in 0 until pixels.width) for (y in 0 until pixels.height) {
+            val foreground = pixels[x, y].luminance()
+            contrast = maxOf(contrast, (maxOf(background, foreground) + 0.05) / (minOf(background, foreground) + 0.05))
+        }
+        return contrast
     }
 }

@@ -11,17 +11,17 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.ColorUtils
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.core.graphics.ColorUtils
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import java.util.Locale
@@ -29,14 +29,15 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import wallcrawl.elopenmike.com.R
-import wallcrawl.elopenmike.com.core.database.repository.WorkoutHistoryDetail
 import wallcrawl.elopenmike.com.core.database.repository.HistoricalExercisePerformance
 import wallcrawl.elopenmike.com.core.database.repository.HistoricalSessionHeader
 import wallcrawl.elopenmike.com.core.database.repository.HistoricalSourceKey
+import wallcrawl.elopenmike.com.core.database.repository.WorkoutHistoryDetail
 import wallcrawl.elopenmike.com.core.model.*
-import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
-import wallcrawl.elopenmike.com.core.ui.theme.LightBackground
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
+import wallcrawl.elopenmike.com.core.ui.theme.LightBackground
+import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
+import wallcrawl.elopenmike.com.test.hasLiveRegion
 
 @RunWith(AndroidJUnit4::class)
 class WorkoutHistoryScreenTest {
@@ -102,7 +103,7 @@ class WorkoutHistoryScreenTest {
                 WorkoutHistoryDetailScreen(WorkoutHistoryDetailUiState.Loaded(detail(), null), {}, {})
             }
         }
-        listOf("Original historical text", context.getString(R.string.history_started)).forEach { text ->
+        listOf("Original historical text", context.getString(R.string.history_started), context.getString(R.string.history_technical)).forEach { text ->
             scrollTo(text)
             val layouts = mutableListOf<TextLayoutResult>()
             compose.onNodeWithText(text, useUnmergedTree = true)
@@ -146,11 +147,11 @@ class WorkoutHistoryScreenTest {
         compose.onNodeWithText(spanish.getString(R.string.history_technical))
             .assertHasClickAction()
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription,
-                spanish.getString(R.string.progress_details_collapsed)))
+                spanish.getString(R.string.a11y_collapsed)))
             .performClick()
         compose.onNodeWithText(spanish.getString(R.string.history_technical))
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription,
-                spanish.getString(R.string.progress_details_expanded)))
+                spanish.getString(R.string.a11y_expanded)))
         compose.onAllNodes(hasText("Editar") or hasText("Eliminar") or hasText("Repetir")).assertCountEquals(0)
     }
 
@@ -163,7 +164,7 @@ class WorkoutHistoryScreenTest {
                 WorkoutHistoryDetailScreen(state.value, { retries++ }, { backs++ })
             }
         }
-        compose.onNodeWithText(context.getString(R.string.history_missing)).assertIsDisplayed()
+        compose.onNodeWithText(context.getString(R.string.history_missing)).assertIsDisplayed().assert(hasLiveRegion())
         compose.runOnIdle { state.value = WorkoutHistoryDetailUiState.Unsupported(detail().session.copy(status = SessionStatus.CANCELLED)) }
         compose.onNodeWithText(context.getString(R.string.history_unsupported)).assertIsDisplayed()
         compose.runOnIdle { state.value = WorkoutHistoryDetailUiState.ReadError }

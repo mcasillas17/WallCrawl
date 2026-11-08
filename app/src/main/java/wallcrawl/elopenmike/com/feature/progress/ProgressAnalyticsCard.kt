@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
@@ -37,10 +36,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -56,7 +55,6 @@ import wallcrawl.elopenmike.com.core.model.AnalyticsRange
 import wallcrawl.elopenmike.com.core.model.AnalyticsScope
 import wallcrawl.elopenmike.com.core.model.AnalyticsSeries
 import wallcrawl.elopenmike.com.core.model.AnalyticsSelection
-import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
 import wallcrawl.elopenmike.com.core.model.MeasurementPrecision
 import wallcrawl.elopenmike.com.core.model.PerformanceObservation
 import wallcrawl.elopenmike.com.core.model.PerformanceSeries
@@ -64,7 +62,10 @@ import wallcrawl.elopenmike.com.core.model.PerformanceShape
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.ui.components.AnalyticsBarChart
+import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
+import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
+import wallcrawl.elopenmike.com.core.ui.components.a11yExpanded
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.recordedDeloadRes
@@ -98,7 +99,7 @@ internal fun ProgressAnalyticsCard(
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.semantics { heading() }
+            modifier = Modifier.a11yHeading()
         )
         Body(stringResource(R.string.analytics_scope_note, zoneId.id))
         Filters(selection, options?.first, options?.second.orEmpty(), when {
@@ -115,7 +116,7 @@ internal fun ProgressAnalyticsCard(
             // No remedy is offered: every range ends with the current weeks, where the overflow may lie.
             ProgressAnalyticsUiState.TooLarge -> Body(stringResource(R.string.analytics_too_large))
             ProgressAnalyticsUiState.Error -> {
-                Text(stringResource(R.string.analytics_error), color = MaterialTheme.colorScheme.error, fontSize = 13.sp)
+                Text(stringResource(R.string.analytics_error), color = MaterialTheme.colorScheme.error, fontSize = 13.sp, modifier = Modifier.a11yAnnounced())
                 Button(onClick = actions.onRetry) { Text(stringResource(R.string.action_try_again)) }
             }
             is ProgressAnalyticsUiState.Loaded -> if (state.analytics.range == selection.range &&
@@ -133,7 +134,7 @@ internal fun ProgressAnalyticsCard(
 @Composable
 private fun AnalyticsLoading() {
     Box(Modifier.fillMaxWidth().padding(16.dp)) {
-        CircularProgressIndicator(color = CrimsonRedPrimary, modifier = Modifier.size(24.dp))
+        LoadingIndicator(Modifier.size(24.dp))
         Text(stringResource(R.string.analytics_loading), color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 13.sp, modifier = Modifier.padding(start = 36.dp))
     }
@@ -395,7 +396,6 @@ private fun WeekRow(bucket: AnalyticsBucket, metric: AnalyticsMetric, unit: Weig
     val start = dates.format(Date(bucket.week.startEpochMillis))
     val end = dates.format(Date(bucket.week.endEpochMillisExclusive - 1))
     val text = stringResource(if (bucket.partial) R.string.analytics_week_row_partial else R.string.analytics_week_row, start, end, value)
-    val stateText = stringResource(if (expanded) R.string.progress_details_expanded else R.string.progress_details_collapsed)
     Text(
         text = text,
         fontSize = 13.sp,
@@ -405,7 +405,7 @@ private fun WeekRow(bucket: AnalyticsBucket, metric: AnalyticsMetric, unit: Weig
             .fillMaxWidth()
             .heightIn(min = 48.dp)
             .clickable(role = Role.Button, onClickLabel = stringResource(R.string.analytics_select_week), onClick = onToggle)
-            .semantics { stateDescription = stateText }
+            .a11yExpanded(expanded)
             .padding(vertical = 12.dp)
     )
 }
@@ -441,7 +441,7 @@ private fun LinkRow(title: String, lines: List<String> = emptyList(), onClick: (
             .clickable(role = Role.Button, onClickLabel = stringResource(R.string.history_open_workout), onClick = onClick)
             .padding(start = 12.dp, top = 8.dp, bottom = 8.dp)
     ) {
-        Text(title, fontSize = 13.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
+        Text(title, fontSize = 13.sp, color = MaterialTheme.colorScheme.tertiary, fontWeight = FontWeight.SemiBold)
         lines.forEach { Text(it, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) }
     }
 }
@@ -463,7 +463,7 @@ private fun ChipRow(content: @Composable () -> Unit) {
 @Composable
 private fun Chip(label: String, selected: Boolean, opensMenu: Boolean? = null, onClick: () -> Unit) {
     val menuState = opensMenu?.let {
-        stringResource(if (it) R.string.progress_details_expanded else R.string.progress_details_collapsed)
+        stringResource(if (it) R.string.a11y_expanded else R.string.a11y_collapsed)
     }
     FilterChip(
         selected = selected,
@@ -535,7 +535,7 @@ private fun Label(text: String) {
 private fun Section(text: String) {
     Spacer(Modifier.height(12.dp))
     Text(text, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier.semantics { heading() })
+        modifier = Modifier.a11yHeading())
 }
 
 @Composable

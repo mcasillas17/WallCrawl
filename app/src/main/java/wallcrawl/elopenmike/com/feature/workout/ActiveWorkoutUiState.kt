@@ -1,13 +1,13 @@
 package wallcrawl.elopenmike.com.feature.workout
 
 import androidx.annotation.StringRes
-import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
+import wallcrawl.elopenmike.com.core.ui.state.Refusal
 
 /** What finishing the workout right now would mean. */
 sealed interface FinishDecision {
@@ -47,7 +47,7 @@ sealed interface ActiveWorkoutUiState {
         // explicit but invalid completion attempt) is recoverable: it never replaces the
         // active workout, only surfaces here to be dismissed or cleared by the next
         // successful update.
-        @StringRes val setUpdateError: Int? = null,
+        val setUpdateError: Refusal = Refusal(),
         val restTimer: RestTimerUiState = RestTimerUiState.Idle,
         /** Non-null while the user is being asked to confirm finishing with open sets. */
         val pendingFinish: FinishDecision.ConfirmIncomplete? = null,

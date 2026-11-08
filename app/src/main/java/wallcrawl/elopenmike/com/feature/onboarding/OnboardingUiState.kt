@@ -85,6 +85,8 @@ data class OnboardingUiState(
     val constraintOptions: List<TrainingConstraint> = TrainingConstraint.entries,
     val isSaving: Boolean = false,
     val error: OnboardingError? = null,
+    /** Counts refusals, so saying the same thing again is announced again. */
+    val errorAttempt: Int = 0,
     val isComplete: Boolean = false
 ) {
     val goal: FitnessGoal get() = goals.firstOrNull() ?: FitnessGoal.BUILD_MUSCLE

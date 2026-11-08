@@ -236,6 +236,10 @@ actions, and Keep preserves the active session. This evidence is distinct from t
 scale only a Compose content wrapper. Device settings were restored afterward. None of
 these checks certifies physical-device behavior or manual TalkBack use.
 
+Accessibility names, announcements and step titles are ordinary paired resources. When a label does not
+fit at 320 dp and 1.8×, the bottom bar moves to two rows instead of shrinking or breaking the word. See
+[accessibility.md](accessibility.md) for what was walked with TalkBack in each language.
+
 ## Adding to it
 
 **A new interface string**

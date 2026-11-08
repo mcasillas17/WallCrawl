@@ -19,9 +19,7 @@ import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
 /**
  * The logger has to stay readable in both themes.
  *
- * The app's typography carries light-on-dark colours in its text styles, so any Material
- * component that falls back to those defaults renders near-white text -- invisible on a
- * light background. These tests pin the rendered result rather than the implementation:
+ * These tests pin the rendered result rather than the implementation:
  * each label must actually contain dark pixels in the light theme and light pixels in the
  * dark theme.
  */

@@ -1,5 +1,7 @@
 package wallcrawl.elopenmike.com.feature.onboarding
 
+import kotlinx.coroutines.test.runCurrent
+import kotlinx.coroutines.CompletableDeferred
 import androidx.lifecycle.SavedStateHandle
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -141,6 +143,49 @@ class OnboardingViewModelTest {
         }
         assertThat(saved.confirmedStartingLoads).isEmpty()
         assertThat(viewModel.uiState.value.isComplete).isTrue()
+    }
+
+    @Test
+    fun aRepeatedRefusalCountsAsANewOne() = runTest {
+        val viewModel = OnboardingViewModel(RecordingUserProfileRepository())
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        viewModel.goToStep(OnboardingStep.MOVEMENT_CAPABILITY)
+
+        viewModel.nextStep()
+        viewModel.nextStep()
+
+        assertThat(viewModel.uiState.value.errorAttempt).isEqualTo(2)
+    }
+
+    @Test
+    fun previousStep_isHeldWhileTheProfileSaves() = runTest {
+        val gate = CompletableDeferred<Unit>()
+        val repository = RecordingUserProfileRepository().apply { saveGate = gate }
+        val viewModel = OnboardingViewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        answerAllCapabilities(viewModel, CapabilityLevel.UNKNOWN)
+        viewModel.goToStep(OnboardingStep.entries.last())
+        viewModel.complete(
+            name = "Alex",
+            goals = setOf(FitnessGoal.STRENGTH),
+            experience = ExperienceLevel.BEGINNER,
+            daysPerWeek = 3,
+            durationMinutes = 45,
+            unit = WeightUnit.KG,
+            equipment = setOf(StandardEquipment.BODYWEIGHT),
+            constraints = emptySet(),
+            returningAfterBreakWeeks = 0
+        )
+        runCurrent()
+        assertThat(viewModel.uiState.value.isSaving).isTrue()
+
+        viewModel.previousStep()
+
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.entries.last())
+        gate.complete(Unit)
+        advanceUntilIdle()
     }
 
     @Test
@@ -412,6 +457,30 @@ class OnboardingViewModelTest {
     }
 
     @Test
+    fun repeatedRefusalsAndSaveFailures_eachCountAsANewAttempt() = runTest {
+        val repository = RecordingUserProfileRepository()
+        val viewModel = OnboardingViewModel(repository)
+        viewModel.updateName("Alex")
+
+        viewModel.complete()
+        advanceUntilIdle()
+        val afterRefusal = viewModel.uiState.value.errorAttempt
+        assertThat(afterRefusal).isEqualTo(1)
+
+        MovementCapabilityType.entries.forEach { type ->
+            viewModel.updateMovementCapability(type, CapabilityLevel.UNKNOWN)
+        }
+        repository.saveGate = CompletableDeferred<Unit>().apply { completeExceptionally(IllegalStateException()) }
+        viewModel.complete()
+        advanceUntilIdle()
+        viewModel.complete()
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.error).isEqualTo(OnboardingError.SAVE_FAILED)
+        assertThat(viewModel.uiState.value.errorAttempt).isEqualTo(afterRefusal + 2)
+    }
+
+    @Test
     fun incompleteCapabilityDraft_cannotCompleteOnboarding() = runTest {
         val repository = RecordingUserProfileRepository()
         val viewModel = OnboardingViewModel(repository)
@@ -544,6 +613,7 @@ class OnboardingViewModelTest {
 private class RecordingUserProfileRepository : UserProfileRepository {
     private val profile = MutableStateFlow(UserProfile())
     val saved = mutableListOf<UserProfile>()
+    var saveGate: CompletableDeferred<Unit>? = null
 
     override fun getUserProfile(): Flow<UserProfile> = profile
     override suspend fun getProfileOnce(): UserProfile = profile.value
@@ -553,6 +623,7 @@ private class RecordingUserProfileRepository : UserProfileRepository {
     }
 
     override suspend fun saveProfile(profile: UserProfile) {
+        saveGate?.await()
         require(profile.goals.isNotEmpty()) { "goals must not be empty." }
         require(profile.daysPerWeek in 2..6) { "daysPerWeek must be between 2 and 6." }
         require(profile.preferredDurationMinutes in 20..120) {

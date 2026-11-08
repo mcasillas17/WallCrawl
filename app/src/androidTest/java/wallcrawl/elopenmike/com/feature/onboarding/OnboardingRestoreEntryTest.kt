@@ -1,5 +1,11 @@
 package wallcrawl.elopenmike.com.feature.onboarding
 
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.isToggleable
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.annotation.StringRes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,8 +16,10 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -56,11 +64,21 @@ class OnboardingRestoreEntryTest {
     @Test
     fun genderDropdownKeepsTheNameAndDraftWhenReturningToWelcome() {
         val viewModel = showWizard()
-        composeRule.onNodeWithText(text(R.string.onboarding_codename_placeholder))
+        composeRule.onNode(hasSetTextAction())
             .performTextInput("Alex")
-        composeRule.onNodeWithText(text(R.string.profile_gender_title)).performClick()
-        composeRule.onNodeWithText(text(R.string.gender_woman)).performClick()
-        composeRule.onNodeWithText("Alex").assertIsDisplayed()
+        // A tap can land where the selector was while the keyboard is still moving it, and is lost.
+        androidx.test.espresso.Espresso.closeSoftKeyboard()
+        composeRule.onNodeWithText(text(R.string.profile_gender_title)).performScrollTo().performClick()
+        composeRule.waitUntil(10_000) {
+            composeRule.onAllNodesWithText(text(R.string.gender_woman)).fetchSemanticsNodes().isNotEmpty()
+        }
+        composeRule.onNodeWithText(text(R.string.gender_woman)).assert(
+            androidx.compose.ui.test.SemanticsMatcher.expectValue(
+                androidx.compose.ui.semantics.SemanticsProperties.Role,
+                androidx.compose.ui.semantics.Role.RadioButton
+            )
+        ).performClick()
+        composeRule.onNodeWithText("Alex").performScrollTo().assertIsDisplayed()
         assertThat(viewModel.uiState.value.gender).isEqualTo(ProfileGender.WOMAN)
 
         composeRule.onNodeWithText(text(R.string.onboarding_action_continue)).performClick()
@@ -69,6 +87,21 @@ class OnboardingRestoreEntryTest {
         composeRule.onNodeWithText(text(R.string.gender_woman)).assertIsDisplayed()
         composeRule.onNodeWithText("Alex").assertIsDisplayed()
         assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.WELCOME)
+    }
+
+    /** Checked and unavailable while nothing is selected; selecting a constraint makes it the way back. */
+    @Test
+    fun noConstraintsIsUnavailableWhileItIsAlreadyTrue() {
+        val viewModel = showWizard()
+        composeRule.runOnIdle { viewModel.goToStep(OnboardingStep.SAFETY) }
+        composeRule.waitForIdle()
+        val none = composeRule.onNode(hasText(text(R.string.onboarding_safety_none_subtitle), substring = true).and(isToggleable()))
+        none.performScrollTo().assertIsOn().assertIsNotEnabled()
+        composeRule.runOnIdle { viewModel.toggleConstraint(wallcrawl.elopenmike.com.core.model.TrainingConstraint.entries.first()) }
+        composeRule.waitForIdle()
+        none.assertIsOff().assertIsEnabled().performClick()
+        composeRule.waitForIdle()
+        assertThat(viewModel.uiState.value.constraints).isEmpty()
     }
 
     @Test
@@ -90,7 +123,7 @@ class OnboardingRestoreEntryTest {
         composeRule.onNodeWithText(RESTORE_SLOT).assertIsDisplayed()
 
         // The first step will not advance without a name, so give it one.
-        composeRule.onNodeWithText(text(R.string.onboarding_codename_placeholder))
+        composeRule.onNode(hasSetTextAction())
             .performTextInput("Alex")
         composeRule.waitForIdle()
         composeRule.onNodeWithText(text(R.string.onboarding_action_continue)).performClick()
@@ -120,7 +153,7 @@ class OnboardingRestoreEntryTest {
         }
         composeRule.waitForIdle()
 
-        composeRule.onNodeWithText(text(R.string.onboarding_codename_placeholder))
+        composeRule.onNode(hasSetTextAction())
             .performTextInput("Gabriela")
         composeRule.waitForIdle()
 

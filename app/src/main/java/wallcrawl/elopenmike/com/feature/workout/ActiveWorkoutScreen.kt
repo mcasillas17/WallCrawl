@@ -1,10 +1,11 @@
 package wallcrawl.elopenmike.com.feature.workout
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,22 +21,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.key
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -44,10 +41,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -62,6 +64,9 @@ import wallcrawl.elopenmike.com.core.model.SetValuesDraft
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.ui.components.ExerciseIllustration
 import wallcrawl.elopenmike.com.core.ui.components.GymFloorSetRow
+import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
+import wallcrawl.elopenmike.com.core.ui.components.StackingRow
+import wallcrawl.elopenmike.com.core.ui.components.isLargeText
 import wallcrawl.elopenmike.com.core.ui.components.restCountdownLabel
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
@@ -69,12 +74,11 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlSecondaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
+import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
-import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 import kotlinx.coroutines.delay
 import java.text.DateFormat
 import java.util.Date
@@ -105,7 +109,7 @@ fun ActiveWorkoutScreen(
         when (val state = uiState) {
             is ActiveWorkoutUiState.Loading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = CrimsonRedPrimary)
+                    LoadingIndicator()
                 }
             }
 
@@ -119,14 +123,15 @@ fun ActiveWorkoutScreen(
                     WallCrawlCard(borderColor = CrimsonRedPrimary) {
                         Text(
                             stringResource(R.string.workout_error_title),
-                            color = CrimsonRedLight,
+                            color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             stringResource(state.messageRes),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.a11yAnnounced()
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         WallCrawlSecondaryButton(
@@ -234,6 +239,34 @@ private fun ActiveWorkoutContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         // Top Navigation Bar
+        // A long generated name breaks inside a word between Close and Finish, so large text gives it a line.
+        val largeText = isLargeText()
+        val sessionTitle: @Composable (Modifier) -> Unit = { titleModifier ->
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = titleModifier
+            ) {
+                // The session name is free text written when the workout started, in the
+                // language that was on screen then. It is shown as recorded.
+                Text(
+                    modifier = Modifier.a11yHeading(),
+                    text = state.session.name,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = stringResource(
+                        R.string.workout_exercise_position,
+                        LocaleFormatting.formatCount(state.currentExerciseIndex + 1, locale),
+                        LocaleFormatting.formatCount(state.totalExercises, locale)
+                    ),
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -247,29 +280,7 @@ private fun ActiveWorkoutContent(
                 )
             }
 
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.weight(1f)
-            ) {
-                // The session name is free text written when the workout started, in the
-                // language that was on screen then. It is shown as recorded.
-                Text(
-                    text = state.session.name,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = stringResource(
-                        R.string.workout_exercise_position,
-                        LocaleFormatting.formatCount(state.currentExerciseIndex + 1, locale),
-                        LocaleFormatting.formatCount(state.totalExercises, locale)
-                    ),
-                    fontSize = 12.sp,
-                    color = CrimsonRedLight,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
+            if (!largeText) sessionTitle(Modifier.weight(1f))
 
             WallCrawlOutlinedButton(
                 text = stringResource(R.string.workout_action_finish),
@@ -278,17 +289,32 @@ private fun ActiveWorkoutContent(
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
             )
         }
+        // A long name at large text would otherwise take the list's height, so it scrolls with the list.
+        if (largeText && currentExercise == null) sessionTitle(Modifier.fillMaxWidth())
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        if (state.restTimer.isVisible) {
-            RestTimerBar(
-                restTimer = state.restTimer,
-                onAddRest = onAddRest,
-                onSkipRest = onSkipRest,
-                onCancelRest = onCancelRest
-            )
-            Spacer(modifier = Modifier.height(8.dp))
+        // Both appear on their own above the list. Bounded together so that at large text on a short
+        // screen they scroll here and leave the list and the actions below reachable; a refused write
+        // comes first, so it is seen and announced wherever the reader had scrolled to.
+        if (state.setUpdateError.message != null || state.restTimer.isVisible) {
+            BoxWithConstraints {
+                Column(modifier = Modifier.heightIn(max = maxHeight / 2).verticalScroll(rememberScrollState())) {
+                    state.setUpdateError.message?.let { error ->
+                        key(state.setUpdateError.attempt) { SetUpdateErrorBanner(error, onDismissSetUpdateError) }
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                    if (state.restTimer.isVisible) {
+                        RestTimerBar(
+                            restTimer = state.restTimer,
+                            onAddRest = onAddRest,
+                            onSkipRest = onSkipRest,
+                            onCancelRest = onCancelRest
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+            }
         }
 
         if (currentExercise != null) {
@@ -299,9 +325,7 @@ private fun ActiveWorkoutContent(
                 contentPadding = PaddingValues(bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                state.setUpdateError?.let { error ->
-                    item { SetUpdateErrorBanner(error, onDismissSetUpdateError) }
-                }
+                if (largeText) item(key = "title") { sessionTitle(Modifier.fillMaxWidth()) }
                 state.programAssociation?.let { association ->
                     item { Text(wallcrawl.elopenmike.com.feature.program.positionText(association.position), color = MaterialTheme.colorScheme.onSurface) }
                     if (association.supportedSnapshot != null && !state.programFinishUnsupported) {
@@ -309,10 +333,11 @@ private fun ActiveWorkoutContent(
                     }
                 }
                 state.programReadError?.let { error -> item {
-                    Text(stringResource(error), color = MaterialTheme.colorScheme.error)
-                    TextButton(onClick = onRetryProgramRead) { Text(stringResource(R.string.action_try_again), color = MaterialTheme.colorScheme.primary) }
+                    Text(stringResource(error), color = MaterialTheme.colorScheme.error, modifier = Modifier.a11yAnnounced())
+                    TextButton(onClick = onRetryProgramRead) { Text(stringResource(R.string.action_try_again), color = MaterialTheme.colorScheme.tertiary) }
                 } }
-                item {
+                // Keyed: a conditional item above must not move it and lose a pause.
+                item(key = "illustration") {
                     ExerciseIllustration(
                         exercise = state.currentCatalogExercise,
                         visualProvider = visualProvider
@@ -365,11 +390,12 @@ private fun ActiveWorkoutContent(
         }
 
         // Bottom Navigation Buttons (Previous / Next / Finish)
-        Row(
+        StackingRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             if (!state.isFirstExercise) {
                 WallCrawlSecondaryButton(
@@ -407,6 +433,9 @@ private fun RestTimerBar(
     onCancelRest: () -> Unit
 ) {
     val isRunning = restTimer.isRunning
+    // Announced only if it finished in front of the reader; returning to a finished bar stays quiet.
+    var sawRunning by remember { mutableStateOf(isRunning) }
+    LaunchedEffect(isRunning) { if (isRunning) sawRunning = true }
     val countdown = restCountdownLabel(restTimer.remainingSeconds)
     WallCrawlCard(cornerRadius = 12.dp, contentPadding = 12.dp) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -433,11 +462,15 @@ private fun RestTimerBar(
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .weight(1f)
-                    .semantics { contentDescription = restAnnouncement }
+                    // Polite only once it is over: the running text changes four times a second.
+                    .semantics {
+                        contentDescription = restAnnouncement
+                        if (!isRunning && sawRunning) liveRegion = LiveRegionMode.Polite
+                    }
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             AssistChip(
                 onClick = onAddRest,
                 label = {
@@ -491,7 +524,7 @@ private fun FinishConfirmationDialog(
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text(confirmLabel, color = CrimsonRedPrimary, fontWeight = FontWeight.Bold)
+                Text(confirmLabel, color = MaterialTheme.colorScheme.tertiary, fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
@@ -517,14 +550,15 @@ private fun DiscardConfirmationDialog(
         text = {
             Text(
                 stringResource(R.string.discard_confirm_body),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.verticalScroll(rememberScrollState())
             )
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
                 Text(
                     stringResource(R.string.discard_confirm_action),
-                    color = CrimsonRedPrimary,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -558,6 +592,7 @@ private fun ExerciseHeaderCard(
         contentPadding = 14.dp
     ) {
         Text(
+            modifier = Modifier.a11yHeading(),
             text = displayName,
             fontSize = 20.sp,
             fontWeight = FontWeight.Black,
@@ -566,10 +601,11 @@ private fun ExerciseHeaderCard(
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        Row(
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            itemVerticalAlignment = Alignment.CenterVertically
         ) {
             StatBadge(
                 label = prescriptionTarget(workoutExercise.prescription),
@@ -665,9 +701,9 @@ private fun SetUpdateErrorBanner(@StringRes messageRes: Int, onDismiss: () -> Un
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = stringResource(messageRes),
-                color = CrimsonRedLight,
+                color = MaterialTheme.colorScheme.tertiary,
                 fontSize = 13.sp,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).a11yAnnounced()
             )
             IconButton(onClick = onDismiss) {
                 Icon(
@@ -713,7 +749,7 @@ private fun PreviousPerformanceCard(
                 text = DateFormat.getDateInstance(DateFormat.MEDIUM, locale)
                     .format(Date(timestamp)),
                 fontSize = 11.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 

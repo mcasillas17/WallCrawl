@@ -32,6 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,7 +75,8 @@ fun BreakDurationSelector(
                     },
                     RoundedCornerShape(12.dp)
                 )
-                .clickable { expanded = !expanded }
+                .clickable(role = Role.DropdownList) { expanded = !expanded }
+                .a11yExpanded(expanded)
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
             Row(
@@ -146,7 +151,7 @@ fun BreakDurationSelector(
                                         FontWeight.SemiBold
                                     },
                                     color = if (isSelected) {
-                                        MaterialTheme.colorScheme.primary
+                                        MaterialTheme.colorScheme.tertiary
                                     } else {
                                         MaterialTheme.colorScheme.onSurface
                                     }
@@ -173,6 +178,10 @@ fun BreakDurationSelector(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
+                        .semantics {
+                            selected = isSelected
+                            role = Role.RadioButton
+                        }
                         .background(
                             if (isSelected) {
                                 MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)

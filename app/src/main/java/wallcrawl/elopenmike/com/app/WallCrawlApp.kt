@@ -3,17 +3,23 @@ package wallcrawl.elopenmike.com.app
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.rememberTextMeasurer
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.feature.program.*
 import wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent
@@ -42,7 +48,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import wallcrawl.elopenmike.com.AppContainer
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
+import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
+import wallcrawl.elopenmike.com.feature.backup.LocalDataOperation
 import wallcrawl.elopenmike.com.feature.backup.LocalDataOutcomeEffect
 import wallcrawl.elopenmike.com.feature.backup.LocalDataSection
 import wallcrawl.elopenmike.com.feature.backup.LocalDataViewModel
@@ -69,7 +76,6 @@ import wallcrawl.elopenmike.com.feature.history.WorkoutHistoryDetailScreen
 import wallcrawl.elopenmike.com.feature.history.WorkoutHistoryDetailViewModel
 import wallcrawl.elopenmike.com.feature.history.WorkoutHistoryListScreen
 import wallcrawl.elopenmike.com.feature.history.WorkoutHistoryListViewModel
-
 import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.illustrationVariant
@@ -77,6 +83,7 @@ import wallcrawl.elopenmike.com.core.model.IllustrationVariant
 import wallcrawl.elopenmike.com.core.ui.components.LocalIllustrationVariant
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.rememberExerciseVocabulary
+
 
 @Composable
 fun WallCrawlApp(
@@ -106,7 +113,7 @@ fun WallCrawlApp(
                         .background(MaterialTheme.colorScheme.background),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                    LoadingIndicator()
                 }
             }
 
@@ -239,7 +246,7 @@ private fun WallCrawlAppContent(
                     restoreFromArchive = {
                         RestoreFromArchiveButton(viewModel = localDataViewModel)
                     },
-                    isRestoreInFlight = localDataState.isBusy
+                    isRestoreInFlight = localDataState.operation == LocalDataOperation.RESTORING
                 )
             }
 
@@ -503,40 +510,52 @@ internal fun WallCrawlBottomBar(
     onNavigate: (Screen) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surface,
-        modifier = modifier
-            .testTag(WALL_CRAWL_BOTTOM_BAR_TEST_TAG)
-            .border(1.dp, MaterialTheme.colorScheme.outline)
-    ) {
-        Screen.bottomNavItems.forEach { screen ->
-            val isSelected = currentRoute == screen.route
-            val title = stringResource(screen.titleRes)
-            NavigationBarItem(
-                selected = isSelected,
-                onClick = { onNavigate(screen) },
-                icon = {
-                    Icon(
-                        imageVector = screen.icon,
-                        contentDescription = title,
-                        modifier = Modifier.size(22.dp)
-                    )
-                },
-                label = {
-                    Text(
-                        text = title,
-                        fontSize = 11.sp,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-                    )
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.onPrimary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    indicatorColor = MaterialTheme.colorScheme.primary
-                )
-            )
+    val items = Screen.bottomNavItems
+    // The style a label is drawn in, letter spacing included, at its widest (selected) weight.
+    val labelStyle = MaterialTheme.typography.labelMedium.copy(fontSize = 11.sp, fontWeight = FontWeight.Bold)
+    val measurer = rememberTextMeasurer()
+    val titles = items.associateWith { stringResource(it.titleRes) }
+    BoxWithConstraints(modifier = modifier.testTag(WALL_CRAWL_BOTTOM_BAR_TEST_TAG)) {
+        // Large text can make a word wider than a quarter of a narrow screen. Two rows give each
+        // label the room to stay whole at the size the reader chose, instead of breaking mid-word.
+        val widest = titles.values.maxOf { measurer.measure(it, labelStyle).size.width }
+        // Material spaces items 8 dp apart and pads a label 4 dp on each side.
+        val labelSlot = (maxWidth - 8.dp * (items.size - 1)) / items.size - 8.dp
+        val perRow = if (with(LocalDensity.current) { widest.toDp() } > labelSlot) (items.size + 1) / 2 else items.size
+        Column(modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.outline)) {
+            val rows = items.chunked(perRow)
+            rows.forEachIndexed { index, row ->
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    windowInsets = if (index == rows.lastIndex) NavigationBarDefaults.windowInsets else NavigationBarDefaults.windowInsets.only(WindowInsetsSides.Horizontal)
+                ) {
+                    row.forEach { screen ->
+                        val isSelected = currentRoute == screen.route
+                        NavigationBarItem(
+                            selected = isSelected,
+                            onClick = { onNavigate(screen) },
+                            icon = {
+                                // Null: the label names this item, so a description would be read twice.
+                                Icon(screen.icon, contentDescription = null, modifier = Modifier.size(22.dp))
+                            },
+                            label = {
+                                Text(
+                                    text = titles.getValue(screen),
+                                    fontSize = labelStyle.fontSize,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                )
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                selectedTextColor = MaterialTheme.colorScheme.tertiary,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                indicatorColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    }
+                }
+            }
         }
     }
 }

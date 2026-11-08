@@ -13,12 +13,10 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.TextStyle
+import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
@@ -31,6 +29,8 @@ import wallcrawl.elopenmike.com.core.database.repository.WorkoutHistoryDetail
 import wallcrawl.elopenmike.com.core.database.repository.HistoricalSessionHeader
 import wallcrawl.elopenmike.com.core.database.repository.HistoricalSourceKey
 import wallcrawl.elopenmike.com.core.model.*
+import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
+import wallcrawl.elopenmike.com.core.ui.components.a11yExpanded
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
@@ -77,14 +77,14 @@ fun WorkoutHistoryListScreen(
             when (state) {
                 WorkoutHistoryListUiState.Loading -> message(R.string.history_loading)
                 is WorkoutHistoryListUiState.ReadError -> {
-                    message(R.string.history_error)
-                    item { Button(onClick = onRetry) { HistoryText(stringResource(R.string.history_retry)) } }
+                    errorMessage(R.string.history_error)
+                    item { Button(onClick = onRetry) { Text(stringResource(R.string.history_retry)) } }
                     if (state.page > 0) item {
-                        Button(onClick = onNewer) { HistoryText(stringResource(R.string.history_newer)) }
+                        Button(onClick = onNewer) { Text(stringResource(R.string.history_newer)) }
                     }
                 }
                 is WorkoutHistoryListUiState.Loaded -> {
-                    item { HistoryText(stringResource(R.string.history_page, count(state.page + 1))) }
+                    item { Text(stringResource(R.string.history_page, count(state.page + 1))) }
                     if (state.sessions.isEmpty()) message(R.string.history_empty)
                     state.sessions.forEach { session ->
                         item(key = session.id) {
@@ -93,7 +93,7 @@ fun WorkoutHistoryListScreen(
                                 modifier = Modifier.fillMaxWidth().semantics { role = Role.Button }
                             ) {
                                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    HistoryText(session.name, style = MaterialTheme.typography.titleMedium)
+                                    Text(session.name, style = MaterialTheme.typography.titleMedium)
                                     HistoryField(R.string.history_completed_at, date(session.completedAtTimestamp))
                                     HistoryField(R.string.history_actual_duration, minutes(session.actualDurationMinutes))
                                 }
@@ -101,10 +101,10 @@ fun WorkoutHistoryListScreen(
                         }
                     }
                     if (state.page > 0) item {
-                        Button(onClick = onNewer) { HistoryText(stringResource(R.string.history_newer)) }
+                        Button(onClick = onNewer) { Text(stringResource(R.string.history_newer)) }
                     }
                     if (state.hasOlder) item {
-                        Button(onClick = onOlder) { HistoryText(stringResource(R.string.history_older)) }
+                        Button(onClick = onOlder) { Text(stringResource(R.string.history_older)) }
                     }
                 }
             }
@@ -124,14 +124,14 @@ fun WorkoutHistoryDetailScreen(
             contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             when (state) {
                 WorkoutHistoryDetailUiState.Loading -> message(R.string.history_loading)
-                WorkoutHistoryDetailUiState.Missing -> message(R.string.history_missing)
+                WorkoutHistoryDetailUiState.Missing -> errorMessage(R.string.history_missing)
                 WorkoutHistoryDetailUiState.ReadError -> {
-                    message(R.string.history_error)
-                    item { Button(onClick = onRetry) { HistoryText(stringResource(R.string.history_retry)) } }
+                    errorMessage(R.string.history_error)
+                    item { Button(onClick = onRetry) { Text(stringResource(R.string.history_retry)) } }
                 }
                 is WorkoutHistoryDetailUiState.Unsupported -> {
                     message(R.string.history_unsupported)
-                    item { HistoryText(state.session.name) }
+                    item { Text(state.session.name) }
                     field(R.string.history_status) { stringResource(sessionStatusRes(state.session.status)) }
                 }
                 is WorkoutHistoryDetailUiState.Loaded -> {
@@ -173,12 +173,11 @@ fun WorkoutHistoryDetailScreen(
                         }
                     }
                     item {
-                        val description = stringResource(if (technicalExpanded) R.string.progress_details_expanded
-                            else R.string.progress_details_collapsed)
                         OutlinedButton(
                             onClick = { technicalExpanded = !technicalExpanded },
-                            modifier = Modifier.fillMaxWidth().semantics { stateDescription = description }
-                        ) { HistoryText(stringResource(R.string.history_technical)) }
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
+                            modifier = Modifier.fillMaxWidth().a11yExpanded(technicalExpanded)
+                        ) { Text(stringResource(R.string.history_technical)) }
                     }
                     if (technicalExpanded) technicalDetails(state.detail, state.reasons)
                 }
@@ -191,10 +190,14 @@ fun WorkoutHistoryDetailScreen(
 private fun HistoryScaffold(@StringRes title: Int, onBack: () -> Unit, content: @Composable ColumnScope.() -> Unit) {
     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column {
-            TextButton(onClick = onBack, modifier = Modifier.padding(horizontal = 8.dp).heightIn(min = 48.dp)) {
-                HistoryText(stringResource(R.string.action_back))
+            TextButton(
+                onClick = onBack,
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
+                modifier = Modifier.padding(horizontal = 8.dp).heightIn(min = 48.dp)
+            ) {
+                Text(stringResource(R.string.action_back))
             }
-            HistoryText(stringResource(title), Modifier.padding(horizontal = 16.dp).semantics { heading() },
+            Text(stringResource(title), Modifier.padding(horizontal = 16.dp).a11yHeading(),
                 style = MaterialTheme.typography.headlineSmall)
             content()
         }
@@ -271,10 +274,10 @@ private fun LazyListScope.setMeasurements(set: WorkoutSet, unit: WeightUnit) {
         item {
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    HistoryText(stringResource(if (performed) R.string.history_performed else R.string.history_planned),
+                    Text(stringResource(if (performed) R.string.history_performed else R.string.history_planned),
                         style = MaterialTheme.typography.titleSmall)
                     val measurements = historyMeasurements(set, performed)
-                    if (measurements.isEmpty()) HistoryText(notRecorded())
+                    if (measurements.isEmpty()) Text(notRecorded())
                     measurements.forEach { field ->
                         HistoryField(when (field.kind) {
                             HistoryMeasurementKind.REPS -> R.string.set_field_reps
@@ -296,12 +299,12 @@ private fun LazyListScope.setMeasurements(set: WorkoutSet, unit: WeightUnit) {
 }
 
 private fun LazyListScope.evidence(session: HistoricalSessionHeader, exercise: WorkoutExercise) {
-    item { HistoryText(session.name, style = MaterialTheme.typography.titleMedium) }
+    item { Text(session.name, style = MaterialTheme.typography.titleMedium) }
     field(R.string.history_completed_at) { date(session.completedAtTimestamp) }
     field(R.string.history_unit) { session.weightUnit.symbol }
     message(R.string.history_evidence_note)
     exercise.sets.sortedWith(compareBy({ it.setNumber }, { it.id })).forEach { set ->
-        item { HistoryText(stringResource(R.string.set_number, count(set.setNumber))) }
+        item { Text(stringResource(R.string.set_number, count(set.setNumber))) }
         setMeasurements(set, session.weightUnit)
     }
 }
@@ -317,20 +320,20 @@ private fun LazyListScope.recordedReasons(reasons: HistoryReasons?) {
     reasons.violations.forEach { message(violationRes(it)) }
     reasons.progression.forEach { reason ->
         item {
-            HistoryText(reason.exerciseId, style = MaterialTheme.typography.titleSmall)
-            HistoryText(recordedProgressionText(reason))
+            Text(reason.exerciseId, style = MaterialTheme.typography.titleSmall)
+            Text(recordedProgressionText(reason))
         }
     }
     reasons.deload?.let { message(recordedDeloadRes(it.source)) }
     reasons.ranking.forEach { reason ->
-        item { workoutRankingNotice(listOf(reason))?.let { HistoryText(it) } }
+        item { workoutRankingNotice(listOf(reason))?.let { Text(it) } }
     }
     if (reasons.unsupportedIdentities.isNotEmpty()) message(R.string.history_unsupported_details)
 }
 
 private fun LazyListScope.technicalDetails(detail: WorkoutHistoryDetail, reasons: HistoryReasons?) {
     reasons?.unsupportedIdentities?.forEach { identity ->
-        item { HistoryText(stringResource(R.string.history_unsupported_identity, identity)) }
+        item { Text(stringResource(R.string.history_unsupported_identity, identity)) }
     }
     field(R.string.history_session_id) { detail.session.id }
     field(R.string.history_status) { stringResource(sessionStatusRes(detail.session.status)) }
@@ -381,24 +384,19 @@ private fun LazyListScope.technicalDetails(detail: WorkoutHistoryDetail, reasons
 private fun LazyListScope.field(@StringRes label: Int, value: @Composable () -> String) {
     item { HistoryField(label, value()) }
 }
-private fun LazyListScope.message(@StringRes text: Int) { item { HistoryText(stringResource(text)) } }
+private fun LazyListScope.message(@StringRes text: Int) { item { Text(stringResource(text)) } }
+private fun LazyListScope.errorMessage(@StringRes text: Int) { item { Text(stringResource(text), Modifier.a11yAnnounced()) } }
 private fun LazyListScope.heading(@StringRes title: Int) { item { HistoryHeading(stringResource(title)) } }
 
 @Composable private fun HistoryHeading(text: String) {
-    HistoryText(text, Modifier.fillMaxWidth().padding(top = 8.dp).semantics { heading() },
+    Text(text, Modifier.fillMaxWidth().padding(top = 8.dp).a11yHeading(),
         style = MaterialTheme.typography.titleLarge)
 }
 @Composable private fun HistoryField(@StringRes label: Int, value: String) {
     Column(Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
-        HistoryText(stringResource(label), Modifier.fillMaxWidth(), style = MaterialTheme.typography.labelLarge)
-        HistoryText(value, Modifier.fillMaxWidth(), style = MaterialTheme.typography.bodyLarge)
+        Text(stringResource(label), Modifier.fillMaxWidth(), style = MaterialTheme.typography.labelLarge)
+        Text(value, Modifier.fillMaxWidth(), style = MaterialTheme.typography.bodyLarge)
     }
-}
-@Composable private fun HistoryText(
-    text: String, modifier: Modifier = Modifier, style: TextStyle = LocalTextStyle.current
-) {
-    // App typography carries fixed dark-theme colors; respect the actual surface/button instead.
-    Text(text, modifier, color = LocalContentColor.current, style = style)
 }
 @Composable private fun count(value: Int) = LocaleFormatting.formatCount(value, LocalConfiguration.current.locales[0])
 @Composable private fun measurement(value: Double) = LocaleFormatting.formatMeasurement(value, LocalConfiguration.current.locales[0])

@@ -1423,7 +1423,7 @@ UserProfile.themePreference (SYSTEM | DARK | LIGHT)
         WallCrawlTheme
          ├─ LightColorScheme / DarkColorScheme
          ├─ WindowCompat (status & nav insets)
-         └─ Dynamic Tokens (Surfaces, Borders, Typography)
+         └─ Dynamic Tokens (Surfaces, Borders, Text colors)
                │
                ├→ WallCrawlCard / WebBackgroundPattern
                ├→ WallCrawlWordmark (Dynamic high-contrast brand)
@@ -1441,7 +1441,7 @@ UserProfile.themePreference (SYSTEM | DARK | LIGHT)
   and visible against light and dark background themes alike. Light theme card
   and field borders use Slate 300 (`0xFFCBD5E1`) for sharp structural definition.
 - **Wordmark & Typography**: Brand elements like `WallCrawlWordmark` dynamically
-  render primary brand lettering in theme-aware typography tokens (`onSurface`),
+  render primary brand lettering in the theme's `onSurface` color,
   preserving high contrast on all screen densities.
 - **Gym-Floor Ergonomics**: Active workout sets incorporate tactile Material 3
   `AssistChip` rest-timer controls, bottom padding clearance above sticky

@@ -2,13 +2,14 @@ package wallcrawl.elopenmike.com.core.ui.theme
 
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import wallcrawl.elopenmike.com.core.model.ThemePreference
@@ -22,7 +23,7 @@ private val DarkColorScheme = darkColorScheme(
     onSecondary = ObsidianBlack,
     secondaryContainer = GraphiteSurfaceElevated,
     onSecondaryContainer = TextPrimary,
-    tertiary = CrimsonRedLight,
+    tertiary = AccentTextOnDark,
     background = ObsidianBlack,
     onBackground = TextPrimary,
     surface = GraphiteSurface,
@@ -42,7 +43,7 @@ private val LightColorScheme = lightColorScheme(
     onSecondary = TextWhite,
     secondaryContainer = LightSurfaceCard,
     onSecondaryContainer = LightTextPrimary,
-    tertiary = CrimsonRedPrimary,
+    tertiary = AccentTextOnLight,
     background = LightBackground,
     onBackground = LightTextPrimary,
     surface = LightSurface,
@@ -52,6 +53,10 @@ private val LightColorScheme = lightColorScheme(
     outline = LightBorder,
     outlineVariant = LightDivider
 )
+
+/** Success green that stays readable as text on this scheme's surfaces. */
+val ColorScheme.successText: Color
+    get() = if (background.luminance() > 0.5f) SuccessGreenDeep else SuccessGreen
 
 @Composable
 fun WallCrawlTheme(

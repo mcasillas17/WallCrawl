@@ -8,24 +8,22 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -44,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,18 +52,20 @@ import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.ui.components.ExerciseIllustration
+import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
+import wallcrawl.elopenmike.com.core.ui.components.StackingRow
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
+import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
+import wallcrawl.elopenmike.com.core.ui.components.a11ySearchField
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
-import wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
-import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,13 +86,13 @@ fun ExercisesScreen(
         when (val state = uiState) {
             is ExercisesUiState.Loading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = CrimsonRedPrimary)
+                    LoadingIndicator()
                 }
             }
 
             is ExercisesUiState.Error -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(stringResource(state.messageRes), color = CrimsonRedLight)
+                    Text(stringResource(state.messageRes), color = MaterialTheme.colorScheme.tertiary, modifier = Modifier.a11yAnnounced())
                 }
             }
 
@@ -140,9 +141,10 @@ private fun ExercisesContent(
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.5.sp,
-                color = CrimsonRedPrimary
+                color = MaterialTheme.colorScheme.tertiary
             )
             Text(
+                modifier = Modifier.a11yHeading(),
                 text = stringResource(R.string.exercises_title),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Black,
@@ -152,13 +154,14 @@ private fun ExercisesContent(
 
         // Search Bar
         item {
+            val searchName = stringResource(R.string.exercises_search_placeholder)
             OutlinedTextField(
                 value = state.query,
                 onValueChange = onQueryChanged,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().a11ySearchField(searchName, state.query),
                 placeholder = {
                     Text(
-                        stringResource(R.string.exercises_search_placeholder),
+                        searchName,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 14.sp
                     )
@@ -200,6 +203,7 @@ private fun ExercisesContent(
         item {
             Column {
                 Text(
+                    modifier = Modifier.a11yHeading(),
                     text = stringResource(R.string.exercises_filter_muscle),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
@@ -245,6 +249,7 @@ private fun ExercisesContent(
         item {
             Column {
                 Text(
+                    modifier = Modifier.a11yHeading(),
                     text = stringResource(R.string.exercises_filter_equipment),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
@@ -333,11 +338,11 @@ private fun ExerciseListItem(
         contentPadding = 14.dp,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(role = Role.Button, onClick = onClick)
     ) {
-        Row(
+        StackingRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
@@ -357,12 +362,11 @@ private fun ExerciseListItem(
                 )
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
             exercise.programming?.let { programming ->
                 StatBadge(
                     label = stringResource(programming.mechanics.labelRes),
                     textColor = if (programming.mechanics == MechanicsType.COMPOUND) {
-                        CrimsonRedLight
+                        MaterialTheme.colorScheme.tertiary
                     } else {
                         MaterialTheme.colorScheme.secondary
                     }
@@ -372,9 +376,10 @@ private fun ExerciseListItem(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row(
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val listSeparator = stringResource(R.string.list_separator)
             if (exercise.listedEquipment.isNotEmpty()) {
@@ -424,6 +429,7 @@ private fun ExerciseDetailSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 12.dp)
         ) {
             // Illustration Component
@@ -436,6 +442,7 @@ private fun ExerciseDetailSheet(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
+                modifier = Modifier.a11yHeading(),
                 text = vocabulary.exerciseName(exercise),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Black,
@@ -460,7 +467,7 @@ private fun ExerciseDetailSheet(
                 Text(
                     text = stringResource(R.string.exercise_detail_original_language),
                     fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -477,7 +484,7 @@ private fun ExerciseDetailSheet(
                         R.string.exercise_detail_primary,
                         vocabulary.muscles(exercise.primaryMuscles).joinToString(listSeparator)
                     ),
-                    textColor = CrimsonRedLight
+                    textColor = MaterialTheme.colorScheme.tertiary
                 )
                 if (exercise.secondaryMuscles.isNotEmpty()) {
                     StatBadge(

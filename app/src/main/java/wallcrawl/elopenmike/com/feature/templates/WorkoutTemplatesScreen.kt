@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -22,9 +25,9 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -32,15 +35,13 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.key
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -50,15 +51,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
-import wallcrawl.elopenmike.com.core.ui.components.StatBadge
+import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
+import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
+import wallcrawl.elopenmike.com.core.ui.components.isLargeText
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
-import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
 
 @Composable
 fun WorkoutTemplatesScreen(
@@ -94,55 +96,65 @@ fun WorkoutTemplatesScreen(
     Box(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         WebBackgroundPattern()
         Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
+            val eyebrow = @Composable {
+                Text(
+                    text = stringResource(R.string.templates_eyebrow),
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+            }
+            // Between the two buttons, a long word in large text would break mid-word.
+            val eyebrowAbove = isLargeText()
+            if (eyebrowAbove) {
+                Spacer(Modifier.height(12.dp))
+                eyebrow()
+            }
             Row(
                 Modifier.fillMaxWidth().padding(vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = dropUnlessResumed { onBack() }, enabled = !anyStarting) {
+                IconButton(onClick = dropUnlessResumed { onBack() }, enabled = !anyStarting, colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
-                        stringResource(R.string.action_back),
-                        tint = MaterialTheme.colorScheme.onSurface
+                        stringResource(R.string.action_back)
                     )
                 }
                 Column(Modifier.weight(1f)) {
+                    if (!eyebrowAbove) eyebrow()
                     Text(
-                        text = stringResource(R.string.templates_eyebrow),
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                        color = CrimsonRedPrimary
-                    )
-                    Text(
+                        modifier = Modifier.a11yHeading(),
                         text = stringResource(R.string.templates_title),
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Black
                     )
                 }
-                IconButton(onClick = openCreate, enabled = !anyStarting) {
+                IconButton(onClick = openCreate, enabled = !anyStarting, colors = IconButtonDefaults.iconButtonColors(contentColor = CrimsonRedPrimary)) {
                     Icon(
                         Icons.Default.Add,
-                        stringResource(R.string.templates_create_content_description),
-                        tint = CrimsonRedPrimary
+                        stringResource(R.string.templates_create_content_description)
                     )
                 }
             }
 
-            state.errorMessage?.let { messageRes ->
-                Text(
-                    stringResource(messageRes),
-                    color = CrimsonRedPrimary,
-                    // Announced: a refused Start leaves the tapped button unchanged.
-                    modifier = Modifier
-                        .padding(bottom = 8.dp)
-                        .semantics { liveRegion = LiveRegionMode.Polite }
-                )
+            state.error.message?.let { messageRes ->
+                key(state.error.attempt) {
+                    Text(
+                        stringResource(messageRes),
+                        color = MaterialTheme.colorScheme.tertiary,
+                        // Announced: a refused Start leaves the tapped button unchanged.
+                        modifier = Modifier
+                            .padding(bottom = 8.dp)
+                            .a11yAnnounced()
+                    )
+                }
             }
 
             when {
                 state.isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = CrimsonRedPrimary)
+                    LoadingIndicator()
                 }
                 state.templates.isEmpty() -> EmptyTemplates(
                     onCreate = openCreate,
@@ -178,13 +190,16 @@ fun WorkoutTemplatesScreen(
                     // translated.
                     text = stringResource(R.string.template_delete_title, template.name),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
+                    // A name can be long enough at large text to push the actions off the dialog.
+                    modifier = Modifier.heightIn(max = 160.dp).verticalScroll(rememberScrollState())
                 )
             },
             text = {
                 Text(
                     text = stringResource(R.string.template_delete_body),
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    modifier = Modifier.verticalScroll(rememberScrollState())
                 )
             },
             confirmButton = {
@@ -194,7 +209,7 @@ fun WorkoutTemplatesScreen(
                 }) {
                     Text(
                         stringResource(R.string.action_delete),
-                        color = CrimsonRedLight,
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -296,21 +311,19 @@ private fun TemplateCard(
                 )
                 if (template.notes.isNotBlank()) {
                     Spacer(Modifier.height(4.dp))
-                    Text(template.notes, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f), fontSize = 12.sp)
+                    Text(template.notes, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                 }
             }
-            IconButton(onClick = onEdit, enabled = !anyStarting) {
+            IconButton(onClick = onEdit, enabled = !anyStarting, colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant)) {
                 Icon(
                     Icons.Default.Edit,
-                    stringResource(R.string.action_edit),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    stringResource(R.string.a11y_edit_named, template.name)
                 )
             }
-            IconButton(onClick = onDelete, enabled = !anyStarting) {
+            IconButton(onClick = onDelete, enabled = !anyStarting, colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.tertiary)) {
                 Icon(
                     Icons.Default.Delete,
-                    stringResource(R.string.action_delete),
-                    tint = CrimsonRedLight.copy(alpha = 0.8f)
+                    stringResource(R.string.a11y_delete_named, template.name)
                 )
             }
         }

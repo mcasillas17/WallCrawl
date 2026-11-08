@@ -14,7 +14,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
@@ -24,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,8 +56,8 @@ import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.GraphiteBorder
 import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurface
 import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurfaceElevated
-import wallcrawl.elopenmike.com.core.ui.theme.TextMuted
 import wallcrawl.elopenmike.com.core.ui.theme.TextSecondary
+import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 
 /**
  * Renders provider-owned exercise visuals without exposing upstream asset paths to feature UI.
@@ -63,11 +68,21 @@ fun ExerciseIllustration(
     exercise: Exercise?,
     visualProvider: ExerciseVisualProvider,
     modifier: Modifier = Modifier,
-    height: Int = 180
+    height: Int = 180,
+    animationsEnabled: Boolean = rememberAnimationsEnabled()
 ) {
     val variant = LocalIllustrationVariant.current
+    // Above the key: pausing holds across the exercises of a workout.
+    var playing by rememberSaveable { mutableStateOf(animationsEnabled) }
+    // The setting can change while the app is away, and a saved or running state must not outlast that.
+    // Only the change stops it: Play, chosen with animations off, survives leaving and re-entering composition.
+    var lastEnabled by rememberSaveable { mutableStateOf(animationsEnabled) }
+    LaunchedEffect(animationsEnabled) {
+        if (lastEnabled && !animationsEnabled) playing = false
+        lastEnabled = animationsEnabled
+    }
     key(exercise?.id, visualProvider, variant) {
-        ExerciseIllustrationContent(exercise, visualProvider, variant, modifier, height)
+        ExerciseIllustrationContent(exercise, visualProvider, variant, modifier, height, playing) { playing = !playing }
     }
 }
 
@@ -77,7 +92,9 @@ private fun ExerciseIllustrationContent(
     visualProvider: ExerciseVisualProvider,
     variant: IllustrationVariant,
     modifier: Modifier,
-    height: Int
+    height: Int,
+    playing: Boolean,
+    onTogglePlaying: () -> Unit
 ) {
     var useOriginals by remember { mutableStateOf(false) }
     val frames by produceState<List<ExerciseVisual>>(emptyList(), useOriginals) {
@@ -85,17 +102,17 @@ private fun ExerciseIllustrationContent(
             if (useOriginals) visualProvider.framesFor(id) else visualProvider.framesFor(id, variant)
         }.orEmpty()
     }
-    var frameIndex by remember(frames) { mutableIntStateOf(0) }
+    val playbackSequence = remember(frames) { playbackSequence(frames.size) }
+    // The position, not the frame: a frame shown on the way there and back appears twice, and Play
+    // has to carry on in the direction Pause stopped it.
+    var sequenceIndex by remember(frames) { mutableIntStateOf(0) }
+    val frameIndex = playbackSequence.getOrElse(sequenceIndex) { 0 }
 
-    LaunchedEffect(frames) {
-        frameIndex = 0
-        val playbackSequence = frames.indices.toList() +
-            (frames.lastIndex - 1 downTo 1).toList()
-        var sequenceIndex = 0
+    LaunchedEffect(frames, playing) {
+        if (!playing) return@LaunchedEffect
         while (playbackSequence.size > 1 && currentCoroutineContext().isActive) {
             delay(FRAME_DURATION_MILLIS)
             sequenceIndex = (sequenceIndex + 1) % playbackSequence.size
-            frameIndex = playbackSequence[sequenceIndex]
         }
     }
 
@@ -143,6 +160,8 @@ private fun ExerciseIllustrationContent(
                     .background(GraphiteSurface.copy(alpha = 0.82f), RoundedCornerShape(6.dp))
                     .border(1.dp, GraphiteBorder, RoundedCornerShape(6.dp))
                     .padding(horizontal = 8.dp, vertical = 4.dp)
+                    // A motion picture, not information: reading each frame number would be noise.
+                    .clearAndSetSemantics {}
             ) {
                 val locale = LocalConfiguration.current.locales[0]
                 Text(
@@ -153,7 +172,18 @@ private fun ExerciseIllustrationContent(
                     ),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextMuted
+                    color = TextSecondary
+                )
+            }
+            IconButton(
+                onClick = onTogglePlaying,
+                modifier = Modifier.align(Alignment.BottomEnd)
+            ) {
+                Icon(
+                    imageVector = if (playing) Icons.Default.Pause else Icons.Default.PlayArrow,
+                    contentDescription = stringResource(if (playing) R.string.illustration_pause else R.string.illustration_play),
+                    tint = TextWhite,
+                    modifier = Modifier.background(GraphiteSurface.copy(alpha = 0.82f), RoundedCornerShape(6.dp))
                 )
             }
         }
@@ -198,10 +228,14 @@ private fun IllustrationPlaceholder(exercise: Exercise?) {
             text = exercise?.programming?.movementPattern?.let { stringResource(it.labelRes) }
                 ?: stringResource(R.string.illustration_motion_preview),
             fontSize = 11.sp,
-            color = TextMuted
+            color = TextSecondary
         )
     }
 }
 
 private const val ANDROID_ASSET_URI_PREFIX = "file:///android_asset/"
+/** There and back, without repeating either end: three frames play 0, 1, 2, 1. */
+internal fun playbackSequence(frameCount: Int): List<Int> =
+    (0 until frameCount).toList() + (frameCount - 2 downTo 1).toList()
+
 private const val FRAME_DURATION_MILLIS = 850L

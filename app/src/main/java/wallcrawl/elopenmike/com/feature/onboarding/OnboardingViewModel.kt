@@ -134,8 +134,8 @@ class OnboardingViewModel(
         val state = mutableState.value
         if (!state.canProceedCurrentStep) {
             updateState {
-                it.copy(
-                    error = if (state.currentStep == OnboardingStep.MOVEMENT_CAPABILITY) {
+                it.refused(
+                    if (state.currentStep == OnboardingStep.MOVEMENT_CAPABILITY) {
                         OnboardingError.MOVEMENT_REQUIRED
                     } else {
                         OnboardingError.REQUIRED_FIELD
@@ -157,6 +157,7 @@ class OnboardingViewModel(
     }
 
     fun previousStep() {
+        if (mutableState.value.isSaving) return
         val current = mutableState.value.currentStep
         val prevOrdinal = current.ordinal - 1
         if (prevOrdinal >= 0) {
@@ -209,10 +210,7 @@ class OnboardingViewModel(
         }
         if (unansweredCapability != null) {
             updateState {
-                it.copy(
-                    currentStep = OnboardingStep.MOVEMENT_CAPABILITY,
-                    error = OnboardingError.MOVEMENT_REQUIRED
-                )
+                it.refused(OnboardingError.MOVEMENT_REQUIRED).copy(currentStep = OnboardingStep.MOVEMENT_CAPABILITY)
             }
             return
         }
@@ -240,17 +238,9 @@ class OnboardingViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: IllegalArgumentException) {
-                updateState {
-                    it.copy(
-                        isSaving = false,
-                        error = OnboardingError.INVALID_FIELD
-                    )
-                }
+                updateState { it.refused(OnboardingError.INVALID_FIELD).copy(isSaving = false) }
             } catch (e: Exception) {
-                updateState { it.copy(
-                    isSaving = false,
-                    error = OnboardingError.SAVE_FAILED
-                ) }
+                updateState { it.refused(OnboardingError.SAVE_FAILED).copy(isSaving = false) }
             }
         }
     }
@@ -385,3 +375,7 @@ class OnboardingViewModel(
         }
     }
 }
+
+/** A new attempt every time, so the same message is announced again. */
+private fun OnboardingUiState.refused(error: OnboardingError) =
+    copy(error = error, errorAttempt = errorAttempt + 1)

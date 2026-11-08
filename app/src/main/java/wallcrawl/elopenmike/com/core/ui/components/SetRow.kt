@@ -11,15 +11,18 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -29,29 +32,32 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.error
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -65,9 +71,10 @@ import wallcrawl.elopenmike.com.core.model.asPerformanceInput
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
-import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreenDeep
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
+import wallcrawl.elopenmike.com.core.ui.theme.successText
+
 
 /** One editable measurement of a set, with the step a gym-floor adjustment actually uses. */
 enum class SetInputField(
@@ -128,14 +135,6 @@ enum class SetInputField(
  */
 @Composable
 fun stopReasonLabel(reason: SetStopReason): String = stringResource(reason.labelRes)
-
-/**
- * Success accent that stays readable on whichever surface the current theme paints.
- * [SuccessGreen] has enough contrast on a dark card but not on a light one.
- */
-@Composable
-private fun completedAccent(): Color =
-    if (MaterialTheme.colorScheme.background.luminance() > 0.5f) SuccessGreenDeep else SuccessGreen
 
 /** Remaining rest as minutes and seconds, with the reader's digits. */
 @Composable
@@ -207,6 +206,8 @@ fun GymFloorSetRow(
     }
     var showStopReasons by remember(set.id) { mutableStateOf(false) }
     var showFeedback by remember(set.id) { mutableStateOf(false) }
+    // Any edit answers the refusal, so typing never brings it back; only another Complete can.
+    var refusedCompletions by remember(set.id) { mutableIntStateOf(0) }
 
     fun draft() = SetValuesDraft(
         reps = LocaleFormatting.parseIntInput(reps),
@@ -225,6 +226,7 @@ fun GymFloorSetRow(
     }
 
     fun setText(field: SetInputField, value: String) {
+        refusedCompletions = 0
         when (field) {
             SetInputField.LOAD -> weight = value
             SetInputField.ASSISTANCE -> assistance = value
@@ -270,7 +272,7 @@ fun GymFloorSetRow(
         }
     }
 
-    val accent = completedAccent()
+    val accent = MaterialTheme.colorScheme.successText
     // Read-only labels use the locale's own digits; only field text must be ASCII.
     val setNumber = LocaleFormatting.formatCount(set.setNumber, locale)
     Column(
@@ -296,7 +298,7 @@ fun GymFloorSetRow(
             .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        StackingRow(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 stringResource(R.string.set_number, setNumber),
                 color = if (set.isCompleted) {
@@ -354,14 +356,27 @@ fun GymFloorSetRow(
             // null and come back as a failed completion. The field that holds it shows its
             // own error, so this is explained on screen rather than silently ignored.
             onToggle = { completed ->
-                if (!hasUnfinishedInput()) onCompletionChanged(draft(), completed)
+                if (hasUnfinishedInput()) refusedCompletions++ else onCompletionChanged(draft(), completed)
             }
         )
+        // Focus stays on the button, so the refusal is said from here, once per attempt. The field's own
+        // error is not a live region, because that would speak during normal typing of "47.5".
+        if (refusedCompletions > 0 && hasUnfinishedInput()) {
+            key(refusedCompletions) {
+                Text(
+                    text = stringResource(R.string.set_complete_refused),
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier.a11yAnnounced()
+                )
+            }
+        }
 
-        Row(
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            itemVerticalAlignment = Alignment.CenterVertically
         ) {
             // These secondary actions use the surface content colour rather than the
             // brand accent: at 13sp the accent red does not reach a comfortable contrast
@@ -375,8 +390,7 @@ fun GymFloorSetRow(
             ) {
                 Text(
                     stringResource(R.string.set_skip_or_stop),
-                    fontSize = 13.sp,
-                    color = LocalContentColor.current
+                    fontSize = 13.sp
                 )
             }
             TextButton(
@@ -384,14 +398,15 @@ fun GymFloorSetRow(
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = MaterialTheme.colorScheme.onSurface
                 ),
-                modifier = Modifier.heightIn(min = MIN_TOUCH_TARGET)
+                modifier = Modifier
+                    .heightIn(min = MIN_TOUCH_TARGET)
+                    .a11yExpanded(showFeedback)
             ) {
                 Text(
                     text = stringResource(
                         if (showFeedback) R.string.set_feedback_hide else R.string.set_feedback_show
                     ),
-                    fontSize = 13.sp,
-                    color = LocalContentColor.current
+                    fontSize = 13.sp
                 )
             }
         }
@@ -424,7 +439,10 @@ fun GymFloorSetRow(
                 )
             },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
                     Text(
                         stringResource(R.string.stop_reason_body),
                         fontSize = 13.sp,
@@ -445,7 +463,6 @@ fun GymFloorSetRow(
                         ) {
                             Text(
                                 text = stopReasonLabel(reason),
-                                color = LocalContentColor.current,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
@@ -496,10 +513,43 @@ private fun SetValueRow(
     )
     // "47." on the way to "47.5" is not a number yet. Saying so beats a Complete button
     // that appears to do nothing.
+    val unfinishedError = stringResource(R.string.set_field_incomplete_number)
     val isUnfinished = value.isNotBlank() && if (field.isDecimal) {
         LocaleFormatting.parseDecimalInput(value) == null
     } else {
         LocaleFormatting.parseIntInput(value) == null
+    }
+    // Beside the field it squeezes the value out of sight at large text, so it moves below there.
+    val chipBelow = isLargeText()
+    val copyChip: @Composable () -> Unit = {
+        if (previousValue != null) {
+            val previousText = LocaleFormatting.formatMeasurement(previousValue, locale)
+            val copyDescription = stringResource(
+                R.string.set_copy_previous_accessibility,
+                fieldLabel,
+                previousText,
+                setNumber
+            )
+            AssistChip(
+                onClick = { onCopyPrevious(previousValue) },
+                label = {
+                    Text(
+                        previousText,
+                        fontSize = 12.sp
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.ContentCopy,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp)
+                    )
+                },
+                modifier = Modifier
+                    .heightIn(min = MIN_TOUCH_TARGET)
+                    .semantics { contentDescription = copyDescription }
+            )
+        }
     }
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -520,7 +570,8 @@ private fun SetValueRow(
             onValueChange = { input -> if (input.length <= MAX_INPUT_LENGTH) onValueChange(input) },
             isError = isUnfinished,
             supportingText = if (isUnfinished) {
-                { Text(stringResource(R.string.set_field_incomplete_number), fontSize = 11.sp) }
+                // The field speaks this as its error; read here too, it would be said twice.
+                { Text(stringResource(R.string.set_field_incomplete_number), fontSize = 11.sp, modifier = Modifier.semantics { hideFromAccessibility() }) }
             } else {
                 null
             },
@@ -531,9 +582,6 @@ private fun SetValueRow(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
-            textStyle = LocalTextStyle.current.copy(
-                color = MaterialTheme.colorScheme.onSurface
-            ),
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = if (field.isDecimal) KeyboardType.Decimal else KeyboardType.Number
@@ -542,6 +590,9 @@ private fun SetValueRow(
                 .weight(1f)
                 .semantics {
                     contentDescription = fieldValueDescription
+                    // A description replaces what a field would speak, so it says these itself.
+                    stateDescription = value
+                    if (isUnfinished) error(unfinishedError)
                 }
         )
         StepButton(
@@ -553,36 +604,9 @@ private fun SetValueRow(
             ),
             onClick = { onStep(true) }
         )
-        if (previousValue != null) {
-            val previousText = LocaleFormatting.formatMeasurement(previousValue, locale)
-            val copyDescription = stringResource(
-                R.string.set_copy_previous_accessibility,
-                fieldLabel,
-                previousText,
-                setNumber
-            )
-            AssistChip(
-                onClick = { onCopyPrevious(previousValue) },
-                label = {
-                    Text(
-                        previousText,
-                        fontSize = 12.sp,
-                        color = LocalContentColor.current
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.ContentCopy,
-                        contentDescription = null,
-                        modifier = Modifier.size(14.dp)
-                    )
-                },
-                modifier = Modifier
-                    .heightIn(min = MIN_TOUCH_TARGET)
-                    .semantics { contentDescription = copyDescription }
-            )
-        }
+        if (!chipBelow) copyChip()
     }
+    if (chipBelow) copyChip()
 }
 
 @Composable
@@ -613,10 +637,10 @@ private fun CompleteSetButton(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(LARGE_TOUCH_TARGET)
+            .heightIn(min = LARGE_TOUCH_TARGET)
             .background(
                 // Filled with the deep green in both themes: white on the lighter green
-                // sits at about 2.2:1, well under WCAG AA.
+                // sits at about 2.5:1, well under WCAG AA.
                 if (isCompleted) SuccessGreenDeep else MaterialTheme.colorScheme.surface,
                 RoundedCornerShape(12.dp)
             )
@@ -658,15 +682,16 @@ private fun ManageableConfirmation(
     feltManageable: Boolean?,
     onRecord: (Boolean) -> Unit
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    FlowRow(
+        modifier = Modifier.fillMaxWidth().selectableGroup(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
             text = stringResource(R.string.set_felt_manageable),
             fontSize = 13.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.align(Alignment.CenterVertically)
         )
         listOf(true to R.string.answer_yes, false to R.string.answer_no).forEach { (answer, labelRes) ->
             val label = stringResource(labelRes)
@@ -678,10 +703,14 @@ private fun ManageableConfirmation(
             FilterChip(
                 selected = feltManageable == answer,
                 onClick = { onRecord(answer) },
-                label = { Text(label, color = LocalContentColor.current) },
+                colors = setChipColors(),
+                label = { Text(label) },
                 modifier = Modifier
                     .heightIn(min = MIN_TOUCH_TARGET)
-                    .semantics { contentDescription = description }
+                    .semantics {
+                        contentDescription = description
+                        role = Role.RadioButton
+                    }
             )
         }
     }
@@ -708,15 +737,16 @@ private fun EffortControls(
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        FlowRow(
+            itemVerticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
                 stringResource(R.string.effort_rpe),
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.width(36.dp)
+                modifier = Modifier.widthIn(min = 36.dp)
             )
             StepButton(
                 increase = false,
@@ -733,7 +763,7 @@ private fun EffortControls(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
-                    .width(40.dp)
+                    .widthIn(min = 40.dp)
                     .clearAndSetSemantics { contentDescription = rpeAnnouncement }
             )
             StepButton(
@@ -747,13 +777,13 @@ private fun EffortControls(
                 }
             )
             TextButton(
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
                 onClick = { onRecordEffort(null, rir) },
                 modifier = Modifier.heightIn(min = MIN_TOUCH_TARGET)
             ) {
                 Text(
                     stringResource(R.string.action_clear),
-                    fontSize = 12.sp,
-                    color = LocalContentColor.current
+                    fontSize = 12.sp
                 )
             }
         }
@@ -766,9 +796,10 @@ private fun EffortControls(
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
-                    .width(36.dp)
+                    .widthIn(min = 36.dp)
                     .heightIn(min = MIN_TOUCH_TARGET)
             )
+            // Checkboxes, not radio buttons: a second tap on the chosen value clears it.
             (0..5).forEach { value ->
                 val valueText = LocaleFormatting.formatCount(value, locale)
                 val description = stringResource(
@@ -779,7 +810,8 @@ private fun EffortControls(
                 FilterChip(
                     selected = rir == value,
                     onClick = { onRecordEffort(rpe, if (rir == value) null else value) },
-                    label = { Text(valueText, color = LocalContentColor.current) },
+                    colors = setChipColors(),
+                    label = { Text(valueText) },
                     modifier = Modifier
                         .heightIn(min = MIN_TOUCH_TARGET)
                         .semantics { contentDescription = description }
@@ -788,6 +820,13 @@ private fun EffortControls(
         }
     }
 }
+
+/** Material's selected fill is the row's own colour here, so the recorded value needs a stronger one. */
+@Composable
+internal fun setChipColors() = FilterChipDefaults.filterChipColors(
+    selectedContainerColor = MaterialTheme.colorScheme.secondary,
+    selectedLabelColor = MaterialTheme.colorScheme.onSecondary
+)
 
 private const val MAX_INPUT_LENGTH = LocaleFormatting.MAX_INPUT_LENGTH
 internal val MIN_TOUCH_TARGET = 48.dp

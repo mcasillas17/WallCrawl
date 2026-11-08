@@ -41,18 +41,18 @@ val SuccessGreen = Color(0xFF10B981)
 
 /**
  * Darker success green for filled controls and for success text on light surfaces:
- * white on [SuccessGreen] only reaches about 2.2:1, which is below WCAG AA.
+ * white on [SuccessGreen] only reaches about 2.5:1, which is below WCAG AA.
  */
 val SuccessGreenDeep = Color(0xFF07704F)
+/** Red for text: [SpiderRedPrimary] reads under 4.5:1 on cards in both themes. */
+val AccentTextOnDark = Color(0xFFFF7A82)
+val AccentTextOnLight = Color(0xFFB91218)
 val WarningAmber = Color(0xFFF59E0B)
 
 // 5. Web Silver & Typography Colors
 val TextWhite = Color(0xFFFFFFFF)
-val TextWebSilver = Color(0xFFE2E8F0)
 val TextPrimary = Color(0xFFF1F5F9)
 val TextSecondary = Color(0xFF94A3B8)
-val TextMuted = Color(0xFF64748B)
-val TextDisabled = Color(0xFF475569)
 
 // ==========================================
 // Light Theme Palette (Clean Athletic Daylight)
@@ -66,8 +66,5 @@ val LightDivider = Color(0xFFE2E8F0)
 
 val LightTextPrimary = Color(0xFF0F172A)
 val LightTextSecondary = Color(0xFF475569)
-val LightTextMuted = Color(0xFF64748B)
-val LightTextDisabled = Color(0xFF94A3B8)
 
-val LightSpiderBluePrimary = Color(0xFF0284C7)
-val LightSpiderBlueGlow = Color(0x1A0284C7)
+val LightSpiderBluePrimary = Color(0xFF0369A1)

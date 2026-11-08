@@ -11,10 +11,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 
@@ -28,8 +32,9 @@ fun WallCrawlWordmark(
     modifier: Modifier = Modifier,
     fontSize: TextUnit = 20.sp
 ) {
+    val name = stringResource(R.string.app_name)
     Row(
-        modifier = modifier,
+        modifier = modifier.clearAndSetSemantics { contentDescription = name },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {

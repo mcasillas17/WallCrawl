@@ -1671,7 +1671,7 @@ class TemplateEditorViewModelTest {
 
         val state = viewModel.uiState.value
         assertThat(state.weightUnit).isEqualTo(WeightUnit.LBS)
-        assertThat(state.unitRefusal).isEqualTo(R.string.editor_error_unit_convert_invalid)
+        assertThat(state.unitRefusal.message).isEqualTo(R.string.editor_error_unit_convert_invalid)
         assertThat(viewModel.rows()[0].load).isEqualTo("100")
         assertThat(state.editorDraft?.load).isEqualTo("12.")
     }
@@ -2093,7 +2093,7 @@ class TemplateEditorViewModelTest {
         viewModel.updateDraftField(DraftField.LOAD, "12.345")
         viewModel.convertUnit(WeightUnit.KG)
         assertThat(viewModel.uiState.value.weightUnit).isEqualTo(WeightUnit.LBS)
-        assertThat(viewModel.uiState.value.unitRefusal).isEqualTo(R.string.editor_error_unit_convert_invalid)
+        assertThat(viewModel.uiState.value.unitRefusal.message).isEqualTo(R.string.editor_error_unit_convert_invalid)
     }
 
     @Test
@@ -2360,7 +2360,7 @@ class TemplateEditorViewModelTest {
         // 5000 kg is beyond what a kilogram template may hold, so it was not entered in kg.
         viewModel.confirmUnit(WeightUnit.KG)
         assertThat(viewModel.uiState.value.weightUnit).isNull()
-        assertThat(viewModel.uiState.value.unitRefusal).isEqualTo(R.string.editor_error_unit_confirm_too_large)
+        assertThat(viewModel.uiState.value.unitRefusal.message).isEqualTo(R.string.editor_error_unit_confirm_too_large)
         // Nothing is opened or changed by the refusal.
         assertThat(viewModel.uiState.value.editorDraft).isNull()
         assertThat(viewModel.rows().single().load).isEqualTo("5000")
@@ -2374,7 +2374,7 @@ class TemplateEditorViewModelTest {
         viewModel.updateDraftField(DraftField.LOAD, "5000")
         viewModel.convertUnit(WeightUnit.LBS)
         assertThat(viewModel.uiState.value.weightUnit).isEqualTo(WeightUnit.KG)
-        assertThat(viewModel.uiState.value.unitRefusal).isEqualTo(R.string.editor_error_unit_convert_invalid)
+        assertThat(viewModel.uiState.value.unitRefusal.message).isEqualTo(R.string.editor_error_unit_convert_invalid)
     }
 
     @Test
@@ -2474,11 +2474,11 @@ class TemplateEditorViewModelTest {
         assertThat(recovered.uiState.value.errorMessage).isEqualTo(R.string.template_error_missing)
 
         recovered.confirmUnit(WeightUnit.KG)
-        assertThat(recovered.uiState.value.unitRefusal).isEqualTo(R.string.editor_error_unit_confirm_too_large)
+        assertThat(recovered.uiState.value.unitRefusal.message).isEqualTo(R.string.editor_error_unit_confirm_too_large)
         assertThat(recovered.uiState.value.errorMessage).isEqualTo(R.string.template_error_missing)
 
         recovered.updateNotes("next edit")
-        assertThat(recovered.uiState.value.unitRefusal).isNull()
+        assertThat(recovered.uiState.value.unitRefusal.message).isNull()
     }
 
     @Test

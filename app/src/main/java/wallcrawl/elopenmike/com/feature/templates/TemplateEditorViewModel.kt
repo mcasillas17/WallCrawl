@@ -28,6 +28,7 @@ import wallcrawl.elopenmike.com.core.exercise.ExerciseSearchIndex
 import wallcrawl.elopenmike.com.core.exercise.localization.ExerciseLocalization
 import wallcrawl.elopenmike.com.core.exercise.localization.ExerciseLocalizationSource
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.ui.state.Refusal
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -61,7 +62,7 @@ data class TemplateEditorUiState(
      * Why the last tap on a unit choice was refused, shown beside those choices. Separate
      * from [errorMessage], so a standing refusal stays where it is.
      */
-    @StringRes val unitRefusal: Int? = null,
+    val unitRefusal: Refusal = Refusal(),
     /**
      * Loading the template, catalog or profile failed. Saving and adding exercises are
      * refused; the name, notes and existing rows stay editable, so nothing typed is lost
@@ -69,6 +70,8 @@ data class TemplateEditorUiState(
      */
     val hasLoadFailed: Boolean = false,
     @StringRes val errorMessage: Int? = null,
+    /** Counts Save taps and refused Apply taps, so the same message is announced again on a repeat. */
+    val submitAttempt: Int = 0,
     /** The sheet's working copy of one row, or null when no row is being edited. */
     val editorDraft: TemplateExerciseDraft? = null,
     val fieldErrors: Map<DraftField, Int> = emptyMap(),
@@ -516,7 +519,8 @@ class TemplateEditorViewModel(
             is DraftValidation.Invalid -> edit {
                 it.copy(
                     fieldErrors = result.errors,
-                    errorMessage = result.message ?: R.string.editor_error_invalid_fields
+                    errorMessage = result.message ?: R.string.editor_error_invalid_fields,
+                    submitAttempt = it.submitAttempt + 1
                 )
             }
         }
@@ -560,7 +564,7 @@ class TemplateEditorViewModel(
         if (rows.any { it == null } || (state.editorDraft != null && sheet == null) ||
             (rows + sheet).any { it != null && it.exceedsLoadBound(unit) }
         ) {
-            settle { it.copy(unitRefusal = R.string.editor_error_unit_convert_invalid) }
+            settle { it.copy(unitRefusal = it.unitRefusal.next(R.string.editor_error_unit_convert_invalid)) }
             return
         }
         edit {
@@ -584,7 +588,7 @@ class TemplateEditorViewModel(
         // kilograms can refuse: the pound limit is the domain's own, which no stored load
         // exceeds. The message states that limit; nothing changes until the user acts.
         if ((state.selectedExercises + listOfNotNull(state.editorDraft)).any { it.exceedsLoadBound(unit) }) {
-            settle { it.copy(unitRefusal = R.string.editor_error_unit_confirm_too_large) }
+            settle { it.copy(unitRefusal = it.unitRefusal.next(R.string.editor_error_unit_confirm_too_large)) }
             return
         }
         edit { it.copy(weightUnit = unit, errorMessage = null) }
@@ -628,6 +632,7 @@ class TemplateEditorViewModel(
         // isSaving is set synchronously below and stays set after a write succeeds, so
         // neither a double tap nor a tap after success can start a second write.
         if (state.isLoading || state.isSaving) return
+        settle { it.copy(submitAttempt = it.submitAttempt + 1) }
         // Every refusal below settles rather than updates. A refusal changes no drafted
         // content, and `persistDraft` marks the handle as holding a draft unconditionally,
         // so refusing a save on an editor nobody had typed into would leave the next
@@ -742,7 +747,7 @@ class TemplateEditorViewModel(
         if (mutableState.value.isSaving) return
         update { state ->
             // Any change the user makes answers a refused unit tap.
-            val next = transform(state).copy(unitRefusal = null)
+            val next = transform(state).let { it.copy(unitRefusal = it.unitRefusal.cleared()) }
             // A legacy draft whose loads are all gone takes the profile unit, so a load
             // typed next is labelled, never mistaken for a stored one ([withUnitIfUnweighed]).
             next.withUnitIfUnweighed(profile?.preferredUnit)

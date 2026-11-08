@@ -53,8 +53,6 @@
     <string name="action_close">Close</string>
     <string name="action_clear">Clear</string>
     <string name="action_delete">Delete</string>
-    <string name="action_edit">Edit</string>
-    <string name="action_remove">Remove</string>
     <string name="action_try_again">Try again</string>
     <string name="answer_yes">Yes</string>
     <string name="answer_no">No</string>
@@ -109,7 +107,7 @@
     <string name="default_crawler_name" translatable="false">Crawler</string>
 
     <string name="onboarding_goals_heading">FITNESS GOALS</string>
-    <string name="onboarding_goals_hint">Select all that apply to your current training block:</string>
+    <string name="onboarding_goals_hint">Select all that apply to your current training block (keep at least one):</string>
 
     <string name="onboarding_unit_heading">PREFERRED WEIGHT UNIT</string>
     <string name="onboarding_unit_hint">Used for weight prescriptions, plates, and logging.</string>
@@ -316,7 +314,6 @@
     <string name="today_loading">Building today\'s plan…</string>
     <string name="today_error_title">Generation issue</string>
     <string name="today_greeting">Ready to train, %1$s</string>
-    <string name="today_logo_content_description">WallCrawl logo</string>
     <string name="today_weekly_goal_met">Weekly goal met</string>
     <string name="today_active_session_heading">ACTIVE WORKOUT IN PROGRESS</string>
     <string name="today_action_resume">Resume</string>
@@ -441,6 +438,7 @@
     <string name="set_field_increase_accessibility">Increase %1$s for set %2$s</string>
     <string name="set_field_value_accessibility">%1$s for set %2$s</string>
     <string name="set_copy_previous_accessibility">Use the previous %1$s of %2$s for set %3$s</string>
+    <string name="set_complete_refused">Not changed: finish the number above</string>
     <string name="set_complete">Complete set</string>
     <string name="set_completed">Completed</string>
     <string name="set_complete_accessibility">Set %1$s complete</string>
@@ -510,11 +508,12 @@
     <string name="editor_equipment_and_separator">\u0020AND\u0020</string>
     <string name="editor_equipment_or_separator">\u0020OR\u0020</string>
     <string name="editor_equipment_unresolved">Setup unresolved: the required attachment is not verified. You can keep this manual choice, but it is excluded from automatic workouts.</string>
-    <string name="editor_move_up">Move up</string>
-    <string name="editor_move_down">Move down</string>
+    <string name="a11y_remove_named">Remove %1$s</string>
+    <string name="editor_move_up">Move %1$s up</string>
+    <string name="editor_move_down">Move %1$s down</string>
     <string name="editor_target_sets">Target sets</string>
-    <string name="editor_decrease_sets">Decrease sets</string>
-    <string name="editor_increase_sets">Increase sets</string>
+    <string name="editor_decrease_sets">Decrease sets for %1$s</string>
+    <string name="editor_increase_sets">Increase sets for %1$s</string>
     <string name="editor_action_save">Save workout</string>
     <string name="editor_action_saving">Saving…</string>
     <string name="editor_error_name_required">Give this workout a name.</string>
@@ -624,8 +623,8 @@
     <string name="progress_involvement_details">Muscle involvement details</string>
 
     <!-- Progressive disclosure state, announced for assistive tech. -->
-    <string name="progress_details_expanded">Expanded</string>
-    <string name="progress_details_collapsed">Collapsed</string>
+    <string name="a11y_expanded">Expanded</string>
+    <string name="a11y_collapsed">Collapsed</string>
     <string name="progress_history_heading">WORKOUT HISTORY</string>
     <string name="progress_history_empty">No past workouts logged yet. Complete your first workout to see history here.</string>
     <string name="progress_history_duration">%1$s min</string>
@@ -638,7 +637,7 @@
     <string name="profile_eyebrow">SETTINGS</string>
     <string name="profile_title">Training profile</string>
     <string name="profile_goals_heading">FITNESS GOALS</string>
-    <string name="profile_goals_hint">Select all that apply to your current training block:</string>
+    <string name="profile_goals_hint">Select all that apply to your current training block (keep at least one):</string>
     <string name="profile_preferences_heading">WORKOUT PREFERENCES</string>
     <string name="profile_preferred_unit">Preferred weight unit</string>
     <string name="profile_preferred_duration">Preferred duration</string>
@@ -782,6 +781,10 @@
     <plurals name="count_days_per_week">
         <item quantity="one">%1$s day/wk</item>
         <item quantity="other">%1$s days/wk</item>
+    </plurals>
+    <plurals name="a11y_days_per_week">
+        <item quantity="one">%1$s day per week</item>
+        <item quantity="other">%1$s days per week</item>
     </plurals>
     <plurals name="count_weeks_streak">
         <item quantity="one">%1$s-week streak</item>
@@ -1111,4 +1114,13 @@
     <string name="analytics_week_value_none">nothing recorded</string>
     <string name="analytics_exercise_options_too_many">There are too many recorded exercises to list here.</string>
     <string name="analytics_decision_row">%1$s, %2$s</string>
+    <string name="a11y_loading">Loading</string>
+    <string name="a11y_muscle_priority">%1$s priority: %2$s</string>
+    <string name="a11y_edit_named">Edit %1$s</string>
+    <string name="a11y_delete_named">Delete %1$s</string>
+    <string name="illustration_pause">Pause animation</string>
+    <string name="illustration_play">Play animation</string>
+    <string name="onboarding_codename_label">Codename</string>
+    <string name="a11y_trend_up">Up</string>
+    <string name="a11y_trend_down">Down</string>
 </resources>

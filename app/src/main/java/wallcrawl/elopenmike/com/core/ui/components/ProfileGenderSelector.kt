@@ -23,6 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import wallcrawl.elopenmike.com.R
@@ -62,7 +64,6 @@ fun ProfileGenderSelector(
                 )
             },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
@@ -87,7 +88,10 @@ fun ProfileGenderSelector(
                         }
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                    modifier = Modifier.semantics { selected = gender == option }
+                    modifier = Modifier.semantics {
+                        role = Role.RadioButton
+                        selected = gender == option
+                    }
                 )
             }
         }

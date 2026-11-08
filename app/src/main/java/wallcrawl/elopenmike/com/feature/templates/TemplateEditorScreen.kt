@@ -39,11 +39,10 @@ import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -59,31 +58,33 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.ui.semantics.stateDescription
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
+import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
+import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
+import wallcrawl.elopenmike.com.core.ui.components.a11ySearchField
 import wallcrawl.elopenmike.com.core.ui.localization.longLabelRes
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.util.Locale
@@ -94,6 +95,7 @@ import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.hasUnresolvedEquipmentRequirements
 import wallcrawl.elopenmike.com.core.model.missingEquipmentAlternatives
+import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
@@ -189,11 +191,10 @@ fun TemplateEditorScreen(
                     .padding(vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = leaveEditor, enabled = !state.isSaving) {
+                IconButton(onClick = leaveEditor, enabled = !state.isSaving, colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
-                        stringResource(R.string.action_back),
-                        tint = MaterialTheme.colorScheme.onSurface
+                        stringResource(R.string.action_back)
                     )
                 }
                 Text(
@@ -207,13 +208,13 @@ fun TemplateEditorScreen(
                     color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Black,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.a11yHeading().weight(1f)
                 )
             }
 
             if (state.isLoading) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = CrimsonRedPrimary)
+                    LoadingIndicator()
                 }
                 return
             }
@@ -224,11 +225,6 @@ fun TemplateEditorScreen(
                         value = state.name,
                         onValueChange = viewModel::updateName,
                         enabled = !state.isSaving,
-                        textStyle = editorTextStyle(),
-                        // `Typography` sets a colour on every style, and a `Text` prefers its
-                        // style's colour over anything `colors` supplies, so a resting label
-                        // with no colour of its own paints the dark-theme value — on this
-                        // surface, near-white on white, at about 1.1:1.
                         label = {
                             Text(
                                 stringResource(R.string.editor_name_label),
@@ -253,7 +249,6 @@ fun TemplateEditorScreen(
                         value = state.notes,
                         onValueChange = viewModel::updateNotes,
                         enabled = !state.isSaving,
-                        textStyle = editorTextStyle(),
                         label = {
                             Text(
                                 stringResource(R.string.editor_notes_label),
@@ -290,7 +285,8 @@ fun TemplateEditorScreen(
                     WeightUnitSection(
                         weightUnit = state.weightUnit,
                         // A refusal of the chips is shown at the chips, not below the list.
-                        refusal = state.unitRefusal,
+                        refusal = state.unitRefusal.message,
+                        refusalAttempt = state.unitRefusal.attempt,
                         enabled = !state.isSaving,
                         onConvert = viewModel::convertUnit,
                         onConfirm = viewModel::confirmUnit
@@ -309,7 +305,7 @@ fun TemplateEditorScreen(
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 1.sp,
-                                color = CrimsonRedPrimary
+                                color = MaterialTheme.colorScheme.tertiary
                             )
                             Text(
                                 text = pluralStringResource(
@@ -336,7 +332,7 @@ fun TemplateEditorScreen(
                                 text = stringResource(R.string.editor_error_exercise_limit),
                                 fontSize = 13.sp,
                                 color = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth().a11yAnnounced()
                             )
                         }
                     }
@@ -363,7 +359,7 @@ fun TemplateEditorScreen(
                                         locale
                                     )
                                 ),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 12.sp
                             )
                         }
@@ -394,7 +390,7 @@ fun TemplateEditorScreen(
 
                 // While a sheet is open it shows the message itself; one announced copy, not two.
                 if (state.editorDraft == null) state.errorMessage?.let { messageRes ->
-                    item { EditorErrorCard(messageRes) }
+                    item { key(state.submitAttempt) { EditorErrorCard(messageRes) } }
                 }
 
                 item {
@@ -428,6 +424,7 @@ fun TemplateEditorScreen(
 private fun WeightUnitSection(
     weightUnit: WeightUnit?,
     refusal: Int?,
+    refusalAttempt: Int,
     enabled: Boolean,
     onConvert: (WeightUnit) -> Unit,
     onConfirm: (WeightUnit) -> Unit
@@ -439,7 +436,7 @@ private fun WeightUnitSection(
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.semantics { heading() }
+                modifier = Modifier.a11yHeading()
             )
             Spacer(Modifier.height(4.dp))
             Text(
@@ -463,6 +460,7 @@ private fun WeightUnitSection(
         Spacer(Modifier.height(6.dp))
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.selectableGroup()
         ) {
             WeightUnit.entries.forEach { unit ->
@@ -508,12 +506,14 @@ private fun WeightUnitSection(
             }
             Spacer(Modifier.height(6.dp))
             // A polite live region, as the rest of the app announces status (TodayDeloadCard).
-            Text(
-                text = refusalText,
-                color = MaterialTheme.colorScheme.error,
-                fontSize = 13.sp,
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }
-            )
+            key(refusalAttempt) {
+                Text(
+                    text = refusalText,
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 13.sp,
+                    modifier = Modifier.a11yAnnounced()
+                )
+            }
         }
     }
     if (weightUnit == null) {
@@ -530,13 +530,6 @@ private fun DiscardConfirmation(
     titleRes: Int = R.string.editor_discard_title,
     messageRes: Int = R.string.editor_discard_message
 ) {
-    // Every colour is passed to the `Text` itself. `Text` prefers its own `color`, then its
-    // style's, and only then `LocalContentColor`; this app's `Typography` sets a colour on
-    // every style, so `titleContentColor` and `textContentColor` never reach the glyphs and
-    // the title and the keep-editing action painted the dark-theme white on a white
-    // container. Fixing that app-wide means taking the colours out of `Typography`, which
-    // reaches every screen and is not this package's to change. Semantics cannot see any of
-    // it, so the instrumented test measures the contrast of the pixels instead.
     val onContainer = MaterialTheme.colorScheme.onSurface
     AlertDialog(
         onDismissRequest = onKeepEditing,
@@ -546,12 +539,13 @@ private fun DiscardConfirmation(
         text = {
             Text(
                 stringResource(messageRes),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.verticalScroll(rememberScrollState())
             )
         },
         confirmButton = {
             TextButton(onClick = onDiscard) {
-                Text(stringResource(R.string.editor_discard_confirm), color = CrimsonRedLight)
+                Text(stringResource(R.string.editor_discard_confirm), color = MaterialTheme.colorScheme.tertiary)
             }
         },
         dismissButton = {
@@ -571,10 +565,10 @@ private fun EditorErrorCard(messageRes: Int) {
             Spacer(Modifier.size(8.dp))
             Text(
                 stringResource(messageRes),
-                color = CrimsonRedLight,
+                color = MaterialTheme.colorScheme.tertiary,
                 fontSize = 13.sp,
                 // Announced: a refused save leaves the tapped button unchanged.
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }
+                modifier = Modifier.a11yAnnounced()
             )
         }
     }
@@ -615,7 +609,7 @@ private fun SelectedExerciseCard(
                     R.string.editor_position,
                     LocaleFormatting.formatCount(index + 1, locale)
                 ),
-                color = CrimsonRedPrimary,
+                color = MaterialTheme.colorScheme.tertiary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp,
                 modifier = Modifier.padding(end = 8.dp)
@@ -625,9 +619,7 @@ private fun SelectedExerciseCard(
                     text = exerciseName,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    fontSize = 16.sp
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
@@ -668,12 +660,12 @@ private fun SelectedExerciseCard(
                         .size(MIN_TOUCH_TARGET)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surface)
-                        .clickable(enabled = canDecreaseSets, onClick = onSetsDown),
+                        .clickable(enabled = canDecreaseSets, role = Role.Button, onClick = onSetsDown),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Remove,
-                        contentDescription = stringResource(R.string.editor_decrease_sets),
+                        contentDescription = stringResource(R.string.editor_decrease_sets, exerciseName),
                         tint = if (canDecreaseSets) {
                             MaterialTheme.colorScheme.onSurface
                         } else {
@@ -697,12 +689,12 @@ private fun SelectedExerciseCard(
                         .size(MIN_TOUCH_TARGET)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surface)
-                        .clickable(enabled = canIncreaseSets, onClick = onSetsUp),
+                        .clickable(enabled = canIncreaseSets, role = Role.Button, onClick = onSetsUp),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.editor_increase_sets),
+                        contentDescription = stringResource(R.string.editor_increase_sets, exerciseName),
                         tint = if (canIncreaseSets) {
                             MaterialTheme.colorScheme.onSurface
                         } else {
@@ -747,7 +739,7 @@ private fun SelectedExerciseCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowUpward,
-                    contentDescription = stringResource(R.string.editor_move_up),
+                    contentDescription = stringResource(R.string.editor_move_up, exerciseName),
                     tint = if (canMoveUp) MaterialTheme.colorScheme.onSurfaceVariant else muted,
                     modifier = Modifier.size(18.dp)
                 )
@@ -759,7 +751,7 @@ private fun SelectedExerciseCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowDownward,
-                    contentDescription = stringResource(R.string.editor_move_down),
+                    contentDescription = stringResource(R.string.editor_move_down, exerciseName),
                     tint = if (canMoveDown) MaterialTheme.colorScheme.onSurfaceVariant else muted,
                     modifier = Modifier.size(18.dp)
                 )
@@ -771,8 +763,8 @@ private fun SelectedExerciseCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = stringResource(R.string.action_remove),
-                    tint = if (isSaving) muted else CrimsonRedLight.copy(alpha = 0.8f),
+                    contentDescription = stringResource(R.string.a11y_remove_named, exerciseName),
+                    tint = if (isSaving) muted else MaterialTheme.colorScheme.tertiary,
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -877,9 +869,10 @@ internal fun PrescriptionSheetContent(
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp,
-            color = CrimsonRedPrimary
+            color = MaterialTheme.colorScheme.tertiary
         )
         Text(
+            modifier = Modifier.a11yHeading(),
             text = exerciseName,
             fontSize = 20.sp,
             fontWeight = FontWeight.Black,
@@ -903,7 +896,7 @@ internal fun PrescriptionSheetContent(
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp,
-            color = CrimsonRedPrimary
+            color = MaterialTheme.colorScheme.tertiary
         )
         Text(
             text = stringResource(R.string.editor_effort_help),
@@ -939,13 +932,12 @@ internal fun PrescriptionSheetContent(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
-            textStyle = editorTextStyle(),
             shape = RoundedCornerShape(12.dp),
             colors = editorFieldColors(),
             modifier = Modifier.fillMaxWidth()
         )
 
-        state.errorMessage?.let { EditorErrorCard(it) }
+        state.errorMessage?.let { key(state.submitAttempt) { EditorErrorCard(it) } }
 
         // Stacked, full width: side by side at a large font scale the Spanish labels broke
         // mid-word.
@@ -985,35 +977,30 @@ private fun DraftNumberField(
     val errorRes = state.fieldErrors[field]
     val fieldDescription =
         stringResource(R.string.editor_field_accessibility, label, exerciseName)
+    val fieldValue = field.valueIn(draft)
+    // An out-of-range value is the one error where the bounds are the answer, and an optional
+    // field never shows them otherwise. One string, shown and spoken.
+    val errorText = errorRes?.let {
+        if (it == R.string.draft_error_out_of_range_with_range) stringResource(it, rule.rangeLabel(locale)) else stringResource(it)
+    }
+
+    val hint = when {
+        errorText != null -> null
+        rule.isOptional -> stringResource(R.string.editor_optional_unset_hint)
+        else -> stringResource(R.string.editor_field_range_hint, rule.rangeLabel(locale))
+    }
 
     OutlinedTextField(
-        value = field.valueIn(draft),
+        value = fieldValue,
         onValueChange = onValueChange,
         enabled = !state.isSaving,
         label = {
             Text(label, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         },
-        textStyle = editorTextStyle(),
         isError = errorRes != null,
         supportingText = {
-            Text(
-                text = when {
-                    // An out-of-range value is the one error where the bounds are the
-                    // answer, and an optional field never shows them otherwise.
-                    errorRes == R.string.draft_error_out_of_range_with_range -> stringResource(
-                        errorRes,
-                        rule.rangeLabel(locale)
-                    )
-
-                    errorRes != null -> stringResource(errorRes)
-                    rule.isOptional -> stringResource(R.string.editor_optional_unset_hint)
-                    else -> stringResource(
-                        R.string.editor_field_range_hint,
-                        rule.rangeLabel(locale)
-                    )
-                },
-                fontSize = 11.sp
-            )
+            // The field speaks this itself, as its description or error; read here too, it would be said twice.
+            Text(text = errorText ?: hint.orEmpty(), fontSize = 11.sp, modifier = Modifier.semantics { hideFromAccessibility() })
         },
         singleLine = true,
         shape = RoundedCornerShape(12.dp),
@@ -1030,7 +1017,12 @@ private fun DraftNumberField(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = MIN_TOUCH_TARGET)
-            .semantics { contentDescription = fieldDescription }
+            .semantics {
+                // A description replaces what a field would speak, so it says these itself.
+                contentDescription = listOfNotNull(fieldDescription, hint).joinToString(". ")
+                stateDescription = fieldValue
+                errorText?.let { error(it) }
+            }
     )
 }
 
@@ -1100,9 +1092,10 @@ private fun ExercisePickerSheet(
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
-                        color = CrimsonRedPrimary
+                        color = MaterialTheme.colorScheme.tertiary
                     )
                     Text(
+                        modifier = Modifier.a11yHeading(),
                         text = stringResource(R.string.picker_title),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Black,
@@ -1120,17 +1113,18 @@ private fun ExercisePickerSheet(
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            // The placeholder names it until something is typed, and then it is gone.
+            val searchName = pluralStringResource(
+                R.plurals.picker_search_placeholder,
+                state.catalogExercises.size,
+                LocaleFormatting.formatCount(state.catalogExercises.size, locale)
+            )
             OutlinedTextField(
                 value = state.query,
                 onValueChange = viewModel::updateQuery,
-                textStyle = editorTextStyle(),
                 placeholder = {
                     Text(
-                        pluralStringResource(
-                            R.plurals.picker_search_placeholder,
-                            state.catalogExercises.size,
-                            LocaleFormatting.formatCount(state.catalogExercises.size, locale)
-                        ),
+                        searchName,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 14.sp
                     )
@@ -1152,7 +1146,7 @@ private fun ExercisePickerSheet(
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = editorFieldColors(),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.a11ySearchField(searchName, state.query).fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -1184,7 +1178,7 @@ private fun ExercisePickerSheet(
                         backgroundColor = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { viewModel.addExercise(exercise) }
+                            .clickable(role = Role.Button) { viewModel.addExercise(exercise) }
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -1257,16 +1251,6 @@ private fun EquipmentWarning(exercise: Exercise, available: Set<String>) {
     }
 }
 
-/**
- * What a field shows as typed. `Typography` sets a colour on every style, and a style's
- * colour wins over `colors`, so the inherited one would draw a typed value in the dark-theme
- * colour, near-white on a light surface. Clearing it hands the colour to
- * [editorFieldColors], including Material's muted colour while a save disables the field.
- * Every editor text field uses it.
- */
-@Composable
-private fun editorTextStyle() = LocalTextStyle.current.copy(color = Color.Unspecified)
-
 @Composable
 private fun editorFieldColors() = OutlinedTextFieldDefaults.colors(
     focusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -1275,7 +1259,7 @@ private fun editorFieldColors() = OutlinedTextFieldDefaults.colors(
     unfocusedBorderColor = MaterialTheme.colorScheme.outline,
     focusedTextColor = MaterialTheme.colorScheme.onSurface,
     unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-    focusedLabelColor = CrimsonRedPrimary,
+    focusedLabelColor = MaterialTheme.colorScheme.tertiary,
     unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
     focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
     unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant

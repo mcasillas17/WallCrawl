@@ -35,9 +35,9 @@ import wallcrawl.elopenmike.com.core.ui.components.MetricHighlight
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
+import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
+import wallcrawl.elopenmike.com.core.ui.components.isLargeText
+import wallcrawl.elopenmike.com.core.ui.theme.successText
 
 @Composable
 fun WorkoutSummaryScreen(
@@ -58,7 +58,8 @@ fun WorkoutSummaryScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(24.dp),
+                // Large text needs the width: a long word in the session name otherwise breaks mid-word.
+                .padding(horizontal = if (isLargeText()) 16.dp else 24.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
@@ -70,7 +71,7 @@ fun WorkoutSummaryScreen(
                     modifier = Modifier
                         .size(80.dp)
                         .background(MaterialTheme.colorScheme.surface, CircleShape)
-                        .border(2.dp, SuccessGreen, CircleShape),
+                        .border(2.dp, MaterialTheme.colorScheme.successText, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -78,7 +79,7 @@ fun WorkoutSummaryScreen(
                         contentDescription = stringResource(
                             R.string.summary_success_content_description
                         ),
-                        tint = SuccessGreen,
+                        tint = MaterialTheme.colorScheme.successText,
                         modifier = Modifier.size(48.dp)
                     )
                 }
@@ -90,13 +91,14 @@ fun WorkoutSummaryScreen(
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.5.sp,
-                    color = CrimsonRedPrimary
+                    color = MaterialTheme.colorScheme.tertiary
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
                 // The name recorded when this workout started, shown as written.
                 Text(
+                    modifier = Modifier.a11yHeading(),
                     text = summary.workoutName,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Black,
@@ -110,6 +112,7 @@ fun WorkoutSummaryScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
+                    modifier = Modifier.a11yHeading(),
                     text = stringResource(R.string.summary_section),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
@@ -160,14 +163,14 @@ fun WorkoutSummaryScreen(
                     MetricHighlight(
                         title = stringResource(R.string.summary_metric_volume),
                         value = formattedVolume,
-                        valueColor = CrimsonRedLight,
+                        valueColor = MaterialTheme.colorScheme.tertiary,
                         modifier = Modifier.fillMaxWidth()
                     )
 
                     MetricHighlight(
                         title = stringResource(R.string.summary_metric_prs),
                         value = LocaleFormatting.formatCount(summary.prCount, locale),
-                        valueColor = SuccessGreen,
+                        valueColor = MaterialTheme.colorScheme.successText,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }

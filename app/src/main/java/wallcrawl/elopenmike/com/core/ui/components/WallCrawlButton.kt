@@ -2,7 +2,6 @@ package wallcrawl.elopenmike.com.core.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,12 +12,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.TextDisabled
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 
 @Composable
@@ -40,9 +37,10 @@ fun WallCrawlPrimaryButton(
             containerColor = CrimsonRedPrimary,
             contentColor = TextWhite,
             disabledContainerColor = CrimsonRedPrimary.copy(alpha = 0.4f),
-            disabledContentColor = TextDisabled
+            // "Saving…" is the only sign a tap landed, so a disabled label stays readable.
+            disabledContentColor = MaterialTheme.colorScheme.onSurface
         ),
-        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 14.dp)
+        contentPadding = PaddingValues(horizontal = if (isLargeText()) 8.dp else 24.dp, vertical = 14.dp)
     ) {
         if (leadingIcon != null) {
             leadingIcon()
@@ -79,8 +77,7 @@ fun WallCrawlSecondaryButton(
         Text(
             text = text,
             fontSize = 15.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface
+            fontWeight = FontWeight.SemiBold
         )
     }
 }
@@ -106,20 +103,10 @@ fun WallCrawlOutlinedButton(
         ),
         contentPadding = contentPadding
     ) {
-        // Named, and named per state. Dropping the colour so `disabledContentColor` could
-        // reach the label does not work here: `Text` prefers its style's colour over
-        // `LocalContentColor`, and `Typography` sets one on every style, so the label took
-        // `labelLarge`'s white and vanished into the container at 1:1. Naming it restores
-        // the label and still tells the two states apart.
         Text(
             text = text,
             fontSize = 15.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = if (enabled) {
-                MaterialTheme.colorScheme.onSurface
-            } else {
-                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-            }
+            fontWeight = FontWeight.SemiBold
         )
     }
 }

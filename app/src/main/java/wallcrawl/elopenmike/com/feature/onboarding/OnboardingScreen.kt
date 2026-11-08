@@ -1,12 +1,11 @@
 package wallcrawl.elopenmike.com.feature.onboarding
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.key
 import wallcrawl.elopenmike.com.core.ui.components.ProfileGenderSelector
-
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.ui.components.BandSetupControls
-
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -26,28 +25,26 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -58,14 +55,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import wallcrawl.elopenmike.com.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -73,6 +71,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import wallcrawl.elopenmike.com.core.model.BreakDurationHelper
 import wallcrawl.elopenmike.com.core.model.BreakRange
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
@@ -82,11 +83,15 @@ import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.ui.components.BreakDurationSelector
 import wallcrawl.elopenmike.com.core.ui.components.LanguageChip
+import wallcrawl.elopenmike.com.core.ui.components.StackingRow
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.MovementCapabilityQuestion
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
+import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
+import wallcrawl.elopenmike.com.core.ui.components.isLargeText
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.descriptionRes
@@ -100,7 +105,9 @@ import wallcrawl.elopenmike.com.core.ui.localization.trainingDaysDescriptionRes
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
-import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
+import wallcrawl.elopenmike.com.core.ui.theme.successText
+
+
 
 /**
  * Friendly multi-step onboarding wizard. Only shown during first-time setup
@@ -153,12 +160,19 @@ fun OnboardingScreen(
             // Wizard Header & Progress Bar
             OnboardingHeader(
                 currentStep = state.currentStep,
+                backEnabled = !state.isSaving && !isRestoreInFlight,
                 onBack = { viewModel.previousStep() }
             )
+            // System Back follows the header arrow, one step at a time, keeping every answer.
+            BackHandler(enabled = state.currentStep.ordinal > 0 || isRestoreInFlight) {
+                // Held, not passed on: leaving the app here would cancel a restore or save in flight.
+                if (!isRestoreInFlight) viewModel.previousStep()
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Step Content Area with smooth transition
+            val stepAnnouncement = stepCounterText(state.currentStep)
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -178,7 +192,7 @@ fun OnboardingScreen(
                         }
                     },
                     label = "OnboardingStepTransition",
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize().semantics { paneTitle = stepAnnouncement }
                 ) { step ->
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -191,6 +205,7 @@ fun OnboardingScreen(
                             verticalArrangement = Arrangement.Center
                         ) {
                             Text(
+                                modifier = Modifier.a11yHeading(),
                                 text = stringResource(step.titleRes),
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Black,
@@ -227,12 +242,14 @@ fun OnboardingScreen(
             // Error message if any
             val error = state.error
             if (error != null) {
-                Text(
-                    text = stringResource(error.messageRes),
-                    fontSize = 13.sp,
-                    color = CrimsonRedLight,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+                key(state.errorAttempt) {
+                    Text(
+                        text = stringResource(error.messageRes),
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        modifier = Modifier.padding(bottom = 8.dp).a11yAnnounced()
+                    )
+                }
             }
 
             // Bottom Navigation Actions
@@ -256,6 +273,7 @@ fun OnboardingScreen(
 @Composable
 private fun OnboardingHeader(
     currentStep: OnboardingStep,
+    backEnabled: Boolean,
     onBack: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -269,29 +287,25 @@ private fun OnboardingHeader(
             if (!currentStep.isFirst()) {
                 IconButton(
                     onClick = onBack,
+                    enabled = backEnabled,
+                    colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
                     modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.action_back),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        contentDescription = stringResource(R.string.action_back)
                     )
                 }
             } else {
                 Spacer(modifier = Modifier.size(48.dp))
             }
 
-            val locale = LocalConfiguration.current.locales[0]
             Text(
-                text = stringResource(
-                    R.string.onboarding_step_counter,
-                    LocaleFormatting.formatCount(currentStep.stepNumber, locale),
-                    LocaleFormatting.formatCount(OnboardingStep.totalSteps, locale)
-                ),
+                text = stepCounterText(currentStep),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.5.sp,
-                color = CrimsonRedPrimary
+                color = MaterialTheme.colorScheme.tertiary
             )
 
             // Reachable from the first screen, before anything has to be typed, so a
@@ -344,11 +358,12 @@ private fun WelcomeStep(
             contentPadding = 20.dp
         ) {
             Text(
+                modifier = Modifier.a11yHeading(),
                 text = stringResource(R.string.onboarding_codename_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
-                color = CrimsonRedPrimary
+                color = MaterialTheme.colorScheme.tertiary
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
@@ -360,6 +375,8 @@ private fun WelcomeStep(
             OutlinedTextField(
                 value = state.name,
                 onValueChange = viewModel::updateName,
+                // A label, not a description: a description would replace the typed name in TalkBack.
+                label = { Text(stringResource(R.string.onboarding_codename_label)) },
                 placeholder = {
                     Text(
                         stringResource(R.string.onboarding_codename_placeholder),
@@ -382,7 +399,7 @@ private fun WelcomeStep(
                     unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                     focusedTextColor = MaterialTheme.colorScheme.onSurface,
                     unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    focusedLabelColor = CrimsonRedPrimary,
+                    focusedLabelColor = MaterialTheme.colorScheme.tertiary,
                     unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -412,11 +429,12 @@ private fun GoalsStep(
             contentPadding = 16.dp
         ) {
             Text(
+                modifier = Modifier.a11yHeading(),
                 text = stringResource(R.string.onboarding_goals_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
-                color = CrimsonRedLight
+                color = MaterialTheme.colorScheme.tertiary
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -430,6 +448,9 @@ private fun GoalsStep(
                     title = stringResource(goal.labelRes),
                     subtitle = stringResource(goal.descriptionRes),
                     isSelected = goal in state.goals,
+                    multiSelect = true,
+                    // At least one goal stays: the last one is announced as unavailable, dimmed, and the hint says why.
+                    enabled = !(goal in state.goals && state.goals.size == 1),
                     onClick = { viewModel.toggleGoal(goal) }
                 )
             }
@@ -451,11 +472,12 @@ private fun ExperienceAndUnitStep(
             contentPadding = 20.dp
         ) {
             Text(
+                modifier = Modifier.a11yHeading(),
                 text = stringResource(R.string.onboarding_unit_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
-                color = CrimsonRedPrimary
+                color = MaterialTheme.colorScheme.tertiary
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
@@ -465,7 +487,7 @@ private fun ExperienceAndUnitStep(
             )
             Spacer(modifier = Modifier.height(14.dp))
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.selectableGroup().fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 WeightUnit.entries.forEach { unit ->
@@ -476,7 +498,7 @@ private fun ExperienceAndUnitStep(
                             .clip(RoundedCornerShape(12.dp))
                             .background(if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.surface)
                             .border(1.dp, if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
-                            .clickable { viewModel.updateUnit(unit) }
+                            .selectable(selected = isSelected, role = Role.RadioButton) { viewModel.updateUnit(unit) }
                             .padding(vertical = 14.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -490,7 +512,7 @@ private fun ExperienceAndUnitStep(
                             Text(
                                 text = stringResource(unit.longLabelRes),
                                 fontSize = 11.sp,
-                                color = if (isSelected) TextWhite.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
+                                color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -503,6 +525,7 @@ private fun ExperienceAndUnitStep(
             contentPadding = 16.dp
         ) {
             Text(
+                modifier = Modifier.a11yHeading(),
                 text = stringResource(R.string.onboarding_experience_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
@@ -510,13 +533,15 @@ private fun ExperienceAndUnitStep(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(12.dp))
-            ExperienceLevel.entries.forEach { level ->
-                SelectableRow(
-                    title = stringResource(level.labelRes),
-                    subtitle = stringResource(level.descriptionRes),
-                    isSelected = state.experience == level,
-                    onClick = { viewModel.updateExperience(level) }
-                )
+            Column(modifier = Modifier.selectableGroup()) {
+                ExperienceLevel.entries.forEach { level ->
+                    SelectableRow(
+                        title = stringResource(level.labelRes),
+                        subtitle = stringResource(level.descriptionRes),
+                        isSelected = state.experience == level,
+                        onClick = { viewModel.updateExperience(level) }
+                    )
+                }
             }
         }
     }
@@ -538,6 +563,7 @@ private fun ScheduleStep(
             contentPadding = 16.dp
         ) {
             Text(
+                modifier = Modifier.a11yHeading(),
                 text = stringResource(R.string.onboarding_schedule_days_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
@@ -552,20 +578,22 @@ private fun ScheduleStep(
                 fontWeight = FontWeight.Medium
             )
             Spacer(modifier = Modifier.height(14.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            FlowRow(
+                modifier = Modifier.selectableGroup().fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 (2..6).forEach { days ->
                     val isSelected = state.daysPerWeek == days
+                    val daysLabel = pluralStringResource(R.plurals.a11y_days_per_week, days, LocaleFormatting.formatCount(days, locale))
                     Box(
                         modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp)
+                            .size(48.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .background(if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.surface)
                             .border(1.dp, if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.outline, RoundedCornerShape(10.dp))
-                            .clickable { viewModel.updateDaysPerWeek(days) },
+                            .selectable(selected = isSelected, role = Role.RadioButton) { viewModel.updateDaysPerWeek(days) }
+                            .semantics { contentDescription = daysLabel },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -583,12 +611,13 @@ private fun ScheduleStep(
             cornerRadius = 16.dp,
             contentPadding = 16.dp
         ) {
-            Row(
+            FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                itemVerticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
+                    modifier = Modifier.a11yHeading(),
                     text = stringResource(R.string.onboarding_duration_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
@@ -612,7 +641,13 @@ private fun ScheduleStep(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(10.dp))
+            val durationLabel = stringResource(R.string.profile_preferred_duration)
+            val durationValue = stringResource(R.string.summary_duration_value, LocaleFormatting.formatCount(state.durationMinutes, locale))
             Slider(
+                modifier = Modifier.semantics {
+                    contentDescription = durationLabel
+                    stateDescription = durationValue
+                },
                 value = state.durationMinutes.toFloat(),
                 onValueChange = { viewModel.updateDurationMinutes(it.toInt()) },
                 valueRange = 20f..120f,
@@ -639,8 +674,8 @@ private fun ScheduleStep(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = CrimsonRedLight,
-                    modifier = Modifier.weight(1f)
+                    color = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier.a11yHeading().weight(1f)
                 )
                 if (state.returningAfterBreakWeeks > 0) {
                     Text(
@@ -670,7 +705,7 @@ private fun ScheduleStep(
                     BreakDurationHelper.guidanceFor(state.returningAfterBreakWeeks).messageRes
                 ),
                 fontSize = 12.sp,
-                color = if (state.returningAfterBreakWeeks >= 52) CrimsonRedLight else MaterialTheme.colorScheme.secondary,
+                color = if (state.returningAfterBreakWeeks >= 52) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.Medium
             )
         }
@@ -705,9 +740,10 @@ private fun EquipmentStep(
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
-            Row(
+            StackingRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier
@@ -715,7 +751,8 @@ private fun EquipmentStep(
                         .clip(RoundedCornerShape(8.dp))
                         .background(MaterialTheme.colorScheme.surface)
                         .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-                        .clickable { viewModel.resetEquipmentToBodyweight() }
+                        .clickable(role = Role.Button) { viewModel.resetEquipmentToBodyweight() }
+                        .heightIn(min = 48.dp)
                         .padding(vertical = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -732,7 +769,8 @@ private fun EquipmentStep(
                         .clip(RoundedCornerShape(8.dp))
                         .background(MaterialTheme.colorScheme.surface)
                         .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-                        .clickable { viewModel.selectFullGymEquipment() }
+                        .clickable(role = Role.Button) { viewModel.selectFullGymEquipment() }
+                        .heightIn(min = 48.dp)
                         .padding(vertical = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -751,11 +789,12 @@ private fun EquipmentStep(
             contentPadding = 16.dp
         ) {
             Text(
+                modifier = Modifier.a11yHeading(),
                 text = stringResource(R.string.onboarding_equipment_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
-                color = CrimsonRedLight
+                color = MaterialTheme.colorScheme.tertiary
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -823,11 +862,12 @@ private fun SafetyStep(
             contentPadding = 16.dp
         ) {
             Text(
+                modifier = Modifier.a11yHeading(),
                 text = stringResource(R.string.onboarding_safety_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
-                color = CrimsonRedLight
+                color = MaterialTheme.colorScheme.tertiary
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
@@ -842,9 +882,11 @@ private fun SafetyStep(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(10.dp))
+                    .alpha(if (hasNoConstraints) 0.6f else 1f)
                     .background(if (hasNoConstraints) Color(0x2210B981) else MaterialTheme.colorScheme.surface)
-                    .border(1.dp, if (hasNoConstraints) Color(0xFF10B981) else MaterialTheme.colorScheme.outline, RoundedCornerShape(10.dp))
-                    .clickable { viewModel.clearConstraints() }
+                    .border(1.dp, if (hasNoConstraints) MaterialTheme.colorScheme.successText else MaterialTheme.colorScheme.outline, RoundedCornerShape(10.dp))
+                    // Checked while nothing is selected, and unavailable then: ticking it only clears the chips.
+                    .toggleable(value = hasNoConstraints, enabled = !hasNoConstraints, role = Role.Checkbox) { viewModel.clearConstraints() }
                     .padding(12.dp)
             ) {
                 Row(
@@ -869,7 +911,7 @@ private fun SafetyStep(
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = null,
-                            tint = Color(0xFF10B981),
+                            tint = MaterialTheme.colorScheme.successText,
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -986,11 +1028,12 @@ private fun SummaryStep(
             val locale = LocalConfiguration.current.locales[0]
             val separator = stringResource(R.string.list_separator)
             Text(
+                modifier = Modifier.a11yHeading(),
                 text = stringResource(R.string.onboarding_summary_heading),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
-                color = CrimsonRedPrimary
+                color = MaterialTheme.colorScheme.tertiary
             )
             Spacer(modifier = Modifier.height(14.dp))
 
@@ -1099,11 +1142,12 @@ private fun SummaryRow(
     label: String,
     value: String
 ) {
-    Row(
+    val stacked = isLargeText()
+    StackingRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -1112,7 +1156,6 @@ private fun SummaryRow(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)
         )
-        Spacer(modifier = Modifier.width(12.dp))
         // Spanish runs longer than English here, so the value gets the room it needs
         // instead of being squeezed onto one line.
         Text(
@@ -1120,7 +1163,7 @@ private fun SummaryRow(
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.End,
+            textAlign = if (stacked) TextAlign.Start else TextAlign.End,
             modifier = Modifier.weight(1.4f)
         )
     }
@@ -1133,7 +1176,7 @@ private fun OnboardingBottomNav(
     onBack: () -> Unit,
     onNext: () -> Unit
 ) {
-    Row(
+    StackingRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 8.dp),
@@ -1144,6 +1187,7 @@ private fun OnboardingBottomNav(
             WallCrawlOutlinedButton(
                 text = stringResource(R.string.action_back),
                 onClick = onBack,
+                enabled = !state.isSaving && !isRestoreInFlight,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -1169,12 +1213,15 @@ private fun SelectableRow(
     title: String,
     subtitle: String?,
     isSelected: Boolean,
+    multiSelect: Boolean = false,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
+            .alpha(if (enabled) 1f else 0.6f)
             .clip(RoundedCornerShape(10.dp))
             .background(
                 if (isSelected) CrimsonRedPrimary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surface
@@ -1184,7 +1231,13 @@ private fun SelectableRow(
                 if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.outline,
                 RoundedCornerShape(10.dp)
             )
-            .clickable(onClick = onClick)
+            .then(
+                if (multiSelect) {
+                    Modifier.toggleable(value = isSelected, enabled = enabled, role = Role.Checkbox) { onClick() }
+                } else {
+                    Modifier.selectable(selected = isSelected, enabled = enabled, role = Role.RadioButton, onClick = onClick)
+                }
+            )
             .padding(12.dp)
     ) {
         Row(
@@ -1197,7 +1250,7 @@ private fun SelectableRow(
                     text = title,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.onSurface
+                    color = if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
                 )
                 if (subtitle != null) {
                     Spacer(modifier = Modifier.height(2.dp))
@@ -1214,4 +1267,15 @@ private fun SelectableRow(
             }
         }
     }
+}
+
+/** The counter shown in the header and spoken as the pane title: one string, so they cannot disagree. */
+@Composable
+private fun stepCounterText(step: OnboardingStep): String {
+    val locale = LocalConfiguration.current.locales[0]
+    return stringResource(
+        R.string.onboarding_step_counter,
+        LocaleFormatting.formatCount(step.stepNumber, locale),
+        LocaleFormatting.formatCount(OnboardingStep.totalSteps, locale)
+    )
 }

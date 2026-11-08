@@ -249,7 +249,7 @@ class ProgressAnalyticsCardTest {
             composeRule.onNodeWithText(english.getString(res))
                 .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, androidx.compose.ui.semantics.Role.Button))
                 .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription,
-                    english.getString(R.string.progress_details_collapsed)))
+                    english.getString(R.string.a11y_collapsed)))
         }
         composeRule.onNodeWithText(english.getString(R.string.analytics_scope_all))
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, androidx.compose.ui.semantics.Role.RadioButton))

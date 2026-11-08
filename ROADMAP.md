@@ -1014,8 +1014,9 @@ and versioning posture.
 
 ### 20. Establish an accessibility regression baseline
 
-**Status:** Not yet audited as a complete product surface; several gym-floor controls already
-have explicit target sizes and semantics.
+**Status:** Baseline in progress; see [docs/accessibility.md](docs/accessibility.md). The app's routes
+and onboarding steps have an automated sweep, and critical flows were walked with real TalkBack on an emulator.
+The listed unwalked flows, most Spanish TalkBack use and physical devices are still open, so this package is not done.
 
 **Depends on:** None. Apply fixes with the feature packages that own each screen.
 

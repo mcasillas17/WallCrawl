@@ -23,6 +23,8 @@ direction; the app's existing deterministic planner remains the foundation.
 
 ## Screenshots & App Experience
 
+These images predate the [accessibility baseline](docs/accessibility.md), so some colours, one onboarding label and the large-text bottom bar differ from the current app.
+
 ### Dark & Light Theme Modes
 
 WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light Theme** (high-contrast daylight athletic), and **System Default** across every screen with dynamic insets, high-contrast SVG exercise frames, and a live switcher in Settings.
@@ -218,7 +220,7 @@ and [metric contract](docs/weekly-dose-ledger.md#individual-workout-history-and-
 
 Every screen ships in **English** and **neutral Latin American Spanish**, including the
 302-exercise catalog, generated workout titles and explanations, destructive
-confirmations, and TalkBack labels. Both languages work fully offline; nothing is
+confirmations, and TalkBack labels ([accessibility record](docs/accessibility.md)). Both languages work fully offline; nothing is
 translated at runtime.
 
 The language follows the device by default, from the very first onboarding screen. A chip
@@ -258,6 +260,8 @@ how to add a string, an exercise, or a language.
 
 - [Architecture](docs/architecture.md) explains the catalog, planner, template,
   persistence, logging, and history boundaries in the current application.
+- [Accessibility](docs/accessibility.md) records the audit, the evidence behind it, and its
+  stated gaps. It is not a certification.
 - [Privacy and backup](docs/privacy.md) explains local storage, Android backup
   exclusions, user-owned export/restore/deletion, archive compatibility, recovery
   tradeoffs, and platform limitations.
@@ -700,7 +704,8 @@ or a background process death; a force-stop, removal from Recents, reboot or
 uninstall loses it.
 
 Each exercise resolves to three bundled frames that animate in a lightweight
-`1 → 2 → 3 → 2` loop using Coil 3 with SVG support. The compact normalized
+`1 → 2 → 3 → 2` loop using Coil 3 with SVG support. The loop starts paused when
+system animations are off, and exercises with more than one frame have a Pause/Play button. The compact normalized
 `catalog.json` derives those paths from validated source slugs and a catalog
 visual specification. The exact pinned upstream metadata and per-frame
 attribution remain unmodified in `upstream-manifest.json` beside the SVGs.

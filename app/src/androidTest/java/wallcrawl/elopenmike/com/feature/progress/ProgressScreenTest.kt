@@ -37,7 +37,13 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.ui.test.getBoundsInRoot
+import wallcrawl.elopenmike.com.core.ui.components.STACK_WEEKLY_CARDS_BELOW_DP
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import java.io.File
 import java.time.Instant
 import java.time.ZoneId
@@ -93,6 +99,31 @@ class ProgressScreenTest {
     private val context: Context = InstrumentationRegistry.getInstrumentation().targetContext
     private val english: Context = context.localized(Locale.ENGLISH)
     private val spanish: Context = context.localized(LATIN_AMERICAN_SPANISH)
+
+    /** Six-digit tonnage in Spanish breaks only between words: stacked at 320 dp, side by side at 360 and 412 dp. */
+    @Test fun aLargeWeeklyTonnageBreaksOnlyBetweenWordsStackedAt320Dp() = assertTonnageBreaksOnlyBetweenWords(320)
+    @Test fun aLargeWeeklyTonnageBreaksOnlyBetweenWordsSideBySideAt360Dp() = assertTonnageBreaksOnlyBetweenWords(360)
+    @Test fun aLargeWeeklyTonnageBreaksOnlyBetweenWordsSideBySideAt412Dp() = assertTonnageBreaksOnlyBetweenWords(412)
+
+    private fun assertTonnageBreaksOnlyBetweenWords(widthDp: Int) {
+        val locale = Locale.forLanguageTag("es-MX")
+        render(success(overview = emptyOverview().copy(workoutsThisWeek = 1, totalWorkoutsLogged = 1, completedSetsThisWeek = 10, totalVolumeThisWeek = 123456.0, totalRepsThisWeek = 1200)), locale, ThemePreference.LIGHT, widthDp = widthDp)
+        val tonnage = LocaleFormatting.formatVolume(123456.0, locale)
+        val layouts = mutableListOf<androidx.compose.ui.text.TextLayoutResult>()
+        composeRule.onAllNodesWithText(tonnage, substring = true, useUnmergedTree = true)[0]
+            .performSemanticsAction(androidx.compose.ui.semantics.SemanticsActions.GetTextLayoutResult) { it(layouts) }
+        val sets = composeRule.onNodeWithText(context.localized(locale, 1f).getString(R.string.progress_completed_sets), ignoreCase = true, useUnmergedTree = true).getBoundsInRoot()
+        val volume = composeRule.onNodeWithText(context.localized(locale, 1f).getString(R.string.progress_weekly_volume), ignoreCase = true, useUnmergedTree = true).getBoundsInRoot()
+        if (widthDp < STACK_WEEKLY_CARDS_BELOW_DP) assertWithMessage("stacked").that(volume.top).isGreaterThan(sets.top)
+        else assertWithMessage("side by side").that(volume.top).isEqualTo(sets.top)
+        val layout = layouts.single()
+        val text = layout.layoutInput.text.text
+        (0 until layout.lineCount - 1).forEach { line ->
+            val end = layout.getLineEnd(line)
+            val lines = (0 until layout.lineCount).map { text.substring(layout.getLineStart(it), layout.getLineEnd(it)) }
+            assertWithMessage("$lines").that(text.substring(end - 1, end + 1).any { it.isWhitespace() }).isTrue()
+        }
+    }
 
     @Test
     fun completedHistoryCardIsAnAccessibleDetailNavigationAction() {
@@ -457,7 +488,8 @@ class ProgressScreenTest {
         theme: ThemePreference,
         fontScale: Float = 1.0f,
         onRetry: () -> Unit = {},
-        onOpenSession: (String) -> Unit = {}
+        onOpenSession: (String) -> Unit = {},
+        widthDp: Int? = null
     ) {
         composeRule.setContent {
             val localized = LocalContext.current.localized(locale, fontScale)
@@ -468,13 +500,19 @@ class ProgressScreenTest {
             )
             CompositionLocalProvider(
                 LocalContext provides localized,
-                LocalConfiguration provides localized.resources.configuration,
+                LocalConfiguration provides android.content.res.Configuration(localized.resources.configuration).apply {
+                    if (widthDp != null) screenWidthDp = widthDp
+                },
                 // Real text scaling happens through density, not the configuration alone.
                 LocalDensity provides Density(baseDensity.density, fontScale),
                 LocalExerciseVocabulary provides vocabulary
             ) {
                 WallCrawlTheme(themePreference = theme) {
-                    ProgressScreen(uiState = state, onRetry = onRetry, onOpenSession = onOpenSession)
+                    androidx.compose.foundation.layout.Box(
+                        if (widthDp != null) Modifier.requiredWidth(widthDp.dp) else Modifier
+                    ) {
+                        ProgressScreen(uiState = state, onRetry = onRetry, onOpenSession = onOpenSession)
+                    }
                 }
             }
         }

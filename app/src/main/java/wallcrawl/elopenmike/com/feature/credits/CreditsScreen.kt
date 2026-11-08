@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,11 +45,13 @@ import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.AttributionNotice
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.CatalogAttribution
+import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlSecondaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
+import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 
 /**
@@ -89,9 +90,10 @@ fun CreditsScreen(
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.5.sp,
-                        color = CrimsonRedPrimary
+                        color = MaterialTheme.colorScheme.tertiary
                     )
                     Text(
+                        modifier = Modifier.a11yHeading(),
                         text = stringResource(R.string.credits_title),
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Black,
@@ -103,7 +105,7 @@ fun CreditsScreen(
             when (val current = state) {
                 is CreditsUiState.Loading -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = CrimsonRedPrimary)
+                        LoadingIndicator()
                     }
                 }
 
@@ -112,14 +114,15 @@ fun CreditsScreen(
                         Text(
                             text = stringResource(R.string.credits_error_title),
                             fontWeight = FontWeight.Bold,
-                            color = CrimsonRedLight,
+                            color = MaterialTheme.colorScheme.tertiary,
                             fontSize = 16.sp
                         )
                         Spacer(Modifier.height(8.dp))
                         Text(
                             stringResource(current.messageRes),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 13.sp
+                            fontSize = 13.sp,
+                            modifier = Modifier.a11yAnnounced()
                         )
                         Spacer(Modifier.height(12.dp))
                         WallCrawlSecondaryButton(
@@ -134,8 +137,8 @@ fun CreditsScreen(
                         Text(
                             text = stringResource(R.string.credits_link_failed, failedUrl),
                             fontSize = 13.sp,
-                            color = CrimsonRedLight,
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            color = MaterialTheme.colorScheme.tertiary,
+                            modifier = Modifier.padding(bottom = 8.dp).a11yAnnounced()
                         )
                     }
                     CreditsContent(
@@ -166,11 +169,12 @@ private fun CreditsContent(
         item {
             WallCrawlCard {
                 Text(
+                    modifier = Modifier.a11yHeading(),
                     text = stringResource(R.string.credits_illustrations_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = CrimsonRedLight
+                    color = MaterialTheme.colorScheme.tertiary
                 )
                 Spacer(Modifier.height(10.dp))
                 Text(
@@ -240,7 +244,7 @@ private fun CreditsContent(
                 Text(
                     text = stringResource(R.string.credits_notice_original_language),
                     fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
@@ -287,15 +291,16 @@ private fun rememberNoticeText(
     body: String,
     onOpenUrl: (String) -> Unit
 ): AnnotatedString {
+    val linkColor = MaterialTheme.colorScheme.tertiary
     val linkStyles = TextLinkStyles(
-        style = SpanStyle(color = CrimsonRedLight, textDecoration = TextDecoration.Underline)
+        style = SpanStyle(color = linkColor, textDecoration = TextDecoration.Underline)
     )
     // Routed through the same handler as the buttons so a device with no browser reports
     // it here too, rather than relying on the framework's default swallowing the failure.
     val linkListener = LinkInteractionListener { link ->
         (link as? LinkAnnotation.Url)?.let { onOpenUrl(it.url) }
     }
-    return remember(body, onOpenUrl) {
+    return remember(body, onOpenUrl, linkColor) {
         buildAnnotatedString {
             var cursor = 0
             // The source files are hand-wrapped at ~75 columns. Kept as-is every line wraps

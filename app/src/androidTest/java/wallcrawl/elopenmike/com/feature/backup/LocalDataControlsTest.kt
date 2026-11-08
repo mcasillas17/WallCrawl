@@ -11,7 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertHasClickAction
 import android.net.Uri
 import androidx.compose.ui.test.assertHeightIsAtLeast
@@ -57,6 +60,13 @@ class LocalDataControlsTest {
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
+    fun busyStatus_isAnnounced() {
+        composeRule.setContent { WallCrawlTheme { BusyIndicator(visible = true) } }
+        composeRule.onNodeWithText(context.getString(R.string.local_data_busy))
+            .assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.LiveRegion))
+    }
+
+    @Test
     fun deletingEverything_requiresAnExplicitConfirmationThatNamesWhatIsLost() {
         val repository = FakeBackupRepository(restoreAllowed = false)
         val viewModel = showSection(repository)
@@ -81,11 +91,8 @@ class LocalDataControlsTest {
 
     @Test
     fun deleteConfirmation_staysLegibleInTheLightTheme() {
-        // The shared typography hard-codes a light colour into the styles an AlertDialog uses
-        // for its title and button labels, so without explicit colours the title and the safe
-        // way out render near-invisibly on the light dialog surface while the destructive
-        // action stays readable. Asserted on rendered pixels: a text-only assertion passes
-        // either way.
+        // The title and the safe way out must stay as readable as the destructive action.
+        // Asserted on rendered pixels: a text-only assertion passes either way.
         val viewModel = LocalDataViewModel(
             context.contentResolver,
             FakeBackupRepository(restoreAllowed = false)

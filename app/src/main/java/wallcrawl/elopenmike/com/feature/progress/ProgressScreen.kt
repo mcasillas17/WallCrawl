@@ -10,6 +10,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +23,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -33,7 +33,6 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -51,7 +50,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
@@ -59,9 +57,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -80,15 +76,22 @@ import wallcrawl.elopenmike.com.core.model.StrengthTrend
 import wallcrawl.elopenmike.com.core.model.TrainingWeek
 import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
+import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
 import wallcrawl.elopenmike.com.core.ui.components.MetricHighlight
+import wallcrawl.elopenmike.com.core.ui.components.StackingRow
 import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
+import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
+import wallcrawl.elopenmike.com.core.ui.components.a11yExpanded
+import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
+import wallcrawl.elopenmike.com.core.ui.components.STACK_WEEKLY_CARDS_BELOW_DP
+import wallcrawl.elopenmike.com.core.ui.components.isLargeText
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
+import wallcrawl.elopenmike.com.core.ui.theme.successText
 
 internal const val PROGRESS_REVIEWED_DOSE_TEST_TAG = "progress-reviewed-dose"
 
@@ -202,7 +205,7 @@ fun ProgressScreen(
         when (val state = uiState) {
             is ProgressUiState.Loading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = CrimsonRedPrimary)
+                    LoadingIndicator()
                 }
             }
 
@@ -229,7 +232,8 @@ fun ProgressScreen(
                     Text(
                         text = stringResource(state.messageRes),
                         color = MaterialTheme.colorScheme.error,
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        modifier = Modifier.a11yAnnounced()
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(onClick = onRetry) {
@@ -269,9 +273,10 @@ private fun ProgressContent(
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.5.sp,
-                color = CrimsonRedPrimary
+                color = MaterialTheme.colorScheme.tertiary
             )
             Text(
+                modifier = Modifier.a11yHeading(),
                 text = stringResource(R.string.progress_title),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Black,
@@ -296,6 +301,7 @@ private fun ProgressContent(
 
         item {
             Text(
+                modifier = Modifier.a11yHeading(),
                 text = stringResource(R.string.progress_history_heading),
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
@@ -336,12 +342,13 @@ private fun LoggedActivityCard(state: ProgressUiState.Success) {
     val unit = state.preferredUnit.symbol
     val locale = LocalConfiguration.current.locales[0]
     val weekLabels = rememberWeekLabels(state.week)
-    val largeText = LocalDensity.current.fontScale > 1.3f
+    val largeText = isLargeText()
     val goalText = stringResource(R.string.progress_goal, LocaleFormatting.formatCount(overview.weeklyGoal, locale))
     var activityDetailsExpanded by remember { mutableStateOf(false) }
 
     WallCrawlCard(cornerRadius = 16.dp, contentPadding = 16.dp) {
         Text(
+            modifier = Modifier.a11yHeading(),
             text = stringResource(R.string.progress_activity_heading),
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
@@ -426,7 +433,8 @@ private fun LoggedActivityCard(state: ProgressUiState.Success) {
                 fontSize = 13.sp
             )
         } else {
-            if (largeText) {
+            // Side by side, a 320 dp screen breaks a Spanish word in one card or the other at any text size.
+            if (largeText || LocalConfiguration.current.screenWidthDp < STACK_WEEKLY_CARDS_BELOW_DP) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     CompletedSetsHighlight(overview, Modifier.fillMaxWidth())
                     WeeklyVolumeHighlight(overview, unit, Modifier.fillMaxWidth())
@@ -437,7 +445,7 @@ private fun LoggedActivityCard(state: ProgressUiState.Success) {
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     CompletedSetsHighlight(overview, Modifier.weight(1f))
-                    WeeklyVolumeHighlight(overview, unit, Modifier.weight(1.3f))
+                    WeeklyVolumeHighlight(overview, unit, Modifier.weight(1f))
                 }
             }
 
@@ -531,7 +539,7 @@ private fun WeeklyVolumeHighlight(
             repsText
         },
         subtitle = if (hasLoadedVolume) repsText else stringResource(R.string.progress_no_weight_logged),
-        valueColor = CrimsonRedLight,
+        valueColor = MaterialTheme.colorScheme.tertiary,
         modifier = modifier
     )
 }
@@ -556,6 +564,7 @@ private fun ReviewedDoseCard(ledger: WeeklyDoseLedger, previousLedger: WeeklyDos
         contentPadding = 16.dp
     ) {
         Text(
+            modifier = Modifier.a11yHeading(),
             text = stringResource(R.string.progress_dose_heading),
             fontSize = 13.sp,
             fontWeight = FontWeight.Bold,
@@ -657,6 +666,7 @@ private fun MuscleInvolvementCard(stats: List<MuscleProgressStat>) {
 
     WallCrawlCard(cornerRadius = 16.dp, contentPadding = 16.dp) {
         Text(
+            modifier = Modifier.a11yHeading(),
             text = stringResource(R.string.progress_involvement_heading),
             fontSize = 13.sp,
             fontWeight = FontWeight.Bold,
@@ -719,9 +729,7 @@ private fun InvolvementDetailRow(stat: MuscleProgressStat) {
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                modifier = Modifier.weight(1f)
             )
             Text(
                 text = pluralStringResource(
@@ -759,6 +767,7 @@ private fun InvolvementDetailRow(stat: MuscleProgressStat) {
 private fun DetailHeading(text: String) {
     Spacer(modifier = Modifier.height(8.dp))
     Text(
+        modifier = Modifier.a11yHeading(),
         text = text,
         fontSize = 11.sp,
         fontWeight = FontWeight.Bold,
@@ -797,9 +806,6 @@ private fun LabelledCountRow(label: String, count: Int) {
 
 @Composable
 private fun DetailsToggle(label: String, expanded: Boolean, onToggle: () -> Unit) {
-    val state = stringResource(
-        if (expanded) R.string.progress_details_expanded else R.string.progress_details_collapsed
-    )
     // A native button so the touch target is at least 48dp; the section-specific label plus a
     // resource-backed expanded/collapsed state description make each disclosure distinct and
     // announceable rather than three anonymous "Show details" rows.
@@ -808,12 +814,9 @@ private fun DetailsToggle(label: String, expanded: Boolean, onToggle: () -> Unit
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 48.dp)
-            .semantics {
-                role = Role.Button
-                stateDescription = state
-            }
+            .semantics { role = Role.Button }
+            .a11yExpanded(expanded)
     ) {
-        // The shared typography specifies white, so an explicit colour is needed on light cards.
         Text(
             text = label,
             modifier = Modifier.weight(1f),
@@ -837,25 +840,26 @@ private fun StrengthTrendsSection(
     val locale = LocalConfiguration.current.locales[0]
     val vocabulary = LocalExerciseVocabulary.current
     WallCrawlCard(cornerRadius = 16.dp, contentPadding = 16.dp) {
-        Row(
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            itemVerticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.TrendingUp,
                     contentDescription = null,
-                    tint = SuccessGreen,
+                    tint = MaterialTheme.colorScheme.successText,
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
+                    modifier = Modifier.a11yHeading(),
                     text = stringResource(R.string.progress_strength_heading),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    color = SuccessGreen
+                    color = MaterialTheme.colorScheme.successText
                 )
             }
             Text(
@@ -880,7 +884,8 @@ private fun StrengthTrendsSection(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 6.dp),
+                    .padding(vertical = 6.dp)
+                    .semantics(mergeDescendants = true) {},
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -889,9 +894,7 @@ private fun StrengthTrendsSection(
                         text = vocabulary.exerciseName(trend.exerciseId, trend.exerciseName),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = stringResource(
@@ -906,17 +909,24 @@ private fun StrengthTrendsSection(
 
                 Spacer(modifier = Modifier.width(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    val trendColor = if (trend.isPositive) SuccessGreen else CrimsonRedLight
-                    Icon(
-                        imageVector = if (trend.isPositive) {
-                            Icons.Default.ArrowUpward
-                        } else {
-                            Icons.Default.ArrowDownward
-                        },
-                        contentDescription = null,
-                        tint = trendColor,
-                        modifier = Modifier.size(14.dp)
-                    )
+                    val trendColor = when {
+                        trend.percentageChange == 0 -> MaterialTheme.colorScheme.onSurfaceVariant
+                        trend.isPositive -> MaterialTheme.colorScheme.successText
+                        else -> MaterialTheme.colorScheme.tertiary
+                    }
+                    // An arrow only for a real change: 0% is neither up nor down, on screen or spoken.
+                    trendDescription(trend)?.let { description ->
+                        Icon(
+                            imageVector = if (trend.isPositive) {
+                                Icons.Default.ArrowUpward
+                            } else {
+                                Icons.Default.ArrowDownward
+                            },
+                            contentDescription = stringResource(description),
+                            tint = trendColor,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
                     Text(
                         text = stringResource(
                             R.string.progress_percentage,
@@ -950,9 +960,9 @@ private fun WorkoutHistoryCard(session: WorkoutSession, onClick: () -> Unit) {
             onClick = onClick
         )
     ) {
-        Row(
+        StackingRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
@@ -969,7 +979,6 @@ private fun WorkoutHistoryCard(session: WorkoutSession, onClick: () -> Unit) {
                 )
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
             StatBadge(
                 label = stringResource(
                     R.string.progress_history_duration,
@@ -1003,12 +1012,19 @@ private fun WorkoutHistoryCard(session: WorkoutSession, onClick: () -> Unit) {
                         session.weightUnit.symbol
                     ),
                     fontSize = 12.sp,
-                    color = CrimsonRedLight,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.SemiBold
                 )
             }
         }
     }
+}
+
+/** No direction for 0%: an unchanged score should not be read as a rise. */
+internal fun trendDescription(trend: StrengthTrend): Int? = when {
+    trend.percentageChange == 0 -> null
+    trend.isPositive -> R.string.a11y_trend_up
+    else -> R.string.a11y_trend_down
 }
 
 /**

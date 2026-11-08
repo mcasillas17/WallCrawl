@@ -2,6 +2,7 @@ package wallcrawl.elopenmike.com.feature.program
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -18,6 +19,9 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.*
+import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
+import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
+import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
 
@@ -46,7 +50,7 @@ internal fun ProgramScreen(state: ProgramUiState, onAction: (ProgramAction) -> U
     onDismiss: () -> Unit, onRetry: () -> Unit, onBack: () -> Unit, onEditProfile: () -> Unit,
     onResume: (String) -> Unit, onOpenHistory: (String) -> Unit) {
     Scaffold(topBar = {
-        TopAppBar(title = { Text(stringResource(R.string.program_title), color = MaterialTheme.colorScheme.onSurface) }, navigationIcon = {
+        TopAppBar(title = { Text(modifier = Modifier.a11yHeading(), text = stringResource(R.string.program_title), color = MaterialTheme.colorScheme.onSurface) }, navigationIcon = {
             IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.action_back)) }
         })
     }) { padding ->
@@ -54,7 +58,7 @@ internal fun ProgramScreen(state: ProgramUiState, onAction: (ProgramAction) -> U
             .padding(16.dp).testTag("program-management"), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             state.activeSession?.let { session ->
                 Text(stringResource(R.string.program_active_workout), color = MaterialTheme.colorScheme.onSurface)
-                Button(onClick = { onResume(session.id) }) { Text(stringResource(R.string.today_action_resume), color = MaterialTheme.colorScheme.onPrimary) }
+                Button(onClick = { onResume(session.id) }) { Text(stringResource(R.string.today_action_resume)) }
             }
             ProgramSummary(state, onRetry = onRetry)
             Text(stringResource(R.string.program_disclosure), color = MaterialTheme.colorScheme.onSurface)
@@ -66,23 +70,23 @@ internal fun ProgramScreen(state: ProgramUiState, onAction: (ProgramAction) -> U
                         ProgramConfigurationText(profile.primaryGoal.name, profile.goals.map { it.name }.sorted(), profile.daysPerWeek)
                     }
                     Button(onClick = { onAction(ProgramAction.START) }, enabled = enabled) {
-                        Text(stringResource(R.string.program_start), color = MaterialTheme.colorScheme.onPrimary)
+                        Text(stringResource(R.string.program_start))
                     }
                 }
                 is ProgramReadState.Supported -> {
                     when (read.enrollment.status) {
                         ProgramStatus.ACTIVE -> Button(onClick = { onAction(ProgramAction.PAUSE) }, enabled = enabled) {
-                            Text(stringResource(R.string.program_pause), color = MaterialTheme.colorScheme.onPrimary)
+                            Text(stringResource(R.string.program_pause))
                         }
                         ProgramStatus.PAUSED -> Button(onClick = { onAction(ProgramAction.RESUME) },
-                            enabled = enabled && read.profileFailure == null) { Text(stringResource(R.string.program_resume), color = MaterialTheme.colorScheme.onPrimary) }
+                            enabled = enabled && read.profileFailure == null) { Text(stringResource(R.string.program_resume)) }
                         ProgramStatus.COMPLETED -> Text(stringResource(R.string.program_completed_body), color = MaterialTheme.colorScheme.onSurface)
                     }
-                    OutlinedButton(onClick = { onAction(ProgramAction.RESTART) }, enabled = enabled && read.profileFailure == null) {
-                        Text(stringResource(R.string.program_restart), color = MaterialTheme.colorScheme.onSurface)
+                    OutlinedButton(onClick = { onAction(ProgramAction.RESTART) }, enabled = enabled && read.profileFailure == null, colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)) {
+                        Text(stringResource(R.string.program_restart))
                     }
                     ReplaceButton(enabled, onAction)
-                    Text(stringResource(R.string.program_completed_history), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+                    Text(modifier = Modifier.a11yHeading(), text = stringResource(R.string.program_completed_history), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
                     read.sessions.filter { it.status == SessionStatus.COMPLETED }.forEach { slot ->
                         TextButton(onClick = { onOpenHistory(slot.association.sessionId) }) {
                             Text(positionText(slot.association.snapshot.position), color = MaterialTheme.colorScheme.onSurface)
@@ -91,7 +95,7 @@ internal fun ProgramScreen(state: ProgramUiState, onAction: (ProgramAction) -> U
                 }
                 is ProgramReadState.Unsupported -> {
                     if (read.status == ProgramStatus.ACTIVE.name) OutlinedButton(
-                        onClick = { onAction(ProgramAction.PAUSE) }, enabled = enabled) { Text(stringResource(R.string.program_pause), color = MaterialTheme.colorScheme.onSurface) }
+                        onClick = { onAction(ProgramAction.PAUSE) }, enabled = enabled, colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)) { Text(stringResource(R.string.program_pause)) }
                     ReplaceButton(enabled, onAction)
                 }
                 null -> Unit
@@ -109,24 +113,24 @@ internal fun ProgramScreen(state: ProgramUiState, onAction: (ProgramAction) -> U
             containerColor = MaterialTheme.colorScheme.surface,
             title = { Text(title, color = MaterialTheme.colorScheme.onSurface) },
             text = { Column(Modifier.verticalScroll(rememberScrollState())) { Text(body, color = MaterialTheme.colorScheme.onSurface); Text(run, color = MaterialTheme.colorScheme.onSurface) } },
-            confirmButton = { TextButton(onClick = onConfirm, enabled = !state.saving) { Text(confirm, color = MaterialTheme.colorScheme.onSurface) } },
+            confirmButton = { TextButton(onClick = onConfirm, enabled = !state.saving, colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)) { Text(confirm) } },
             dismissButton = { TextButton(onClick = onDismiss) { Text(keep, color = MaterialTheme.colorScheme.onSurface) } })
     }
 }
 
 @Composable
 private fun ReplaceButton(enabled: Boolean, onAction: (ProgramAction) -> Unit) {
-    OutlinedButton(onClick = { onAction(ProgramAction.REPLACE) }, enabled = enabled) { Text(stringResource(R.string.program_replace), color = MaterialTheme.colorScheme.onSurface) }
+    OutlinedButton(onClick = { onAction(ProgramAction.REPLACE) }, enabled = enabled, colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)) { Text(stringResource(R.string.program_replace)) }
 }
 
 @Composable
 fun ProgramSummary(state: ProgramUiState, onManage: (() -> Unit)? = null, onRetry: () -> Unit = {}) {
     Card(Modifier.fillMaxWidth().testTag("program-summary")) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(stringResource(R.string.program_name), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
-            if (state.loading) CircularProgressIndicator()
+            Text(modifier = Modifier.a11yHeading(), text = stringResource(R.string.program_name), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+            if (state.loading) LoadingIndicator()
             state.error?.let {
-                Text(stringResource(it), color = MaterialTheme.colorScheme.error)
+                Text(stringResource(it), color = MaterialTheme.colorScheme.error, modifier = Modifier.a11yAnnounced())
                 TextButton(onClick = onRetry) { Text(stringResource(R.string.action_try_again), color = MaterialTheme.colorScheme.onSurface) }
             }
             when (val read = state.program) {
@@ -151,7 +155,7 @@ fun ProgramSummary(state: ProgramUiState, onManage: (() -> Unit)? = null, onRetr
                         Text(stringResource(objectiveRes(if (position.blockNumber == 1) ProgramObjective.ESTABLISH_ROUTINE else ProgramObjective.CONTINUE_AND_RECORD)), color = MaterialTheme.colorScheme.onSurface)
                     }
                     ProgramConfigurationText(enrollment.configuration.primaryGoal.name, enrollment.configuration.goals.map { it.name }, enrollment.configuration.sessionsPerWeek)
-                    read.profileFailure?.let { Text(stringResource(programFailureRes(it)), color = MaterialTheme.colorScheme.error) }
+                    read.profileFailure?.let { Text(stringResource(programFailureRes(it)), color = MaterialTheme.colorScheme.error, modifier = Modifier.a11yAnnounced()) }
                 }
                 null -> Unit
             }
@@ -163,7 +167,7 @@ fun ProgramSummary(state: ProgramUiState, onManage: (() -> Unit)? = null, onRetr
 @Composable
 fun ProgramAssociationText(association: ProgramHistoryAssociation) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(R.string.program_recorded_heading), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+        Text(modifier = Modifier.a11yHeading(), text = stringResource(R.string.program_recorded_heading), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
         Text(stringResource(R.string.program_run, association.facts.programId), color = MaterialTheme.colorScheme.onSurface)
         Text(positionText(association.position), color = MaterialTheme.colorScheme.onSurface)
         ProgramConfigurationText(association.facts.primaryGoal, association.facts.goals, association.facts.sessionsPerWeek)
@@ -197,16 +201,20 @@ private fun objectiveRes(objective: ProgramObjective) = when (objective) {
 fun ProgramPlanningChoice(selected: WorkoutPlanningIntent, programAvailable: Boolean, enabled: Boolean,
     onSelect: (WorkoutPlanningIntent) -> Unit) {
     Column(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
-        Text(stringResource(R.string.program_choice), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurface)
-        WorkoutPlanningIntent.entries.forEach { intent ->
-            val available = enabled && (intent == WorkoutPlanningIntent.ORDINARY || programAvailable)
-            Row(Modifier.fillMaxWidth().testTag("planning-${intent.name}")
-                .selectable(selected = selected == intent, enabled = available,
-                    role = androidx.compose.ui.semantics.Role.RadioButton, onClick = { onSelect(intent) })
-                .padding(8.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                RadioButton(selected = selected == intent, onClick = null, enabled = available)
-                Text(stringResource(if (intent == WorkoutPlanningIntent.PROGRAM) R.string.program_session_choice else R.string.program_ordinary_choice),
-                    Modifier.padding(start = 8.dp), color = MaterialTheme.colorScheme.onSurface)
+        Text(modifier = Modifier.a11yHeading(), text = stringResource(R.string.program_choice), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurface)
+        Column(Modifier.selectableGroup()) {
+            WorkoutPlanningIntent.entries.forEach { intent ->
+                val available = enabled && (intent == WorkoutPlanningIntent.ORDINARY || programAvailable)
+                Row(Modifier.fillMaxWidth().testTag("planning-${intent.name}")
+                    .selectable(selected = selected == intent, enabled = available,
+                        role = androidx.compose.ui.semantics.Role.RadioButton, onClick = { onSelect(intent) })
+                    .heightIn(min = 48.dp)
+                    .padding(horizontal = 8.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                    RadioButton(selected = selected == intent, onClick = null, enabled = available)
+                    Text(stringResource(if (intent == WorkoutPlanningIntent.PROGRAM) R.string.program_session_choice else R.string.program_ordinary_choice),
+                        // Dims with the radio, so an unavailable row looks unavailable, not only its circle.
+                        Modifier.padding(start = 8.dp), color = MaterialTheme.colorScheme.onSurface.copy(alpha = if (available) 1f else 0.38f))
+                }
             }
         }
     }

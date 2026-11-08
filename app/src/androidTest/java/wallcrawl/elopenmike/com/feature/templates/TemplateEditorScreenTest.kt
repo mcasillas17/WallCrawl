@@ -1,5 +1,7 @@
 package wallcrawl.elopenmike.com.feature.templates
 
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.semantics.SemanticsProperties
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -252,6 +254,13 @@ class TemplateEditorScreenTest {
         val error = composeRule.onNodeWithText(editor.resources.getString(R.string.draft_error_range_inverted))
         error.performScrollTo()
         assertAboveKeyboard(error)
+        // A description replaces what the field would speak, so the field states the error itself.
+        composeRule.onNode(
+            SemanticsMatcher.expectValue(
+                SemanticsProperties.Error,
+                editor.resources.getString(R.string.draft_error_range_inverted)
+            )
+        ).assertExists()
     }
 
     /** The exercise picker is a sheet too: its search and results stay above the keyboard. */
@@ -452,8 +461,7 @@ class TemplateEditorScreenTest {
         assertPainted(
             editor.resources.getString(R.string.editor_name_label),
             editor.resources.getString(R.string.editor_notes_label),
-            // Shared component. Naming a colour is what keeps this label on screen, and
-            // the round that made its disabled state visible took the label with it.
+            // Shared component: its label takes the button's content colour, enabled or disabled.
             editor.resources.getString(R.string.editor_action_add)
         )
 
@@ -471,7 +479,29 @@ class TemplateEditorScreenTest {
         val note = "Pause at the bottom"
         composeRule.onNodeWithText(editor.resources.getString(R.string.editor_field_exercise_notes))
             .performTextInput(note)
+        // The rising keyboard can push the field out of the sheet, leaving nothing to capture.
+        Espresso.closeSoftKeyboard()
+        composeRule.onNodeWithText(note).performScrollTo()
         assertLaidOutReadable(note)
+    }
+
+    /** The description carries the hint shown below the field, and the hint is not read a second time. */
+    @Test
+    fun aNumberFieldSpeaksItsAllowedRange() {
+        val editor = showEditor(language = "en")
+        openSheetFor(editor)
+        val allowed = editor.resources.getString(R.string.editor_field_range_hint, "").trim()
+        val fields = composeRule.onAllNodes(hasSetTextAction().and(hasContentDescription(allowed, substring = true)))
+            .fetchSemanticsNodes()
+        assertThat(fields).isNotEmpty()
+        fields.forEach { field ->
+            val spoken = field.config[SemanticsProperties.ContentDescription].single()
+            assertThat(spoken.substringAfter(allowed)).containsMatch("\\d")
+            // The hint is shown on screen too; that copy is hidden from TalkBack so it is read once.
+            val shown = composeRule.onAllNodesWithText(spoken.substringAfterLast(". "), useUnmergedTree = true).fetchSemanticsNodes()
+            assertThat(shown).isNotEmpty()
+            shown.forEach { assertThat(SemanticsProperties.HideFromAccessibility in it.config).isTrue() }
+        }
     }
 
     @Test
@@ -508,6 +538,9 @@ class TemplateEditorScreenTest {
             .onNodeWithText(editor.resources.getString(R.string.editor_error_exercise_limit))
             .performScrollTo()
             .assertIsDisplayed()
+        composeRule.onNode(
+            hasText(editor.resources.getString(R.string.editor_error_exercise_limit)).and(hasLiveRegion())
+        ).assertExists()
         assertPainted(editor.resources.getString(R.string.editor_error_exercise_limit))
         // A disabled control is drawn muted on purpose, and still has to say what it is.
         assertPainted(
@@ -1031,6 +1064,13 @@ class TemplateEditorScreenTest {
         composeRule.onNode(
             hasText(message).and(hasLiveRegion())
         ).performScrollTo().assertIsDisplayed()
+
+        // The same refusal again gets a new node, which is what makes it speak again.
+        val first = composeRule.onNodeWithText(message).fetchSemanticsNode().id
+        composeRule.onNode(hasScrollAction()).performScrollToNode(hasText(save))
+        composeRule.onNodeWithText(save).performClick()
+        composeRule.waitForIdle()
+        assertThat(composeRule.onNodeWithText(message).fetchSemanticsNode().id).isNotEqualTo(first)
     }
 
     @Test
@@ -1080,6 +1120,19 @@ class TemplateEditorScreenTest {
         composeRule.onNode(
             hasText(message).and(hasLiveRegion())
         ).assertExists()
+
+        // Tapped again, the same refusal gets a new node, which is what makes it speak again.
+        val first = composeRule.onNodeWithText(message).fetchSemanticsNode().id
+        composeRule.onNodeWithText(resources.getString(R.string.weight_unit_kg_long)).performClick()
+        composeRule.waitForIdle()
+        assertThat(composeRule.onNodeWithText(message).fetchSemanticsNode().id).isNotEqualTo(first)
+
+        // Each message has its own count, so a tap on Save does not speak the unit refusal again.
+        val before = viewModel.uiState.value
+        composeRule.runOnIdle { viewModel.save() }
+        composeRule.waitForIdle()
+        assertThat(viewModel.uiState.value.unitRefusal.attempt).isEqualTo(before.unitRefusal.attempt)
+        assertThat(viewModel.uiState.value.submitAttempt).isEqualTo(before.submitAttempt + 1)
 
         // The next change the user makes answers it, and it goes.
         composeRule.runOnIdle { viewModel.updateName("Renamed") }
@@ -1173,7 +1226,7 @@ class TemplateEditorScreenTest {
                 R.string.editor_edit_accessibility,
                 editor.exerciseName
             ),
-            editor.resources.getString(R.string.editor_increase_sets)
+            editor.resources.getString(R.string.editor_increase_sets, editor.exerciseName)
         ).forEach { description ->
             list.performScrollToNode(hasContentDescription(description))
             composeRule.onNodeWithContentDescription(description).assertIsDisplayed()
@@ -1382,10 +1435,8 @@ class TemplateEditorScreenTest {
 
     /**
      * `assertIsDisplayed` checks bounds, not paint, and a string can be laid out, tappable
-     * and unreadable. `Text` prefers its style's colour over `LocalContentColor`, and this
-     * app's `Typography` sets one on every style, so any `Text` that does not name a colour
-     * paints the dark-theme value — near-white on a light surface. Counting distinct pixels
-     * does not catch that: anti-aliased near-white glyphs produce plenty of distinct values
+     * and unreadable. Counting distinct pixels does not catch near-white text on a light
+     * surface: anti-aliased near-white glyphs produce plenty of distinct values
      * at about 1.1:1. This measures WCAG contrast against the background instead.
      */
     private fun assertPainted(

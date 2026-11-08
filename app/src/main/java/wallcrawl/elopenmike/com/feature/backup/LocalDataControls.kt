@@ -34,9 +34,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -45,6 +42,8 @@ import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveFormat
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
+import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
+import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 
@@ -97,6 +96,7 @@ fun LocalDataSection(
                 .fillMaxWidth()
                 .testTag(LOCAL_DATA_DELETE_TEST_TAG)
         )
+        BusyIndicator(visible = state.operation == LocalDataOperation.DELETING)
 
         LocalDataMessageText(state)
     }
@@ -297,14 +297,6 @@ private fun RestoreControl(viewModel: LocalDataViewModel, state: LocalDataUiStat
 
 /**
  * The confirmation for the one irreversible action in this feature.
- *
- * Every text colour is explicit. The shared typography hard-codes a light colour into
- * `headlineSmall` and `labelLarge` — the styles an `AlertDialog` applies to its title and its
- * button labels — and an explicit colour inside a `TextStyle` wins over the content colour the
- * dialog provides. Without these the title and the safe way out would render near-invisibly on
- * the light theme's dialog surface while the destructive action stayed perfectly readable,
- * which is the opposite of what a destructive confirmation owes the user. The other dialogs in
- * this app set the same colours for the same reason.
  */
 @Composable
 private fun DeleteEverythingDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
@@ -323,7 +315,8 @@ private fun DeleteEverythingDialog(onConfirm: () -> Unit, onDismiss: () -> Unit)
         text = {
             Text(
                 text = stringResource(R.string.local_data_delete_confirm_body),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.verticalScroll(rememberScrollState())
             )
         },
         confirmButton = {
@@ -378,12 +371,12 @@ private fun LocalDataMessageText(state: LocalDataUiState) {
             .testTag(LOCAL_DATA_MESSAGE_TEST_TAG)
             // Announced when it appears: the outcome of an export or a restore is the whole
             // point of the interaction, and it is not attached to the control that was used.
-            .semantics { liveRegion = LiveRegionMode.Polite }
+            .a11yAnnounced()
     )
 }
 
 @Composable
-private fun BusyIndicator(visible: Boolean) {
+internal fun BusyIndicator(visible: Boolean) {
     if (!visible) return
     Spacer(modifier = Modifier.height(8.dp))
     Row(
@@ -399,7 +392,8 @@ private fun BusyIndicator(visible: Boolean) {
         Text(
             text = stringResource(R.string.local_data_busy),
             fontSize = 13.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.a11yAnnounced()
         )
     }
 }
@@ -428,11 +422,12 @@ private fun templateCount(count: Int): String = pluralStringResource(
 @Composable
 private fun SectionHeading(text: String) {
     Text(
+        modifier = Modifier.a11yHeading(),
         text = text,
         fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
         letterSpacing = 0.8.sp,
-        color = CrimsonRedPrimary
+        color = MaterialTheme.colorScheme.tertiary
     )
 }
 

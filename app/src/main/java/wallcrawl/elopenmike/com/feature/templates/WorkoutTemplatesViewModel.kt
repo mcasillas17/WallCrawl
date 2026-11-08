@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import wallcrawl.elopenmike.com.core.ui.state.Refusal
 import kotlinx.coroutines.launch
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
@@ -35,8 +37,10 @@ data class WorkoutTemplatesUiState(
      * a number hard-coded into a translated sentence that would then need updating twice.
      */
     val catalogSize: Int = 0,
-    @StringRes val errorMessage: Int? = null
+    /** The attempt counts refusals, so the same message is announced again on a repeat. */
+    val error: Refusal = Refusal()
 )
+
 
 class WorkoutTemplatesViewModel(
     private val templateRepository: WorkoutTemplateRepository,
@@ -45,13 +49,13 @@ class WorkoutTemplatesViewModel(
     private val exerciseCatalog: ExerciseCatalog
 ) : ViewModel() {
     private val startingTemplateId = MutableStateFlow<String?>(null)
-    private val errorMessage = MutableStateFlow<Int?>(null)
+    private val refusal = MutableStateFlow(Refusal())
     private val startedSessionId = MutableStateFlow<String?>(null)
 
     val uiState: StateFlow<WorkoutTemplatesUiState> = combine(
         templateRepository.observeTemplates(),
         startingTemplateId,
-        errorMessage,
+        refusal,
         startedSessionId,
         exerciseCatalog.getAllExercises()
     ) { templates, startingId, error, startedId, catalog ->
@@ -61,7 +65,7 @@ class WorkoutTemplatesViewModel(
             startingTemplateId = startingId,
             startedSessionId = startedId,
             catalogSize = catalog.size,
-            errorMessage = error
+            error = error
         )
     }.catch { error ->
         // The repository's exception message is developer text; the screen shows a typed,
@@ -70,7 +74,7 @@ class WorkoutTemplatesViewModel(
         emit(
             WorkoutTemplatesUiState(
                 isLoading = false,
-                errorMessage = R.string.editor_error_load_failed
+                error = Refusal(R.string.editor_error_load_failed)
             )
         )
     }.stateIn(
@@ -85,12 +89,12 @@ class WorkoutTemplatesViewModel(
         // dispatcher, as the editor's save sets isSaving.
         startingTemplateId.value = template.id
         // A new attempt answers whatever the last one said, such as a unit to confirm.
-        errorMessage.value = null
+        refusal.update { it.cleared() }
         viewModelScope.launch {
             try {
                 val currentTemplate = templateRepository.getTemplate(template.id)
                 if (currentTemplate == null) {
-                    errorMessage.value = R.string.template_error_missing
+                    refuse(R.string.template_error_missing)
                     return@launch
                 }
                 val profile = userProfileRepository.getProfileOnce()
@@ -101,9 +105,9 @@ class WorkoutTemplatesViewModel(
                 // Its loads were saved before templates recorded a unit, so it cannot start a
                 // new workout without guessing one. (A workout in progress is resumed by the
                 // repository instead, which copies nothing and needs no unit.)
-                errorMessage.value = R.string.template_error_unit_unconfirmed
+                refuse(R.string.template_error_unit_unconfirmed)
             } catch (error: Exception) {
-                errorMessage.value = R.string.template_error_start_failed
+                refuse(R.string.template_error_start_failed)
             } finally {
                 startingTemplateId.value = null
             }
@@ -122,13 +126,17 @@ class WorkoutTemplatesViewModel(
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
-                errorMessage.value = R.string.template_error_delete_failed
+                refuse(R.string.template_error_delete_failed)
             }
         }
     }
 
+    private fun refuse(@StringRes message: Int) {
+        refusal.update { it.next(message) }
+    }
+
     fun clearError() {
-        errorMessage.value = null
+        refusal.update { it.cleared() }
     }
 
     companion object {

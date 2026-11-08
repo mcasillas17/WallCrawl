@@ -77,9 +77,10 @@ fun LanguageChip(
                 .size(48.dp)
                 .clip(CircleShape)
                 .clickable { expanded = true }
+                .a11yExpanded(expanded)
                 .semantics {
                     contentDescription = description
-                    role = Role.Button
+                    role = Role.DropdownList
                 },
             contentAlignment = Alignment.Center
         ) {

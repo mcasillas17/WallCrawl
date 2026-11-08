@@ -151,7 +151,7 @@ A tag cannot publish unless all three pass.
 | --- | --- | --- |
 | API 36 | Full suite | Existing regression baseline |
 | API `37.0` | Full suite | The target level. Android 17's SDK packages are versioned `37.0` |
-| API 26 | The `wallcrawl.elopenmike.com.app` package | The minSdk boundary, kept short. It covers installed SDK levels, the packaged backup policy, the launcher icon, and real navigation, Back, recreation and restore |
+| API 26 | The `wallcrawl.elopenmike.com.app` package | The minSdk boundary. It covers installed SDK levels, the packaged backup policy, the launcher icon, real navigation, Back, recreation and restore, and the accessibility sweep without ATF |
 
 The API 26 leg selects a package because AGP 9.4.0 keeps only the first class of a
 comma-separated `class` argument. Each leg also fails when its JUnit report recorded no test.
@@ -183,9 +183,9 @@ Android 17 AVDs locally, use command-line tools 22 or newer.
   - Two keyboard checks. The picker's search field opens the keyboard automatically on API 26,
     and the component test host lacks the app's `adjustResize` window. The real app behaves
     correctly in both cases (manual checks above).
-- Still open from earlier releases and unchanged here: the onboarding codename text is hard to
-  read in the light theme; bottom-bar labels break mid-word at 320 dp with font scale 1.8; and
-  the predictive preview from a full-screen route shows the previous tab without the bottom bar
+- The onboarding codename contrast and the mid-word bottom-bar labels recorded here have since been
+  fixed; see [accessibility.md](accessibility.md).
+- Still open from earlier releases and unchanged here: the predictive preview from a full-screen route shows the previous tab without the bottom bar
   until the gesture commits.
 - The API 26 runs on this change's pull request exposed a race in `ProgramNavigationTest` that
   also failed locally at target 35 under load. While Today builds the workout, it shows the program

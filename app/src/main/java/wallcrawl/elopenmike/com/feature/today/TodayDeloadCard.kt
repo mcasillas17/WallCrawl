@@ -15,10 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.semantics
+import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
+import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import wallcrawl.elopenmike.com.R
@@ -47,7 +45,7 @@ internal fun TodayDeloadCard(
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.semantics { heading() }
+                modifier = Modifier.a11yHeading()
             )
             val offer = state.acceptedChoice?.offer ?: state.offer
             if (offer != null) {
@@ -81,13 +79,11 @@ internal fun TodayDeloadCard(
             }
             if (state.isSaving) {
                 Text(stringResource(R.string.today_deload_saving), color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.semantics {
-                    liveRegion = LiveRegionMode.Polite
-                })
+                    modifier = Modifier.a11yAnnounced())
             }
             state.error?.let { error ->
                 Text(stringResource(error.messageRes), color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                    modifier = Modifier.a11yAnnounced())
             }
         }
     }
@@ -157,7 +153,6 @@ private fun DeloadButton(text: String, enabled: Boolean, primary: Boolean = fals
         border = if (primary) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         contentPadding = PaddingValues(horizontal = 24.dp, vertical = 14.dp)
     ) {
-        Text(text, fontWeight = FontWeight.SemiBold,
-            color = if (primary) TextWhite else MaterialTheme.colorScheme.onSurface)
+        Text(text, fontWeight = FontWeight.SemiBold)
     }
 }

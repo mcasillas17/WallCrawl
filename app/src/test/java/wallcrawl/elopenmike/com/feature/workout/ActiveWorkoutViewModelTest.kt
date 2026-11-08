@@ -6,8 +6,6 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
@@ -23,10 +21,7 @@ import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
-import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.SessionStatus
-import wallcrawl.elopenmike.com.core.model.SetOutcomeRules
-import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
@@ -327,7 +322,7 @@ class ActiveWorkoutViewModelTest {
 
         val state = viewModel.uiState.value
         assertThat(state).isInstanceOf(ActiveWorkoutUiState.Active::class.java)
-        assertThat((state as ActiveWorkoutUiState.Active).setUpdateError).isNotNull()
+        assertThat((state as ActiveWorkoutUiState.Active).setUpdateError.message).isNotNull()
 
         // A subsequent valid edit recovers: the transient error clears and the set
         // persists as completed with the real load, without ever having left Active.
@@ -335,7 +330,7 @@ class ActiveWorkoutViewModelTest {
         advanceUntilIdle()
 
         val recovered = viewModel.uiState.value as ActiveWorkoutUiState.Active
-        assertThat(recovered.setUpdateError).isNull()
+        assertThat(recovered.setUpdateError.message).isNull()
         assertThat(repository.lastPersistedWeight).isEqualTo(25.0)
     }
 
@@ -354,7 +349,7 @@ class ActiveWorkoutViewModelTest {
 
         val state = viewModel.uiState.value
         assertThat(state).isInstanceOf(ActiveWorkoutUiState.Active::class.java)
-        assertThat((state as ActiveWorkoutUiState.Active).setUpdateError).isNotNull()
+        assertThat((state as ActiveWorkoutUiState.Active).setUpdateError.message).isNotNull()
     }
 
     @Test
@@ -368,13 +363,13 @@ class ActiveWorkoutViewModelTest {
 
         viewModel.updateSet("set", reps = 10, weight = null, isCompleted = true)
         advanceUntilIdle()
-        assertThat((viewModel.uiState.value as ActiveWorkoutUiState.Active).setUpdateError)
+        assertThat((viewModel.uiState.value as ActiveWorkoutUiState.Active).setUpdateError.message)
             .isNotNull()
 
         viewModel.dismissSetUpdateError()
         advanceUntilIdle()
 
-        assertThat((viewModel.uiState.value as ActiveWorkoutUiState.Active).setUpdateError)
+        assertThat((viewModel.uiState.value as ActiveWorkoutUiState.Active).setUpdateError.message)
             .isNull()
     }
 

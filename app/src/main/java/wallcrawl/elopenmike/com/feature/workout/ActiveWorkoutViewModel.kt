@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.flow.update
+import wallcrawl.elopenmike.com.core.ui.state.Refusal
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -59,7 +60,7 @@ class ActiveWorkoutViewModel(
     // A failed set update must never become a terminal, screen-replacing error the way
     // errorFlow does (see uiState below): it is a recoverable, dismissible condition on
     // the Active state, cleared automatically the next time a set update succeeds.
-    private val setUpdateErrorFlow = MutableStateFlow<Int?>(null)
+    private val setUpdateErrorFlow = MutableStateFlow(Refusal())
     private val programFinishUnsupportedFlow = MutableStateFlow(false)
     private val refreshRequests = MutableStateFlow(0L)
     private var finishRequested = false
@@ -268,14 +269,14 @@ class ActiveWorkoutViewModel(
                     performance = performance
                 )
                 outcomesAwaitingObservation[setId] = performance
-                setUpdateErrorFlow.value = null
+                setUpdateErrorFlow.update { it.cleared() }
                 if (startsRest) startRestFor(setId)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 // The write did not land, so the observed session remains the truth.
                 outcomesAwaitingObservation.remove(setId)
-                setUpdateErrorFlow.value = R.string.workout_set_update_error
+                refuse(R.string.workout_set_update_error)
             } finally {
                 if (startsRest) completionsInFlight.remove(setId)
             }
@@ -367,9 +368,14 @@ class ActiveWorkoutViewModel(
         updateSet(setId, current.copy(rpe = rpe, rir = rir))
     }
 
+    /** A new value each time, so saying the same thing again still reaches the screen and is announced. */
+    private fun refuse(@StringRes messageRes: Int) {
+        setUpdateErrorFlow.update { it.next(messageRes) }
+    }
+
     /** Dismisses a recoverable set-update error without requiring another edit. */
     fun dismissSetUpdateError() {
-        setUpdateErrorFlow.value = null
+        setUpdateErrorFlow.update { it.cleared() }
     }
 
     /** Re-evaluates the countdown against the monotonic clock; the UI calls this while resting. */
@@ -446,8 +452,8 @@ class ActiveWorkoutViewModel(
                 finishRequested = false
                 if (e.failure == wallcrawl.elopenmike.com.core.model.ProgramFailure.UNSUPPORTED_POLICY) {
                     programFinishUnsupportedFlow.value = true
-                    setUpdateErrorFlow.value = R.string.program_finish_unsupported
-                } else setUpdateErrorFlow.value = R.string.workout_finish_error
+                    refuse(R.string.program_finish_unsupported)
+                } else refuse(R.string.workout_finish_error)
             } catch (e: Exception) {
                 finishRequested = false
                 errorFlow.value = R.string.workout_finish_error
@@ -555,7 +561,7 @@ class ActiveWorkoutViewModel(
 
     private data class ScreenState(
         @StringRes val error: Int?,
-        @StringRes val setUpdateError: Int?,
+        val setUpdateError: Refusal,
         val restTimer: RestTimerUiState,
         val confirmations: ConfirmationState,
         val programFinishUnsupported: Boolean
@@ -607,3 +613,4 @@ internal fun elapsedWorkoutMinutes(
         .toInt()
         .coerceAtLeast(1)
 }
+

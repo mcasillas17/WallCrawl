@@ -29,7 +29,8 @@ fun BandSetupControls(
     val vocabulary = LocalExerciseVocabulary.current
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            stringResource(R.string.band_setup_heading),
+            text = stringResource(R.string.band_setup_heading),
+            modifier = Modifier.a11yHeading(),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurface
         )

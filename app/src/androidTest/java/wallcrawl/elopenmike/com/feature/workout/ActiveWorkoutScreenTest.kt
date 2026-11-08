@@ -1,11 +1,34 @@
 package wallcrawl.elopenmike.com.feature.workout
 
+import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.hasScrollToIndexAction
+import androidx.compose.ui.test.getBoundsInRoot
+import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.platform.LocalConfiguration
+import android.content.res.Configuration
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.test.assertWidthIsAtLeast
+import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.Modifier
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.Box
+import wallcrawl.elopenmike.com.test.hasLiveRegion
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
@@ -21,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow
@@ -52,7 +76,8 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
+import wallcrawl.elopenmike.com.core.ui.theme.AccentTextOnDark
+import wallcrawl.elopenmike.com.core.ui.theme.AccentTextOnLight
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
 
 /**
@@ -119,11 +144,14 @@ class ActiveWorkoutScreenTest {
 
         composeRule.onNodeWithText(text(R.string.rest_add_thirty)).performClick()
         composeRule.waitForIdle()
+        // Never a live region while it counts, or TalkBack would read every tick; once when over.
         composeRule.onNodeWithContentDescription("Rest remaining 2:30").assertIsDisplayed()
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.LiveRegion))
 
         composeRule.onNodeWithText("Skip rest").performClick()
         composeRule.waitForIdle()
         composeRule.onNodeWithContentDescription("Rest finished").assertIsDisplayed()
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Polite))
 
         composeRule.onNodeWithText("Dismiss").performClick()
         composeRule.waitForIdle()
@@ -222,37 +250,179 @@ class ActiveWorkoutScreenTest {
 
         composeRule.onNodeWithText("Finish").performClick()
         composeRule.waitForIdle()
-        composeRule.onNodeWithText("Finish anyway").assertContainsColor(CrimsonRedPrimary)
-        composeRule.onNodeWithText("Keep going").assertDoesNotContainColor(CrimsonRedPrimary)
+        composeRule.onNodeWithText("Finish anyway").assertContainsColor(destructive)
+        composeRule.onNodeWithText("Keep going").assertDoesNotContainColor(destructive)
         composeRule.onNodeWithText("Keep going").performClick()
 
         composeRule.onNodeWithContentDescription(
             text(R.string.workout_close_content_description)
         ).performClick()
         composeRule.waitForIdle()
-        composeRule.onNodeWithText("Discard").assertContainsColor(CrimsonRedPrimary)
-        composeRule.onNodeWithText("Keep workout").assertDoesNotContainColor(CrimsonRedPrimary)
+        composeRule.onNodeWithText("Discard").assertContainsColor(destructive)
+        composeRule.onNodeWithText("Keep workout").assertDoesNotContainColor(destructive)
     }
 
-    private fun showScreen() {
+    /** At 320 dp and 1.8x nothing on a completed set or the rest bar is squeezed away. */
+    @Test
+    fun aCompletedSetAndTheRestBarKeepEveryControlAtLargeText() {
+        showScreen(fontScale = 1.8f, narrow = true)
+        activateFromList("Set 1 complete")
+        composeRule.waitForIdle()
+        listOf("+30 s", "Skip rest", "Dismiss").forEach {
+            composeRule.onNodeWithText(it).assertIsDisplayed().assertWidthIsAtLeast(48.dp).assertHasClickAction()
+        }
+        scrollListTo("Set 1 felt manageable, Yes").assertIsDisplayed().assertWidthIsAtLeast(48.dp)
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, androidx.compose.ui.semantics.Role.RadioButton))
+        scrollListTo("Set 1 felt manageable, No").assertIsDisplayed().assertWidthIsAtLeast(48.dp)
+    }
+
+    /** On CI's 320x640 dp screen at 1.8x, a refusal and a running rest still leave the actions on screen. */
+    @Test
+    fun aRefusalAndTheRestBarLeaveTheBottomActionsOnScreenAtLargeText() {
+        showScreen(fontScale = 1.8f, narrow = true)
+        activateFromList("Set 1 complete")
+        composeRule.waitForIdle()
+        repository.failSetWrites = true
+        activateFromList("Set 2 complete")
+        composeRule.waitForIdle()
+        composeRule.waitUntil(5_000) { composeRule.onAllNodesWithText(text(R.string.workout_set_update_error)).fetchSemanticsNodes().isNotEmpty() }
+        composeRule.onNodeWithText(text(R.string.workout_set_update_error)).assertIsDisplayed()
+        composeRule.onNodeWithText("Skip rest").assertIsDisplayed()
+
+        assertFinishIsWhollyInsideTheScreen()
+        composeRule.onNodeWithText(text(R.string.workout_action_finish_workout)).assertHasClickAction()
+    }
+
+    /** Returning to a bar that has already finished does not announce it a second time. */
+    @Test
+    fun aFinishedRestBarIsQuietWhenComposedAgain() {
+        var shown by mutableStateOf(true)
         composeRule.setContent {
             WallCrawlTheme {
+                if (shown) {
+                    ActiveWorkoutScreen(
+                        viewModel = viewModel,
+                        visualProvider = NoVisualProvider,
+                        onNavigateBack = {},
+                        onWorkoutFinished = {}
+                    )
+                }
+            }
+        }
+        composeRule.waitForIdle()
+        activateFromList("Set 1 complete")
+        composeRule.waitForIdle()
+        composeRule.onNodeWithText("Skip rest").performClick()
+        composeRule.waitForIdle()
+        composeRule.onNodeWithContentDescription("Rest finished").assert(hasLiveRegion())
+        shown = false
+        composeRule.waitForIdle()
+        shown = true
+        composeRule.waitForIdle()
+        composeRule.onNodeWithContentDescription("Rest finished")
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.LiveRegion))
+    }
+
+    /** A template name can be 120 characters: at large text it scrolls away and leaves the list its height. */
+    @Test
+    fun theLongestSessionNameLeavesTheListAndActionsAtLargeText() {
+        val name = "Routine ".repeat(15).take(WorkoutTemplate.MAX_NAME_LENGTH)
+        val longNamed = ActiveWorkoutViewModel(
+            sessionId = SESSION_ID,
+            workoutRepository = ScreenTestRepository(session(name)),
+            exerciseCatalog = InMemoryExerciseCatalog(),
+            workoutHistoryAnalyzer = WorkoutHistoryAnalyzer(),
+            nowMillis = { WALL_CLOCK },
+            elapsedRealtimeClock = clock
+        )
+        showScreen(fontScale = 1.8f, narrow = true, screenViewModel = longNamed)
+        composeRule.onNodeWithText(name).assertExists()
+        val list = composeRule.onNode(hasScrollToIndexAction()).getBoundsInRoot()
+        assertThat(list.bottom - list.top).isAtLeast(350.dp)
+        scrollListTo("Set 1 complete").assertIsDisplayed()
+        assertFinishIsWhollyInsideTheScreen()
+    }
+
+    /** assertIsDisplayed also passes for a partly clipped control, so this compares the edges. */
+    private fun assertFinishIsWhollyInsideTheScreen() {
+        val host = composeRule.onNodeWithTag(HOST_TAG).getBoundsInRoot()
+        val finish = composeRule.onNodeWithText(text(R.string.workout_action_finish_workout)).getBoundsInRoot()
+        assertThat(finish.bottom).isAtMost(host.bottom)
+        assertThat(finish.top).isAtLeast(host.top)
+    }
+
+    /** A lazy list composes only what it shows, and on a short screen a row can start off it. */
+    private fun scrollListTo(description: String): SemanticsNodeInteraction {
+        composeRule.onNode(hasScrollToIndexAction()).performScrollToNode(hasContentDescription(description))
+        return composeRule.onNodeWithContentDescription(description)
+    }
+
+    /** The action, as TalkBack activates it: in a short list the row's centre can sit under the actions. */
+    private fun activateFromList(description: String) {
+        scrollListTo(description).performSemanticsAction(SemanticsActions.OnClick)
+    }
+
+    /** The refusal sits above the list, so it is seen and announced wherever the reader had scrolled to. */
+    @Test
+    fun aRefusedSetWriteIsAnnouncedAboveTheList() {
+        repository.failSetWrites = true
+        showScreen()
+        activateFromList("Set 1 complete")
+        composeRule.waitForIdle()
+        composeRule.onNodeWithText(text(R.string.workout_set_update_error))
+            .assertIsDisplayed().assert(hasLiveRegion())
+        val banner = composeRule.onNodeWithText(text(R.string.workout_set_update_error)).getBoundsInRoot()
+        val list = composeRule.onNode(hasScrollToIndexAction()).getBoundsInRoot()
+        assertThat(banner.bottom).isAtMost(list.top)
+
+        // The same refusal again has to be a new announcement, so it has to be a new live-region node.
+        val message = composeRule.onNodeWithText(text(R.string.workout_set_update_error), useUnmergedTree = true)
+        val first = message.fetchSemanticsNode().id
+        // As TalkBack does: on a short screen the banner has pushed the row out from under a finger.
+        activateFromList("Set 1 complete")
+        composeRule.waitForIdle()
+        assertThat(message.fetchSemanticsNode().id).isNotEqualTo(first)
+    }
+
+    /** The theme's readable red; [showScreen] follows the device's light or dark setting. */
+    private val destructive
+        get() = if (ApplicationProvider.getApplicationContext<android.content.Context>().resources.configuration.uiMode and
+            android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_YES
+        ) AccentTextOnDark else AccentTextOnLight
+
+    private fun showScreen(
+        fontScale: Float = 1f,
+        narrow: Boolean = false,
+        screenViewModel: ActiveWorkoutViewModel = viewModel
+    ) {
+        composeRule.setContent {
+            val density = LocalDensity.current.density
+            val base = LocalConfiguration.current
+            val configuration = if (narrow) Configuration(base).apply { screenWidthDp = 320 } else base
+            CompositionLocalProvider(
+                LocalDensity provides Density(density, fontScale),
+                LocalConfiguration provides configuration
+            ) {
+                Box(if (narrow) Modifier.requiredSize(320.dp, 640.dp).testTag(HOST_TAG) else Modifier) {
+            WallCrawlTheme {
                 ActiveWorkoutScreen(
-                    viewModel = viewModel,
+                    viewModel = screenViewModel,
                     visualProvider = NoVisualProvider,
                     onNavigateBack = {},
                     onWorkoutFinished = {}
                 )
             }
+                }
+            }
         }
         composeRule.waitForIdle()
     }
 
-    private fun session(): WorkoutSession {
+    private fun session(name: String = "Push"): WorkoutSession {
         val workoutExerciseId = "workout-exercise"
         return WorkoutSession(
             id = SESSION_ID,
-            name = "Push",
+            name = name,
             status = SessionStatus.IN_PROGRESS,
             exercises = listOf(
                 WorkoutExercise(
@@ -343,6 +513,7 @@ private class ScreenTestRepository(initial: WorkoutSession) : WorkoutRepository 
     private val session = MutableStateFlow<WorkoutSession?>(initial)
     var completeCalls: Int = 0
         private set
+    var failSetWrites = false
     var cancelCalls: Int = 0
         private set
     val historyReady = MutableStateFlow(true)
@@ -380,6 +551,7 @@ private class ScreenTestRepository(initial: WorkoutSession) : WorkoutRepository 
     ): WorkoutSession = error("Not used")
 
     override suspend fun logSetCompletion(setId: String, performance: SetPerformanceInput) {
+        if (failSetWrites) error("refused")
         SetOutcomeRules.requireValidOutcome(performance)
         val current = session.value ?: return
         session.value = current.copy(
@@ -438,3 +610,5 @@ private class ScreenTestRepository(initial: WorkoutSession) : WorkoutRepository 
         completedAtTimestamp = current.completedAtTimestamp ?: current.startedAtTimestamp
     )
 }
+
+private const val HOST_TAG = "narrow-host"
