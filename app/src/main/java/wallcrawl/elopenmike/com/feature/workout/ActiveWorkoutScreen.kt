@@ -281,18 +281,17 @@ private fun ActiveWorkoutContent(
                     })
             }
         }
-        if (largeText) contextLabel(Modifier.fillMaxWidth())
+        // The name gets its own line at every size: sharing a row by fixed fractions broke long words at 320 dp.
+        contextLabel(Modifier.fillMaxWidth())
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {
             val leaveLabel = stringResource(R.string.guided_leave_workout)
             TextButton(onClick = onLeave, enabled = !state.isSaving, colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
-                modifier = if (largeText) Modifier.semantics { contentDescription = leaveLabel } else Modifier.weight(1f),
+                modifier = if (largeText) Modifier.semantics { contentDescription = leaveLabel } else Modifier,
                 contentPadding = PaddingValues(horizontal = 8.dp)) {
                 Text(if (largeText) stringResource(R.string.guided_leave_short) else leaveLabel)
             }
-            if (!largeText) contextLabel(Modifier.weight(1.25f))
             TextButton(onClick = viewModel::requestFinish, enabled = !state.isSaving, colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
-                modifier = if (largeText) Modifier else Modifier.weight(.8f),
                 contentPadding = PaddingValues(horizontal = 8.dp)) {
                 Text(stringResource(R.string.workout_action_finish))
             }

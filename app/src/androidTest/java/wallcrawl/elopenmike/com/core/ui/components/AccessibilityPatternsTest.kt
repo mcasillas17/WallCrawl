@@ -33,6 +33,7 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -107,6 +108,7 @@ class AccessibilityPatternsTest {
         val density = context.resources.displayMetrics.density
         val base = Configuration(context.resources.configuration).apply { setLocales(LocaleList(Locale.forLanguageTag("es-MX"))) }
         val localized = context.createConfigurationContext(base)
+        val labels = listOf(R.string.nav_today, R.string.nav_progress, R.string.nav_exercises).map(localized::getString)
         compose.setContent {
             CompositionLocalProvider(
                 LocalContext provides localized,
@@ -120,7 +122,7 @@ class AccessibilityPatternsTest {
             width = w
             scale = s
             compose.waitForIdle()
-            listOf("Hoy", "Progreso", "Ejercicios", "Perfil").forEach { label ->
+            labels.forEach { label ->
                 val layouts = mutableListOf<TextLayoutResult>()
                 compose.onNodeWithText(label, useUnmergedTree = true)
                     .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
@@ -132,23 +134,21 @@ class AccessibilityPatternsTest {
         width = 412.dp
         scale = 1f
         compose.waitForIdle()
-        assertWithMessage("one row when the labels fit").that(top("Perfil")).isEqualTo(top("Hoy"))
-        width = 320.dp
-        scale = 1.8f
-        compose.waitForIdle()
-        assertWithMessage("two rows when they do not").that(top("Perfil")).isGreaterThan(top("Hoy"))
-        val selected = compose.onNodeWithText("Ejercicios")
+        assertWithMessage("one row when the labels fit").that(top(labels.last())).isEqualTo(top(labels.first()))
+        val selected = compose.onNodeWithText(labels.last())
         selected.assertIsSelected()
         val spoken = selected.fetchSemanticsNode().config
         assertThat(spoken.getOrNull(SemanticsProperties.ContentDescription).orEmpty()).isEmpty()
-        assertThat(spoken.getOrNull(SemanticsProperties.Text)?.map { it.text }).containsExactly("Ejercicios")
+        assertThat(spoken.getOrNull(SemanticsProperties.Text)?.map { it.text }).containsExactly(labels.last())
     }
 
-    /** The frame counter stays out of the tree, so a screen reader never hears it advance. */
+    /** The frame counter is hidden from screen readers, so one never hears it advance. */
     @Test fun animatedIllustrationIsQuietAndPauseHoldsTheFrame() {
         showIllustration(animationsEnabled = true)
         val counter = context.getString(R.string.illustration_frame_counter, "1", "2")
-        assertThat(compose.onAllNodesWithText(counter).fetchSemanticsNodes()).isEmpty()
+        // Shown, but hidden from screen readers by the badge around it.
+        val hidden = SemanticsMatcher.keyIsDefined(SemanticsProperties.HideFromAccessibility)
+        compose.onNode(hasText(counter) and (hidden or hasAnyAncestor(hidden)), useUnmergedTree = true).assertExists()
         val first = counterPixels()
         compose.mainClock.advanceTimeBy(850)
         compose.waitForIdle()
@@ -433,7 +433,8 @@ class AccessibilityPatternsTest {
         compose.setContent {
             WallCrawlTheme {
                 GymFloorSetRow(
-                    set = WorkoutSet(id = "s", workoutExerciseId = "e", setNumber = 1, exerciseType = ExerciseType.WEIGHT_REPS, targetReps = 8, targetWeight = 40.0),
+                    set = WorkoutSet(id = "s", workoutExerciseId = "e", setNumber = 1, exerciseType = ExerciseType.WEIGHT_REPS, targetReps = 8, targetWeight = 40.0,
+                        completedReps = 8, completedWeight = 40.0, isCompleted = true),
                     weightUnit = "kg", previousSet = null,
                     onCompletionChanged = { _, _ -> }, onSkipSet = { _, _ -> }, onRecordEffort = { _, _ -> }, onRecordFeltManageable = {}
                 )

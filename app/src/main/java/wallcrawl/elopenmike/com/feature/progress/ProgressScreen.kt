@@ -86,7 +86,6 @@ import wallcrawl.elopenmike.com.core.ui.components.MetricHighlight
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
 import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
-import wallcrawl.elopenmike.com.core.ui.components.isLargeText
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.theme.successText
@@ -262,10 +261,8 @@ fun ProgressScreen(
                                 }
                             }
                             val recentLabel = stringResource(R.string.guided_progress_recent)
-                            if (isLargeText()) {
-                                Text(recentLabel, Modifier.a11yHeading(), style = MaterialTheme.typography.titleMedium)
-                                allWorkouts()
-                            } else Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                            // The button moves below the heading whenever the two do not fit side by side.
+                            FlowRow(Modifier.fillMaxWidth(), itemVerticalAlignment = Alignment.CenterVertically) {
                                 Text(recentLabel, Modifier.weight(1f).a11yHeading(), style = MaterialTheme.typography.titleMedium)
                                 allWorkouts()
                             }

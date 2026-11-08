@@ -245,11 +245,11 @@ class AccessibilityBaselineTest {
         show(Locale.ENGLISH, ThemePreference.LIGHT, 1f, AppRoutes.ONBOARDING)
         compose.onNode(hasSetTextAction()).performTextReplacement("Gwen")
         compose.onNodeWithText("Continue").performClick()
-        compose.onNodeWithText("STEP 2 OF 8").assertExists()
+        compose.onNodeWithText("Step 2 of 8").assertExists()
         compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
         compose.waitForIdle()
-        compose.onNodeWithText("STEP 1 OF 8").assertExists()
-        compose.onNode(SemanticsMatcher.expectValue(SemanticsProperties.PaneTitle, "STEP 1 OF 8")).assertExists()
+        compose.onNodeWithText("Step 1 of 8").assertExists()
+        compose.onNode(SemanticsMatcher.expectValue(SemanticsProperties.PaneTitle, "Step 1 of 8")).assertExists()
         compose.onNode(hasSetTextAction()).assert(hasText("Gwen"))
         assertThat(container.userProfileRepository.getUserProfile().first()).isEqualTo(before)
     }
@@ -261,8 +261,8 @@ class AccessibilityBaselineTest {
         show(Locale.ENGLISH, ThemePreference.LIGHT, 1f, AppRoutes.ONBOARDING)
         compose.onNode(hasSetTextAction()).performTextReplacement("Gwen")
         compose.onNodeWithText("Continue").performClick()
-        compose.onNodeWithText("STEP 2 OF 8").assertExists()
-        compose.onNode(SemanticsMatcher.expectValue(SemanticsProperties.PaneTitle, "STEP 2 OF 8")).assertExists()
+        compose.onNodeWithText("Step 2 of 8").assertExists()
+        compose.onNode(SemanticsMatcher.expectValue(SemanticsProperties.PaneTitle, "Step 2 of 8")).assertExists()
         val back = compose.activity.onBackPressedDispatcher
         fun start() {
             back.dispatchOnBackStarted(BackEventCompat(0f, 1200f, 0f, BackEventCompat.EDGE_LEFT))
@@ -270,10 +270,10 @@ class AccessibilityBaselineTest {
         }
         compose.runOnUiThread { start(); back.dispatchOnBackCancelled() }
         compose.waitForIdle()
-        compose.onNodeWithText("STEP 2 OF 8").assertExists()
+        compose.onNodeWithText("Step 2 of 8").assertExists()
         compose.runOnUiThread { start(); back.onBackPressed() }
         compose.waitForIdle()
-        compose.onNodeWithText("STEP 1 OF 8").assertExists()
+        compose.onNodeWithText("Step 1 of 8").assertExists()
         compose.onNode(hasSetTextAction()).assert(hasText("Gwen"))
         assertThat(container.userProfileRepository.getUserProfile().first()).isEqualTo(before)
     }
@@ -287,14 +287,14 @@ class AccessibilityBaselineTest {
         }
         compose.onNode(hasSetTextAction()).performTextReplacement("Gwen")
         compose.onNodeWithText("Continue").performClick()
-        compose.onNodeWithText("STEP 2 OF 8").assertExists()
+        compose.onNodeWithText("Step 2 of 8").assertExists()
         restoring = true
         compose.waitForIdle()
-        compose.onNodeWithText("Back").assertIsNotEnabled()
+        // The header arrow is the only on-screen Back; system Back is held too.
         compose.onNodeWithContentDescription("Back").assertIsNotEnabled()
         compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
         compose.waitForIdle()
-        compose.onNodeWithText("STEP 2 OF 8").assertExists()
+        compose.onNodeWithText("Step 2 of 8").assertExists()
     }
 
     /** Back must not leave the app, and cancel the restore, while one runs on the first step. */
@@ -325,7 +325,9 @@ class AccessibilityBaselineTest {
             screenWidthDp = 320
         }
         localized = context.createConfigurationContext(configuration)
-        var set by mutableStateOf(WorkoutSet(id = "s", workoutExerciseId = "e", setNumber = 1, exerciseType = ExerciseType.WEIGHT_REPS, targetReps = 8, targetWeight = 47.5))
+        // Logged, since the logger offers feedback only on a resolved set.
+        var set by mutableStateOf(WorkoutSet(id = "s", workoutExerciseId = "e", setNumber = 1, exerciseType = ExerciseType.WEIGHT_REPS, targetReps = 8, targetWeight = 47.5,
+            completedReps = 8, completedWeight = 47.5, isCompleted = true))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) compose.enableAccessibilityChecks()
         compose.setContent {
             CompositionLocalProvider(
@@ -456,7 +458,10 @@ class AccessibilityBaselineTest {
         saveProfile(completed = true)
         show(Locale.ENGLISH, ThemePreference.LIGHT, 1f, AppRoutes.TODAY)
         compose.runOnIdle { nav.navigate(AppRoutes.PROFILE) }
-        val list = compose.onAllNodes(hasScrollAction())[0]
+        compose.onNodeWithText(localized.getString(R.string.guided_training_preferences)).performClick()
+        // The page is a lazy list: its later rows exist only once scrolled to.
+        compose.waitUntilAtLeastOneExists(hasText(localized.getString(R.string.guided_goals)), 10_000)
+        var list = compose.onAllNodes(hasScrollAction())[0]
         list.performScrollToNode(hasContentDescription("4 days per week"))
         compose.onNodeWithContentDescription("2 days per week").assertIsSelected()
         compose.onNodeWithContentDescription("4 days per week").assertIsNotSelected().performClick()
@@ -485,18 +490,8 @@ class AccessibilityBaselineTest {
                 .fetchSemanticsNodes().single().config.getOrNull(SemanticsProperties.StateDescription)
         ).contains("min")
 
-        // The unit and each muscle's priority are radio groups: the selected one says so, and a tap moves it.
+        // Each muscle's priority is a radio group: the selected one says so, and a tap moves it.
         val radio = SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton)
-        val pounds = hasText(localized.getString(WeightUnit.LBS.shortLabelRes)) and radio
-        val kilograms = hasText(localized.getString(WeightUnit.KG.shortLabelRes)) and radio
-        list.performScrollToNode(kilograms)
-        compose.onNode(pounds).assertIsSelected()
-        compose.onNode(kilograms).assertIsNotSelected().performClick()
-        compose.waitUntil(5_000) {
-            runBlocking { container.userProfileRepository.getUserProfile().first().preferredUnit } == WeightUnit.KG
-        }
-        compose.onNode(kilograms).assertIsSelected()
-        compose.onNode(pounds).assertIsNotSelected()
         // A muscle not already at High: some start there.
         val high = hasContentDescription(" priority: " + localized.getString(PriorityLevel.HIGH.labelRes), substring = true) and radio
         val notYet = high and SemanticsMatcher.expectValue(SemanticsProperties.Selected, false)
@@ -508,6 +503,22 @@ class AccessibilityBaselineTest {
             runBlocking { container.userProfileRepository.getUserProfile().first().musclePriorities } != before
         }
         compose.onNode(hasContentDescription(name) and radio).assertIsSelected()
+
+        // The unit, on App preferences, is a radio group too.
+        compose.onNodeWithContentDescription(localized.getString(R.string.action_back)).performClick()
+        compose.onNodeWithText(localized.getString(R.string.guided_app_preferences)).performClick()
+        val pounds = hasText(localized.getString(WeightUnit.LBS.shortLabelRes)) and radio
+        val kilograms = hasText(localized.getString(WeightUnit.KG.shortLabelRes)) and radio
+        compose.waitForIdle()
+        list = compose.onAllNodes(hasScrollAction())[0]
+        list.performScrollToNode(kilograms)
+        compose.onNode(pounds).assertIsSelected()
+        compose.onNode(kilograms).assertIsNotSelected().performClick()
+        compose.waitUntil(5_000) {
+            runBlocking { container.userProfileRepository.getUserProfile().first().preferredUnit } == WeightUnit.KG
+        }
+        compose.onNode(kilograms).assertIsSelected()
+        compose.onNode(pounds).assertIsNotSelected()
     }
 
     private fun sweep(locale: Locale, theme: ThemePreference, fontScale: Float, narrow: Boolean = fontScale > 1f) = runBlocking {
@@ -522,7 +533,7 @@ class AccessibilityBaselineTest {
         seedActive("active")
         // Back to the top, where the open session's banner is, once Room has delivered it.
         compose.onNodeWithTag("today-list").performScrollToIndex(0)
-        compose.waitUntilAtLeastOneExists(hasText(localized.getString(R.string.today_action_resume)), 10_000)
+        compose.waitUntilAtLeastOneExists(hasText(localized.getString(R.string.guided_train_resume)), 10_000)
         scan(AppRoutes.TODAY)
         listOf(
             AppRoutes.PROGRESS, AppRoutes.TRENDS, AppRoutes.MUSCLES, AppRoutes.EXERCISES, AppRoutes.CONDITION_REFERENCE,
@@ -696,13 +707,13 @@ class AccessibilityBaselineTest {
                     val end = layout.getLineEnd(line)
                     val tokenStart = text.lastIndexOf(' ', end - 1) + 1
                     val tokenEnd = text.indexOf(' ', end).let { if (it < 0) text.length else it }
-                    // A web address has no break point to offer, and no layout can fit a word wider
-                    // than a whole 320 dp screen's content without shrinking the reader's text.
-                    val isAddress = "://" in text.substring(tokenStart, tokenEnd)
+                    // A web address or file path has no break point to offer, and no layout can fit a word
+                    // wider than a whole 320 dp screen's content without shrinking the reader's text.
+                    val isAddress = '/' in text.substring(tokenStart, tokenEnd)
                     val tokenWidth = (tokenStart until tokenEnd).sumOf { layout.getBoundingBox(it).width.toDouble() }
                     val widerThanScreen = tokenWidth > layout.size.width && layout.size.width / density >= WIDEST_LINE_DP - 1
                     if (!isAddress && !widerThanScreen && end in 1 until text.length && text[end - 1].isLetter() && text[end].isLetter()) {
-                        findings += "$route word broken: \"$text\" (word %.0f dp, box %.0f dp)".format(tokenWidth / density, layout.size.width / density)
+                        findings += "$route word broken: \"${text.substring(tokenStart, end)}|${text.substring(end, tokenEnd)}\" in \"$text\" (word %.0f dp, box %.0f dp)".format(tokenWidth / density, layout.size.width / density)
                     }
                 }
             }

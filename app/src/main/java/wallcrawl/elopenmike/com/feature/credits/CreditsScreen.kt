@@ -310,6 +310,11 @@ private fun rememberNoticeText(
                         .filter(String::isNotEmpty)
                         .joinToString(" ")
                 }
+                // Android keeps a long hyphenated compound together and then splits it mid-letter at large text,
+                // so each hyphen between letters gets an invisible break opportunity. Links and paths are left alone.
+                .replace(NON_SPACE) { token ->
+                    if ('/' in token.value) token.value else token.value.replace(LETTER_HYPHEN, "-\u200B")
+                }
             while (cursor < text.length) {
                 val match = MARKDOWN_LINK.find(text, cursor)
                 if (match == null) {
@@ -330,5 +335,7 @@ private fun rememberNoticeText(
     }
 }
 
+private val NON_SPACE = Regex("""\S+""")
+private val LETTER_HYPHEN = Regex("""(?<=\p{L})-(?=\p{L})""")
 private val MARKDOWN_LINK = Regex("""\[([^\]]+)]\(([^)\s]+)\)""")
 private val PARAGRAPH_BREAK = Regex("\\n\\s*\\n")

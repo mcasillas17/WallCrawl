@@ -60,6 +60,7 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
 import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
+import wallcrawl.elopenmike.com.core.ui.components.isLargeText
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
@@ -107,6 +108,17 @@ fun WorkoutTemplatesScreen(
 
     Box(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
+            val createLabel = stringResource(R.string.templates_create_content_description)
+            @Composable
+            fun CreateButton() {
+                TextButton(onClick = openCreate, enabled = !anyStarting,
+                    modifier = Modifier.semantics { contentDescription = createLabel }) {
+                    Icon(Icons.Default.Add, null)
+                    Text(stringResource(R.string.templates_action_create))
+                }
+            }
+            // At large text Create takes its own line, or it leaves the title too narrow for one word.
+            val createBelow = isLargeText() && onBack != null
             if (onBack != null || state.templates.isNotEmpty()) Row(
                 Modifier.fillMaxWidth().padding(vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -120,12 +132,10 @@ fun WorkoutTemplatesScreen(
                 } else {
                     Spacer(Modifier.weight(1f))
                 }
-                val createLabel = stringResource(R.string.templates_create_content_description)
-                if (state.templates.isNotEmpty()) TextButton(onClick = openCreate, enabled = !anyStarting,
-                    modifier = Modifier.semantics { contentDescription = createLabel }) {
-                    Icon(Icons.Default.Add, null)
-                    Text(stringResource(R.string.templates_action_create))
-                }
+                if (state.templates.isNotEmpty() && !createBelow) CreateButton()
+            }
+            if (state.templates.isNotEmpty() && createBelow) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { CreateButton() }
             }
 
             if (state.isLoading) {

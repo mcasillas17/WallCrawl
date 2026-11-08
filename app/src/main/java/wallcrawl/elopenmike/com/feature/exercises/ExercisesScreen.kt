@@ -33,6 +33,7 @@ import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.ui.components.ExerciseIllustration
 import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
+import wallcrawl.elopenmike.com.core.ui.components.isLargeText
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
 import wallcrawl.elopenmike.com.core.ui.components.a11yExpanded
@@ -110,6 +111,7 @@ private fun ExerciseList(
     val vocabulary = LocalExerciseVocabulary.current
     val locale = LocalConfiguration.current.locales[0]
     val activeFilters = listOfNotNull(state.selectedMuscle?.let(vocabulary::muscle), state.selectedEquipment?.let(vocabulary::equipment))
+    val largeText = isLargeText()
     LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)) {
         item {
             OutlinedTextField(
@@ -154,9 +156,12 @@ private fun ExerciseList(
             ListItem(
                 modifier = Modifier.clickable(role = Role.Button) { viewModel.openExerciseDetail(exercise) },
                 colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.background),
-                leadingContent = {
-                    ExerciseIllustration(exercise, visualProvider, Modifier.size(64.dp).clearAndSetSemantics {},
-                        height = 64, thumbnail = true)
+                // The thumbnail is decorative; at large text the name needs its width.
+                leadingContent = if (largeText) null else {
+                    {
+                        ExerciseIllustration(exercise, visualProvider, Modifier.size(64.dp).clearAndSetSemantics {},
+                            height = 64, thumbnail = true)
+                    }
                 },
                 headlineContent = { Text(vocabulary.exerciseName(exercise)) },
                 supportingContent = {

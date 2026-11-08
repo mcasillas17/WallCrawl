@@ -34,6 +34,7 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlSecondaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
 import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
+import wallcrawl.elopenmike.com.core.ui.components.isLargeText
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.*
 import wallcrawl.elopenmike.com.feature.program.ProgramPlanningChoice
@@ -158,7 +159,8 @@ internal fun TodayContent(
         if (active != null) item(key = "resume") {
             WallCrawlCard(Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.guided_train_active), style = MaterialTheme.typography.labelLarge)
-                Text(active.name, Modifier.a11yHeading(), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Text(active.name, Modifier.a11yHeading(), style = if (isLargeText()) MaterialTheme.typography.titleLarge
+                    else MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
                 Text(pluralStringResource(R.plurals.today_active_session_sets, active.totalSetsCount,
                     LocaleFormatting.formatCount(active.completedSetsCount, locale),
                     LocaleFormatting.formatCount(active.totalSetsCount, locale)), color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -275,7 +277,9 @@ private fun WorkoutHero(
             return@WallCrawlCard
         }
         state.programSession?.let { Text(positionText(it.position), style = MaterialTheme.typography.labelLarge) }
-        Text(name, Modifier.a11yHeading(), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+        // At large text a headline-size word such as "Acondicionamiento" is wider than the card; the title size still scales.
+        Text(name, Modifier.a11yHeading(), style = if (isLargeText()) MaterialTheme.typography.titleLarge
+            else MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
         Text(vocabulary.muscles(workout.focusMuscles).joinToString(stringResource(R.string.detail_separator)),
             style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
         val duration = stringResource(R.string.today_stat_duration, LocaleFormatting.formatCount(workout.estimatedDurationMinutes, locale))
@@ -314,7 +318,8 @@ private fun WorkoutHero(
 
 @Composable
 private fun SourceRow(intent: WorkoutPlanningIntent, onChange: () -> Unit, enabled: Boolean) {
-    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+    // Change moves below the source whenever the two do not fit side by side.
+    FlowRow(Modifier.fillMaxWidth(), itemVerticalAlignment = Alignment.CenterVertically) {
         Text(stringResource(if (intent == WorkoutPlanningIntent.PROGRAM) R.string.program_session_choice
             else R.string.guided_train_ordinary), Modifier.weight(1f), style = MaterialTheme.typography.labelLarge)
         TextButton(onClick = onChange, enabled = enabled) { Text(stringResource(R.string.guided_train_change)) }

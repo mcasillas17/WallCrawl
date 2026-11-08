@@ -400,7 +400,12 @@ class ActiveWorkoutScreenTest {
         listOf(text(R.string.rest_add_thirty), "Skip rest").forEach {
             composeRule.onNodeWithText(it).performScrollTo().assertIsDisplayed().assertWidthIsAtLeast(48.dp).assertHasClickAction()
         }
-        composeRule.onNodeWithContentDescription("Rest timer options").assertWidthIsAtLeast(48.dp).assertHasClickAction()
+        // An icon button draws 40 dp and extends its touch area to 48 dp, so the touch bounds are what count.
+        val options = composeRule.onNodeWithContentDescription("Rest timer options").assertHasClickAction().fetchSemanticsNode()
+        with(composeRule.density) {
+            assertThat(options.touchBoundsInRoot.width.toDp()).isAtLeast(48.dp)
+            assertThat(options.touchBoundsInRoot.height.toDp()).isAtLeast(48.dp)
+        }
         composeRule.onNodeWithContentDescription("Set 1").performScrollTo().performClick()
         composeRule.onNodeWithText(text(R.string.set_feedback_show)).performScrollTo().performClick()
         listOf("Yes", "No").forEach {
