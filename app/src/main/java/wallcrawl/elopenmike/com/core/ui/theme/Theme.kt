@@ -40,7 +40,9 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = CrimsonRedPrimary,
+    // The brand red reads under 4.5:1 as text on light surfaces, and Material draws text and outlined
+    // button labels in primary, so the light scheme uses the readable red. Brand fills stay CrimsonRedPrimary.
+    primary = AccentTextOnLight,
     onPrimary = TextWhite,
     primaryContainer = CrimsonRedLight.copy(alpha = 0.12f),
     onPrimaryContainer = CrimsonRedDark,

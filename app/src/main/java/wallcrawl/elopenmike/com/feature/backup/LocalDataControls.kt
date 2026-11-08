@@ -46,6 +46,8 @@ import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
 import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.semantics
 
 const val LOCAL_DATA_EXPORT_TEST_TAG = "local_data_export"
 const val LOCAL_DATA_RESTORE_TEST_TAG = "local_data_restore"
@@ -384,9 +386,10 @@ internal fun BusyIndicator(visible: Boolean) {
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // Beside its own text: hidden, so the row is read once.
         CircularProgressIndicator(
             color = CrimsonRedPrimary,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(20.dp).semantics { hideFromAccessibility() }
         )
         Spacer(modifier = Modifier.size(8.dp))
         Text(

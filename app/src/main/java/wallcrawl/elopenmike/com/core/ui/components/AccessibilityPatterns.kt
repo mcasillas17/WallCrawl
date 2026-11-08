@@ -89,8 +89,8 @@ fun LoadingIndicator(modifier: Modifier = Modifier) {
 
 /**
  * False when the user turned animations off (Remove animations, or animator scale 0). It reads the
- * composition's [MotionDurationScale], the scale Compose's own animations follow, so it changes as
- * soon as the setting does; it is read again on every return to the app as well.
+ * composition's [MotionDurationScale], the scale Compose's own animations follow. That scale is snapshot
+ * state, so a change, including one made while the app was away, recomposes whatever read it.
  */
 @Composable
 fun rememberAnimationsEnabled(): Boolean {

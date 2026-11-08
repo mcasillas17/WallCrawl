@@ -39,12 +39,12 @@ fun ConditionSelectionControls(
                         SelectedCondition(it.conditionId, it.contextSchemaVersion, answers) else it })
                 } else ConditionAnswers(selection.answers, record.inputs + record.responsePolicy.inputs)
             }
-            if (onChange != null) TextButton(enabled = enabled, colors = labelColors(), onClick = { onChange(selections.filterNot { it.conditionId == selection.conditionId }) }) {
+            if (onChange != null) TextButton(enabled = enabled, onClick = { onChange(selections.filterNot { it.conditionId == selection.conditionId }) }) {
                 Text(stringResource(R.string.condition_remove, record?.label?.localized() ?: selection.conditionId))
             }
         }
         if (onChange != null && selections.size < 32) records.filter { record -> selections.none { it.conditionId == record.conditionId } }.forEach { record ->
-            TextButton(enabled = enabled, colors = labelColors(), onClick = { onChange(selections + SelectedCondition(record.conditionId, record.contextSchemaVersion, emptyMap())) }) {
+            TextButton(enabled = enabled, onClick = { onChange(selections + SelectedCondition(record.conditionId, record.contextSchemaVersion, emptyMap())) }) {
                 Text(stringResource(R.string.condition_add, record.label.localized()))
             }
         }
@@ -165,10 +165,6 @@ fun RecordedConditions(context: SessionConditionContext) {
     }
     if (context.formatVersion != 1 || context.policyVersion != 1) ConditionLabel(stringResource(R.string.condition_recorded_version, context.formatVersion, context.policyVersion))
 }
-
-/** The theme's text colour, which dims when disabled: TextButton's default red reads under 4.5:1. */
-@Composable
-private fun labelColors() = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
 
 @Composable
 private fun ConditionLabel(text: String, modifier: Modifier = Modifier,

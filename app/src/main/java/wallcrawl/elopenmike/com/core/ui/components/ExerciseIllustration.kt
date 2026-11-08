@@ -83,15 +83,22 @@ fun ExerciseIllustration(
     // The setting can change while the app is away, and a saved or running state must not outlast that.
     // Only a change moves it: Play, chosen with animations off, survives leaving and re-entering composition,
     // and turning animations back on starts the loop again.
-    var lastEnabled by rememberSaveable { mutableStateOf(animationsEnabled) }
-    LaunchedEffect(animationsEnabled) {
-        if (lastEnabled != animationsEnabled) playing = animationsEnabled
-        lastEnabled = animationsEnabled
-    }
+    // A shared playback is owned by its caller, which follows the setting once for every illustration it serves.
+    if (playback == null) FollowAnimationSetting(animationsEnabled, ownPlayback)
     key(exercise?.id, visualProvider, variant) {
         ExerciseIllustrationContent(exercise, visualProvider, variant, modifier, height, thumbnail, animationsEnabled, playing) {
             playing = !playing
         }
+    }
+}
+
+/** Only a change of the setting moves [playback]; a reader's own Play or Pause stands otherwise. */
+@Composable
+fun FollowAnimationSetting(animationsEnabled: Boolean, playback: MutableState<Boolean>) {
+    var lastEnabled by rememberSaveable { mutableStateOf(animationsEnabled) }
+    LaunchedEffect(animationsEnabled) {
+        if (lastEnabled != animationsEnabled) playback.value = animationsEnabled
+        lastEnabled = animationsEnabled
     }
 }
 

@@ -80,6 +80,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.ui.components.ExerciseIllustration
+import wallcrawl.elopenmike.com.core.ui.components.FollowAnimationSetting
 import wallcrawl.elopenmike.com.core.ui.components.GymFloorSetRow
 import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
 import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
@@ -273,6 +274,7 @@ private fun ActiveWorkoutContent(
     // One state for the compact demo and the expanded one: the compact demo has no control of its own.
     val animationsEnabled = rememberAnimationsEnabled()
     val illustrationPlayback = rememberSaveable { mutableStateOf(animationsEnabled) }
+    FollowAnimationSetting(animationsEnabled, illustrationPlayback)
     Column(Modifier.fillMaxSize().padding(horizontal = 12.dp)) {
         val largeText = isLargeText()
         val contextLabel = @Composable { modifier: Modifier ->

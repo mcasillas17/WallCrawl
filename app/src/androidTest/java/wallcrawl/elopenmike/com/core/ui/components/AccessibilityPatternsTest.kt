@@ -3,7 +3,6 @@ package wallcrawl.elopenmike.com.core.ui.components
 import androidx.compose.material3.Text
 import androidx.compose.ui.test.isSelected
 import androidx.compose.ui.test.hasClickAction
-import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.SemanticsMatcher
 import android.content.res.Configuration
@@ -38,7 +37,6 @@ import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.onNodeWithText
@@ -64,6 +62,10 @@ import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.semantics.Role
 import wallcrawl.elopenmike.com.core.locale.AppLanguage
 import androidx.test.platform.app.InstrumentationRegistry
+import wallcrawl.elopenmike.com.WallCrawlApplication
+import kotlinx.coroutines.runBlocking
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.foundation.layout.width
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import java.util.Locale
@@ -244,20 +246,28 @@ class AccessibilityPatternsTest {
 
     /** A compact demo has no control of its own, so a Pause on the full-size one sharing its playback holds it too. */
     @Test fun aSharedPauseHoldsTheCompactDemo() {
+        val app = context.applicationContext as WallCrawlApplication
+        val exercise = runBlocking { app.container.exerciseCatalog.getExerciseById("incline-dumbbell-press")!! }
         val playback = mutableStateOf(true)
         compose.setContent {
             WallCrawlTheme {
                 Column {
-                    val exercise = Exercise(id = "push-up", name = "push-up", primaryMuscles = listOf("Chest"), type = ExerciseType.BODYWEIGHT_REPS)
-                    ExerciseIllustration(exercise, twoFrames, height = 88, animationsEnabled = true, playback = playback)
-                    ExerciseIllustration(exercise, twoFrames, height = 210, animationsEnabled = true, playback = playback)
+                    ExerciseIllustration(exercise, app.container.exerciseVisualProvider, Modifier.width(88.dp).testTag("compact"),
+                        height = 88, animationsEnabled = true, playback = playback)
+                    ExerciseIllustration(exercise, app.container.exerciseVisualProvider, height = 210,
+                        animationsEnabled = true, playback = playback)
                 }
             }
         }
+        fun compact() = compose.onNodeWithTag("compact").captureToImage().asAndroidBitmap()
+        // The compact demo moves while the shared playback runs.
+        compose.waitUntil(15_000) { compact().let { a -> compose.mainClock.advanceTimeBy(900); !a.sameAs(compact()) } }
         compose.onNodeWithContentDescription(context.getString(R.string.illustration_pause)).performClick()
-        compose.waitForIdle()
+        compose.mainClock.advanceTimeBy(1_500)
+        val held = compact()
+        compose.mainClock.advanceTimeBy(2_000)
+        assertThat(compact().sameAs(held)).isTrue()
         assertThat(playback.value).isFalse()
-        compose.onNodeWithContentDescription(context.getString(R.string.illustration_play)).assertExists()
     }
 
     /** Turning animations off while away stops a loop that had been playing. */
@@ -507,9 +517,9 @@ class AccessibilityPatternsTest {
                 )
             }
         }
-        val load = compose.onNodeWithContentDescription("Load (kg) for set 1")
+        val load = compose.onNodeWithContentDescription(context.getString(R.string.set_field_value_accessibility, context.getString(R.string.set_field_with_unit, context.getString(R.string.set_field_load), "kg"), "1"))
         load.assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "40"))
-        compose.onNodeWithContentDescription("Increase Load for set 1").performClick()
+        compose.onNodeWithContentDescription(context.getString(R.string.set_field_increase_accessibility, context.getString(R.string.set_field_load), "1")).performClick()
         compose.waitForIdle()
         val stepped = load.fetchSemanticsNode().config[SemanticsProperties.StateDescription]
         assertThat(stepped).isNotEqualTo("40")

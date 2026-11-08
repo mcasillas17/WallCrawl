@@ -578,6 +578,8 @@ class AccessibilityBaselineTest {
         AppRoutes.HISTORY, AppRoutes.historyDetail("recorded") -> LONG_SESSION_NAME
         AppRoutes.WORKOUT_TEMPLATES, AppRoutes.editTemplate("saved") -> "Saved routine"
         AppRoutes.TEMPLATE_NEW -> localized.getString(R.string.editor_name_label)
+        // The library loads from assets after the title shows; the about text only appears with the list.
+        AppRoutes.CONDITION_REFERENCE -> localized.getString(R.string.guided_research_about)
         else -> null
     }
 

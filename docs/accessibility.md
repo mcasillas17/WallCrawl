@@ -108,7 +108,7 @@ and of Progress's analytics card, whose spinners are hidden from screen readers 
 | Progress, Over time and muscles | Normal, no match, error | Section headings; error announced; trend rows are one stop each; trend arrow says Up or Down, because a gain has no sign of its own; trend and volume text pass contrast; names no longer ellipsized | Walked on the earlier design only: filters, measure definitions, chart summary and per-week rows were read without touching the chart; the chart states *The list below has every value*; formulas unchanged. The redesigned pages were not walked |
 | History | List, detail, disclosure, read error | Palette fixes; read and missing errors announced | Not walked |
 | Library | Normal, filters, detail sheet (empty and error states set in code, not tested) | Load and link errors announced; filter titles are headings; *More details* states expanded or collapsed; frame counter silent; pause control | Walked on the earlier design only: the top of the catalog and one detail sheet: *Bottom Sheet*, then the illustration, Pause and the name |
-| Condition reference | List, search, detail, notes, related reading | Headings on the guide, regions, condition and publications; named spinner; load and link errors announced; research notes and related reading state expanded or collapsed | Not walked |
+| Condition reference | List and search swept; detail, notes and related reading set in code, not swept | Headings on the guide, regions, condition and publications; named spinner; load and link errors announced; research notes and related reading state expanded or collapsed | Not walked |
 | Condition controls | Profile, onboarding, pending review | Each question's answers are a grouped radio set of 48 dp rows; section titles are headings; refusals and errors announced; button labels take the button's colour, so a disabled button dims and the filled Submit keeps its contrast | Not walked |
 | Profile and data | Overview, each settings page, edit, delete dialog | Goals are checkboxes and the last one is unavailable, with a hint saying why; experience, days, priorities and unit are grouped radios; slider speaks minutes; priority names its muscle; errors announced, including condition and reported-condition errors; dialog body scrolls | Walked on the earlier design only: goals, unit and duration slider. The grouped settings were not walked |
 | Credits | Normal (loading and error states set in code, not tested) | Load and link errors announced | Not walked |
@@ -125,13 +125,14 @@ Typography no longer carries colour, so text takes the colour of the surface it 
 
 ## Measurements
 
-*Before* values were calculated by hand, on the palette at `da8b24b`. #106 then changed the palette; its red, DE2045, also reads under 4.5:1 on cards, at about 4.3:1 on a light card and 3.4:1 on a dark one, so red text still uses `tertiary`. *After* values are palette colours that `ThemeContrastTest` checks against 4.5:1. That test checks colours, not where each is used; call sites were reviewed by reading, and ATF sees those on screen during the sweep, though not dialogs, which it does not open. The editor's discard dialog text is checked only by a pixel test with a 3:1 floor, so it is not held to 4.5:1 by a test.
+*Before* values were calculated by hand, on the palette at `da8b24b`. #106 then changed the palette; its red, DE2045, also reads under 4.5:1 on cards, at about 4.3:1 on a light card and 3.4:1 on a dark one, so red text still uses `tertiary`. Material draws text and outlined button labels in `primary`, so the light scheme's `primary` is the same readable red; brand fills such as the primary button keep DE2045. *After* values are palette colours that `ThemeContrastTest` checks against 4.5:1. That test checks colours, not where each is used; call sites were reviewed by reading, and ATF sees those on screen during the sweep, though not dialogs, which it does not open. The editor's discard dialog text is checked only by a pixel test with a 3:1 floor, so it is not held to 4.5:1 by a test.
 
 | Text | Before | After |
 | --- | --- | --- |
 | Typed field text, light | F1F5F9 on FFFFFF, about 1.1:1 | Theme `onSurface` |
 | Red text on a light card | E81A21 on F1F5F9, about 4.2:1 | B91218 (`tertiary`) |
 | Red text on a dark card | E81A21 on 131722, about 3.9:1 | FF7A82 (`tertiary`) |
+| Default text-button labels, light | DE2045 (#106's `primary`) on F5F4F2, about 4.3:1 | B91218 (light `primary`) |
 | Blue text on a light card | 0284C7 on F1F5F9, about 3.7:1 | 126494, #106's own blue, about 5.8:1 |
 | Success text, light | 10B981 on FFFFFF, about 2.5:1 | 07704F |
 
@@ -148,7 +149,7 @@ Typography no longer carries colour, so text takes the colour of the surface it 
 The illustration loop is the only continuous motion besides Material spinners shown while a screen loads or a
 backup runs. Spinners were not checked separately at animator scale 0. The loop follows the composition's
 `MotionDurationScale`, the scale Compose's own animations use, which tracks the system animation setting as it
-changes; it is also read again on each return to the app. When animations are off, a loop that was playing stops
+changes, including while the app is away; the scale is snapshot state, so readers recompose. When animations are off, a loop that was playing stops
 and returns to its first frame, and a new illustration starts paused. Full-size illustrations with more than one
 frame offer Pause and Play, so a reader with animations off can still choose to play one, and a reader's own Pause
 keeps the frame where it stopped. Turning animations back on starts the loop again. Compact illustrations and
@@ -201,7 +202,7 @@ order. Predictive gestures were not repeated with TalkBack on, and the preview l
 - The last selected goal is dimmed to 60% and announced as unavailable; the dimmed text falls below 4.5:1, which WCAG exempts for disabled controls. No test measures the dimming.
 - If an illustration frame fails to load, its counter and Pause/Play stay over the placeholder, because a later frame may still load. No test forces this path.
 - Disabled button labels dim to Material's 38%, below 4.5:1, which WCAG exempts for disabled controls, with the two exceptions below. This now includes buttons that used to force their label colour and so looked enabled while disabled, such as Program's Start, Pause and Resume and its replace or restart confirmation, Train's deload choices while a choice saves, the template list's and editor's Back, Create, Edit and Delete icons while a template starts or saves, and the label of an unavailable Program or Ordinary planning choice. Two keep a readable disabled label because it can be the only progress message: `WallCrawlPrimaryButton`, and the restore entry, whose label reads as restoring while a restore runs. The primary button's fill fades to 40% when disabled, but the restore entry is a text button with no fill, so it does not look disabled while a restore runs, and sighted users rely on its label to know a tap does nothing; where an outlined button shows one, as deleting all data does, a readable announced status sits beside it.
-- A repeated refusal creates a new live-region node. Screen tests assert this for onboarding, the set row, the active workout's banner and the template editor. The template list's repeated Start and Delete are checked only in its view model, where the attempt count rises, and not on screen. None of these repeats was walked with TalkBack.
+- A repeated refusal creates a new live-region node. Screen tests assert this for onboarding, the active workout's banner and the template editor. The template list's repeated Start and Delete are checked only in its view model, where the attempt count rises, and not on screen. None of these repeats was walked with TalkBack.
 - Default outlines around unselected controls and fields are about 1.5:1, below WCAG 1.4.11's 3:1, and were
   not changed. Their labels and text meet the text criterion, and selected states differ by more than the
   outline, but this is an open gap.
