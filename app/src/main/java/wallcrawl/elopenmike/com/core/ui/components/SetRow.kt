@@ -1,13 +1,11 @@
 package wallcrawl.elopenmike.com.core.ui.components
 
 import java.text.DecimalFormatSymbols
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.material.icons.automirrored.filled.Backspace
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.withFrameNanos
 import androidx.annotation.StringRes
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -17,7 +15,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -41,18 +38,24 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
@@ -66,15 +69,17 @@ import wallcrawl.elopenmike.com.core.ui.localization.labelRes
 /** One editable measurement of a set, with the step a gym-floor adjustment actually uses. */
 enum class SetInputField(
     @StringRes val labelRes: Int,
-    val stepSize: Double,
+    val increments: List<Double>,
     val isDecimal: Boolean,
     val maximum: Double
 ) {
-    LOAD(R.string.set_field_load, stepSize = 2.5, isDecimal = true, maximum = 100_000.0),
-    ASSISTANCE(R.string.set_field_assist, stepSize = 2.5, isDecimal = true, maximum = 100_000.0),
-    REPS(R.string.set_field_reps, stepSize = 1.0, isDecimal = false, maximum = 1_000.0),
-    DURATION(R.string.set_field_seconds, stepSize = 5.0, isDecimal = false, maximum = 86_400.0),
-    DISTANCE(R.string.set_field_meters, stepSize = 50.0, isDecimal = true, maximum = 1_000_000.0);
+    LOAD(R.string.set_field_load, increments = listOf(2.5, 1.0, 0.1, 0.01), isDecimal = true, maximum = 100_000.0),
+    ASSISTANCE(R.string.set_field_assist, increments = listOf(2.5, 1.0, 0.1, 0.01), isDecimal = true, maximum = 100_000.0),
+    REPS(R.string.set_field_reps, increments = listOf(1.0), isDecimal = false, maximum = 1_000.0),
+    DURATION(R.string.set_field_seconds, increments = listOf(5.0, 1.0), isDecimal = false, maximum = 86_400.0),
+    DISTANCE(R.string.set_field_meters, increments = listOf(50.0, 1.0, 0.1, 0.01), isDecimal = true, maximum = 1_000_000.0);
+
+    val stepSize: Double get() = increments.first()
 
     /**
      * One step up or down from [current], clamped to the range the repository accepts.
@@ -83,10 +88,10 @@ enum class SetInputField(
      * for this set -- so the control offers what was prescribed instead of inventing a
      * value. With no target either, stepping up starts at one step.
      */
-    fun stepped(current: Double?, increase: Boolean, fallback: Double? = null): Double {
+    fun stepped(current: Double?, increase: Boolean, fallback: Double? = null, increment: Double = stepSize): Double {
         if (current == null && fallback != null && increase) return fallback.coerceIn(0.0, maximum)
         val base = current ?: 0.0
-        val next = (base.toBigDecimal() + (if (increase) stepSize else -stepSize).toBigDecimal()).toDouble()
+        val next = (base.toBigDecimal() + (if (increase) increment else -increment).toBigDecimal()).toDouble()
         return next.coerceIn(0.0, maximum)
     }
 
@@ -169,18 +174,16 @@ fun GymFloorSetRow(
     val setNumber = LocaleFormatting.formatCount(set.setNumber, locale)
     // Only overrides are saved. Untouched legacy/null measurements follow the recorded row.
     var edits by rememberSaveable(set.id) { mutableStateOf(hashMapOf<String, String>()) }
-    var keypad by rememberSaveable(set.id) { mutableStateOf<SetInputField?>(null) }
-    var replaceOnDigit by rememberSaveable(set.id) { mutableStateOf(false) }
     var showStopReasons by rememberSaveable(set.id) { mutableStateOf(false) }
     var showFeedback by rememberSaveable(set.id) { mutableStateOf(false) }
     var submitted by rememberSaveable(set.id) { mutableStateOf(false) }
-    val logButton = remember { BringIntoViewRequester() }
 
     fun initial(field: SetInputField) = field.recorded(set) ?: field.target(set).takeUnless { set.isResolved }
-    fun textFor(field: SetInputField) = edits[field.name] ?: initial(field)?.let { exactMeasurement(it, decimal) }.orEmpty()
+    fun textFor(field: SetInputField) = edits[field.name]?.replace('.', decimal)?.replace(',', decimal)
+        ?: initial(field)?.let { exactMeasurement(it, decimal) }.orEmpty()
     fun parsed(field: SetInputField): Double? {
         val text = edits[field.name] ?: return initial(field)
-        return if (field.isDecimal) LocaleFormatting.parseDecimalInput(text) else LocaleFormatting.parseIntInput(text)?.toDouble()
+        return if (field.isDecimal) LocaleFormatting.parseExactMeasurement(text) else LocaleFormatting.parseIntInput(text)?.toDouble()
     }
     fun edit(field: SetInputField, value: String) {
         submitted = false
@@ -226,97 +229,66 @@ fun GymFloorSetRow(
         if (submitted && !saving && set.isCompleted && fields.all { parsed(it) == it.recorded(set) }) {
             edits = hashMapOf()
             submitted = false
-            keypad = null
         }
     }
 
-    LaunchedEffect(keypad, error) {
-        if (keypad != null) {
-            withFrameNanos { }
-            logButton.bringIntoView()
-        }
-    }
     Column(modifier.fillMaxWidth()
         .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
         .padding(horizontal = 8.dp, vertical = 4.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         set.stopReason?.let { Text(stopReasonLabel(it), style = MaterialTheme.typography.labelLarge) }
-        val editing = keypad
-        if (editing == null) {
-            fields.forEach { field ->
-                val value = textFor(field)
-                val label = stringResource(field.labelRes)
-                val fieldName = if (field == SetInputField.LOAD || field == SetInputField.ASSISTANCE)
-                    stringResource(R.string.set_field_with_unit, label, weightUnit) else label
-                val description = stringResource(R.string.set_field_value_accessibility, fieldName, setNumber)
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        fields.forEach { field ->
+            val label = stringResource(field.labelRes)
+            val fieldName = if (field == SetInputField.LOAD || field == SetInputField.ASSISTANCE)
+                stringResource(R.string.set_field_with_unit, label, weightUnit) else label
+            val description = stringResource(R.string.set_field_value_accessibility, fieldName, setNumber)
+            var stepIndex by rememberSaveable(set.id, field) { mutableStateOf(0) }
+            val increment = field.increments[stepIndex]
+
+            fun step(increase: Boolean) {
+                val current = parsed(field)
+                val next = field.stepped(current, increase, field.target(set), increment)
+                val optional = field == SetInputField.ASSISTANCE || set.exerciseType == ExerciseType.DISTANCE_DURATION
+                val clear = optional && !increase && (current == null || current == 0.0)
+                val value = if (clear) "" else exactMeasurement(next, decimal)
+                if (value != textFor(field)) edit(field, value)
+            }
+
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                if (field.increments.size > 1) {
+                    val amount = exactMeasurement(increment, decimal)
+                    val adjustDescription = stringResource(R.string.guided_change_step, fieldName, amount)
+                    Column(
+                        Modifier.weight(1f).heightIn(min = MIN_TOUCH_TARGET)
+                            .clickable(enabled = !saving, role = Role.Button) {
+                                stepIndex = (stepIndex + 1) % field.increments.size
+                            }.semantics { contentDescription = adjustDescription },
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(fieldName, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface)
+                        Text("±$amount", style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                } else {
                     Text(fieldName, Modifier.weight(1f), style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurface)
-                    fun step(increase: Boolean) {
-                        val stepped = field.stepped(parsed(field), increase, field.target(set))
-                        edit(field, exactMeasurement(stepped, decimal))
-                    }
-                    StepButton(false, stringResource(R.string.set_field_decrease_accessibility, label, setNumber),
-                        { step(false) }, enabled = !saving)
-                    TextButton(onClick = { replaceOnDigit = !value.endsWith('.') && !value.endsWith(','); keypad = field },
-                        enabled = !saving,
-                        modifier = Modifier.weight(1f).heightIn(min = MIN_TOUCH_TARGET).semantics {
-                            contentDescription = description
-                        }, contentPadding = PaddingValues(0.dp)) {
-                        Text(value.ifBlank { stringResource(R.string.value_not_available) },
-                            style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface)
-                    }
-                    StepButton(true, stringResource(R.string.set_field_increase_accessibility, label, setNumber),
-                        { step(true) }, enabled = !saving)
-                    field.previousValue(previousSet)?.let { previous ->
-                        val copy = stringResource(R.string.set_copy_previous_accessibility, label,
-                            exactMeasurement(previous, decimal), setNumber)
-                        IconButton(enabled = !saving, onClick = { edit(field, exactMeasurement(previous, decimal)) }) {
-                            Icon(Icons.Default.ContentCopy, copy, Modifier.size(18.dp))
-                        }
-                    }
                 }
-            }
-        } else {
-            val value = textFor(editing)
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                val fieldLabel = stringResource(editing.labelRes)
-                val name = if (editing == SetInputField.LOAD || editing == SetInputField.ASSISTANCE)
-                    stringResource(R.string.set_field_with_unit, fieldLabel, weightUnit) else fieldLabel
-                Column(Modifier.weight(1f)) {
-                    Text(name, style = MaterialTheme.typography.labelMedium)
-                    Text(value.ifBlank { stringResource(R.string.value_not_available) },
-                        style = MaterialTheme.typography.titleLarge)
+                StepButton(false, stringResource(R.string.set_field_decrease_accessibility, label, setNumber),
+                    { step(false) }, enabled = !saving, repeatOnHold = (parsed(field) ?: 0.0) > 0.0)
+                Box(Modifier.weight(1f).heightIn(min = MIN_TOUCH_TARGET)
+                    .semantics(mergeDescendants = true) { contentDescription = description },
+                    contentAlignment = Alignment.Center) {
+                    Text(textFor(field).ifBlank { stringResource(R.string.value_not_available) },
+                        style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface)
                 }
-                TextButton(onClick = { keypad = null }) { Text(stringResource(R.string.summary_action_done), color = MaterialTheme.colorScheme.onSurface) }
-            }
-            listOf("123", "456", "789", ".0<").forEach { row ->
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                    row.forEach { key ->
-                        if (key == '.' && !editing.isDecimal) {
-                            Spacer(Modifier.weight(1f))
-                        } else {
-                            val insert = if (key == '.') decimal.toString() else key.toString()
-                            TextButton(onClick = {
-                                val current = textFor(editing)
-                                val updated = when (key) {
-                                    '<' -> current.dropLast(1)
-                                    '.' -> if (replaceOnDigit || current.isEmpty()) "0$decimal"
-                                        else if ('.' in current || ',' in current) current else current + decimal
-                                    else -> if (replaceOnDigit || current == "0") insert else current + insert
-                                }
-                                if (updated.length <= MAX_INPUT_LENGTH) edit(editing, updated)
-                                replaceOnDigit = false
-                            }, enabled = !saving, modifier = Modifier.weight(1f).heightIn(min = MIN_TOUCH_TARGET),
-                                shape = RoundedCornerShape(8.dp), contentPadding = PaddingValues(0.dp),
-                                colors = ButtonDefaults.textButtonColors(containerColor = MaterialTheme.colorScheme.surface,
-                                    contentColor = MaterialTheme.colorScheme.onSurface)) {
-                                if (key == '<') Icon(Icons.AutoMirrored.Filled.Backspace,
-                                    contentDescription = stringResource(R.string.guided_delete_digit))
-                                else Text(insert, style = MaterialTheme.typography.titleMedium)
-                            }
-                        }
+                StepButton(true, stringResource(R.string.set_field_increase_accessibility, label, setNumber),
+                    { step(true) }, enabled = !saving, repeatOnHold = parsed(field) != field.maximum)
+                field.previousValue(previousSet)?.let { previous ->
+                    val copy = stringResource(R.string.set_copy_previous_accessibility, label,
+                        exactMeasurement(previous, decimal), setNumber)
+                    IconButton(enabled = !saving, onClick = { edit(field, exactMeasurement(previous, decimal)) }) {
+                        Icon(Icons.Default.ContentCopy, copy, Modifier.size(18.dp))
                     }
                 }
             }
@@ -325,8 +297,7 @@ fun GymFloorSetRow(
         WallCrawlPrimaryButton(
             text = stringResource(if (set.isCompleted) R.string.guided_save_changes else R.string.guided_log_set),
             onClick = { submitted = true; onCompletionChanged(draft(), true) },
-            enabled = !saving && error == null,
-            modifier = Modifier.bringIntoViewRequester(logButton)
+            enabled = !saving && error == null
         )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
             TextButton(enabled = !saving, onClick = { showStopReasons = true }) {
@@ -407,18 +378,42 @@ private fun StepButton(
     increase: Boolean,
     contentDescription: String,
     onClick: () -> Unit,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    repeatOnHold: Boolean = false
 ) {
+    val latestClick by rememberUpdatedState(onClick)
     IconButton(
         onClick = onClick,
         enabled = enabled,
         modifier = Modifier.sizeIn(minWidth = MIN_TOUCH_TARGET, minHeight = MIN_TOUCH_TARGET)
     ) {
-        Icon(
-            imageVector = if (increase) Icons.Default.Add else Icons.Default.Remove,
-            contentDescription = contentDescription,
-            tint = MaterialTheme.colorScheme.onSurface
-        )
+        val gesture = if (repeatOnHold && enabled) Modifier.pointerInput(Unit) {
+            detectTapGestures(onPress = {
+                coroutineScope {
+                    var repeated = false
+                    val repeater = launch {
+                        delay(viewConfiguration.longPressTimeoutMillis)
+                        repeated = true
+                        while (isActive) {
+                            latestClick()
+                            delay(90L)
+                        }
+                    }
+                    try {
+                        if (tryAwaitRelease() && !repeated) latestClick()
+                    } finally {
+                        repeater.cancel()
+                    }
+                }
+            })
+        } else Modifier
+        Box(Modifier.size(MIN_TOUCH_TARGET).then(gesture), contentAlignment = Alignment.Center) {
+            Icon(
+                imageVector = if (increase) Icons.Default.Add else Icons.Default.Remove,
+                contentDescription = contentDescription,
+                tint = LocalContentColor.current
+            )
+        }
     }
 }
 
@@ -566,7 +561,6 @@ private fun EffortControls(
     }
 }
 
-private const val MAX_INPUT_LENGTH = LocaleFormatting.MAX_INPUT_LENGTH
 internal val MIN_TOUCH_TARGET = 48.dp
 /**
  * Whether this performance update is safe to submit to the repository as-is. A set

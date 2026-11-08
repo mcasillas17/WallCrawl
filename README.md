@@ -35,7 +35,7 @@ direction; the app's existing deterministic planner remains the foundation.
 - **My Workouts & Templates**: Manage and launch saved custom routines with total sets, exercise counts, and quick-start actions.
 - **Custom Workout Builder**: Interactive routine editor with full 327-exercise bottom sheet picker, move controls for ordering, type-aware editing of every prescription target, unit-safe loads, and unsaved drafts recovered after configuration change or background process death.
 - **Exercise Library**: Searchable catalog of 327 exercises across all muscle groups and equipment types.
-- **Active workout.** Swipe between exercises, tap the demonstration to expand it, and select a numbered set to review or edit it. Adjust a value with the minus and plus buttons or tap the number for the inline keypad. Log the set to save it and start rest. [View the inline keypad](art/screenshots/active-workout-keypad.png).
+- **Active workout.** Swipe between exercises, tap the demonstration to expand it, and select a numbered set to review or edit it. Tap − or + once, or hold to change the value continuously. Tap the step size under the measurement label for finer adjustments. **Log set** saves the result and starts rest. [View the fine adjustment during rest](art/screenshots/active-workout-fine.png).
 - **Workout Summary**: The existing Finish flow shows recorded duration, external-load volume, completed sets, and records against genuinely earlier performance. View workout details opens the read-only record; Done returns to Progress.
 - **Progress Tracking & History**: Calendar-week activity and separately labelled reviewed dose, weekly streaks, and strength trends, plus an Over time card that charts 4–52 calendar weeks for all exercises, one exercise or one muscle, whose week rows list the workouts behind each week and whose data points open their workout. Tap a completed-workout card to reopen its frozen targets, performed sets, feedback and recorded decision reasons. View all workouts browses older sessions in fixed 20-workout pages.
 - **Profile and settings**: Full local customization of app language (System default / English / Español) and theme preference (Auto System / Dark Mode / Light Mode) with compact switchers, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, muscle priorities, and seven movement preferences.
@@ -213,7 +213,7 @@ restoring an archive never changes it.
 </p>
 <p align="center">
   <img src="art/screenshots/exercises-screen-es.png" width="24%" alt="Spanish exercise library showing 302 exercises with Spanish names, muscle chips, and equipment chips" />
-  <img src="art/screenshots/active-workout-es.png" width="24%" alt="Spanish active workout logging a bench press set, with the load shown as 47,5 using the reader decimal mark and the unit still in pounds" />
+  <img src="art/screenshots/active-workout-es.png" width="24%" alt="Spanish set controls showing a 40,1 lb load with 0,1 lb increments during rest" />
   <img src="art/screenshots/profile-your-data-es.png" width="24%" alt="Spanish Your Data card with export, restore, and delete-all controls and their privacy and fresh-start guidance" />
   <img src="art/screenshots/profile-delete-confirmation-es.png" width="24%" alt="Spanish delete-all confirmation naming exactly what is removed, what is left alone, and that the language setting is not changed" />
 </p>
@@ -456,14 +456,14 @@ for the complete automatic and manual data flows.
 Logging a set is meant to survive a noisy gym floor, so the active workout screen
 keeps every control large, explicit, and local.
 
-- **One-tap completion.** Each set has a full-width completion control with
-  checkbox semantics, a screen-reader label, and a 56 dp target.
-- **Plus/minus plus text.** Every numeric outcome — load, assistance, reps,
-  seconds, metres — has 48 dp decrease and increase controls beside a text field
-  for precise values. The first press of a plus control starts from the planned
-  target when one exists; it never invents a load that was never confirmed.
-- **Copy previous.** When a comparable previous set actually recorded a value, a
-  one-tap chip copies it in.
+- **One-tap completion.** Log set records the values shown. Save changes confirms
+  a correction to a logged set.
+- **Weight, reps, and other measurements.** Tap either 48 dp button to adjust
+  once or hold it to repeat. Lift your finger or slide away to stop. Reps change
+  by one. Tap the displayed step size for finer load, assistance, time, or distance
+  adjustments. A fresh tap on − at zero clears an optional measurement.
+- **Copy previous.** The copy button appears beside a measurement when a
+  comparable previous set recorded it.
 - **Optional effort.** RPE (0-10) and RIR (0-10) sit behind an "Add feedback
   (optional)" toggle, and a simple *felt manageable?* yes/no appears once a set
   is completed. All three are nullable: leaving them blank is a first-class

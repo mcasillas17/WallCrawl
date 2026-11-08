@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasAnyAncestor
@@ -210,9 +211,15 @@ class WorkoutHistoryNavigationTest {
         assertThat(sets.first().completedReps).isEqualTo(9)
         assertThat(sets.first().completedWeight).isEqualTo(70.0)
         val unitLabel = context.getString(R.string.set_field_with_unit, context.getString(R.string.set_field_load), WeightUnit.LBS.symbol)
-        val exact = context.getString(R.string.set_field_value_accessibility, unitLabel, "2")
-        compose.onNodeWithContentDescription(exact).performScrollTo().performClick()
-        capture("guided-session-keypad")
+        listOf("2.5", "1").forEach { step ->
+            compose.onNodeWithContentDescription(context.getString(R.string.guided_change_step, unitLabel, step))
+                .performScrollTo().performClick()
+        }
+        val increaseLoad = context.getString(R.string.set_field_increase_accessibility, context.getString(R.string.set_field_load), "2")
+        compose.onNodeWithContentDescription(increaseLoad).performScrollTo().performClick()
+        compose.onNodeWithText("70.1").assertIsDisplayed()
+        compose.onNodeWithText(log).performScrollTo().assertIsDisplayed()
+        capture("guided-session-fine")
     }
 
     @Test fun databaseRemainsOpenUntilCompositionIsDisposed() {

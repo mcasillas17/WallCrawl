@@ -15,7 +15,7 @@
     <string name="guided_rest">Rest</string>
     <string name="guided_sets">Sets</string>
     <string name="guided_unlogged">Unlogged</string>
-    <string name="guided_delete_digit">Delete last digit</string>
+    <string name="guided_change_step">Change adjustment size for %1$s, currently %2$s</string>
     <string name="guided_set_maximum">%1$s must be %2$s or less.</string>
     <string name="guided_set_need_load_reps">Enter a positive load and rep count.</string>
     <string name="guided_set_need_reps">Enter at least one rep.</string>

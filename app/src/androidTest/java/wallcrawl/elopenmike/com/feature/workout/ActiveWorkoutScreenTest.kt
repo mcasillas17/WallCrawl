@@ -22,7 +22,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
@@ -124,11 +125,10 @@ class ActiveWorkoutScreenTest {
     }
 
     @Test
-    fun unfinishedKeypadSurvivesSwitchingSetsAndAnUnrelatedPersistedUpdate() {
+    fun adjustedLoadSurvivesSwitchingSetsAndAnUnrelatedPersistedUpdate() {
         showScreen()
-        composeRule.onNodeWithContentDescription("Load (lb) for set 1").performClick()
-        listOf("4", "7", ".").forEach { composeRule.onNodeWithText(it).performClick() }
-        composeRule.onNodeWithText("Log set").assertIsNotEnabled()
+        composeRule.onNodeWithContentDescription("Increase Load for set 1").performScrollTo().performClick()
+        composeRule.onNodeWithText("42.5").assertIsDisplayed()
         composeRule.onNodeWithContentDescription("Set 2").performScrollTo().performClick()
         repository.historyReady.value = false
         try {
@@ -140,12 +140,11 @@ class ActiveWorkoutScreenTest {
                 }
             }
             composeRule.onNodeWithContentDescription("Set 1").performScrollTo().performClick()
-            composeRule.onNodeWithText("47.").performScrollTo().assertIsDisplayed()
-            composeRule.onNodeWithText("5").performClick()
+            composeRule.onNodeWithText("42.5").performScrollTo().assertIsDisplayed()
             composeRule.onNodeWithText("Log set").performScrollTo().performClick()
             composeRule.waitForIdle()
             assertThat(runBlocking { repository.getActiveSessionOnce() }!!.exercises.first()
-                .sets.first().completedWeight).isEqualTo(47.5)
+                .sets.first().completedWeight).isEqualTo(42.5)
             assertThat(repository.historySubscriptions).isEqualTo(1)
         } finally {
             repository.historyReady.value = true
@@ -176,7 +175,7 @@ class ActiveWorkoutScreenTest {
     }
 
     @Test
-    fun spanishDecimalKeypadWithRestKeepsLogReachable() {
+    fun spanishFineStepsWithRestKeepLogReachable() {
         val locale = Locale.forLanguageTag("es-ES")
         val localized = app.createConfigurationContext(Configuration(app.resources.configuration).apply { setLocale(locale) })
         val vocabulary = ExerciseVocabulary(runBlocking { app.container.exerciseLocalizationSource.localization() }, locale.toLanguageTag())
@@ -191,18 +190,25 @@ class ActiveWorkoutScreenTest {
         }
         val log = localized.getString(R.string.guided_log_set)
         composeRule.onNodeWithText(log).performScrollTo().performClick()
-        val load = localized.getString(R.string.set_field_with_unit, localized.getString(R.string.set_field_load), "lb")
-        composeRule.onNodeWithContentDescription(localized.getString(R.string.set_field_value_accessibility, load, "2"))
-            .performScrollTo().performClick()
-        listOf("4", "7", ",", "5").forEach { composeRule.onNodeWithText(it).performScrollTo().performClick() }
-        composeRule.onNodeWithText("47,5").assertExists()
+        composeRule.waitUntil(10_000) {
+            (viewModel.uiState.value as? ActiveWorkoutUiState.Active)?.restTimer?.isRunning == true
+        }
+        val load = localized.getString(R.string.set_field_load)
+        val withUnit = localized.getString(R.string.set_field_with_unit, load, "lb")
+        val increase = localized.getString(R.string.set_field_increase_accessibility, load, "2")
+        listOf("2,5", "1").forEach { step ->
+            composeRule.onNodeWithContentDescription(localized.getString(R.string.guided_change_step, withUnit, step))
+                .performScrollTo().performClick()
+        }
+        composeRule.onNodeWithContentDescription(increase).performScrollTo().performClick()
+        composeRule.onNodeWithText("40,1").assertIsDisplayed()
+        composeRule.onAllNodes(hasSetTextAction()).assertCountEquals(0)
         composeRule.onNodeWithText(log).performScrollTo().assertIsDisplayed()
-        capture("guided-keypad-es-light")
-        composeRule.onNodeWithText(localized.getString(R.string.summary_action_done)).performScrollTo().performClick()
-        composeRule.onNodeWithText("47,5").performScrollTo().assertIsDisplayed()
-        capture("guided-active-es-light")
-        composeRule.onNodeWithText(log).performScrollTo().performClick()
-        assertThat(runBlocking { repository.getActiveSessionOnce() }!!.exercises.first().sets[1].completedWeight).isEqualTo(47.5)
+        capture("guided-steps-es-light")
+        composeRule.onNodeWithText(log).performClick()
+        composeRule.waitUntil(10_000) {
+            runBlocking { repository.getActiveSessionOnce() }!!.exercises.first().sets[1].completedWeight == 40.1
+        }
     }
 
     @Test
@@ -219,9 +225,6 @@ class ActiveWorkoutScreenTest {
         composeRule.onNodeWithText("Log set").performScrollTo().performClick()
         composeRule.onNodeWithContentDescription("Rest remaining 2:00").performScrollTo().assertIsDisplayed()
         capture("guided-rest-en")
-        composeRule.onNodeWithContentDescription("Load (lb) for set 2").performClick()
-        composeRule.onNodeWithText("Log set").assertIsDisplayed()
-        capture("guided-keypad-rest-en")
         composeRule.onNodeWithText("Finish").performClick()
         composeRule.onNodeWithText("Finish anyway").performClick()
         composeRule.onNodeWithText("Done").assertIsDisplayed()
@@ -244,8 +247,7 @@ class ActiveWorkoutScreenTest {
         composeRule.waitUntil(10_000) { (vm.uiState.value as? ActiveWorkoutUiState.Active)?.restTimer?.isRunning == true }
         composeRule.onNodeWithContentDescription("Rest remaining 2:00").assertIsDisplayed()
         val deadline = RestTimerState.Running("set-1", 120_000L)
-        composeRule.onNodeWithContentDescription("Load (lb) for set 2").performScrollTo().performClick()
-        listOf("4", "7", ".").forEach { composeRule.onNodeWithText(it).performScrollTo().performClick() }
+        composeRule.onNodeWithContentDescription("Decrease Load for set 2").performScrollTo().performClick()
         art.performScrollTo().performTouchInput { swipeLeft() }
         composeRule.onNodeWithText("Previous exercise").assertExists()
         assertThat((vm.uiState.value as ActiveWorkoutUiState.Active).currentExerciseIndex).isEqualTo(1)
@@ -255,8 +257,8 @@ class ActiveWorkoutScreenTest {
         composeRule.onNodeWithText("Close").assertIsDisplayed().performClick()
         art.performTouchInput { swipeRight() }
         composeRule.onNodeWithText("Next exercise").assertExists()
-        composeRule.onNodeWithText("47.").performScrollTo().assertIsDisplayed()
-        composeRule.onNodeWithText("Log set").assertIsNotEnabled()
+        composeRule.onNodeWithText("37.5").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Log set").assertIsEnabled()
         assertThat((vm.uiState.value as ActiveWorkoutUiState.Active).restTimer.state).isEqualTo(deadline)
     }
 

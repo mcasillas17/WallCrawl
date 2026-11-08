@@ -1,6 +1,6 @@
 # Localization
 
-The three tabs are **Train / Entrenar**, **Progress / Progreso** and **Library / Biblioteca**. The account icon on each opens **Profile and settings / Perfil y ajustes**. Set logging uses locale-aware numbers, including the decimal key on the inline keypad. Workout and exercise identities stay the same across language changes.
+The three tabs are **Train / Entrenar**, **Progress / Progreso** and **Library / Biblioteca**. The account icon on each opens **Profile and settings / Perfil y ajustes**. Set values and adjustment sizes use the active locale’s decimal separator. Workout and exercise identities stay the same across language changes.
 
 
 WallCrawl ships two languages: English and neutral Latin American Spanish. Both are

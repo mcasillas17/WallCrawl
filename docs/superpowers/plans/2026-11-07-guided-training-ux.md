@@ -12,7 +12,7 @@
 
 ## Constraints and review focus
 
-Preserve 48 dp touch targets, EN/ES, light/dark themes, large text, offline operation, explicit planning intent, clinical release gates, original history and existing restore semantics. Check incomplete decimal drafts, repeated confirmations, an active session during a planning failure, return from a nested screen, and an exact keypad with a running rest timer on a short phone.
+Preserve 48 dp touch targets, EN/ES, light/dark themes, large text, offline operation, explicit planning intent, clinical release gates, original history and existing restore semantics. Check incomplete decimal drafts, repeated confirmations, an active session during a planning failure, return from a nested screen, and precise adjustments with a running rest timer on a short phone.
 
 ## Implementation
 
@@ -29,4 +29,11 @@ Preserve 48 dp touch targets, EN/ES, light/dark themes, large text, offline oper
 - The Room-backed set logger opened the bundled dumbbell bench press demonstration, preserved a 70 lb draft across leave, saved-state restoration and resume, and recorded the edited 9 reps once. Other cases covered all five measurement types, incomplete decimals, rejected writes, rest during swiping, explicit discard and partial finish.
 - Checked Train source selection and restrictions, Library and grouped settings, template start locking, analytics and history drill-downs, language recreation, onboarding and local data controls. Reran the affected native tests after correcting stale selectors, locale fixtures, and asynchronous assertions.
 
-[Set logger](../../../art/screenshots/active-workout.png) · [Inline keypad](../../../art/screenshots/active-workout-keypad.png) · [Train](../../../art/screenshots/today-screen.png) · [Progress](../../../art/screenshots/progress-screen.png) · [Library](../../../art/screenshots/exercises-screen.png)
+[Set logger](../../../art/screenshots/active-workout.png) · [Train](../../../art/screenshots/today-screen.png) · [Progress](../../../art/screenshots/progress-screen.png) · [Library](../../../art/screenshots/exercises-screen.png)
+
+## November 8 set controls revision
+
+- [x] Replace exact-entry mode with fixed rows, selectable precision and cancellable hold-to-repeat in the Android editor and the interactive preview.
+- [x] Exercise taps, holds, cancellation, fractional values, restoration and explicit logging. Check the compact layout and refresh the native example.
+
+The API 37 tests exercised release, drag-away, scroll cancellation, a held decrement reaching zero and a separate tap clearing optional assistance. The Room-backed session saved 70 lb × 9 once after leaving and resuming. The Spanish logger recorded 40,1 lb during rest on a 320 dp display at 1.8× font scale. A distance adjustment from 101.123456789 to 101.133456789 covered exact legacy data. All 1,486 JVM tests passed. [Native set controls during rest](../../../art/screenshots/active-workout-fine.png)

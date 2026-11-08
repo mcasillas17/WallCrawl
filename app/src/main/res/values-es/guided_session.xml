@@ -15,7 +15,7 @@
     <string name="guided_rest">Descanso</string>
     <string name="guided_sets">Series</string>
     <string name="guided_unlogged">Sin registrar</string>
-    <string name="guided_delete_digit">Borrar el último dígito</string>
+    <string name="guided_change_step">Cambiar el incremento de %1$s, actual %2$s</string>
     <string name="guided_set_maximum">%1$s debe ser menor o igual que %2$s.</string>
     <string name="guided_set_need_load_reps">Introduce una carga y un número de repeticiones mayores que cero.</string>
     <string name="guided_set_need_reps">Introduce al menos una repetición.</string>

@@ -1,13 +1,28 @@
 package wallcrawl.elopenmike.com.core.ui.components
 
+import android.view.View
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasSetTextAction
-import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertHasNoClickAction
+import androidx.compose.ui.test.click
+import androidx.compose.ui.test.performTouchInput
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
@@ -22,7 +37,9 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.unit.dp
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
+import wallcrawl.elopenmike.com.R
 import org.junit.Rule
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.model.ExerciseType
@@ -93,7 +110,7 @@ class GymFloorSetRowTest {
     }
 
     @Test
-    fun restoringAnUnfinishedDecimalKeepsTheDraftAndDisablesSaveUntilComplete() {
+    fun fineAdjustedLoadRestoresAndIsCommittedOnlyWhenSaved() {
         val committed = mutableListOf<SetValuesDraft>()
         val restore = StateRestorationTester(composeRule)
         restore.setContent {
@@ -105,17 +122,93 @@ class GymFloorSetRowTest {
                 )
             }
         }
-        composeRule.onNodeWithContentDescription("Load (kg) for set 1").performClick()
-        listOf("4", "7", ".").forEach { composeRule.onNodeWithText(it).performClick() }
+        val save = composeRule.onNodeWithText("Save changes")
+        val initialBounds = save.getUnclippedBoundsInRoot()
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        listOf("2.5", "1", "0.1").forEach { step ->
+            composeRule.onNodeWithContentDescription(context.getString(R.string.guided_change_step, "Load (kg)", step))
+                .performClick()
+        }
+        composeRule.onNodeWithContentDescription("Increase Load for set 1").performClick()
         composeRule.onAllNodes(hasSetTextAction()).assertCountEquals(0)
+        assertThat(save.getUnclippedBoundsInRoot()).isEqualTo(initialBounds)
         restore.emulateSavedInstanceStateRestore()
-        composeRule.onNodeWithText("47.").assertIsDisplayed()
-        composeRule.onNodeWithText("Enter a complete number").assertIsDisplayed()
-        composeRule.onNodeWithText("Save changes").assertIsNotEnabled()
-        composeRule.onNodeWithText("5").performClick()
+        composeRule.onNodeWithText("40.01").assertIsDisplayed()
         assertThat(committed).isEmpty()
         composeRule.onNodeWithText("Save changes").performClick()
-        assertThat(committed.single().weight).isEqualTo(47.5)
+        assertThat(committed.single().weight).isEqualTo(40.01)
+    }
+
+    @Test
+    fun holdingChangesRepsUntilReleaseAndDraggingScrollsWithoutEditing() {
+        val scroll = ScrollState(0)
+        val committed = mutableListOf<SetValuesDraft>()
+        var longPressMillis = 0L
+        lateinit var view: View
+        composeRule.setContent {
+            view = LocalView.current
+            longPressMillis = LocalViewConfiguration.current.longPressTimeoutMillis
+            WallCrawlTheme {
+                Column(Modifier.verticalScroll(scroll)) {
+                    GymFloorSetRow(weightRepsSet(), "kg", null, { values, _ -> committed += values },
+                        { _, _ -> }, { _, _ -> }, {})
+                    Spacer(Modifier.height(1000.dp))
+                }
+            }
+        }
+        val value = composeRule.onNodeWithContentDescription("Reps for set 1")
+        val plus = composeRule.onNodeWithContentDescription("Increase Reps for set 1")
+        val minus = composeRule.onNodeWithContentDescription("Decrease Reps for set 1")
+        fun displayedReps() = value.fetchSemanticsNode().config[SemanticsProperties.Text].single().text.toInt()
+        value.assertHasNoClickAction().performTouchInput { click() }
+        composeRule.onAllNodes(hasSetTextAction()).assertCountEquals(0)
+        composeRule.runOnIdle {
+            assertThat(checkNotNull(ViewCompat.getRootWindowInsets(view)).isVisible(WindowInsetsCompat.Type.ime())).isFalse()
+        }
+
+        plus.performTouchInput { click() }
+        assertThat(displayedReps()).isEqualTo(9)
+        composeRule.mainClock.autoAdvance = false
+        try {
+            plus.performTouchInput { down(center) }
+            composeRule.mainClock.advanceTimeBy(longPressMillis + 310L)
+            val heldReps = displayedReps()
+            assertThat(heldReps).isAtLeast(12)
+            plus.performTouchInput { up() }
+            composeRule.mainClock.advanceTimeBy(400L)
+            assertThat(displayedReps()).isEqualTo(heldReps)
+
+            minus.performTouchInput { down(center) }
+            composeRule.mainClock.advanceTimeBy(longPressMillis + 200L)
+            val reducedReps = displayedReps()
+            assertThat(reducedReps).isLessThan(heldReps - 1)
+            minus.performTouchInput { cancel() }
+            composeRule.mainClock.advanceTimeBy(400L)
+            assertThat(displayedReps()).isEqualTo(reducedReps)
+
+            plus.performTouchInput { down(center) }
+            composeRule.mainClock.advanceTimeBy(longPressMillis + 200L)
+            val repsBeforeLeavingButton = displayedReps()
+            assertThat(repsBeforeLeavingButton).isGreaterThan(reducedReps)
+            plus.performTouchInput { moveBy(Offset(-width.toFloat() * 2, 0f)) }
+            composeRule.mainClock.advanceTimeBy(400L)
+            plus.performTouchInput { up() }
+            composeRule.mainClock.advanceTimeByFrame()
+            assertThat(displayedReps()).isEqualTo(repsBeforeLeavingButton)
+
+            plus.performTouchInput {
+                down(center)
+                moveBy(Offset(0f, -35.dp.toPx()))
+                moveBy(Offset(0f, -35.dp.toPx()))
+                up()
+            }
+            composeRule.mainClock.advanceTimeBy(longPressMillis + 400L)
+            assertThat(scroll.value).isGreaterThan(0)
+            assertThat(displayedReps()).isEqualTo(repsBeforeLeavingButton)
+            assertThat(committed).isEmpty()
+        } finally {
+            composeRule.mainClock.autoAdvance = true
+        }
     }
 
     @Test
@@ -261,30 +354,62 @@ class GymFloorSetRowTest {
     }
 
     @Test
-    fun exactEntryRejectsAnOutOfBoundsCountAndLogsOnlyApplicableFields() {
-        var set by mutableStateOf(weightRepsSet().copy(exerciseType = ExerciseType.BODYWEIGHT_REPS, targetWeight = null))
+    fun steppersStopAtTheBoundsAndLogOnlyApplicableFields() {
+        val base = weightRepsSet().copy(targetWeight = null, targetReps = null)
+        var set by mutableStateOf(base.copy(exerciseType = ExerciseType.BODYWEIGHT_REPS, targetReps = 999))
         val committed = mutableListOf<SetValuesDraft>()
+        var longPressMillis = 0L
         composeRule.setContent {
+            longPressMillis = LocalViewConfiguration.current.longPressTimeoutMillis
             WallCrawlTheme {
                 GymFloorSetRow(set, "kg", null, { values, _ -> committed += values },
                     { _, _ -> }, { _, _ -> }, {})
             }
         }
-        composeRule.onNodeWithContentDescription("Reps for set 1").performClick()
-        listOf("1", "0", "0", "1").forEach { composeRule.onNodeWithText(it).performClick() }
-        composeRule.onNodeWithText(".").assertDoesNotExist()
-        composeRule.onNodeWithText("Log set").assertIsNotEnabled()
-        composeRule.onNodeWithContentDescription("Delete last digit").performClick()
+        val increaseReps = composeRule.onNodeWithContentDescription("Increase Reps for set 1")
+        increaseReps.performTouchInput { click() }
+        increaseReps.performTouchInput { click() }
         composeRule.onNodeWithText("Log set").performClick()
-        val base = weightRepsSet().copy(targetWeight = null, targetReps = null)
-        set = base.copy(id = "assist", exerciseType = ExerciseType.ASSISTED_BODYWEIGHT, targetReps = 7)
+
+        set = base.copy(id = "assist", exerciseType = ExerciseType.ASSISTED_BODYWEIGHT,
+            targetReps = 7, targetAssistanceWeight = 5.0)
+        val decreaseAssist = composeRule.onNodeWithContentDescription("Decrease Assist for set 1")
+        decreaseAssist.assertIsDisplayed()
+        composeRule.mainClock.autoAdvance = false
+        try {
+            decreaseAssist.performTouchInput { down(center) }
+            composeRule.mainClock.advanceTimeBy(longPressMillis + 500L)
+            composeRule.onNodeWithText("0").assertIsDisplayed()
+            decreaseAssist.performTouchInput { up() }
+            composeRule.mainClock.advanceTimeBy(200L)
+            composeRule.onNodeWithText("0").assertIsDisplayed()
+        } finally {
+            composeRule.mainClock.autoAdvance = true
+        }
         composeRule.onNodeWithText("Log set").performClick()
+        decreaseAssist.performTouchInput { click() }
+        composeRule.onNodeWithText("Log set").performClick()
+
         set = base.copy(id = "time", exerciseType = ExerciseType.DURATION, targetDurationSeconds = 12)
+        composeRule.onNodeWithContentDescription("Increase Seconds for set 1").performClick()
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        composeRule.onNodeWithContentDescription(context.getString(R.string.guided_change_step, "Seconds", "5")).performClick()
+        composeRule.onNodeWithContentDescription("Decrease Seconds for set 1").performClick()
         composeRule.onNodeWithText("Log set").performClick()
-        set = base.copy(id = "distance", exerciseType = ExerciseType.DISTANCE_DURATION, targetDistanceMeters = 101.125)
+
+        set = base.copy(id = "distance", exerciseType = ExerciseType.DISTANCE_DURATION, targetDistanceMeters = 101.123456789)
+        listOf("50", "1", "0.1").forEach { step ->
+            composeRule.onNodeWithContentDescription(context.getString(R.string.guided_change_step, "Meters", step)).performClick()
+        }
+        composeRule.onNodeWithContentDescription("Increase Meters for set 1").performClick()
         composeRule.onNodeWithText("Log set").performClick()
-        assertThat(committed).containsExactly(SetValuesDraft(reps = 100), SetValuesDraft(reps = 7),
-            SetValuesDraft(durationSeconds = 12), SetValuesDraft(distanceMeters = 101.125)).inOrder()
+        assertThat(committed).containsExactly(
+            SetValuesDraft(reps = 1000),
+            SetValuesDraft(reps = 7, assistanceWeight = 0.0),
+            SetValuesDraft(reps = 7),
+            SetValuesDraft(durationSeconds = 16),
+            SetValuesDraft(distanceMeters = 101.133456789)
+        ).inOrder()
     }
 
     private fun weightRepsSet(isCompleted: Boolean = false) = WorkoutSet(
