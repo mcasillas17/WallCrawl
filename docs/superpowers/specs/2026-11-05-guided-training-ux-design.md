@@ -92,11 +92,13 @@ Non-blocking coverage limitations use concise, accurate summaries with Details f
 The screen answers “What do I do now?” in this order:
 
 1. Compact header with workout position, a **Leave workout** action, and secondary **Finish**.
-2. Exercise name and a compact illustration beside or beneath it, followed by the exact prescribed target. **How to do it** opens full artwork and catalog instructions without editing or restarting the session.
+2. Exercise name and its animated demonstration beside or beneath it, followed by the exact prescribed target. Reuse the selected catalog variant and its native playback sequence. **How to do it** enlarges the same demonstration and shows the catalog guidance. Offer Pause and Play. When reduced motion is enabled, start with a still frame and allow explicit playback. Static illustrations and unavailable artwork keep their existing fallback behavior.
 3. Any applicable execution/stop cues and errors, visible before logging.
 4. A compact rest strip when applicable, using the existing deadline and rest states.
 5. One expanded set editor, followed by compact rows for the other sets in this exercise.
-6. Previous / Next exercise navigation. Next is secondary until this exercise's sets are resolved; the user may still intentionally navigate with open sets. Final exercise uses Finish workout.
+6. Swipe left across the exercise page to advance one exercise and right to return. Keep labelled Previous and Next exercise controls for one-handed use, keyboard navigation, and TalkBack. Update and announce the exercise position and name together. Keep vertical scrolling, text editing, and Android's system back gesture usable. At the first and last exercise, a swipe beyond the boundary stays on that exercise. Finishing requires the explicit Finish action.
+
+Both navigation methods preserve entered set values, completion and stop states, and the active rest deadline. An exercise change only selects which exercise to view. Next is secondary until the exercise's sets are resolved, and users can move with sets still open.
 
 Use the existing set measurements, locale parser, +/- controls, previous-value copying, and repository validation. Label the primary set action **Log set**. Do not synthesize an initial load or turn a target into recorded performance without an explicit action. Type-specific inputs continue to support weighted reps, bodyweight reps, assistance, holds, and distance/time. Optional feedback stays available after logging and when reopening a completed set.
 
@@ -183,6 +185,7 @@ Update EN/ES string resources together, navigation and Compose UI tests whose co
 - A user can log each supported measurement type, correct a completed set, skip/stop, record optional feedback, leave/resume, and finish partial/full workouts without data loss.
 - A failed save, fast double tap, decimal fragment, rotation, process recreation, open keyboard, and changing the expanded set cannot silently erase or fabricate measurements.
 - The rest countdown survives ordinary UI transitions and uses the existing deadline, including background/resume behavior.
+- Exercise navigation works in both directions with swipes and buttons. Verify first/last bounds, vertical scrolling, decimal drafts, completed sets, and the ongoing rest timer across a round trip. Check that compact and expanded demonstrations follow the selected exercise, Pause/Play work, and reduced motion starts on a still frame.
 - Recent and older history, exact prior performance, dose details, routine editing, condition citations, exclusions, and all settings/data actions remain reachable.
 - Fresh setup, restore, deletion, legacy reports, pending reassessment, zero released conditions, empty history, catalog failures, unsupported program versions, and unavailable recommendations have explicit paths.
 - Capture actual native screenshots for Train ready/active/blocked, active set/rest/failure, completion, Progress empty/populated, Library/filter/detail, grouped settings, and onboarding. Include Spanish large text and light theme examples.
@@ -199,3 +202,5 @@ Approval covers the proposed navigation, interaction, and presentation scope abo
 Builder check on 2026-11-05: a fresh Android/Compose reviewer read this contract and connected code and reported “nothing important left.” This checks planning clarity, not implemented behavior or native accessibility.
 
 Preview verification on 2026-11-05: browser checks exercised invalid numeric input, set logging, rest display, leave/resume, partial finish, library search, and settings return navigation. Train and active-session layouts were inspected visually; Train was captured in light and dark themes and checked for horizontal overflow at 320 and 390 px. These are checks of the sample-data design preview only. Native implementation and its acceptance checks have not started.
+
+On 2026-11-07 the owner requested swipe navigation and asked to see exercise animation. Browser checks exercised touch, horizontal trackpad input, boundary swipes, button navigation, retained set drafts and rest time, and pause/play with reduced motion. Playback for bench press, one-arm dumbbell row, and lat pulldown matched their bundled Android frames.
