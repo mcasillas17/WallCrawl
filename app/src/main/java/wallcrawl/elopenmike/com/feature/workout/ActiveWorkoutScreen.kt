@@ -96,6 +96,7 @@ import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import kotlinx.coroutines.delay
 import java.text.DateFormat
 import java.util.Date
+import wallcrawl.elopenmike.com.core.ui.components.rememberAnimationsEnabled
 
 @Composable
 fun ActiveWorkoutScreen(
@@ -269,6 +270,9 @@ private fun ActiveWorkoutContent(
         LocaleFormatting.formatCount(state.currentExerciseIndex + 1, locale),
         LocaleFormatting.formatCount(state.totalExercises, locale))
     val exerciseState = rememberSaveableStateHolder()
+    // One state for the compact demo and the expanded one: the compact demo has no control of its own.
+    val animationsEnabled = rememberAnimationsEnabled()
+    val illustrationPlayback = rememberSaveable { mutableStateOf(animationsEnabled) }
     Column(Modifier.fillMaxSize().padding(horizontal = 12.dp)) {
         val largeText = isLargeText()
         val contextLabel = @Composable { modifier: Modifier ->
@@ -361,7 +365,7 @@ private fun ActiveWorkoutContent(
                     Box(Modifier.size(88.dp).focusRequester(thumbnailFocus)
                         .clickable(role = Role.Button) { expanded = true }
                         .clearAndSetSemantics { contentDescription = expandLabel }) {
-                        ExerciseIllustration(state.currentCatalogExercise, visualProvider, height = 88)
+                        ExerciseIllustration(state.currentCatalogExercise, visualProvider, height = 88, playback = illustrationPlayback)
                         Icon(Icons.Default.OpenInFull, null,
                             Modifier.align(Alignment.TopEnd).padding(5.dp).size(16.dp),
                             tint = androidx.compose.ui.graphics.Color.White)
@@ -466,7 +470,7 @@ private fun ActiveWorkoutContent(
                 val dismiss = { returnFocus = true; expanded = false }
                 AlertDialog(onDismissRequest = dismiss, title = { Text(name) }, text = {
                     Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        ExerciseIllustration(state.currentCatalogExercise, visualProvider, height = 210)
+                        ExerciseIllustration(state.currentCatalogExercise, visualProvider, height = 210, playback = illustrationPlayback)
                         Text(state.currentCatalogExercise?.let(vocabulary::coachingSummary)
                             ?: stringResource(R.string.exercise_detail_no_programming))
                         if (state.currentCatalogExercise?.let(vocabulary::hasUntranslatedCoachingSummary) == true)
@@ -670,7 +674,7 @@ private fun SetUpdateErrorBanner(@StringRes messageRes: Int, onDismiss: () -> Un
                 text = stringResource(messageRes),
                 color = MaterialTheme.colorScheme.error,
                 fontSize = 13.sp,
-                modifier = Modifier.weight(1f).a11yAnnounced()
+                modifier = Modifier.weight(1f).semantics { liveRegion = LiveRegionMode.Assertive }
             )
             IconButton(onClick = onDismiss) {
                 Icon(

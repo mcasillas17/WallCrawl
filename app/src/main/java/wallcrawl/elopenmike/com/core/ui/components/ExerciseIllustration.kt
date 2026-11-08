@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -71,11 +72,14 @@ fun ExerciseIllustration(
     modifier: Modifier = Modifier,
     height: Int = 180,
     thumbnail: Boolean = false,
-    animationsEnabled: Boolean = rememberAnimationsEnabled()
+    animationsEnabled: Boolean = rememberAnimationsEnabled(),
+    /** Shared by a screen that shows one exercise twice, so a Pause in one holds the other. */
+    playback: MutableState<Boolean>? = null
 ) {
     val variant = LocalIllustrationVariant.current
     // Above the key: pausing holds across the exercises of a workout.
-    var playing by rememberSaveable { mutableStateOf(animationsEnabled) }
+    val ownPlayback = rememberSaveable { mutableStateOf(animationsEnabled) }
+    var playing by playback ?: ownPlayback
     // The setting can change while the app is away, and a saved or running state must not outlast that.
     // Only a change moves it: Play, chosen with animations off, survives leaving and re-entering composition,
     // and turning animations back on starts the loop again.

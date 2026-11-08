@@ -286,15 +286,15 @@ class AccessibilityBaselineTest {
             WallCrawlTheme { OnboardingScreen(viewModel = viewModel, onCompleted = {}, isRestoreInFlight = restoring) }
         }
         compose.onNode(hasSetTextAction()).performTextReplacement("Gwen")
-        compose.onNodeWithText("Continue").performClick()
-        compose.onNodeWithText("Step 2 of 8").assertExists()
+        compose.onNodeWithText(context.getString(R.string.onboarding_action_continue)).performClick()
+        compose.onNodeWithText(context.getString(R.string.onboarding_step_counter, "2", "8")).assertExists()
         restoring = true
         compose.waitForIdle()
         // The header arrow is the only on-screen Back; system Back is held too.
-        compose.onNodeWithContentDescription("Back").assertIsNotEnabled()
+        compose.onNodeWithContentDescription(context.getString(R.string.action_back)).assertIsNotEnabled()
         compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
         compose.waitForIdle()
-        compose.onNodeWithText("Step 2 of 8").assertExists()
+        compose.onNodeWithText(context.getString(R.string.onboarding_step_counter, "2", "8")).assertExists()
     }
 
     /** Back must not leave the app, and cancel the restore, while one runs on the first step. */
@@ -548,8 +548,28 @@ class AccessibilityBaselineTest {
             // These routes show their heading while still loading; only their content proves they finished.
             loadedContent(route)?.let { compose.waitUntilAtLeastOneExists(hasText(it, substring = true), 15_000) }
             scan(route)
+            if (route == AppRoutes.PROFILE) scanSettingsPages()
         }
         report()
+    }
+
+    /** Profile opens on an overview; each settings page is its own screen, so each is opened and scanned. */
+    private fun scanSettingsPages() {
+        listOf(
+            R.string.guided_training_preferences, R.string.guided_equipment, R.string.guided_movement_restrictions,
+            R.string.guided_app_preferences, R.string.guided_your_data
+        ).forEach { title ->
+            val name = localized.getString(title)
+            // Moving between pages is not what is checked; each page is scanned once it shows.
+            withoutActionChecks {
+                compose.onAllNodes(hasScrollAction())[0].performScrollToNode(hasText(name))
+                compose.onNodeWithText(name).performClick()
+            }
+            compose.waitForIdle()
+            scan("profile/$name")
+            withoutActionChecks { compose.onNodeWithContentDescription(localized.getString(R.string.action_back)).performClick() }
+            compose.waitForIdle()
+        }
     }
 
     private fun loadedContent(route: String): String? = when (route) {

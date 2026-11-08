@@ -595,8 +595,6 @@
     <string name="progress_involvement_details">Muscle involvement details</string>
 
     <!-- Progressive disclosure state, announced for assistive tech. -->
-    <string name="progress_details_expanded">Expanded</string>
-    <string name="progress_details_collapsed">Collapsed</string>
     <string name="a11y_expanded">Expanded</string>
     <string name="a11y_collapsed">Collapsed</string>
     <string name="progress_history_empty">No past workouts logged yet. Complete your first workout to see history here.</string>

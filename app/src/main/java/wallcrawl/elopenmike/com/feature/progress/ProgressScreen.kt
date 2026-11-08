@@ -61,7 +61,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -89,6 +88,7 @@ import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.theme.successText
+import wallcrawl.elopenmike.com.core.ui.components.a11yExpanded
 
 enum class ProgressSection { OVERVIEW, TRENDS, MUSCLES }
 
@@ -666,9 +666,6 @@ private fun LabelledCountRow(label: String, count: Int) {
 
 @Composable
 private fun DetailsToggle(label: String, expanded: Boolean, onToggle: () -> Unit) {
-    val state = stringResource(
-        if (expanded) R.string.progress_details_expanded else R.string.progress_details_collapsed
-    )
     // A native button so the touch target is at least 48dp; the section-specific label plus a
     // resource-backed expanded/collapsed state description make each disclosure distinct and
     // announceable rather than three anonymous "Show details" rows.
@@ -677,10 +674,8 @@ private fun DetailsToggle(label: String, expanded: Boolean, onToggle: () -> Unit
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 48.dp)
-            .semantics {
-                role = Role.Button
-                stateDescription = state
-            }
+            .semantics { role = Role.Button }
+            .a11yExpanded(expanded)
     ) {
         Text(
             text = label,

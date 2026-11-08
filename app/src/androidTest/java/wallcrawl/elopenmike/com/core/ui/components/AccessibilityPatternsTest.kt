@@ -9,6 +9,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import android.content.res.Configuration
 import android.os.LocaleList
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -154,7 +155,7 @@ class AccessibilityPatternsTest {
         compose.waitForIdle()
         assertThat(counterPixels()).isNotEqualTo(first)
 
-        compose.onNodeWithContentDescription("Pause animation").performClick()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_pause)).performClick()
         // Past the click's own ripple, which would otherwise differ between the two captures.
         compose.mainClock.advanceTimeBy(1_500)
         compose.waitForIdle()
@@ -163,7 +164,7 @@ class AccessibilityPatternsTest {
         compose.waitForIdle()
         assertThat(counterPixels()).isEqualTo(held)
 
-        compose.onNodeWithContentDescription("Play animation").performClick()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_play)).performClick()
         compose.mainClock.advanceTimeBy(1_000)
         compose.waitForIdle()
         assertThat(counterPixels()).isNotEqualTo(held)
@@ -172,7 +173,7 @@ class AccessibilityPatternsTest {
     /** With animations off, the loop waits to be asked for. */
     @Test fun illustrationStartsStillWhenAnimationsAreOff() {
         showIllustration(animationsEnabled = false)
-        compose.onNodeWithContentDescription("Play animation").assertExists()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_play)).assertExists()
         val still = counterPixels()
         compose.mainClock.advanceTimeBy(2_000)
         compose.waitForIdle()
@@ -193,8 +194,8 @@ class AccessibilityPatternsTest {
                 )
             }
         }
-        compose.onNodeWithContentDescription("Pause animation").assertDoesNotExist()
-        compose.onNodeWithContentDescription("Play animation").assertDoesNotExist()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_pause)).assertDoesNotExist()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_play)).assertDoesNotExist()
     }
 
     /** Paused on the way back through a frame, Play carries on backwards, not forwards. */
@@ -219,9 +220,9 @@ class AccessibilityPatternsTest {
             compose.waitForIdle()
         }
         // The fourth position shows the middle frame on its way back, so the next is the first frame.
-        compose.onNodeWithContentDescription("Pause animation").performSemanticsAction(SemanticsActions.OnClick)
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_pause)).performSemanticsAction(SemanticsActions.OnClick)
         compose.waitForIdle()
-        compose.onNodeWithContentDescription("Play animation").performSemanticsAction(SemanticsActions.OnClick)
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_play)).performSemanticsAction(SemanticsActions.OnClick)
         compose.waitForIdle()
         compose.mainClock.advanceTimeBy(900)
         compose.waitForIdle()
@@ -234,11 +235,29 @@ class AccessibilityPatternsTest {
         compose.setContent {
             Illustration(true, id)
         }
-        compose.onNodeWithContentDescription("Pause animation").performClick()
-        compose.onNodeWithContentDescription("Play animation").assertExists()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_pause)).performClick()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_play)).assertExists()
         id = "squat"
         compose.waitForIdle()
-        compose.onNodeWithContentDescription("Play animation").assertExists()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_play)).assertExists()
+    }
+
+    /** A compact demo has no control of its own, so a Pause on the full-size one sharing its playback holds it too. */
+    @Test fun aSharedPauseHoldsTheCompactDemo() {
+        val playback = mutableStateOf(true)
+        compose.setContent {
+            WallCrawlTheme {
+                Column {
+                    val exercise = Exercise(id = "push-up", name = "push-up", primaryMuscles = listOf("Chest"), type = ExerciseType.BODYWEIGHT_REPS)
+                    ExerciseIllustration(exercise, twoFrames, height = 88, animationsEnabled = true, playback = playback)
+                    ExerciseIllustration(exercise, twoFrames, height = 210, animationsEnabled = true, playback = playback)
+                }
+            }
+        }
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_pause)).performClick()
+        compose.waitForIdle()
+        assertThat(playback.value).isFalse()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_play)).assertExists()
     }
 
     /** Turning animations off while away stops a loop that had been playing. */
@@ -247,10 +266,10 @@ class AccessibilityPatternsTest {
         compose.setContent {
             Illustration(enabled)
         }
-        compose.onNodeWithContentDescription("Pause animation").assertExists()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_pause)).assertExists()
         enabled = false
         compose.waitForIdle()
-        compose.onNodeWithContentDescription("Play animation").assertExists()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_play)).assertExists()
         val still = counterPixels()
         compose.mainClock.advanceTimeBy(2_000)
         compose.waitForIdle()
@@ -266,11 +285,11 @@ class AccessibilityPatternsTest {
         restoration.setContent {
             Illustration(enabled)
         }
-        compose.onNodeWithContentDescription("Pause animation").assertExists()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_pause)).assertExists()
         enabled = false
         restoration.emulateSavedInstanceStateRestore()
         compose.waitForIdle()
-        compose.onNodeWithContentDescription("Play animation").assertExists()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_play)).assertExists()
     }
 
     /** Play, chosen with animations off, survives a restore: only turning the setting off stops it. */
@@ -279,11 +298,11 @@ class AccessibilityPatternsTest {
         restoration.setContent {
             Illustration(false)
         }
-        compose.onNodeWithContentDescription("Play animation").performClick()
-        compose.onNodeWithContentDescription("Pause animation").assertExists()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_play)).performClick()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_pause)).assertExists()
         restoration.emulateSavedInstanceStateRestore()
         compose.waitForIdle()
-        compose.onNodeWithContentDescription("Pause animation").assertExists()
+        compose.onNodeWithContentDescription(context.getString(R.string.illustration_pause)).assertExists()
     }
 
     private val twoFrames = object : ExerciseVisualProvider {
@@ -513,7 +532,7 @@ class AccessibilityPatternsTest {
                 }
             }
         }
-        compose.onNodeWithText("Skip or stop").performClick()
+        compose.onNodeWithText(context.getString(R.string.set_skip_or_stop)).performClick()
         compose.onNode(hasScrollAction()).performScrollToNode(hasText(last))
         compose.onNodeWithText(last).assertIsDisplayed().assertHasClickAction()
     }

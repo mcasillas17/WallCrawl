@@ -588,8 +588,6 @@
     <string name="progress_involvement_details">Detalles de la participación muscular</string>
 
     <!-- Estado del detalle progresivo, anunciado para tecnología de asistencia. -->
-    <string name="progress_details_expanded">Expandido</string>
-    <string name="progress_details_collapsed">Contraído</string>
     <string name="a11y_expanded">Expandido</string>
     <string name="a11y_collapsed">Contraído</string>
     <string name="progress_history_empty">Todavía no hay entrenamientos registrados. Completa el primero para ver tu historial aquí.</string>

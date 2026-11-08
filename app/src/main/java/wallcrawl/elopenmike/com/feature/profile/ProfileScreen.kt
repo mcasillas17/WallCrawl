@@ -383,7 +383,8 @@ private fun MovementCapabilityProfileCard(
 
         if (draft == null) {
             MovementCapabilityType.entries.forEach { type ->
-                Row(
+                // At large text the level goes below the movement, or the movement name breaks mid-word.
+                StackingRow(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 6.dp),

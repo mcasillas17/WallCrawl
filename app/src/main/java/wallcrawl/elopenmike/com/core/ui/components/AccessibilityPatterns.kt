@@ -5,16 +5,9 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.MotionDurationScale
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -26,10 +19,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 
@@ -86,11 +76,10 @@ fun Modifier.a11yExpanded(expanded: Boolean): Modifier {
 
 /** A spinner a screen reader can name; the unnamed Material one is silent. */
 @Composable
-fun LoadingIndicator(modifier: Modifier = Modifier, strokeWidth: Dp = ProgressIndicatorDefaults.CircularStrokeWidth) {
+fun LoadingIndicator(modifier: Modifier = Modifier) {
     val label = stringResource(R.string.a11y_loading)
     CircularProgressIndicator(
         color = CrimsonRedPrimary,
-        strokeWidth = strokeWidth,
         modifier = modifier.semantics {
             contentDescription = label
             liveRegion = LiveRegionMode.Polite
@@ -106,9 +95,5 @@ fun LoadingIndicator(modifier: Modifier = Modifier, strokeWidth: Dp = ProgressIn
 @Composable
 fun rememberAnimationsEnabled(): Boolean {
     val scale = rememberCoroutineScope().coroutineContext[MotionDurationScale]
-    fun current() = (scale?.scaleFactor ?: 1f) > 0f
-    var enabled by remember(scale) { mutableStateOf(current()) }
-    LaunchedEffect(scale) { snapshotFlow { current() }.collect { enabled = it } }
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { enabled = current() }
-    return enabled
+    return (scale?.scaleFactor ?: 1f) > 0f
 }

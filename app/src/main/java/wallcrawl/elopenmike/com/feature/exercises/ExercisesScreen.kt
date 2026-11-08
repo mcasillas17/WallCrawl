@@ -65,7 +65,7 @@ fun ExercisesScreen(
                 listOf(R.string.guided_exercises, R.string.templates_title).forEachIndexed { index, label ->
                     Tab(
                         selected = showWorkouts == (index == 1), enabled = !locked,
-                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        selectedContentColor = MaterialTheme.colorScheme.tertiary,
                         unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         onClick = dropUnlessResumed { if (!templatesViewModel.navigationLocked.value) showWorkouts = index == 1 },
                         text = { Text(stringResource(label)) }
@@ -126,7 +126,7 @@ private fun ExerciseList(
             )
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TextButton(onClick = { filtersOpen = true }, colors = ButtonDefaults.textButtonColors(
-                    contentColor = if (activeFilters.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary
+                    contentColor = if (activeFilters.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.tertiary
                 )) {
                     Icon(Icons.Default.FilterList, null)
                     Spacer(Modifier.width(6.dp))

@@ -60,7 +60,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import wallcrawl.elopenmike.com.AppContainer
 import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
-import wallcrawl.elopenmike.com.feature.backup.LocalDataOperation
 import wallcrawl.elopenmike.com.feature.backup.LocalDataOutcomeEffect
 import wallcrawl.elopenmike.com.feature.backup.LocalDataSection
 import wallcrawl.elopenmike.com.feature.backup.LocalDataViewModel
@@ -305,7 +304,7 @@ private fun WallCrawlAppContent(
                     restoreFromArchive = {
                         RestoreFromArchiveButton(viewModel = localDataViewModel)
                     },
-                    isRestoreInFlight = localDataState.operation == LocalDataOperation.RESTORING
+                    isRestoreInFlight = localDataState.isBusy
                 )
             }
 

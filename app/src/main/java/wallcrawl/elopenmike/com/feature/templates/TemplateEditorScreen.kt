@@ -109,7 +109,6 @@ import wallcrawl.elopenmike.com.core.ui.components.MIN_TOUCH_TARGET
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.shortLabelRes
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -760,7 +759,7 @@ private fun SelectedExerciseCard(
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = null,
-                    tint = if (canEdit) CrimsonRedLight else muted,
+                    tint = if (canEdit) MaterialTheme.colorScheme.tertiary else muted,
                     modifier = Modifier.size(18.dp)
                 )
             }

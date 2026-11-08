@@ -669,7 +669,7 @@ uninstall loses it.
 
 Each exercise resolves to three bundled frames that animate in a lightweight
 `1 → 2 → 3 → 2` loop using Coil 3 with SVG support. The loop starts paused when
-system animations are off, and exercises with more than one frame have a Pause/Play button. The compact normalized
+system animations are off, and full-size illustrations with more than one frame have a Pause/Play button; in a workout it also holds the compact demo. The compact normalized
 `catalog.json` derives those paths from validated source slugs and a catalog
 visual specification. The exact pinned upstream metadata and per-frame
 attribution remain unmodified in `upstream-manifest.json` beside the SVGs.

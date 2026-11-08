@@ -468,7 +468,9 @@ class ActiveWorkoutScreenTest {
             composeRule.onAllNodesWithText(text(R.string.workout_set_update_error)).fetchSemanticsNodes().isNotEmpty()
         }
         val message = composeRule.onNodeWithText(text(R.string.workout_set_update_error), useUnmergedTree = true)
-        message.assertIsDisplayed().assert(hasLiveRegion())
+        // Assertive, as on main: a failed write has no other cue.
+        message.assertIsDisplayed()
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Assertive))
         val first = message.fetchSemanticsNode().id
         composeRule.onNodeWithText("Log set").performScrollTo().performClick()
         composeRule.waitForIdle()

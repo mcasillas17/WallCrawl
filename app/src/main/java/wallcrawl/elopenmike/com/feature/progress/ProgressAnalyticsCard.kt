@@ -62,7 +62,6 @@ import wallcrawl.elopenmike.com.core.model.PerformanceShape
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.ui.components.AnalyticsBarChart
-import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
 import wallcrawl.elopenmike.com.core.ui.components.a11yExpanded
@@ -71,6 +70,8 @@ import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.recordedDeloadRes
 import wallcrawl.elopenmike.com.core.ui.localization.recordedProgressionText
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.ui.semantics.hideFromAccessibility
 
 internal const val PROGRESS_ANALYTICS_TEST_TAG = "progress-analytics"
 
@@ -134,7 +135,8 @@ internal fun ProgressAnalyticsCard(
 @Composable
 private fun AnalyticsLoading() {
     Box(Modifier.fillMaxWidth().padding(16.dp)) {
-        LoadingIndicator(Modifier.size(24.dp))
+        // Beside its own text: hidden, so the row is read once.
+        CircularProgressIndicator(Modifier.size(24.dp).semantics { hideFromAccessibility() })
         Text(stringResource(R.string.analytics_loading), color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 13.sp, modifier = Modifier.padding(start = 36.dp))
     }
