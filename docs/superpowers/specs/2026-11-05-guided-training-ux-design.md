@@ -92,7 +92,7 @@ Non-blocking coverage limitations use concise, accurate summaries with Details f
 The screen answers “What do I do now?” in this order:
 
 1. Compact header with workout position, a **Leave workout** action, and secondary **Finish**.
-2. Exercise name and its animated demonstration beside or beneath it, followed by the exact prescribed target. Reuse the selected catalog variant and its native playback sequence. **How to do it** enlarges the same demonstration and shows the catalog guidance. Offer Pause and Play. When reduced motion is enabled, start with a still frame and allow explicit playback. Static illustrations and unavailable artwork keep their existing fallback behavior.
+2. Exercise name and its animated demonstration beside or beneath it, followed by the exact prescribed target. A small expand icon sits in the corner of the artwork. Tapping anywhere on the artwork opens a larger view of the same demonstration and its catalog guidance. Give the whole thumbnail a single accessible action named “Expand [exercise name] demonstration.” Playback runs automatically in both sizes and shows a still frame when reduced motion is enabled. Static illustrations and unavailable artwork keep their existing fallback behavior.
 3. Any applicable execution/stop cues and errors, visible before logging.
 4. A compact rest strip when applicable, using the existing deadline and rest states.
 5. One expanded set editor, followed by compact rows for the other sets in this exercise.
@@ -126,7 +126,7 @@ All historical names, targets, measurements, units, timestamps, and reasons rema
 
 Exercise search is first. A **Filters** action opens muscle and equipment choices, with an applied-filter count and Clear filters. Active filter summaries stay visible after closing the sheet. Closing filters preserves the search and results; no new search backend is needed.
 
-Each exercise row shows the existing illustration, name, and a concise equipment or muscle summary. Detail prioritizes the full illustration, plain-language instructions, and equipment. Supporting muscle classifications and programming metadata move to **More details**. Source citations and condition-reference links remain accessible. “How to do it” must use actual catalog/source-reviewed descriptions rather than generate medical advice.
+Each exercise row shows the existing illustration, name, and a concise equipment or muscle summary. Detail prioritizes the full illustration, plain-language instructions, and equipment. Supporting muscle classifications and programming metadata move to **More details**. Source citations and condition-reference links remain accessible. Exercise guidance uses the catalog descriptions and their reviewed sources.
 
 My workouts supports the existing create, edit, reorder, start, and delete flows. The routine editor keeps all prescription types, unit confirmation, unsaved-draft recovery, and active-session start restrictions. Use the new shared visual rules without weakening its existing validation.
 
@@ -160,7 +160,7 @@ Use **Name**, **Your goals**, and **Review your setup** in place of implementati
 - Red identifies the primary action or selection, not every section title. Success and errors also use text/icons so color is not their only signal.
 - Establish shared semantic typography and theme tokens. Avoid fixed dark text colors in reusable type styles. Screen titles, section labels, body copy, and secondary copy are consistent across all destinations.
 - Preserve 48 dp touch targets, visible focus, meaningful TalkBack labels/order, Android back behavior, keyboard insets, and font scaling. “Compact” means less redundant content, not tiny controls.
-- No information requires hover, animation, or gesture discovery. No looping decorative animation. Existing exercise playback remains available with readable controls and static frames.
+- All tasks support visible or labelled actions. The expand icon identifies the artwork as interactive. Exercise guidance remains readable with reduced motion enabled.
 - Verify English and Spanish, dark and light, 320/360 dp widths, and at least 1.8x font scale. A scrollable large-text layout takes priority over an arbitrary above-the-fold target.
 
 ## Implementation reach and order
@@ -185,7 +185,7 @@ Update EN/ES string resources together, navigation and Compose UI tests whose co
 - A user can log each supported measurement type, correct a completed set, skip/stop, record optional feedback, leave/resume, and finish partial/full workouts without data loss.
 - A failed save, fast double tap, decimal fragment, rotation, process recreation, open keyboard, and changing the expanded set cannot silently erase or fabricate measurements.
 - The rest countdown survives ordinary UI transitions and uses the existing deadline, including background/resume behavior.
-- Exercise navigation works in both directions with swipes and buttons. Verify first/last bounds, vertical scrolling, decimal drafts, completed sets, and the ongoing rest timer across a round trip. Check that compact and expanded demonstrations follow the selected exercise, Pause/Play work, and reduced motion starts on a still frame.
+- Exercise navigation works in both directions with swipes and buttons. Verify first/last bounds, vertical scrolling, decimal drafts, completed sets, and the ongoing rest timer across a round trip. Tap the thumbnail or activate it with a keyboard to expand the selected demonstration, and verify a swipe across it only changes exercises. Check automatic playback and the reduced-motion still in both sizes, then dismiss the larger view and return focus to the same thumbnail.
 - Recent and older history, exact prior performance, dose details, routine editing, condition citations, exclusions, and all settings/data actions remain reachable.
 - Fresh setup, restore, deletion, legacy reports, pending reassessment, zero released conditions, empty history, catalog failures, unsupported program versions, and unavailable recommendations have explicit paths.
 - Capture actual native screenshots for Train ready/active/blocked, active set/rest/failure, completion, Progress empty/populated, Library/filter/detail, grouped settings, and onboarding. Include Spanish large text and light theme examples.
@@ -203,4 +203,4 @@ Builder check on 2026-11-05: a fresh Android/Compose reviewer read this contract
 
 Preview verification on 2026-11-05: browser checks exercised invalid numeric input, set logging, rest display, leave/resume, partial finish, library search, and settings return navigation. Train and active-session layouts were inspected visually; Train was captured in light and dark themes and checked for horizontal overflow at 320 and 390 px. These are checks of the sample-data design preview only. Native implementation and its acceptance checks have not started.
 
-On 2026-11-07 the owner requested swipe navigation and asked to see exercise animation. Browser checks exercised touch, horizontal trackpad input, boundary swipes, button navigation, retained set drafts and rest time, and pause/play with reduced motion. Playback for bench press, one-arm dumbbell row, and lat pulldown matched their bundled Android frames.
+On 2026-11-07 the owner requested swipe navigation and direct artwork expansion with an icon, and removed the separate instruction and pause actions. Browser checks exercised touch and keyboard expansion, focus return, swiping across the artwork, horizontal trackpad input, boundary swipes, retained set drafts and rest time, and reduced motion in both sizes. Playback for bench press, one-arm dumbbell row, and lat pulldown matched their bundled Android frames.
