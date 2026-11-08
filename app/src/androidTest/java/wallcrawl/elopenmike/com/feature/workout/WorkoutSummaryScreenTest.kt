@@ -49,8 +49,8 @@ class WorkoutSummaryScreenTest {
     @Test fun summaryDetailActionHasReadableLightThemeContrast() {
         render(Locale.ENGLISH, ThemePreference.LIGHT, openDetails = {})
         val layouts = mutableListOf<TextLayoutResult>()
-        compose.onNodeWithText("View workout details").performScrollTo()
-        compose.onNodeWithText("View workout details", useUnmergedTree = true)
+        compose.onNodeWithText("View workout").performScrollTo()
+        compose.onNodeWithText("View workout", useUnmergedTree = true)
             .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
         assertThat(ColorUtils.calculateContrast(
             layouts.single().layoutInput.style.color.toArgb(), LightBackground.toArgb()

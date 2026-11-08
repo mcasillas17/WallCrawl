@@ -62,7 +62,7 @@ see [privacy and explicit exports](privacy.md).
 
 ## Browsing conditions and exercises
 
-**Exercises → Condition reference** opens a searchable offline library of 50 conditions in seven regions. Each detail shows the publications, the research team's access level and expandable study notes. English and Spanish names, search and controls are available. Publication titles retain their original language and detailed extraction notes are in English. Opening a source uses the system browser. Where the cited source describes an illustrated catalog movement, tap its localized name to open the exercise detail.
+**Library → Condition guide** opens a searchable offline library of 50 conditions in seven regions. Each detail shows the publications, the research team's access level and expandable study notes. English and Spanish names, search and controls are available. Publication titles retain their original language and detailed extraction notes are in English. Opening a source uses the system browser. Where the cited source describes an illustrated catalog movement, tap its localized name to open the exercise detail.
 
 The catalog contains 327 exercises, including 25 neutral WallCrawl additions with both illustration variants. Each has explicit execution guidance and PNG masters. The source-specific exercise links identify the movement studied. The condition picker and deterministic planner use the separate clinical release records, currently empty. [Exercise sources, PNG masters and remaining artwork gaps](art/condition-exercises.md)
 

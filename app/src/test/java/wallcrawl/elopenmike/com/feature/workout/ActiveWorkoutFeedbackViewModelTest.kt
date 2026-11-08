@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.feature.workout
 
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -12,6 +13,7 @@ import org.junit.Test
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.database.repository.FakeUserProfileDao
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
+import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
@@ -459,6 +461,47 @@ class ActiveWorkoutFeedbackViewModelTest {
         assertThat(discarded).isTrue()
     }
 
+    @Test
+    fun pendingDiscardAndFinishRejectCompetingSetAndTerminalWrites() = runTest {
+        for (discard in listOf(false, true)) {
+            val stored = FakeRepository(session())
+            val release = CompletableDeferred<Unit>()
+            val repository = object : WorkoutRepository by stored {
+                override suspend fun cancelWorkout(sessionId: String) {
+                    release.await()
+                    stored.cancelWorkout(sessionId)
+                }
+                override suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): wallcrawl.elopenmike.com.core.model.WorkoutSummary {
+                    release.await()
+                    return stored.completeWorkout(sessionId, actualDurationMinutes)
+                }
+            }
+            val vm = viewModel(repository)
+            collect(vm)
+            advanceUntilIdle()
+            var returned = 0
+            if (discard) {
+                vm.requestCancel()
+                vm.confirmCancel { returned++ }
+            } else {
+                vm.requestFinish()
+                vm.confirmFinish()
+            }
+            advanceUntilIdle()
+            assertThat(active(vm).isSaving).isTrue()
+            vm.updateSet("set-1", completion(8, 50.0))
+            vm.requestCancel()
+            vm.confirmCancel { returned++ }
+            vm.finishWorkout()
+            release.complete(Unit)
+            advanceUntilIdle()
+            assertThat(stored.persistedInputs).isEmpty()
+            assertThat(stored.cancelCalls).isEqualTo(if (discard) 1 else 0)
+            assertThat(stored.completeCalls).isEqualTo(if (discard) 0 else 1)
+            assertThat(returned).isEqualTo(if (discard) 1 else 0)
+        }
+    }
+
     private fun TestScope.collect(viewModel: ActiveWorkoutViewModel) {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
@@ -475,7 +518,7 @@ class ActiveWorkoutFeedbackViewModelTest {
         isCompleted = true
     )
 
-    private fun viewModel(repository: FakeRepository, profiles: UserProfileRepository? = null) = ActiveWorkoutViewModel(
+    private fun viewModel(repository: WorkoutRepository, profiles: UserProfileRepository? = null) = ActiveWorkoutViewModel(
         sessionId = SESSION_ID,
         workoutRepository = repository,
         exerciseCatalog = InMemoryExerciseCatalog(),

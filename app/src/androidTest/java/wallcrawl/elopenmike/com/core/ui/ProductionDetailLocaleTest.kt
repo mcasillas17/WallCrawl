@@ -19,6 +19,7 @@ import org.junit.rules.ExternalResource
 import org.junit.rules.RuleChain
 import java.io.File
 import wallcrawl.elopenmike.com.*
+import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.database.WallCrawlDatabase
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
 import wallcrawl.elopenmike.com.core.locale.*
@@ -95,8 +96,13 @@ class ProductionDetailLocaleTest {
             }
             vm.openExerciseDetail(exercise)
         }
+        val more = compose.activity.getString(R.string.guided_more_details)
+        val hide = compose.activity.getString(R.string.today_hide_details)
         compose.waitUntil(10_000) {
-            compose.onAllNodes(hasText("Programming review pending") or hasText("Programación pendiente de revisión")).fetchSemanticsNodes().isNotEmpty()
+            compose.onAllNodes(hasText(more) or hasText(hide)).fetchSemanticsNodes().isNotEmpty()
+        }
+        if (compose.onAllNodesWithText(more).fetchSemanticsNodes().isNotEmpty()) {
+            compose.onNodeWithText(more).performScrollTo().performClick()
         }
     }
 }

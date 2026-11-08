@@ -74,7 +74,8 @@ sealed interface ActiveWorkoutUiState {
     }
 
     data class Completed(
-        val summary: WorkoutSummary
+        val summary: WorkoutSummary,
+        val advancedPartialProgram: Boolean = false
     ) : ActiveWorkoutUiState
 
     data class Error(@StringRes val messageRes: Int) : ActiveWorkoutUiState

@@ -17,6 +17,9 @@ import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.MotionDurationScale
+import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.runtime.key
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.LaunchedEffect
@@ -63,11 +66,12 @@ fun ExerciseIllustration(
     exercise: Exercise?,
     visualProvider: ExerciseVisualProvider,
     modifier: Modifier = Modifier,
-    height: Int = 180
+    height: Int = 180,
+    thumbnail: Boolean = false
 ) {
     val variant = LocalIllustrationVariant.current
     key(exercise?.id, visualProvider, variant) {
-        ExerciseIllustrationContent(exercise, visualProvider, variant, modifier, height)
+        ExerciseIllustrationContent(exercise, visualProvider, variant, modifier, height, thumbnail)
     }
 }
 
@@ -77,7 +81,8 @@ private fun ExerciseIllustrationContent(
     visualProvider: ExerciseVisualProvider,
     variant: IllustrationVariant,
     modifier: Modifier,
-    height: Int
+    height: Int,
+    thumbnail: Boolean
 ) {
     var useOriginals by remember { mutableStateOf(false) }
     val frames by produceState<List<ExerciseVisual>>(emptyList(), useOriginals) {
@@ -87,15 +92,20 @@ private fun ExerciseIllustrationContent(
     }
     var frameIndex by remember(frames) { mutableIntStateOf(0) }
 
-    LaunchedEffect(frames) {
+    LaunchedEffect(frames, thumbnail) {
         frameIndex = 0
-        val playbackSequence = frames.indices.toList() +
-            (frames.lastIndex - 1 downTo 1).toList()
-        var sequenceIndex = 0
-        while (playbackSequence.size > 1 && currentCoroutineContext().isActive) {
-            delay(FRAME_DURATION_MILLIS)
-            sequenceIndex = (sequenceIndex + 1) % playbackSequence.size
-            frameIndex = playbackSequence[sequenceIndex]
+        if (frames.size <= 1 || thumbnail) return@LaunchedEffect
+        val scale = currentCoroutineContext()[MotionDurationScale]
+        val sequence = frames.indices.toList() + (frames.lastIndex - 1 downTo 1).toList()
+        snapshotFlow { scale?.scaleFactor ?: 1f }.collectLatest { durationScale ->
+            frameIndex = 0
+            if (durationScale == 0f) return@collectLatest
+            var index = 0
+            while (currentCoroutineContext().isActive) {
+                delay(FRAME_DURATION_MILLIS)
+                index = (index + 1) % sequence.size
+                frameIndex = sequence[index]
+            }
         }
     }
 
@@ -131,11 +141,13 @@ private fun ExerciseIllustrationContent(
                     useOriginals = true
                 }
             )
+        } else if (height <= 100 || thumbnail) {
+            Icon(Icons.Default.FitnessCenter, stringResource(R.string.illustration_unavailable), tint = TextSecondary)
         } else {
             IllustrationPlaceholder(exercise = exercise)
         }
 
-        if (frames.size > 1) {
+        if (frames.size > 1 && height > 100 && !thumbnail) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)

@@ -108,15 +108,13 @@ class ProgramNavigationTest {
         capture("today-returning-first-viewport-${locale.language}")
         compose.onNodeWithTag("planning-PROGRAM").assertDoesNotExist()
         click(R.string.today_view_exercises)
-        click(R.string.today_hide_exercises)
+        click(R.string.action_close)
         click(R.string.today_details)
-        compose.onNodeWithTag("today-list").performScrollToNode(hasText(text(R.string.today_deload_cancel)))
         compose.onNodeWithText(text(R.string.today_deload_cancel)).assertIsEnabled()
     }
 
     @Test fun todayLinksToProgramWeeksAndSharedCalendarAllowances() = runBlocking {
         enroll(); show(); chooseProgram()
-        compose.onNodeWithTag("today-list").performScrollToNode(hasTestTag("planning-PROGRAM"))
         capture("program-today-mode-en")
         assertTodayDisclosureReadable(1f)
         assertThat((container.programRepository.get() as ProgramReadState.Supported).progress.completedSlots).isEqualTo(0)
@@ -128,9 +126,9 @@ class ProgramNavigationTest {
         assertTodayDisclosureReadable(1.8f)
     }
 
-    @Test fun todayAndProgressOpenManagementAndStaleConfirmationCannotReplaceAnotherRun() = runBlocking {
+    @Test fun trainOpensManagementAndStaleConfirmationCannotReplaceAnotherRun() = runBlocking {
         show()
-        click(R.string.program_manage)
+        click(R.string.guided_train_explore)
         waitText(R.string.program_start)
         click(R.string.program_start)
         waitText(R.string.program_pause)
@@ -144,8 +142,8 @@ class ProgramNavigationTest {
         waitText(R.string.program_stale)
         assertThat(container.programRepository.getHeader()).isEqualTo(replacement)
         capture("program-stale-confirmation-en")
-        compose.runOnIdle { nav.popBackStack(); nav.navigate(AppRoutes.PROGRESS) }
-        waitText(R.string.program_manage)
+        compose.runOnIdle { nav.popBackStack() }
+        awaitTodayList()
         click(R.string.program_manage)
         assertThat(nav.currentDestination?.route).isEqualTo(AppRoutes.PROGRAM)
     }
@@ -156,8 +154,9 @@ class ProgramNavigationTest {
         chooseProgram()
         restoration.emulateSavedInstanceStateRestore()
         waitText(R.string.program_start_session)
-        compose.onNodeWithTag("today-list").performScrollToNode(hasTestTag("planning-PROGRAM"))
+        click(R.string.guided_train_change)
         compose.onNodeWithTag("planning-PROGRAM").assertIsSelected()
+        click(R.string.action_close)
         capture("program-today-en")
         click(R.string.program_start_session)
         awaitActiveWorkout()
@@ -236,8 +235,9 @@ class ProgramNavigationTest {
         enroll()
         database.openHelper.writableDatabase.execSQL("UPDATE program_enrollments SET configurationPolicyVersion='FUTURE_POLICY'")
         show()
-        waitText(R.string.program_unsupported)
-        click(R.string.today_action_open_templates)
+        awaitTodayList()
+        compose.onNodeWithTag("today-list").performScrollToNode(hasText(text(R.string.program_unsupported)))
+        click(R.string.today_my_workouts_title)
         compose.waitUntil(15_000) { nav.currentDestination?.route == AppRoutes.WORKOUT_TEMPLATES }
         compose.runOnIdle { nav.popBackStack() }
         click(R.string.today_action_start)
@@ -247,9 +247,9 @@ class ProgramNavigationTest {
         compose.runOnIdle { nav.popBackStack() }
         compose.waitUntil(15_000) { compose.onAllNodesWithTag("today-list").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithTag("today-list").performScrollToIndex(0)
-        waitText(R.string.today_action_resume)
+        waitText(R.string.guided_train_resume)
         capture("program-unsupported-active-resume-en")
-        click(R.string.today_action_resume)
+        click(R.string.guided_train_resume)
         assertThat(nav.currentDestination?.route).isEqualTo(AppRoutes.ACTIVE_WORKOUT)
     }
 
@@ -288,7 +288,8 @@ class ProgramNavigationTest {
         waitText(R.string.program_finish_unsupported)
         assertThat(container.workoutRepository.getActiveSessionOnce()?.id).isEqualTo(session.id)
         capture("program-unsupported-finish-en")
-        compose.onNodeWithContentDescription(text(R.string.workout_close_content_description)).performClick()
+        compose.onNodeWithText(text(R.string.guided_leave_workout)).performClick()
+        click(R.string.guided_discard_workout)
         waitText(R.string.discard_confirm_action)
         compose.onNodeWithText(text(R.string.discard_confirm_action)).performClick()
         compose.waitUntil(15_000) { nav.currentDestination?.route == AppRoutes.TODAY }
@@ -312,7 +313,7 @@ class ProgramNavigationTest {
         waitText(R.string.finish_confirm_action)
         compose.onNodeWithText(text(R.string.program_partial_finish), substring = true).assertDoesNotExist()
         compose.onNodeWithText(text(R.string.finish_confirm_keep_going)).performClick()
-        compose.onNodeWithContentDescription(text(R.string.workout_close_content_description)).assertHasClickAction()
+        compose.onNodeWithText(text(R.string.guided_leave_workout)).assertHasClickAction()
         assertThat(container.workoutRepository.getActiveSessionOnce()?.id).isEqualTo(session.id)
     }
 
@@ -327,7 +328,8 @@ class ProgramNavigationTest {
                 }
             }
         }
-        show(); waitText(R.string.program_read_failed)
+        show(); awaitTodayList()
+        compose.onNodeWithTag("today-list").performScrollToNode(hasText(text(R.string.program_read_failed)))
         click(R.string.program_manage)
         waitText(R.string.program_read_failed)
         failing = false
@@ -377,10 +379,10 @@ class ProgramNavigationTest {
                 restoreState = true
             }
         }
-        waitText(R.string.program_manage)
         awaitTodayList()
-        compose.onNodeWithTag("today-list").performScrollToNode(hasTestTag("planning-ORDINARY"))
+        click(R.string.guided_train_change)
         compose.onNodeWithTag("planning-ORDINARY").assertIsSelected()
+        click(R.string.action_close)
         compose.onNodeWithText(text(R.string.program_confirm)).assertDoesNotExist()
         assertThat(container.programRepository.getHeader()).isEqualTo(originalHeader)
         click(R.string.program_manage)
@@ -421,12 +423,12 @@ class ProgramNavigationTest {
     }
     private fun chooseProgram() {
         awaitTodayList()
-        compose.onNodeWithTag("today-list").performScrollToNode(hasTestTag("planning-PROGRAM"))
+        click(R.string.guided_train_change)
         compose.waitUntil(15_000) {
             compose.onNode(hasTestTag("planning-PROGRAM") and isEnabled()).isDisplayed()
         }
         compose.onNodeWithTag("planning-PROGRAM").performClick()
-        compose.onNodeWithTag("today-list").performScrollToNode(hasText(text(R.string.today_plan_heading)))
+        compose.onNodeWithTag("today-list").performScrollToNode(hasText(text(R.string.program_start_session)))
         waitText(R.string.program_start_session)
     }
     private fun text(id: Int) = localized.getString(id)
@@ -441,25 +443,19 @@ class ProgramNavigationTest {
         waitText(R.string.workout_action_finish)
     }
     private fun click(id: Int) {
+        val button = hasText(text(id)) and hasClickAction() and isEnabled()
         compose.waitUntil(15_000) {
-            compose.onAllNodesWithText(text(R.string.today_loading)).fetchSemanticsNodes().isEmpty() && (
-                compose.onAllNodesWithTag("today-list").fetchSemanticsNodes().isNotEmpty() ||
-                    compose.onAllNodesWithText(text(id)).fetchSemanticsNodes().isNotEmpty())
-        }
-        if (compose.onAllNodesWithTag("today-list").fetchSemanticsNodes().isNotEmpty()) {
-            // The list can be on screen before the item is in it, so the scroll is retried.
-            compose.waitUntil(15_000) {
-                runCatching {
-                    compose.onNodeWithTag("today-list").performScrollToNode(hasText(text(id)))
-                }.isSuccess
+            if (compose.onAllNodes(button).fetchSemanticsNodes().isEmpty() &&
+                compose.onAllNodesWithTag("today-list").fetchSemanticsNodes().isNotEmpty()
+            ) {
+                runCatching { compose.onNodeWithTag("today-list").performScrollToNode(hasText(text(id))) }
             }
+            compose.onAllNodes(button).fetchSemanticsNodes().isNotEmpty()
         }
-        compose.waitUntil(15_000) {
-            compose.onAllNodes(hasText(text(id)) and hasClickAction()).fetchSemanticsNodes().any {
-                !it.config.contains(androidx.compose.ui.semantics.SemanticsProperties.Disabled)
-            }
+        if (compose.onAllNodes(button and hasAnyAncestor(hasScrollAction())).fetchSemanticsNodes().isNotEmpty()) {
+            compose.onNode(button).performScrollTo()
         }
-        compose.onNodeWithText(text(id)).performScrollTo().performClick()
+        compose.onNode(button).performClick()
     }
     private fun show(locale: Locale = Locale.ENGLISH, fontScale: Float = 1f) {
         val configuration = Configuration(context.resources.configuration).apply { setLocales(LocaleList(locale)); this.fontScale = fontScale }
@@ -467,7 +463,7 @@ class ProgramNavigationTest {
         restoration = StateRestorationTester(compose)
         restoration.setContent {
             nav = rememberNavController()
-            CompositionLocalProvider(LocalContext provides localized, LocalConfiguration provides configuration,
+            CompositionLocalProvider(LocalContext provides localized, LocalResources provides localized.resources, LocalConfiguration provides configuration,
                 LocalDensity provides Density(context.resources.displayMetrics.density, fontScale)) {
                 WallCrawlTheme { Box(if (fontScale > 1f) Modifier.width(320.dp) else Modifier) { WallCrawlApp(container, nav) } }
             }

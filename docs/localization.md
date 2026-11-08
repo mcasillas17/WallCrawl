@@ -1,5 +1,8 @@
 # Localization
 
+The three tabs are **Train / Entrenar**, **Progress / Progreso** and **Library / Biblioteca**. The account icon on each opens **Profile and settings / Perfil y ajustes**. Set logging uses locale-aware numbers, including the decimal key on the inline keypad. Workout and exercise identities stay the same across language changes.
+
+
 WallCrawl ships two languages: English and neutral Latin American Spanish. Both are
 complete and offline. This document is the reference for how the two are kept complete —
 where each kind of text lives, what is deliberately never translated, and what to do when
@@ -200,7 +203,7 @@ including rows that carry units.
 
 ## Program controls and large-text evidence
 
-Program management, Today/Progress summaries and mode selection, captured goals/frequency,
+Program management, Train summaries and workout source selection, captured goals/frequency,
 status/objective/position, history membership, confirmations, partial-Finish guidance and
 typed errors/retry use paired `values/` and `values-es/` resources. Selected/disabled controls
 retain accessible semantics. Structured supported labels translate; recorded run IDs,

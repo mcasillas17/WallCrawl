@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,23 +14,26 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -45,10 +47,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -57,6 +59,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -81,14 +84,14 @@ import wallcrawl.elopenmike.com.core.model.TrainingWeek
 import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.ui.components.MetricHighlight
-import wallcrawl.elopenmike.com.core.ui.components.StatBadge
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
-import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
+
+enum class ProgressSection { OVERVIEW, TRENDS, MUSCLES }
 
 internal const val PROGRESS_REVIEWED_DOSE_TEST_TAG = "progress-reviewed-dose"
 
@@ -106,7 +109,11 @@ fun ProgressScreen(
     modifier: Modifier = Modifier,
     onOpenSession: (String) -> Unit = {},
     onOpenHistory: () -> Unit = {},
-    programContent: @Composable () -> Unit = {}
+    onOpenTrain: () -> Unit = {},
+    onOpenTrends: () -> Unit = {},
+    onOpenMuscles: () -> Unit = {},
+    section: ProgressSection = ProgressSection.OVERVIEW,
+    onBack: () -> Unit = {}
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -124,16 +131,13 @@ fun ProgressScreen(
             viewModel.uiState.collect { value = it }
         }
     }
-    // The "Over time" card has its own lifecycle-scoped read, so a filter change leaves the week alone.
-    val analyticsState by produceState<ProgressAnalyticsUiState>(
-        initialValue = ProgressAnalyticsUiState.Loading,
-        viewModel,
-        lifecycleOwner
-    ) {
-        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            viewModel.analyticsState.collect { value = it }
-        }
-    }
+    val analyticsState = if (section == ProgressSection.TRENDS) {
+        produceState<ProgressAnalyticsUiState>(ProgressAnalyticsUiState.Loading, viewModel, lifecycleOwner) {
+            lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.analyticsState.collect { value = it }
+            }
+        }.value
+    } else null
     val analyticsSelection by viewModel.analyticsSelection.collectAsState()
     val analyticsActions = remember(viewModel) {
         ProgressAnalyticsActions(
@@ -169,7 +173,8 @@ fun ProgressScreen(
 
     ProgressScreen(
         uiState = uiState, onRetry = viewModel::refresh, modifier = modifier,
-        onOpenSession = onOpenSession, onOpenHistory = onOpenHistory, programContent = programContent,
+        onOpenSession = onOpenSession, onOpenHistory = onOpenHistory,
+        onOpenTrain = onOpenTrain, onOpenTrends = onOpenTrends, onOpenMuscles = onOpenMuscles, section = section, onBack = onBack,
         analyticsState = analyticsState, analyticsSelection = analyticsSelection, analyticsActions = analyticsActions
     )
 }
@@ -187,18 +192,27 @@ fun ProgressScreen(
     modifier: Modifier = Modifier,
     onOpenSession: (String) -> Unit = {},
     onOpenHistory: () -> Unit = {},
-    programContent: @Composable () -> Unit = {},
+    onOpenTrain: () -> Unit = {},
+    onOpenTrends: () -> Unit = {},
+    onOpenMuscles: () -> Unit = {},
+    section: ProgressSection = ProgressSection.OVERVIEW,
+    onBack: () -> Unit = {},
     analyticsState: ProgressAnalyticsUiState? = null,
     analyticsSelection: AnalyticsSelection = AnalyticsSelection(),
     analyticsActions: ProgressAnalyticsActions? = null
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        WebBackgroundPattern()
-
+    val listState = rememberLazyListState()
+    Column(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        if (section != ProgressSection.OVERVIEW) {
+            Row(Modifier.fillMaxWidth().statusBarsPadding().heightIn(min = 56.dp).padding(end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = onBack) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.action_back))
+                }
+                Text(stringResource(if (section == ProgressSection.TRENDS) R.string.guided_progress_trends else R.string.guided_progress_muscles),
+                    style = MaterialTheme.typography.titleLarge, modifier = Modifier.semantics { heading() })
+            }
+        }
         when (val state = uiState) {
             is ProgressUiState.Loading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -207,15 +221,10 @@ fun ProgressScreen(
             }
 
             is ProgressUiState.NoProfile -> {
-                Box(
-                    modifier = Modifier.fillMaxSize().padding(24.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(R.string.progress_no_profile),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 14.sp
-                    )
+                Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                    Text(stringResource(R.string.progress_no_profile), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Button(onClick = onOpenTrain) { Text(stringResource(R.string.guided_progress_train)) }
                 }
             }
 
@@ -225,7 +234,6 @@ fun ProgressScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    programContent()
                     Text(
                         text = stringResource(state.messageRes),
                         color = MaterialTheme.colorScheme.error,
@@ -238,9 +246,51 @@ fun ProgressScreen(
                 }
             }
 
-            is ProgressUiState.Success -> ProgressContent(state, onOpenSession, onOpenHistory, programContent) {
-                if (analyticsState != null && analyticsActions != null) {
-                    ProgressAnalyticsCard(analyticsState, analyticsSelection, state.week.zoneId, analyticsActions, onOpenSession)
+            is ProgressUiState.Success -> LazyColumn(
+                Modifier.fillMaxSize(), state = listState,
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                when (section) {
+                    ProgressSection.OVERVIEW -> {
+                        item { LoggedActivityCard(state) }
+                        item {
+                            val allWorkouts: @Composable () -> Unit = {
+                                TextButton(onClick = onOpenHistory) {
+                                    Text(stringResource(R.string.progress_all_workouts), color = MaterialTheme.colorScheme.onSurface)
+                                }
+                            }
+                            val recentLabel = stringResource(R.string.guided_progress_recent)
+                            if (LocalDensity.current.fontScale > 1.3f) {
+                                Text(recentLabel, style = MaterialTheme.typography.titleMedium)
+                                allWorkouts()
+                            } else Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                                Text(recentLabel, Modifier.weight(1f), style = MaterialTheme.typography.titleMedium)
+                                allWorkouts()
+                            }
+                        }
+                        if (state.overview.recentHistory.isEmpty()) item {
+                            Text(stringResource(R.string.progress_history_empty), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            if (state.overview.totalWorkoutsLogged == 0) Button(onClick = onOpenTrain) {
+                                Text(stringResource(R.string.guided_progress_train))
+                            }
+                        }
+                        items(state.overview.recentHistory.take(3), key = { it.id }) { session ->
+                            WorkoutHistoryCard(session) { onOpenSession(session.id) }
+                        }
+                        item { ProgressDetailLink(R.string.guided_progress_trends, onOpenTrends) }
+                        item { ProgressDetailLink(R.string.guided_progress_muscles, onOpenMuscles) }
+                    }
+                    ProgressSection.MUSCLES -> {
+                        item { MuscleInvolvementCard(state.overview.legacyPrimaryActivity) }
+                        item { ReviewedDoseCard(state.reviewedDose, state.previousReviewedDose) }
+                    }
+                    ProgressSection.TRENDS -> {
+                        if (analyticsState != null && analyticsActions != null) item {
+                            ProgressAnalyticsCard(analyticsState, analyticsSelection, state.week.zoneId, analyticsActions, onOpenSession)
+                        }
+                        item { StrengthTrendsSection(state.overview.strengthTrends, state.preferredUnit.symbol) }
+                    }
                 }
             }
         }
@@ -248,227 +298,47 @@ fun ProgressScreen(
 }
 
 @Composable
-private fun ProgressContent(
-    state: ProgressUiState.Success,
-    onOpenSession: (String) -> Unit,
-    onOpenHistory: () -> Unit,
-    programContent: @Composable () -> Unit,
-    analyticsContent: @Composable () -> Unit
-) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item { programContent() }
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = stringResource(R.string.progress_eyebrow),
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.5.sp,
-                color = CrimsonRedPrimary
-            )
-            Text(
-                text = stringResource(R.string.progress_title),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Black,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-
-        item { LoggedActivityCard(state) }
-
-        item { ReviewedDoseCard(ledger = state.reviewedDose, previousLedger = state.previousReviewedDose) }
-
-        item { MuscleInvolvementCard(stats = state.overview.legacyPrimaryActivity) }
-
-        item {
-            StrengthTrendsSection(
-                trends = state.overview.strengthTrends,
-                unit = state.preferredUnit.symbol
-            )
-        }
-
-        item { analyticsContent() }
-
-        item {
-            Text(
-                text = stringResource(R.string.progress_history_heading),
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-
-        if (state.overview.recentHistory.isEmpty()) {
-            item {
-                WallCrawlCard {
-                    Text(
-                        stringResource(R.string.progress_history_empty),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 13.sp
-                    )
-                }
-            }
-        } else {
-            items(state.overview.recentHistory) { session ->
-                WorkoutHistoryCard(session = session, onClick = { onOpenSession(session.id) })
-            }
-        }
-
-        item {
-            TextButton(onClick = onOpenHistory) {
-                Text(stringResource(R.string.progress_all_workouts), color = MaterialTheme.colorScheme.onSurface)
-            }
-        }
-        item { Spacer(modifier = Modifier.height(24.dp)) }
+private fun ProgressDetailLink(label: Int, onClick: () -> Unit) {
+    Row(Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick)
+        .heightIn(min = 48.dp).padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(stringResource(label), Modifier.weight(1f), style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface)
+        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
-/** Real logged activity, stated first and never as a reviewed dose. */
 @Composable
 private fun LoggedActivityCard(state: ProgressUiState.Success) {
     val overview = state.overview
-    val unit = state.preferredUnit.symbol
     val locale = LocalConfiguration.current.locales[0]
-    val weekLabels = rememberWeekLabels(state.week)
-    val largeText = LocalDensity.current.fontScale > 1.3f
-    val goalText = stringResource(R.string.progress_goal, LocaleFormatting.formatCount(overview.weeklyGoal, locale))
-    var activityDetailsExpanded by remember { mutableStateOf(false) }
-
-    WallCrawlCard(cornerRadius = 16.dp, contentPadding = 16.dp) {
-        Text(
-            text = stringResource(R.string.progress_activity_heading),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        // Compact Monday-week range (it starts Monday) plus the zone the dates are read in.
-        Text(
-            text = stringResource(R.string.progress_activity_range, weekLabels.monday, weekLabels.sunday),
-            fontSize = 12.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = stringResource(R.string.progress_activity_timezone, state.week.zoneId.id),
-            fontSize = 11.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .background(Color(0x22E63946), CircleShape)
-                        .border(1.dp, CrimsonRedPrimary.copy(alpha = 0.5f), CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.LocalFireDepartment,
-                        contentDescription = null,
-                        tint = CrimsonRedLight,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Column {
-                    Text(
-                        text = pluralStringResource(
-                            R.plurals.count_weeks_streak,
-                            overview.currentStreakWeeks,
-                            LocaleFormatting.formatCount(overview.currentStreakWeeks, locale)
-                        ),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = pluralStringResource(
-                            R.plurals.progress_workouts_this_week,
-                            overview.workoutsThisWeek,
-                            LocaleFormatting.formatCount(overview.workoutsThisWeek, locale)
-                        ),
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-
-            if (!largeText) {
-                Spacer(modifier = Modifier.width(8.dp))
-                StatBadge(label = goalText, textColor = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    WallCrawlCard(Modifier.fillMaxWidth()) {
+        Text(stringResource(R.string.progress_activity_heading), style = MaterialTheme.typography.titleMedium)
+        Text(pluralStringResource(R.plurals.progress_workouts_this_week, overview.workoutsThisWeek,
+            LocaleFormatting.formatCount(overview.workoutsThisWeek, locale)), style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.progress_goal, LocaleFormatting.formatCount(overview.weeklyGoal, locale)),
+            style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        if (overview.currentStreakWeeks > 0) {
+            Text(pluralStringResource(R.plurals.count_weeks_streak, overview.currentStreakWeeks,
+                LocaleFormatting.formatCount(overview.currentStreakWeeks, locale)))
+        } else if (overview.workoutsThisWeek == 0 && overview.totalWorkoutsLogged > 0) {
+            Text(stringResource(R.string.progress_activity_empty), color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
-        if (largeText) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = goalText, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
-        }
-
-        Spacer(modifier = Modifier.height(14.dp))
-
-        if (overview.workoutsThisWeek == 0) {
-            Text(
-                text = stringResource(R.string.progress_activity_empty),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 13.sp
-            )
-        } else {
-            if (largeText) {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    CompletedSetsHighlight(overview, Modifier.fillMaxWidth())
-                    WeeklyVolumeHighlight(overview, unit, Modifier.fillMaxWidth())
-                }
-            } else {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    CompletedSetsHighlight(overview, Modifier.weight(1f))
-                    WeeklyVolumeHighlight(overview, unit, Modifier.weight(1.3f))
+        DetailsToggle(stringResource(R.string.progress_activity_details), expanded) { expanded = !expanded }
+        if (expanded) {
+            val dates = rememberWeekLabels(state.week)
+            Text(stringResource(R.string.progress_activity_range, dates.monday, dates.sunday))
+            Text(stringResource(R.string.progress_activity_timezone, state.week.zoneId.id))
+            Text(pluralStringResource(R.plurals.progress_all_time_workouts, overview.totalWorkoutsLogged,
+                LocaleFormatting.formatCount(overview.totalWorkoutsLogged, locale)))
+            if (overview.workoutsThisWeek > 0) {
+                CompletedSetsHighlight(overview, Modifier.fillMaxWidth())
+                WeeklyVolumeHighlight(overview, state.preferredUnit.symbol, Modifier.fillMaxWidth())
+                if (overview.completedSetsThisWeek > 0 && overview.completedSetsThisWeek == overview.warmupSetsThisWeek) {
+                    Text(stringResource(R.string.progress_activity_warmups_only))
                 }
             }
-
-            val workSets = overview.completedSetsThisWeek - overview.warmupSetsThisWeek
-            if (overview.completedSetsThisWeek > 0 && workSets == 0 && overview.warmupSetsThisWeek > 0) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.progress_activity_warmups_only),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 12.sp
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            text = pluralStringResource(
-                R.plurals.progress_all_time_workouts,
-                overview.totalWorkoutsLogged,
-                LocaleFormatting.formatCount(overview.totalWorkoutsLogged, locale)
-            ),
-            fontSize = 12.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        DetailsToggle(
-            label = stringResource(R.string.progress_activity_details),
-            expanded = activityDetailsExpanded,
-            onToggle = { activityDetailsExpanded = !activityDetailsExpanded }
-        )
-        if (activityDetailsExpanded) {
             ActivityMetricDefinition(stringResource(R.string.progress_metric_sets_def))
             ActivityMetricDefinition(stringResource(R.string.progress_metric_reps_def))
             ActivityMetricDefinition(stringResource(R.string.progress_metric_volume_def))
@@ -545,7 +415,7 @@ private fun WeeklyVolumeHighlight(
 private fun ReviewedDoseCard(ledger: WeeklyDoseLedger, previousLedger: WeeklyDoseLedger) {
     val locale = LocalConfiguration.current.locales[0]
     val vocabulary = LocalExerciseVocabulary.current
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
     val credited = ledger.creditedWorkSets
     val omitted = ledger.omittedWorkSets
@@ -653,7 +523,7 @@ private fun ReviewedDoseCard(ledger: WeeklyDoseLedger, previousLedger: WeeklyDos
 @Composable
 private fun MuscleInvolvementCard(stats: List<MuscleProgressStat>) {
     val vocabulary = LocalExerciseVocabulary.current
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
     WallCrawlCard(cornerRadius = 16.dp, contentPadding = 16.dp) {
         Text(
@@ -813,7 +683,6 @@ private fun DetailsToggle(label: String, expanded: Boolean, onToggle: () -> Unit
                 stateDescription = state
             }
     ) {
-        // The shared typography specifies white, so an explicit colour is needed on light cards.
         Text(
             text = label,
             modifier = Modifier.weight(1f),
@@ -943,71 +812,20 @@ private fun WorkoutHistoryCard(session: WorkoutSession, onClick: () -> Unit) {
     }
 
     WallCrawlCard(
-        cornerRadius = 12.dp, contentPadding = 12.dp,
-        modifier = Modifier.clickable(
-            role = Role.Button,
-            onClickLabel = stringResource(R.string.history_open_workout),
-            onClick = onClick
-        )
+        modifier = Modifier.fillMaxWidth().clickable(role = Role.Button,
+            onClickLabel = stringResource(R.string.history_open_workout), onClick = onClick),
+        contentPadding = 12.dp
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = session.name,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = dateStr,
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-            StatBadge(
-                label = stringResource(
-                    R.string.progress_history_duration,
-                    LocaleFormatting.formatCount(session.actualDurationMinutes, locale)
-                ),
-                textColor = MaterialTheme.colorScheme.secondary
-            )
+        Text(session.name, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+        Text(dateStr, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        val metrics = buildList {
+            add(stringResource(R.string.progress_history_duration, LocaleFormatting.formatCount(session.actualDurationMinutes, locale)))
+            add(pluralStringResource(R.plurals.count_sets_logged, session.completedSetsCount,
+                LocaleFormatting.formatCount(session.completedSetsCount, locale)))
+            if (session.totalVolume > 0) add(stringResource(R.string.progress_history_volume,
+                LocaleFormatting.formatVolume(session.totalVolume, locale), session.weightUnit.symbol))
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                text = pluralStringResource(
-                    R.plurals.count_sets_logged,
-                    session.completedSetsCount,
-                    LocaleFormatting.formatCount(session.completedSetsCount, locale)
-                ),
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            if (session.totalVolume > 0) {
-                Text(
-                    text = stringResource(
-                        R.string.progress_history_volume,
-                        LocaleFormatting.formatVolume(session.totalVolume, locale),
-                        session.weightUnit.symbol
-                    ),
-                    fontSize = 12.sp,
-                    color = CrimsonRedLight,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-        }
+        Text(metrics.joinToString(" · "), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 

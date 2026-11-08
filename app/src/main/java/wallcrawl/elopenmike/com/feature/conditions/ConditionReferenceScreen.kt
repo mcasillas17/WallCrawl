@@ -76,7 +76,7 @@ internal fun ConditionReferenceScreen(
             Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = back) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.action_back)) }
-                Text(stringResource(R.string.condition_reference_title), style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface,
+                Text(stringResource(R.string.guided_condition_guide), style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.semantics { heading() })
             }
             val result = library
@@ -96,7 +96,7 @@ internal fun ConditionReferenceScreen(
                         val matches = remember(groups, query) { groups.search(query) }
                         LazyColumn(state = listState, contentPadding = PaddingValues(16.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                            item { Text(stringResource(R.string.condition_reference_about), color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                            item { Text(stringResource(R.string.guided_research_about), color = MaterialTheme.colorScheme.onSurfaceVariant) }
                             item {
                                 OutlinedTextField(value = query, onValueChange = { query = it.take(256) }, singleLine = true,
                                     modifier = Modifier.fillMaxWidth(), textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),

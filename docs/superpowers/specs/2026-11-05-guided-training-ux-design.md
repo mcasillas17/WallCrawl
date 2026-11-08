@@ -2,7 +2,7 @@
 
 Date: 2026-11-05
 
-Status: proposed design, awaiting owner approval
+Status: implemented in the Android app, including the approved compact set editor. See the [implementation and verification notes](../plans/2026-11-07-guided-training-ux.md).
 
 Scope: Android app experience, English and Spanish, dark and light themes
 

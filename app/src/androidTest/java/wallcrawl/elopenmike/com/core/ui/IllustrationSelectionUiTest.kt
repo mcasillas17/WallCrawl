@@ -33,6 +33,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.then
@@ -113,6 +114,8 @@ class IllustrationSelectionUiTest {
             R.string.exercise_detail_equipment, R.string.exercise_detail_review_pending).forEach { id ->
             assertThat(context.getString(id)).isNotEqualTo(english.getString(id))
         }
+        compose.onNodeWithText("Principal:", substring = true).assertDoesNotExist()
+        compose.onNodeWithText(context.getString(R.string.guided_more_details)).performScrollTo().performClick()
         compose.onNodeWithText("Principal:", substring = true).assertExists()
         compose.onNodeWithText("Secundarios:", substring = true).assertExists()
         compose.onNodeWithText("Equipo indicado:", substring = true).assertExists()

@@ -164,22 +164,16 @@ class LocalizedScreenTest {
                     set = weightSet(),
                     weightUnit = "kg",
                     previousSet = null,
-                    onValuesChanged = {},
                     onCompletionChanged = { _, _ -> },
-                    onSkipSet = {},
+                    onSkipSet = { _, _ -> },
                     onRecordEffort = { _, _ -> },
                     onRecordFeltManageable = {}
                 )
             }
         }
 
-        composeRule.onNodeWithText(spanish.getString(R.string.set_complete)).assertIsDisplayed()
+        composeRule.onNodeWithText(spanish.getString(R.string.guided_log_set)).assertIsDisplayed()
         composeRule.onNodeWithText(spanish.getString(R.string.set_skip_or_stop))
-            .assertIsDisplayed()
-        composeRule
-            .onNodeWithContentDescription(
-                spanish.getString(R.string.set_complete_accessibility, "1")
-            )
             .assertIsDisplayed()
         composeRule
             .onNodeWithContentDescription(
@@ -203,9 +197,8 @@ class LocalizedScreenTest {
                     set = weightSet(targetWeight = 42.5),
                     weightUnit = "kg",
                     previousSet = null,
-                    onValuesChanged = { recorded += it },
                     onCompletionChanged = { values, _ -> recorded += values },
-                    onSkipSet = {},
+                    onSkipSet = { _, _ -> },
                     onRecordEffort = { _, _ -> },
                     onRecordFeltManageable = {}
                 )
@@ -214,7 +207,7 @@ class LocalizedScreenTest {
 
         composeRule.onNodeWithText("42,5").assertIsDisplayed()
         composeRule
-            .onNodeWithText(decimalCommaSpanish.getString(R.string.set_complete))
+            .onNodeWithText(decimalCommaSpanish.getString(R.string.guided_log_set))
             .performClick()
 
         assertThat(recorded).isNotEmpty()

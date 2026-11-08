@@ -204,6 +204,7 @@ class WorkoutTemplatesViewModelTest {
         // Back to back, as a double tap lands: the second call must see the first's lock
         // before either coroutine has run.
         viewModel.startTemplate(shown)
+        assertThat(viewModel.navigationLocked.value).isTrue()
         viewModel.startTemplate(shown)
         advanceUntilIdle()
         assertThat(entered).isEqualTo(1)
@@ -214,8 +215,14 @@ class WorkoutTemplatesViewModelTest {
         assertThat(viewModel.uiState.value.startedSessionId).isEqualTo("session")
         assertThat(viewModel.uiState.value.startingTemplateId).isNull()
 
+        assertThat(viewModel.navigationLocked.value).isTrue()
+        viewModel.startTemplate(shown)
+        advanceUntilIdle()
+        assertThat(entered).isEqualTo(1)
+
         // Held until the screen has navigated, then gone, so it opens the workout once.
         viewModel.onStartHandled()
+        assertThat(viewModel.navigationLocked.value).isFalse()
         advanceUntilIdle()
         assertThat(viewModel.uiState.value.startedSessionId).isNull()
     }

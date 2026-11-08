@@ -201,6 +201,16 @@ class ProfileViewModelTest {
     }
 
     @Test
+    fun togglingSensitivityCannotOverwriteAnUnrecognizedStoredRestriction() = runTest {
+        val raw = "KNEE_SENSITIVE|||LEGACY"
+        val repository = repositoryWith(profile().copy(unresolvedTrainingConstraintsRaw = raw))
+        ProfileViewModel(repository).toggleTrainingConstraint(TrainingConstraint.KNEE_SENSITIVE)
+        advanceUntilIdle()
+        assertThat(repository.getProfileOnce().unresolvedTrainingConstraintsRaw).isEqualTo(raw)
+        assertThat(repository.getProfileOnce().trainingConstraints).containsExactly(TrainingConstraint.KNEE_SENSITIVE)
+    }
+
+    @Test
     fun overlappingCapabilitySave_doesNotRestoreARevokedSetupFromItsProfileSnapshot() = runTest {
         val repository = repositoryWith(profile().copy(availableEquipment = listOf(
             StandardEquipment.RESISTANCE_BAND, StandardEquipment.BAND_ANCHOR_LOW
@@ -284,6 +294,8 @@ class ProfileViewModelTest {
             )
         }
         viewModel.saveMovementCapabilities()
+        viewModel.saveMovementCapabilities()
+        viewModel.cancelMovementCapabilityEditing()
         advanceUntilIdle()
 
         val saved = repository.getProfileOnce()

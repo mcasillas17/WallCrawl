@@ -23,57 +23,33 @@ direction; the app's existing deterministic planner remains the foundation.
 
 ## Screenshots & App Experience
 
-### Dark & Light Theme Modes
-
-WallCrawl supports **Dark Theme** (stealth suit graphite aesthetic), **Light Theme** (high-contrast daylight athletic), and **System Default** across every screen with dynamic insets, high-contrast SVG exercise frames, and a live switcher in Settings.
+**Train** opens your next workout or resumes one in progress. Use **Change** to choose a workout source. **Progress** opens your weekly activity and recent workouts. **Library** holds exercises, saved workouts and the educational condition guide. The profile icon on each tab opens settings.
 
 <p align="center">
-  <img src="art/screenshots/today-screen.png" width="24%" alt="Today Screen (Dark)" />
-  <img src="art/screenshots/today-screen-light.png" width="24%" alt="Today Screen (Light)" />
-  <img src="art/screenshots/exercises-screen.png" width="24%" alt="Exercise Library (Dark)" />
-  <img src="art/screenshots/exercises-screen-light.png" width="24%" alt="Exercise Library (Light)" />
-</p>
-<p align="center">
-  <img src="art/screenshots/profile-screen.png" width="24%" alt="Training Profile & Preferences (Dark)" />
-  <img src="art/screenshots/profile-screen-light.png" width="24%" alt="Training Profile & Preferences (Light)" />
-  <img src="art/screenshots/workout-templates-light.png" width="24%" alt="My Workouts (Light)" />
-  <img src="art/screenshots/template-editor-light.png" width="24%" alt="Workout Builder (Light): the Loads in control with Kilograms selected and one exercise row whose summary reads 3 sets · 6–8 · 45.36 KG · rest 90 s" />
-</p>
-<p align="center">
-  <img src="art/screenshots/profile-your-data.png" width="24%" alt="Your Data card on the Training Profile screen: export, restore, and delete-all controls, with restore explaining that it needs a fresh start" />
-  <img src="art/screenshots/profile-delete-confirmation.png" width="24%" alt="Delete-all confirmation dialog naming the profile, templates, workouts including one in progress, and cached totals it removes, and what it leaves alone" />
-  <img src="art/screenshots/onboarding-restore-entry.png" width="24%" alt="First onboarding step: a quiet Restore profile from file text button under the Continue action, with no card competing with the codename field" />
-  <img src="art/screenshots/onboarding-restore-archive.png" width="24%" alt="The restore sheet opened from that button, stating that the file holds the whole archive — profile, routines, and every logged workout — before a new profile is created" />
-</p>
-<p align="center">
-  <em>Your Data on Training Profile &middot; the destructive confirmation &middot; restore offered on first run, and the sheet behind it</em>
-</p>
-<p align="center">
-  <img src="art/screenshots/onboarding-capabilities-light.png" width="24%" alt="Onboarding Movement Preferences (Light)" />
-  <img src="art/screenshots/onboarding-summary-light.png" width="24%" alt="Onboarding Blueprint Summary (Light)" />
-  <img src="art/screenshots/exercise-detail-light.png" width="24%" alt="Exercise Detail & Artwork Frame (Light)" />
-  <img src="art/screenshots/workout-summary.png" width="24%" alt="Workout Summary" />
+  <img src="art/screenshots/today-screen.png" width="24%" alt="Train with a workout ready to start" />
+  <img src="art/screenshots/active-workout.png" width="24%" alt="Exercise demonstration and compact set logger" />
+  <img src="art/screenshots/exercises-screen.png" width="24%" alt="Library search, filters and exercise illustrations" />
+  <img src="art/screenshots/profile-screen.png" width="24%" alt="Profile and settings" />
 </p>
 
-- **Today Recommendation**: Offline planner-generated routine tailored to equipment and training goals, with instant regeneration and custom routine shortcuts.
 - **My Workouts & Templates**: Manage and launch saved custom routines with total sets, exercise counts, and quick-start actions.
 - **Custom Workout Builder**: Interactive routine editor with full 327-exercise bottom sheet picker, move controls for ordering, type-aware editing of every prescription target, unit-safe loads, and unsaved drafts recovered after configuration change or background process death.
 - **Exercise Library**: Searchable catalog of 327 exercises across all muscle groups and equipment types.
-- **Active Workout Session**: Type-aware logging for load/reps, bodyweight reps, assisted reps, duration, and distance/duration, with one-tap set completion, plus/minus and text entry for every value, a local rest countdown, optional RPE/RIR, animated SVG movement previews, and previous performance comparisons.
+- **Active workout.** Swipe between exercises, tap the demonstration to expand it, and select a numbered set to review or edit it. Adjust a value with the minus and plus buttons or tap the number for the inline keypad. Log the set to save it and start rest. [View the inline keypad](art/screenshots/active-workout-keypad.png).
 - **Workout Summary**: The existing Finish flow shows recorded duration, external-load volume, completed sets, and records against genuinely earlier performance. View workout details opens the read-only record; Done returns to Progress.
 - **Progress Tracking & History**: Calendar-week activity and separately labelled reviewed dose, weekly streaks, and strength trends, plus an Over time card that charts 4–52 calendar weeks for all exercises, one exercise or one muscle, whose week rows list the workouts behind each week and whose data points open their workout. Tap a completed-workout card to reopen its frozen targets, performed sets, feedback and recorded decision reasons. View all workouts browses older sessions in fixed 20-workout pages.
-- **Training Profile & App Preferences**: Full local customization of app language (System default / English / Español) and theme preference (Auto System / Dark Mode / Light Mode) with compact switchers, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, muscle priorities, and seven movement preferences.
+- **Profile and settings**: Full local customization of app language (System default / English / Español) and theme preference (Auto System / Dark Mode / Light Mode) with compact switchers, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, muscle priorities, and seven movement preferences.
 - **Your Data**: Export everything stored on the device to one versioned, checksummed file you choose the destination for; restore it onto a fresh start; or delete every local record behind an explicit destructive confirmation. Restore is also offered on the first onboarding step — a quiet button under Continue opens the whole flow in a sheet — so a reinstall does not have to build a throwaway profile first.
-- **Language**: English and neutral Latin American Spanish across the whole app, following the device by default, switchable from a chip in the onboarding wizard's header before any details are entered and from Training Profile → App preferences, and stored as a device setting rather than as part of the profile or the export archive.
-- **Credits & Licenses**: In-app attribution for the bundled exercise artwork, reachable from the Training Profile screen.
+- **Language**: English and neutral Latin American Spanish across the whole app, following the device by default, switchable from a chip in the onboarding wizard's header before any details are entered and from Profile and settings → App preferences, and stored as a device setting rather than as part of the profile or the export archive.
+- **Credits & Licenses**: In-app attribution for the bundled exercise artwork, under Profile and settings → About and credits.
 
 ### Optional four-week programs
 
-Open **Today or Progress → Manage program** to start an optional sequence: four
+Open **Train → Explore programs** to start an optional sequence of four
 completion-driven weeks in two two-week blocks. Enrollment captures your primary
 goal, selected goals and preferred frequency of 2–6 sessions per week, for 8–24 slots.
-On Today, explicitly choose **Program session** or **Ordinary workout** before starting;
-manual templates remain available. Only a program session counts toward the sequence.
+On Train, use **Change** to choose **Program session** or **Today’s workout** before starting.
+Manual templates remain available. Only a program session counts toward the sequence.
 
 A confirmed **Finish** advances one slot, including a partial or zero-set workout.
 Finished sessions appear in workout counts, including zero-set workouts. Only actually
@@ -110,7 +86,7 @@ sessions retain honestly absent membership.
 
 ### Progress: activity and reviewed dose
 
-Progress and Today's weekly workout counter use **Monday-to-Monday calendar weeks in the
+Progress and the Train workout counter use **Monday-to-Monday calendar weeks in the
 device's time zone**, including daylight-saving changes. A streak needs at least one
 completed workout per week; an unfinished, empty current week does not erase a streak
 through last week.
@@ -223,7 +199,7 @@ translated at runtime.
 
 The language follows the device by default, from the very first onboarding screen. A chip
 in the wizard header — reading `EN` or `ES`, whichever is actually on screen — changes it
-before any details are entered, and **Training Profile → App preferences** changes it later.
+before any details are entered, and **Profile and settings → App preferences** changes it later.
 Both write the same preference, and on Android 13+ that is the same per-app language the
 system Settings screen shows. It is a
 device setting: it is not part of the training profile, not in the export archive, and
@@ -249,7 +225,7 @@ Language is presentation only. Identical inputs produce identical exercise selec
 prescriptions, loads, rest targets, and stored measurements in either language, and units
 never change with it — Spanish does not turn pounds into kilograms. Numbers are shown with
 the reader's decimal mark and read back the same way, so a load typed as `47,5` is stored
-as 47.5. Anything a user typed — codename, template names, notes — and the title and
+as 47.5. Anything a user typed — name, template names, notes — and the title and
 explanation stored with a past session are kept exactly as written, in the language they
 were written in. See [Localization](docs/localization.md) for the full reference and for
 how to add a string, an exercise, or a language.
@@ -287,7 +263,7 @@ and device-transfer rules. The policy covers profiles and capabilities, preferen
 templates, workout history and feedback, and derived ledger state. The app adds no
 account, analytics upload, or cloud-sync service.
 
-Recovery is **user-driven**. Training Profile offers three controls, and the first
+Recovery is **user-driven**. Profile and settings → Your data offers three controls, and the first
 onboarding step offers restore on its own:
 
 | Control | What it does |
@@ -320,7 +296,7 @@ devices.
 
 ```text
                 fresh install → 8-step onboarding wizard
-                                (codename, goals, units/experience,
+                                (name, goals, units/experience,
                                  movement preferences, schedule/break,
                                  gear, safety, summary)
                                            │
@@ -345,10 +321,9 @@ Bundled catalog ─────────┤  profile + bounded history
 A fresh install cannot skip onboarding: `UserProfile.onboardingCompleted`
 starts `false`, equipment defaults to bodyweight-only rather than assuming a
 full gym, and Today does not generate or render until onboarding is complete.
-The 8-step wizard collects user codename, multi-select fitness goals, units and
+The 8-step wizard collects your name, multi-select fitness goals, units and
 experience level, seven movement preferences, schedule and break duration,
-available gear, and sensitive-joint restrictions before compiling the initial
-Training Blueprint. Every movement preference requires an explicit answer;
+available gear, and sensitive-joint restrictions before saving your training preferences. Every movement preference requires an explicit answer;
 **Not sure** is a valid answer and persists as `UNKNOWN`. A sensitive-joint
 selection is saved and automatic workouts do read it: production checks each
 candidate's `clearedTrainingConstraints`, and because every accepted record
@@ -360,7 +335,7 @@ reviewed-path tests already act on.
 
 ### Fixed-anchor band setups
 
-Select available band setups explicitly in onboarding or Training Profile.
+Select available band setups explicitly in onboarding or Profile and settings → Equipment.
 Upper-body (adjustable chest-to-face), overhead, low, and kickback
 ankle-attachment/same-assembly hand support are separate confirmations; **Full
 gym never adds them**. A band, wall, doorway or chair does not establish an
@@ -380,7 +355,7 @@ WallCrawl stores seven local movement preferences: impact tolerance, floor
 transitions, unsupported squat, upper-body bodyweight push, vertical pull or
 hang, balance without support, and continuous activity. Each is one of
 `COMFORTABLE`, `LIMITED`, `AVOID`, or `UNKNOWN` (shown as **Not sure**). They can
-be edited and atomically saved from Training Profile; cancel or Back discards
+be edited and atomically saved from Profile and settings → Movement and restrictions; cancel or Back discards
 the draft.
 
 Fresh onboarding requires an explicit choice for all seven. Existing users who
@@ -945,7 +920,7 @@ proposals are not active implementation plans.
 ### Profile gender and exercise artwork
 
 Choose optional gender from the dropdown in onboarding or Profile. Onboarding keeps
-codename and gender together in one card; the menu marks the current choice and
+name and gender together in one card; the menu marks the current choice and
 closes after selection. Exercise artwork follows that
 single profile setting: female artwork for Woman, male artwork for the other
 options. Exercise screens have no separate gender or illustration selector.

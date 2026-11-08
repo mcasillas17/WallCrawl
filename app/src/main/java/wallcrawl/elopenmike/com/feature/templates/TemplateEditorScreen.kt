@@ -104,7 +104,6 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.MIN_TOUCH_TARGET
-import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.shortLabelRes
@@ -181,8 +180,6 @@ fun TemplateEditorScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        WebBackgroundPattern()
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -211,8 +208,7 @@ fun TemplateEditorScreen(
                         }
                     ),
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Black,
+                    style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -343,13 +339,6 @@ fun TemplateEditorScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Column {
-                            Text(
-                                text = stringResource(R.string.editor_exercises_eyebrow),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 1.sp,
-                                color = CrimsonRedPrimary
-                            )
                             Text(
                                 text = pluralStringResource(
                                     R.plurals.count_exercises_selected,
@@ -590,7 +579,7 @@ private fun DiscardConfirmation(
         },
         confirmButton = {
             TextButton(onClick = onDiscard) {
-                Text(stringResource(R.string.editor_discard_confirm), color = CrimsonRedLight)
+                Text(stringResource(R.string.editor_discard_confirm), color = MaterialTheme.colorScheme.error)
             }
         },
         dismissButton = {
@@ -606,11 +595,11 @@ private fun DiscardConfirmation(
 private fun EditorErrorCard(messageRes: Int) {
     WallCrawlCard(borderColor = CrimsonRedPrimary) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.Warning, null, tint = CrimsonRedLight, modifier = Modifier.size(16.dp))
+            Icon(Icons.Default.Warning, null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(16.dp))
             Spacer(Modifier.size(8.dp))
             Text(
                 stringResource(messageRes),
-                color = CrimsonRedLight,
+                color = MaterialTheme.colorScheme.error,
                 fontSize = 13.sp,
                 // Announced: a refused save leaves the tapped button unchanged.
                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }
@@ -943,10 +932,8 @@ internal fun PrescriptionSheetContent(
 
         Text(
             text = stringResource(R.string.editor_effort_eyebrow),
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp,
-            color = CrimsonRedPrimary
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface
         )
         Text(
             text = stringResource(R.string.editor_effort_help),
@@ -1139,13 +1126,6 @@ private fun ExercisePickerSheet(
             ) {
                 Column {
                     Text(
-                        text = stringResource(R.string.picker_eyebrow),
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                        color = CrimsonRedPrimary
-                    )
-                    Text(
                         text = stringResource(R.string.picker_title),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Black,
@@ -1260,7 +1240,7 @@ private fun ExercisePickerSheet(
                                 Icon(
                                     imageVector = Icons.Default.Add,
                                     contentDescription = stringResource(R.string.picker_add_content_description),
-                                    tint = CrimsonRedLight,
+                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }

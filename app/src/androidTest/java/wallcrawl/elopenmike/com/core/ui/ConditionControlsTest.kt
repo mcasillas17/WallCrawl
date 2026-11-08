@@ -229,6 +229,8 @@ class ConditionControlsTest {
             }
         }
         compose.waitUntil(10_000) { vm.uiState.value is wallcrawl.elopenmike.com.feature.profile.ProfileUiState.Success && vm.conditions.value.records.isNotEmpty() }
+        compose.onNode(hasScrollAction()).performScrollToNode(hasText("Movement and restrictions"))
+        compose.onNodeWithText("Movement and restrictions").performClick()
         compose.onNode(hasScrollAction()).performScrollToNode(hasText("Edit conditions"))
         compose.onNodeWithText("Recorded side: Left").assertExists()
         compose.onNodeWithText("Edit conditions").performClick()
@@ -238,6 +240,11 @@ class ConditionControlsTest {
         compose.onNodeWithText("Derecho").performScrollTo().assertIsSelected()
         assertThat(vm.conditions.value.draft!!.single().answers).containsExactly("side", "right", "future", null)
         save("profile-condition-es-light-large.png")
+        androidx.test.espresso.Espresso.pressBack()
+        compose.waitUntil { vm.conditions.value.draft == null }
+        assertThat(kotlinx.coroutines.runBlocking { repository.getProfileOnce() }.activeConditions.single().answers["side"]).isEqualTo("left")
+        compose.onNodeWithContentDescription(base.createConfigurationContext(Configuration(base.resources.configuration).apply { setLocale(Locale.forLanguageTag("es")) }).getString(R.string.action_back)).performClick()
+        compose.onNodeWithText("Perfil y ajustes").assertIsDisplayed()
     }
 
     @Test fun onboardingSafetyShowsRetainedSelectionAndExplicitRemoval() {

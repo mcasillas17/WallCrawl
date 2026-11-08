@@ -133,7 +133,11 @@ class TodayProductionLifecycleTest {
         val current = vm.uiState.value as TodayUiState.Success
         assertThat(current.planningIntent).isEqualTo(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.PROGRAM)
         assertThat(current.programSession?.position?.slotOrdinal).isEqualTo(0)
-        vm.startWorkout("Program session", "Test fixture") {}
+        // A tap from the last ordinary composition cannot attach its name to the newly published program.
+        vm.startWorkout("Ordinary", "Ordinary", ordinary.suggestedWorkout) { error("stale display") }
+        advanceUntilIdle()
+        assertThat(workouts.startRequests).isEmpty()
+        vm.startWorkout("Program session", "Test fixture", current.suggestedWorkout) {}
         advanceUntilIdle()
         assertThat(workouts.startRequests.single().recommendation?.programSession?.position?.slotOrdinal).isEqualTo(0)
     }
@@ -1489,6 +1493,15 @@ class TodayProductionLifecycleTest {
 
         assertThat((viewModel.uiState.value as TodayUiState.Error).error)
             .isEqualTo(TodayError.REVIEWED_CONSTRAINTS_REMOVED_ALL)
+    }
+
+    @Test fun unreadableStoredRestrictionsExplainTheGenerationBlock() = runTest {
+        val profile = freshlyOnboardedProfile().copy(unresolvedTrainingConstraintsRaw = "future policy")
+        val viewModel = todayViewModel(LifecycleProfileRepository(profile), LifecycleWorkoutRepository())
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Error).error)
+            .isEqualTo(TodayError.UNREADABLE_RESTRICTIONS)
     }
 
     @Test fun pendingConditionAfterSelectionRemovalIsStillActionableAtStart() = runTest {

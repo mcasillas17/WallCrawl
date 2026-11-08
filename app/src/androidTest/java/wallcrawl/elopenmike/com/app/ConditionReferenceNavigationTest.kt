@@ -120,10 +120,17 @@ class ConditionReferenceNavigationTest {
                 }
             }
         }
-        val entry = text(R.string.condition_reference_title)
+        val entry = text(R.string.guided_condition_guide)
         compose.waitUntil(15_000) { nav.currentDestination?.route == AppRoutes.TODAY }
         compose.onNode(hasText(text(R.string.nav_exercises)) and hasAnyAncestor(hasTestTag(WALL_CRAWL_BOTTOM_BAR_TEST_TAG))).performClick()
         compose.waitUntil(15_000) { compose.onAllNodesWithText(entry).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithContentDescription(text(R.string.guided_profile_settings)).performClick()
+        compose.waitUntil { nav.currentDestination?.route == AppRoutes.PROFILE }
+        compose.onNodeWithTag(WALL_CRAWL_BOTTOM_BAR_TEST_TAG).assertDoesNotExist()
+        capture("settings-$language")
+        compose.onNodeWithContentDescription(text(R.string.action_back)).performClick()
+        compose.waitUntil { nav.currentDestination?.route == AppRoutes.EXERCISES }
+        capture("library-$language")
         compose.onNodeWithText(entry).performClick()
         compose.waitUntil(15_000) { compose.onAllNodes(hasSetTextAction()).fetchSemanticsNodes().isNotEmpty() }
         val query = if (language == "es") "sindrome del piriforme" else "piriformis muscle syndrome"

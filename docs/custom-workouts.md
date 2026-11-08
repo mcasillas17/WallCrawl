@@ -7,7 +7,7 @@ Room persistence, history, and progress pipeline as a planner-generated workout.
 
 ## User flow
 
-1. Open **Today** and select **My Workouts**.
+1. Open **Library → My workouts**, or use the **My workouts** shortcut on Train.
 2. Create a workout, then add a name and optional notes.
 3. Search the bundled catalog and add exercises.
 4. Use the move controls to set exercise order and adjust each set count.
@@ -25,7 +25,7 @@ add control is disabled and says so beside itself.
 ## Templates alongside an optional program
 
 Templates remain independent of optional four-week program enrollment. Only an explicit
-**Program session** start on Today creates program membership; starting or finishing a
+**Program session** start on Train creates program membership; starting or finishing a
 manual template never reserves/advances a slot, changes captured configuration or consumes
 an accepted one-workout deload. Templates require no program-header read, so program
 configuration/policy failures do not hide this workflow. Ordinary automatic recommendations

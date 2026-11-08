@@ -18,9 +18,11 @@ import wallcrawl.elopenmike.com.core.model.WeightUnit
  * same thing in whichever language the reader chose.
  */
 enum class TodayError(@StringRes val messageRes: Int) {
+    UNREADABLE_RESTRICTIONS(R.string.guided_train_unreadable_restrictions),
     PROGRAM_UNSUPPORTED(R.string.program_unsupported),
     PROGRAM_PROFILE_MISMATCH(R.string.program_profile_mismatch),
     PROGRAM_UNAVAILABLE(R.string.program_read_failed),
+    PROGRAM_INACTIVE(R.string.guided_train_no_active_program),
     NO_CANDIDATES(R.string.today_error_no_candidates),
     NO_STRENGTH_CANDIDATES(R.string.today_error_no_strength_candidates),
     NO_CANDIDATES_FOR_ANY_SPLIT(R.string.today_error_no_split),
@@ -77,7 +79,8 @@ sealed interface TodayUiState {
         val prescriptionUnit: WeightUnit = userProfile.preferredUnit,
         val planningIntent: wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent = wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.ORDINARY,
         val conditionContext: wallcrawl.elopenmike.com.core.model.SessionConditionContext? = null,
-        val programSession: wallcrawl.elopenmike.com.core.model.ProgramSessionSnapshot? = null
+        val programSession: wallcrawl.elopenmike.com.core.model.ProgramSessionSnapshot? = null,
+        val isStarting: Boolean = false
     ) : TodayUiState
 
     /**
@@ -89,6 +92,7 @@ sealed interface TodayUiState {
         val error: TodayError,
         val activeSession: WorkoutSession? = null,
         val deload: TodayDeloadState? = null,
-        val conditionRefusal: wallcrawl.elopenmike.com.core.model.ConditionStartRefused? = null
+        val conditionRefusal: wallcrawl.elopenmike.com.core.model.ConditionStartRefused? = null,
+        val isBusy: Boolean = false
     ) : TodayUiState
 }

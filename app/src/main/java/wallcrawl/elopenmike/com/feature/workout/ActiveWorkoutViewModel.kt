@@ -1,6 +1,10 @@
 package wallcrawl.elopenmike.com.feature.workout
 
 import androidx.annotation.StringRes
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -50,10 +54,13 @@ class ActiveWorkoutViewModel(
     private val nowMillis: () -> Long = System::currentTimeMillis,
     elapsedRealtimeClock: ElapsedRealtimeClock = ElapsedRealtimeClock.System,
     private val programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null,
-    private val userProfileRepository: UserProfileRepository? = null
+    private val userProfileRepository: UserProfileRepository? = null,
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle()
 ) : ViewModel() {
 
-    private val currentExerciseIndexFlow = MutableStateFlow(0)
+    private val currentExerciseIndexFlow = savedStateHandle.getStateFlow("exerciseIndex", 0)
+    private var catalogRequest: kotlinx.coroutines.Job? = null
+    private var requestedExerciseId: String? = null
     private val currentCatalogExerciseFlow = MutableStateFlow<Exercise?>(null)
     // Every failure the screen can show is a resource id rather than a sentence: an
     // exception message is written for a log and cannot be translated.
@@ -65,7 +72,6 @@ class ActiveWorkoutViewModel(
     private val setUpdateErrorFlow = MutableStateFlow<Int?>(null)
     private val programFinishUnsupportedFlow = MutableStateFlow(false)
     private val refreshRequests = MutableStateFlow(0L)
-    private var finishRequested = false
 
     // Rest timer state lives here so it survives recomposition and configuration changes.
     // It is intentionally not restored after process death; see RestTimerStateMachine.
@@ -73,10 +79,8 @@ class ActiveWorkoutViewModel(
     private val restTimerFlow = MutableStateFlow(RestTimerUiState.Idle)
 
     private val confirmationFlow = MutableStateFlow(ConfirmationState())
-    // Set IDs whose completion transition is currently being written. A second tap on the
-    // same set while the first write is in flight is a double tap, not a second set: it
-    // must not produce another write or another rest timer.
-    private val completionsInFlight = mutableSetOf<String>()
+    // A second tap cannot interleave with an uncommitted write to the same set.
+    private val writesInFlight = mutableSetOf<String>()
     // The outcome most recently written for a set, held only until the observed session
     // catches up. Room commits a write before its invalidation-driven query re-emits, so
     // for a short window the session still reports the old row and the completion control
@@ -161,7 +165,10 @@ class ActiveWorkoutViewModel(
         } else if (session == null) {
             ActiveWorkoutUiState.Error(R.string.workout_no_longer_active)
         } else if (session.status == SessionStatus.COMPLETED) {
-            sessionHistory.summary?.let { ActiveWorkoutUiState.Completed(it) }
+            sessionHistory.summary?.let {
+                ActiveWorkoutUiState.Completed(it, associationState.association?.supportedSnapshot != null &&
+                    session.exercises.any { exercise -> exercise.sets.any { set -> !set.isCompleted } })
+            }
                 ?: ActiveWorkoutUiState.Error(R.string.workout_no_longer_active)
         } else if (error != null) {
             ActiveWorkoutUiState.Error(error)
@@ -172,7 +179,7 @@ class ActiveWorkoutViewModel(
         } else {
             val safeExerciseIndex = exerciseIndex.coerceIn(0, session.exercises.lastIndex)
             val currentEx = session.exercises[safeExerciseIndex]
-            if (catalogEx?.id != currentEx.exerciseId) {
+            if (requestedExerciseId != currentEx.exerciseId) {
                 loadCatalogExercise(currentEx.exerciseId)
             }
 
@@ -186,7 +193,8 @@ class ActiveWorkoutViewModel(
             ActiveWorkoutUiState.Active(
                 session = session,
                 currentExerciseIndex = safeExerciseIndex,
-                currentCatalogExercise = catalogEx,
+                currentCatalogExercise = catalogEx?.takeIf { it.id == currentEx.exerciseId },
+                isSaving = screenState.confirmations.saving || screenState.confirmations.ending || outcomesAwaitingObservation.isNotEmpty(),
                 weightUnit = session.weightUnit,
                 previousSets = previousPerformance?.sets.orEmpty(),
                 previousSessionTimestamp = previousPerformance?.sessionCompletedAtTimestamp,
@@ -208,12 +216,15 @@ class ActiveWorkoutViewModel(
     )
 
     fun retry() {
+        requestedExerciseId = null
         errorFlow.value = null
         refreshRequests.update { it + 1 }
     }
 
     private fun loadCatalogExercise(exerciseId: String) {
-        viewModelScope.launch {
+        requestedExerciseId = exerciseId
+        catalogRequest?.cancel()
+        catalogRequest = viewModelScope.launch {
             try {
                 val ex = exerciseCatalog.getExerciseById(exerciseId)
                 currentCatalogExerciseFlow.value = ex
@@ -228,19 +239,19 @@ class ActiveWorkoutViewModel(
     fun nextExercise() {
         val currentState = uiState.value as? ActiveWorkoutUiState.Active ?: return
         if (currentState.currentExerciseIndex < currentState.totalExercises - 1) {
-            currentExerciseIndexFlow.value = currentState.currentExerciseIndex + 1
+            savedStateHandle["exerciseIndex"] = currentState.currentExerciseIndex + 1
         }
     }
 
     fun previousExercise() {
         val currentState = uiState.value as? ActiveWorkoutUiState.Active ?: return
         if (currentState.currentExerciseIndex > 0) {
-            currentExerciseIndexFlow.value = currentState.currentExerciseIndex - 1
+            savedStateHandle["exerciseIndex"] = currentState.currentExerciseIndex - 1
         }
     }
 
     fun goToExercise(index: Int) {
-        currentExerciseIndexFlow.value = index
+        savedStateHandle["exerciseIndex"] = index
     }
 
     fun updateSet(setId: String, reps: Int?, weight: Double?, isCompleted: Boolean) {
@@ -256,7 +267,7 @@ class ActiveWorkoutViewModel(
     }
 
     fun updateSet(setId: String, performance: SetPerformanceInput) {
-        if (uiState.value !is ActiveWorkoutUiState.Active) return
+        if (uiState.value !is ActiveWorkoutUiState.Active || confirmationFlow.value.ending) return
         val current = currentOutcome(setId)
         // A repeat of the outcome this set already has is a duplicate tap or a re-emitted
         // edit, not new information, so it is never written again.
@@ -268,7 +279,9 @@ class ActiveWorkoutViewModel(
         // Rest starts only on a genuine false -> true completion transition, so editing a
         // value on an already-completed set never hands out another rest period.
         val startsRest = performance.isCompleted && !wasCompleted
-        if (startsRest && !completionsInFlight.add(setId)) return
+        if (!writesInFlight.add(setId)) return
+        confirmationFlow.update { it.copy(saving = true) }
+        setUpdateErrorFlow.value = null
 
         viewModelScope.launch {
             try {
@@ -284,10 +297,10 @@ class ActiveWorkoutViewModel(
                 throw e
             } catch (e: Exception) {
                 // The write did not land, so the observed session remains the truth.
-                outcomesAwaitingObservation.remove(setId)
                 setUpdateErrorFlow.value = R.string.workout_set_update_error
             } finally {
-                if (startsRest) completionsInFlight.remove(setId)
+                writesInFlight.remove(setId)
+                confirmationFlow.update { it.copy(saving = writesInFlight.isNotEmpty()) }
             }
         }
     }
@@ -339,22 +352,23 @@ class ActiveWorkoutViewModel(
      * reason. Nothing about the reason is diagnostic, and no rest period follows work
      * that was not performed.
      */
-    fun skipSet(setId: String, reason: SetStopReason) {
+    fun skipSet(setId: String, reason: SetStopReason, values: SetValuesDraft? = null) {
         // Partial work already entered for an unfinished set is kept; a set that was
         // completed and is now being stopped drops its completion-only fields, which the
         // outcome invariants require anyway.
         val base = currentOutcome(setId)
             ?.takeIf { !it.isCompleted }
             ?: SetPerformanceInput(isCompleted = false)
+        val stopped = if (values == null || currentOutcome(setId)?.isCompleted == true) base else base.withValues(values)
         updateSet(
             setId,
-            base.copy(
+            stopped.copy(
                 rpe = null,
                 rir = null,
                 feltManageable = null,
                 completedAtTimestamp = null,
                 stopReason = reason,
-                stoppedAtTimestamp = nowMillis(),
+                stoppedAtTimestamp = base.stoppedAtTimestamp?.takeIf { base.stopReason == reason } ?: nowMillis(),
                 isCompleted = false
             )
         )
@@ -447,7 +461,7 @@ class ActiveWorkoutViewModel(
      * nothing is persisted until the user explicitly confirms.
      */
     fun requestFinish() {
-        if (finishRequested) return
+        if (writePending()) return
         val session = (uiState.value as? ActiveWorkoutUiState.Active)?.session ?: return
         when (val decision = session.finishDecision()) {
             FinishDecision.Complete -> finishWorkout()
@@ -457,6 +471,7 @@ class ActiveWorkoutViewModel(
     }
 
     fun confirmFinish() {
+        if (confirmationFlow.value.pendingFinish == null) return
         confirmationFlow.value = confirmationFlow.value.copy(pendingFinish = null)
         finishWorkout()
     }
@@ -466,6 +481,7 @@ class ActiveWorkoutViewModel(
     }
 
     fun requestCancel() {
+        if (writePending()) return
         confirmationFlow.value = confirmationFlow.value.copy(isConfirmingDiscard = true)
     }
 
@@ -474,9 +490,9 @@ class ActiveWorkoutViewModel(
     }
 
     fun finishWorkout() {
-        if (finishRequested) return
+        if (writePending()) return
         val currentState = uiState.value as? ActiveWorkoutUiState.Active ?: return
-        finishRequested = true
+        confirmationFlow.update { it.copy(ending = true) }
         viewModelScope.launch {
             try {
                 val elapsedMinutes = elapsedWorkoutMinutes(
@@ -489,38 +505,45 @@ class ActiveWorkoutViewModel(
                 restTimer.cancel()
                 publishRestTimer()
             } catch (e: CancellationException) {
-                finishRequested = false
+                confirmationFlow.update { it.copy(ending = false) }
                 throw e
             } catch (e: wallcrawl.elopenmike.com.core.model.ProgramException) {
-                finishRequested = false
+                confirmationFlow.update { it.copy(ending = false) }
                 if (e.failure == wallcrawl.elopenmike.com.core.model.ProgramFailure.UNSUPPORTED_POLICY) {
                     programFinishUnsupportedFlow.value = true
                     setUpdateErrorFlow.value = R.string.program_finish_unsupported
                 } else setUpdateErrorFlow.value = R.string.workout_finish_error
             } catch (e: Exception) {
-                finishRequested = false
+                confirmationFlow.update { it.copy(ending = false) }
                 errorFlow.value = R.string.workout_finish_error
             }
         }
     }
 
     fun confirmCancel(onCancelled: () -> Unit) {
+        if (!confirmationFlow.value.isConfirmingDiscard) return
         confirmationFlow.value = confirmationFlow.value.copy(isConfirmingDiscard = false)
         cancelWorkout(onCancelled)
     }
 
     fun cancelWorkout(onCancelled: () -> Unit) {
+        if (writePending() || uiState.value !is ActiveWorkoutUiState.Active) return
+        confirmationFlow.update { it.copy(ending = true) }
         viewModelScope.launch {
             try {
                 workoutRepository.cancelWorkout(sessionId)
                 onCancelled()
             } catch (e: CancellationException) {
+                confirmationFlow.update { it.copy(ending = false) }
                 throw e
             } catch (e: Exception) {
+                confirmationFlow.update { it.copy(ending = false) }
                 errorFlow.value = R.string.workout_cancel_error
             }
         }
     }
+
+    private fun writePending() = confirmationFlow.value.ending || writesInFlight.isNotEmpty() || outcomesAwaitingObservation.isNotEmpty()
 
     private fun startRestFor(setId: String) {
         val restSeconds = exerciseContaining(setId)?.prescription?.restSeconds ?: return
@@ -576,17 +599,13 @@ class ActiveWorkoutViewModel(
             workoutHistoryAnalyzer: WorkoutHistoryAnalyzer,
             programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null,
             userProfileRepository: UserProfileRepository
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return ActiveWorkoutViewModel(
-                    sessionId,
-                    workoutRepository,
-                    exerciseCatalog,
-                    workoutHistoryAnalyzer,
-                    programRepository = programRepository,
-                    userProfileRepository = userProfileRepository
-                ) as T
+        ): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                ActiveWorkoutViewModel(
+                    sessionId, workoutRepository, exerciseCatalog, workoutHistoryAnalyzer,
+                    programRepository = programRepository, userProfileRepository = userProfileRepository,
+                    savedStateHandle = createSavedStateHandle()
+                )
             }
         }
     }
@@ -600,6 +619,8 @@ class ActiveWorkoutViewModel(
     )
 
     private data class ConfirmationState(
+        val saving: Boolean = false,
+        val ending: Boolean = false,
         val pendingFinish: FinishDecision.ConfirmIncomplete? = null,
         val isConfirmingDiscard: Boolean = false,
         val pendingExclusions: List<String> = emptyList(),

@@ -1,81 +1,45 @@
 package wallcrawl.elopenmike.com.feature.today
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import wallcrawl.elopenmike.com.R
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Assignment
-import androidx.compose.material.icons.filled.FitnessCenter
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.Text
-import androidx.compose.runtime.collectAsState
-import wallcrawl.elopenmike.com.core.ui.components.ConditionRefusal
-import wallcrawl.elopenmike.com.core.ui.components.ConditionExecution
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.produceState
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.material3.MaterialTheme
-import wallcrawl.elopenmike.com.core.model.GeneratedExercise
-import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
-import wallcrawl.elopenmike.com.core.model.ExerciseType
-import wallcrawl.elopenmike.com.core.model.DeloadAction
-import wallcrawl.elopenmike.com.core.model.WeightUnit
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
+import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.model.*
+import wallcrawl.elopenmike.com.core.ui.components.ConditionExecution
+import wallcrawl.elopenmike.com.core.ui.components.ConditionRefusal
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
-import wallcrawl.elopenmike.com.core.ui.components.WallCrawlWordmark
-import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlSecondaryButton
+import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
-import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
-import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutRationale
-import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutTitle
-import wallcrawl.elopenmike.com.core.ui.localization.labelRes
-import wallcrawl.elopenmike.com.core.ui.localization.unavailableFocusNotice
-import wallcrawl.elopenmike.com.core.ui.localization.workoutRankingNotice
-import wallcrawl.elopenmike.com.core.ui.localization.progressionNotice
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
+import wallcrawl.elopenmike.com.core.ui.localization.*
+import wallcrawl.elopenmike.com.feature.program.ProgramPlanningChoice
+import wallcrawl.elopenmike.com.feature.program.ProgramUiState
+import wallcrawl.elopenmike.com.feature.program.positionText
+import wallcrawl.elopenmike.com.feature.program.programFailureRes
 
 @Composable
 fun TodayScreen(
@@ -83,151 +47,58 @@ fun TodayScreen(
     onStartWorkout: (sessionId: String) -> Unit,
     onResumeWorkout: (sessionId: String) -> Unit,
     onOpenTemplates: () -> Unit,
+    programState: ProgramUiState,
+    onManageProgram: () -> Unit,
+    onRetryProgram: () -> Unit,
     modifier: Modifier = Modifier,
-    programContent: @Composable () -> Unit = {},
     onOpenProfile: () -> Unit = {}
 ) {
     val pending by viewModel.pendingConditions.collectAsState()
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val uiState by produceState<TodayUiState>(TodayUiState.Loading, viewModel, lifecycleOwner) {
-        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            value = TodayUiState.Loading
+    val selected by viewModel.planningIntent.collectAsState()
+    val owner = LocalLifecycleOwner.current
+    val state by produceState<TodayUiState>(TodayUiState.Loading, viewModel, owner) {
+        owner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             viewModel.uiState.collect { value = it }
         }
     }
-
-    val conditionContent: @Composable () -> Unit = {
-        if (pending.pendingFailed) Text(stringResource(R.string.condition_pending_read_error), color = MaterialTheme.colorScheme.onSurface)
-        if (!pending.pending.isNullOrEmpty()) {
-            Text(stringResource(R.string.condition_pending_hint), color = MaterialTheme.colorScheme.onSurface)
-            TextButton(onClick = onOpenProfile) { Text(stringResource(R.string.condition_edit), color = MaterialTheme.colorScheme.onSurface) }
-        }
+    val ready = state as? TodayUiState.Success
+    val active = when (val current = state) {
+        is TodayUiState.Success -> current.activeSession
+        is TodayUiState.Preparing -> current.activeSession
+        is TodayUiState.Error -> current.activeSession
+        TodayUiState.Loading -> null
     }
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-
-        when (val state = uiState) {
-            TodayUiState.Loading, is TodayUiState.Preparing -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column(
-                        modifier = Modifier.verticalScroll(rememberScrollState()).padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        (state as? TodayUiState.Preparing)?.activeSession?.let { session ->
-                            ActiveSessionBanner(
-                                sessionName = session.name,
-                                completedSets = session.completedSetsCount,
-                                totalSets = session.totalSetsCount,
-                                onResume = { onResumeWorkout(session.id) }
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
-                        conditionContent()
-                        CircularProgressIndicator(color = CrimsonRedPrimary)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            stringResource(R.string.today_loading),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        programContent()
-                    }
-                }
+    val workout = ready?.suggestedWorkout
+    val name = workout?.let { generatedWorkoutTitle(it.title) }.orEmpty()
+    val rationale = workout?.let { generatedWorkoutRationale(it.rationale, it.unavailableFocusMuscles, it.rankingReasons) }.orEmpty()
+    TodayContent(
+        state = state, workoutName = name, modifier = modifier,
+        onStartWorkout = {
+            viewModel.startWorkout(name, rationale, workout) { id ->
+                // If the user left Train during the write, its next visit offers this saved session.
+                if (owner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) onStartWorkout(id)
             }
-
-            is TodayUiState.Error -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(24.dp),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    // A workout already in progress stays reachable: this card is the only
-                    // route back into it.
-                    state.activeSession?.let { session ->
-                        ActiveSessionBanner(
-                            sessionName = session.name,
-                            completedSets = session.completedSetsCount,
-                            totalSets = session.totalSetsCount,
-                            onResume = { onResumeWorkout(session.id) }
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-                    conditionContent()
-                    state.conditionRefusal?.let { ConditionRefusal(it.reasons) }
-                    WallCrawlCard(borderColor = CrimsonRedPrimary) {
-                        Text(
-                            stringResource(R.string.today_error_title),
-                            fontWeight = FontWeight.Bold,
-                            color = CrimsonRedLight,
-                            fontSize = 18.sp
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            stringResource(state.error.messageRes),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 14.sp
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        WallCrawlPrimaryButton(
-                            text = stringResource(R.string.action_try_again),
-                            onClick = { viewModel.regenerateWorkout() }
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        WallCrawlSecondaryButton(
-                            text = stringResource(R.string.today_action_open_templates),
-                            onClick = onOpenTemplates
-                        )
-                    }
-                    Spacer(Modifier.height(16.dp))
-                    programContent()
-                    if (state.activeSession == null) {
-                        state.deload?.let {
-                            TodayDeloadCard(it, viewModel::decideDeload)
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
-                    }
-                }
-            }
-
-            is TodayUiState.Success -> {
-                // Written here, where the reader's language is known, and handed to the
-                // ViewModel so the session is stored with the wording that was on screen.
-                val workoutName = generatedWorkoutTitle(state.suggestedWorkout.title)
-                val workoutRationale = generatedWorkoutRationale(
-                    spec = state.suggestedWorkout.rationale,
-                    unavailableFocusMuscles = state.suggestedWorkout.unavailableFocusMuscles,
-                    rankingReasons = state.suggestedWorkout.rankingReasons
-                )
-                TodayContent(
-                    state = state,
-                    workoutName = workoutName,
-                    onStartWorkout = {
-                        viewModel.startWorkout(workoutName, workoutRationale, onStartWorkout)
-                    },
-                    onResumeWorkout = { state.activeSession?.let { onResumeWorkout(it.id) } },
-                    onRegenerate = { viewModel.regenerateWorkout() },
-                    onOpenTemplates = onOpenTemplates,
-                    onDeloadAction = viewModel::decideDeload,
-                    conditionContent = conditionContent,
-                    programContent = programContent
-                )
+        },
+        onResumeWorkout = { active?.let { onResumeWorkout(it.id) } },
+        onRegenerate = viewModel::regenerateWorkout, onOpenTemplates = onOpenTemplates,
+        onDeloadAction = viewModel::decideDeload, onOpenProfile = onOpenProfile,
+        programState = programState, selected = selected, onSelect = viewModel::selectPlanningIntent,
+        onManageProgram = onManageProgram, onRetryProgram = onRetryProgram,
+        conditionContent = {
+            if (pending.pendingFailed) StatusText(stringResource(R.string.condition_pending_read_error))
+            if (!pending.pending.isNullOrEmpty()) {
+                Text(stringResource(R.string.condition_pending_hint))
+                TextButton(onClick = onOpenProfile) { Text(stringResource(R.string.condition_edit)) }
             }
         }
-    }
+    )
 }
 
-/**
- * The success body. Visible to the test source set so a screen test can render the real
- * card against a state it supplies, rather than asserting on a composable in isolation.
- */
+private enum class TrainDialog { SOURCE, PREVIEW, OPTIONS, ADJUSTMENT, REASONS }
+
 @Composable
 internal fun TodayContent(
-    state: TodayUiState.Success,
+    state: TodayUiState,
     workoutName: String,
     onStartWorkout: () -> Unit,
     onResumeWorkout: () -> Unit,
@@ -235,537 +106,255 @@ internal fun TodayContent(
     onOpenTemplates: () -> Unit,
     onDeloadAction: (DeloadAction) -> Unit = {},
     conditionContent: @Composable () -> Unit = {},
-    programContent: @Composable () -> Unit = {}
+    modifier: Modifier = Modifier,
+    programState: ProgramUiState = ProgramUiState(),
+    selected: WorkoutPlanningIntent = WorkoutPlanningIntent.ORDINARY,
+    onSelect: (WorkoutPlanningIntent) -> Unit = {},
+    onManageProgram: () -> Unit = {},
+    onRetryProgram: () -> Unit = {},
+    onOpenProfile: () -> Unit = {}
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .testTag("today-list")
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-            TodayHeader(
-                userName = state.userProfile.name,
-                completedThisWeek = state.completedThisWeek,
-                weeklyGoal = state.userProfile.daysPerWeek
-            )
+    var dialog by rememberSaveable { mutableStateOf<TrainDialog?>(null) }
+    val locale = LocalConfiguration.current.locales[0]
+    val ready = state as? TodayUiState.Success
+    val error = state as? TodayUiState.Error
+    val active = ready?.activeSession ?: error?.activeSession ?: (state as? TodayUiState.Preparing)?.activeSession
+    val deload = ready?.deload ?: error?.deload
+    val busy = ready?.isRegenerating == true || error?.isBusy == true || deload?.isSaving == true ||
+        (ready != null && ready.planningIntent != selected)
+    val program = programState.program as? ProgramReadState.Supported
+    val manageLabel = stringResource(if (programState.program is ProgramReadState.Empty) R.string.guided_train_explore else R.string.program_manage)
+    val programProblem = programState.error ?: when {
+        programState.program is ProgramReadState.Unsupported -> R.string.program_unsupported
+        else -> program?.profileFailure?.let(::programFailureRes)
+    }
+    val programSummary = program?.let {
+        val status = when (it.enrollment.status) {
+            ProgramStatus.ACTIVE -> R.string.program_active
+            ProgramStatus.PAUSED -> R.string.program_paused
+            ProgramStatus.COMPLETED -> R.string.program_completed
         }
-
-        // Active workout resumption banner if active
-        if (state.activeSession != null) {
-            item {
-                ActiveSessionBanner(
-                    sessionName = state.activeSession.name,
-                    completedSets = state.activeSession.completedSetsCount,
-                    totalSets = state.activeSession.totalSetsCount,
-                    onResume = onResumeWorkout
-                )
+        val progress = stringResource(R.string.program_progress, LocaleFormatting.formatCount(it.progress.completedSlots, locale),
+            LocaleFormatting.formatCount(it.enrollment.configuration.sessionsPerWeek * 4, locale))
+        "${stringResource(status)} · $progress"
+    }
+    val chooseSource = { dialog = TrainDialog.SOURCE }
+    val settledListState = rememberLazyListState()
+    val settled = ready != null || error != null
+    LazyColumn(modifier.fillMaxSize().testTag(if (settled) "today-list" else "today-preparing"),
+        state = if (settled) settledListState else rememberLazyListState(),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (ready != null) item(key = "week") {
+            val name = ready.userProfile.name.lineSequence().firstOrNull()?.trim().orEmpty()
+            if (name.isNotBlank()) Text(stringResource(R.string.today_greeting, name),
+                style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            val goal = ready.userProfile.daysPerWeek
+            Text(pluralStringResource(R.plurals.today_weekly_progress, goal,
+                LocaleFormatting.formatCount(ready.completedThisWeek, locale), LocaleFormatting.formatCount(goal, locale)),
+                style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(vertical = 6.dp))
+        }
+        if (active != null) item(key = "resume") {
+            WallCrawlCard(Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.guided_train_active), style = MaterialTheme.typography.labelLarge)
+                Text(active.name, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Text(pluralStringResource(R.plurals.today_active_session_sets, active.totalSetsCount,
+                    LocaleFormatting.formatCount(active.completedSetsCount, locale),
+                    LocaleFormatting.formatCount(active.totalSetsCount, locale)), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Spacer(Modifier.height(12.dp))
+                WallCrawlPrimaryButton(stringResource(R.string.guided_train_resume), onResumeWorkout)
             }
         }
-
-        // Main Recommended Workout Card
-        item {
-            Column {
-                conditionContent()
-                SuggestedWorkoutCard(
-                    workout = state.suggestedWorkout,
-                    workoutName = workoutName,
-                    isRegenerating = state.isRegenerating || state.activeSession != null || state.deload?.isSaving == true,
-                    prescriptionUnit = state.prescriptionUnit,
-                    onStartWorkout = onStartWorkout,
-                    onRegenerate = onRegenerate,
-                    programSession = state.programSession,
-                    conditionContext = state.conditionContext
-                )
-            }
-        }
-
-        item { programContent() }
-
-        if (state.activeSession == null) {
-            state.deload?.let { deload ->
-                item {
-                    TodayDeloadCard(deload, onDeloadAction) {
-                        DeloadPrescriptionPreview(
-                            state.suggestedWorkout, state.prescriptionUnit
-                        )
+        item(key = "conditions") { conditionContent() }
+        if (active == null) {
+            when {
+                ready != null -> item(key = "workout") {
+                    WorkoutHero(ready, workoutName, selected, busy, onStartWorkout, chooseSource, onDialog = { dialog = it })
+                }
+                error != null -> item(key = "error") {
+                    WallCrawlCard(Modifier.fillMaxWidth()) {
+                        SourceRow(selected, chooseSource, !busy)
+                        Text(stringResource(R.string.guided_train_error), style = MaterialTheme.typography.titleLarge)
+                        error.conditionRefusal?.let { ConditionRefusal(it.reasons) }
+                        StatusText(stringResource(error.error.messageRes))
+                        Spacer(Modifier.height(12.dp))
+                        WallCrawlPrimaryButton(stringResource(R.string.action_try_again), onRegenerate, enabled = !busy)
+                        if (busy) StatusText(stringResource(R.string.guided_train_busy))
+                        TextButton(onClick = onOpenProfile) { Text(stringResource(R.string.program_edit_profile)) }
+                    }
+                }
+                else -> item(key = "loading") {
+                    Row(Modifier.padding(vertical = 16.dp), verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        CircularProgressIndicator(Modifier.size(24.dp))
+                        StatusText(stringResource(R.string.today_loading))
                     }
                 }
             }
-        }
-
-        item { MyWorkoutsCard(onOpenTemplates) }
-
-        // Planning context pill
-        item {
-            PlanContextCard(
-                goal = stringResource(state.userProfile.primaryGoal.labelRes),
-                unit = state.prescriptionUnit.symbol,
-                equipmentCount = state.userProfile.availableEquipment.size
-            )
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-    }
-}
-
-@Composable
-private fun MyWorkoutsCard(onOpenTemplates: () -> Unit) {
-    WallCrawlCard {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(CrimsonRedPrimary.copy(alpha = 0.15f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.FitnessCenter,
-                    contentDescription = null,
-                    tint = CrimsonRedPrimary,
-                    modifier = Modifier.size(20.dp)
-                )
+            if (deload?.offer != null || (error != null && deload?.acceptedChoice != null)) item(key = "adjustment") {
+                TrainLink(stringResource(if (deload?.acceptedChoice != null) R.string.today_deload_accepted
+                    else R.string.guided_train_adjustment_review), onClick = { dialog = TrainDialog.ADJUSTMENT })
             }
-            Spacer(Modifier.width(12.dp))
-            Column(Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(R.string.today_custom_routines_heading),
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp,
-                    color = CrimsonRedPrimary
-                )
-                Text(
-                    text = stringResource(R.string.today_my_workouts_title),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
-                Text(
-                    text = stringResource(R.string.today_my_workouts_body),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 12.sp
-                )
+            deload?.error?.let { item { StatusText(stringResource(it.messageRes)) } }
+        }
+        item(key = "routines") {
+            TrainLink(stringResource(R.string.today_my_workouts_title), onClick = onOpenTemplates)
+        }
+        item(key = "program") {
+            TrainLink(manageLabel, programSummary, onManageProgram)
+            if (programProblem != null) {
+                Text(stringResource(programProblem), color = MaterialTheme.colorScheme.error)
+                if (programState.error != null) TextButton(onClick = onRetryProgram) { Text(stringResource(R.string.action_try_again)) }
             }
         }
-        Spacer(Modifier.height(14.dp))
-        WallCrawlSecondaryButton(
-            text = stringResource(R.string.today_action_open_templates),
-            onClick = onOpenTemplates
-        )
-    }
-}
-
-@Composable
-private fun TodayHeader(
-    userName: String,
-    completedThisWeek: Int,
-    weeklyGoal: Int
-) {
-    val locale = LocalConfiguration.current.locales[0]
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        WallCrawlWordmark(fontSize = 16.sp)
-        val displayName = userName.lineSequence().firstOrNull()?.trim().orEmpty()
-            .ifBlank { stringResource(R.string.default_crawler_name) }
-        Text(
-            stringResource(R.string.today_greeting, displayName),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
-        Text(
-            pluralStringResource(R.plurals.today_weekly_progress, weeklyGoal,
-                LocaleFormatting.formatCount(completedThisWeek, locale), LocaleFormatting.formatCount(weeklyGoal, locale)),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        LinearProgressIndicator(
-            progress = { (completedThisWeek.toFloat() / weeklyGoal.coerceAtLeast(1)).coerceIn(0f, 1f) },
-            modifier = Modifier.fillMaxWidth().height(4.dp).clip(RoundedCornerShape(2.dp)),
-            drawStopIndicator = {},
-            color = MaterialTheme.colorScheme.primary,
-            trackColor = MaterialTheme.colorScheme.outline
-        )
-    }
-}
-
-@Composable
-private fun ActiveSessionBanner(
-    sessionName: String,
-    completedSets: Int,
-    totalSets: Int,
-    onResume: () -> Unit
-) {
-    val locale = LocalConfiguration.current.locales[0]
-    WallCrawlCard(
-        borderColor = CrimsonRedPrimary
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(R.string.today_active_session_heading),
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = CrimsonRedLight,
-                    letterSpacing = 0.5.sp
-                )
-                // A session name is user-visible free text written when the workout
-                // started. It is never re-translated afterwards.
-                Text(
-                    text = sessionName,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = pluralStringResource(
-                        R.plurals.today_active_session_sets,
-                        totalSets,
-                        LocaleFormatting.formatCount(completedSets, locale),
-                        LocaleFormatting.formatCount(totalSets, locale)
-                    ),
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-            ButtonResume(onClick = onResume)
+        if (active == null && (ready != null || deload != null)) item(key = "options") {
+            TrainLink(stringResource(R.string.guided_train_options), onClick = { dialog = TrainDialog.OPTIONS })
         }
     }
+    if (active != null) return
+    val close = { dialog = null }
+    when (dialog) {
+        TrainDialog.SOURCE -> TrainDetail(R.string.guided_train_source, close) {
+            ProgramPlanningChoice(selected,
+                program?.enrollment?.status == ProgramStatus.ACTIVE && program.profileFailure == null && programProblem == null,
+                !busy && programState.activeSession == null) { intent -> close(); onSelect(intent) }
+            if (programProblem != null) Text(stringResource(programProblem), color = MaterialTheme.colorScheme.error)
+            if (programState.error != null) TextButton(onClick = onRetryProgram) { Text(stringResource(R.string.action_try_again)) }
+            TrainLink(stringResource(R.string.today_my_workouts_title), onClick = { close(); onOpenTemplates() })
+            TrainLink(manageLabel, programSummary, onClick = { close(); onManageProgram() })
+        }
+        TrainDialog.PREVIEW -> ready?.let {
+            TrainDetail(R.string.guided_train_preview, close) { ExercisePreview(it) }
+        }
+        TrainDialog.REASONS -> ready?.let {
+            TrainDetail(R.string.guided_train_why, close) {
+                Text(generatedWorkoutRationale(it.suggestedWorkout.rationale, it.suggestedWorkout.unavailableFocusMuscles,
+                    it.suggestedWorkout.rankingReasons))
+            }
+        }
+        TrainDialog.OPTIONS -> TrainDetail(R.string.guided_train_options, close) {
+            if (ready != null) {
+                Text(stringResource(R.string.guided_train_regenerate_hint))
+                WallCrawlSecondaryButton(stringResource(R.string.today_regenerate_content_description), { close(); onRegenerate() }, enabled = !busy)
+            }
+            if (deload != null && deload.acceptedChoice == null) {
+                WallCrawlSecondaryButton(stringResource(R.string.today_deload_request), { onDeloadAction(DeloadAction.REQUEST); close() }, enabled = !busy)
+            }
+        }
+        TrainDialog.ADJUSTMENT -> deload?.let {
+            TrainDetail(if (it.acceptedChoice != null) R.string.today_deload_accepted else R.string.today_deload_title, close) {
+                TodayDeloadCard(it, { action -> onDeloadAction(action); close() },
+                    enabled = !busy, workout = ready?.suggestedWorkout, unit = ready?.prescriptionUnit)
+            }
+        }
+        null -> Unit
+    }
 }
 
 @Composable
-private fun ButtonResume(onClick: () -> Unit) {
-    WallCrawlPrimaryButton(
-        text = stringResource(R.string.today_action_resume),
-        onClick = onClick,
-        modifier = Modifier.width(120.dp)
-    )
-}
-
-@Composable
-private fun SuggestedWorkoutCard(
-    workout: GeneratedWorkout,
-    workoutName: String,
-    isRegenerating: Boolean,
-    prescriptionUnit: WeightUnit,
-    onStartWorkout: () -> Unit,
-    onRegenerate: () -> Unit,
-    programSession: wallcrawl.elopenmike.com.core.model.ProgramSessionSnapshot? = null,
-    conditionContext: wallcrawl.elopenmike.com.core.model.SessionConditionContext? = null
+private fun WorkoutHero(
+    state: TodayUiState.Success, name: String, selected: WorkoutPlanningIntent, busy: Boolean, onStart: () -> Unit,
+    onChange: () -> Unit, onDialog: (TrainDialog) -> Unit
 ) {
+    val workout = state.suggestedWorkout
     val locale = LocalConfiguration.current.locales[0]
     val vocabulary = LocalExerciseVocabulary.current
-    WallCrawlCard(
-        cornerRadius = 20.dp,
-        contentPadding = 20.dp,
-        borderColor = CrimsonRedPrimary.copy(alpha = 0.4f)
-    ) {
-        programSession?.let { Text(wallcrawl.elopenmike.com.feature.program.positionText(it.position)) }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Assignment,
-                    contentDescription = null,
-                    tint = CrimsonRedLight,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = stringResource(R.string.today_plan_heading),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.8.sp,
-                    color = CrimsonRedLight
-                )
-            }
-
-            IconButton(
-                onClick = onRegenerate,
-                enabled = !isRegenerating,
-                modifier = Modifier.size(48.dp)
-            ) {
-                if (isRegenerating) {
-                    CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp, color = CrimsonRedPrimary)
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(
-                            R.string.today_regenerate_content_description
-                        ),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
+    WallCrawlCard(Modifier.fillMaxWidth()) {
+        SourceRow(selected, onChange, !busy)
+        val startLabel = stringResource(if (selected == WorkoutPlanningIntent.PROGRAM) R.string.program_start_session
+            else R.string.today_action_start)
+        if (state.planningIntent != selected) {
+            StatusText(stringResource(R.string.guided_train_busy))
+            WallCrawlPrimaryButton(startLabel, onStart, enabled = false)
+            return@WallCrawlCard
+        }
+        state.programSession?.let { Text(positionText(it.position), style = MaterialTheme.typography.labelLarge) }
+        Text(name, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+        Text(vocabulary.muscles(workout.focusMuscles).joinToString(stringResource(R.string.detail_separator)),
+            style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        val duration = stringResource(R.string.today_stat_duration, LocaleFormatting.formatCount(workout.estimatedDurationMinutes, locale))
+        val count = workout.exercises.size
+        val exercises = pluralStringResource(R.plurals.count_exercises, count, LocaleFormatting.formatCount(count, locale))
+        val sets = workout.exercises.sumOf { it.targetSets }
+        val setLabel = pluralStringResource(R.plurals.count_sets, sets, LocaleFormatting.formatCount(sets, locale))
+        Text(listOf(duration, exercises, setLabel).joinToString(" · "), Modifier.padding(vertical = 8.dp),
+            style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        if (workout.unavailableFocusMuscles.isNotEmpty()) {
+            Text(stringResource(R.string.guided_train_focus_missing,
+                vocabulary.muscles(workout.unavailableFocusMuscles).joinToString(stringResource(R.string.list_separator))))
+        }
+        if (workout.unavailableFocusMuscles.isNotEmpty() || workout.rankingReasons.isNotEmpty()) {
+            TextButton(onClick = { onDialog(TrainDialog.REASONS) }) { Text(stringResource(R.string.guided_train_why)) }
+        }
+        if (state.deload?.acceptedChoice != null) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.today_deload_applied_summary), Modifier.weight(1f),
+                    style = MaterialTheme.typography.bodyMedium)
+                TextButton(onClick = { onDialog(TrainDialog.ADJUSTMENT) }) { Text(stringResource(R.string.today_details)) }
             }
         }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(
-            text = workoutName,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Black,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-
-        Spacer(modifier = Modifier.height(6.dp))
-
-        Text(
-            text = vocabulary.muscles(workout.focusMuscles)
-                .joinToString(stringResource(R.string.detail_separator)),
-            fontSize = 15.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        // Only when there is something to say. A prioritised muscle nothing available can
-        // train is named here, so the alternative above is explained to the reader and not
-        // only to the stored session; an ordinary session adds no line at all.
-        unavailableFocusNotice(workout.unavailableFocusMuscles)?.let { notice ->
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = notice,
-                fontSize = 13.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-        workoutRankingNotice(workout.rankingReasons)?.let { notice ->
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = notice,
-                fontSize = 13.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        val duration = stringResource(R.string.today_stat_duration,
-            LocaleFormatting.formatCount(workout.estimatedDurationMinutes, locale))
-        val exercises = pluralStringResource(R.plurals.count_exercises, workout.exercises.size,
-            LocaleFormatting.formatCount(workout.exercises.size, locale))
-        val setCount = workout.exercises.sumOf { it.targetSets }
-        val sets = pluralStringResource(R.plurals.count_sets, setCount, LocaleFormatting.formatCount(setCount, locale))
-        Text(listOf(duration, exercises, sets).joinToString("  ·  "), style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
-
-        Spacer(Modifier.height(16.dp))
-
-        val startButton: @Composable () -> Unit = {
-            WallCrawlPrimaryButton(
-                text = stringResource(if (programSession != null) R.string.program_start_session else R.string.today_action_start),
-                onClick = onStartWorkout,
-                enabled = !isRegenerating,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = null,
-                        tint = TextWhite,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                }
-            )
-        }
-        if (conditionContext == null) startButton()
-        Spacer(modifier = Modifier.height(10.dp))
-
-        var expanded by rememberSaveable(workoutName) { mutableStateOf(false) }
-        if (conditionContext == null) {
-            TextButton(onClick = { expanded = !expanded }, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(if (expanded) R.string.today_hide_exercises else R.string.today_view_exercises),
-                    color = MaterialTheme.colorScheme.onSurface)
-                Icon(if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore, null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-        }
-        if (expanded || conditionContext != null) {
-            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                workout.exercises.forEachIndexed { index, exercise ->
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        ExercisePreviewRow(index = index + 1, exercise = exercise)
-                        ConditionExecution(conditionContext, exercise.exerciseId, exercise.prescription.purpose)
-                        workout.progressionDecisions.firstOrNull { it.exerciseId == exercise.exerciseId }?.let {
-                            Text(
-                                progressionNotice(it, prescriptionUnit, prescriptionUnit),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-            }
-        }
-        if (conditionContext != null) {
-            Spacer(Modifier.height(16.dp))
-            startButton()
+        if (state.conditionContext != null) ExercisePreview(state)
+        if (busy) StatusText(stringResource(when {
+            state.isStarting -> R.string.guided_train_starting
+            state.deload?.isSaving == true -> R.string.today_deload_saving
+            else -> R.string.guided_train_busy
+        }))
+        WallCrawlPrimaryButton(startLabel, onStart, enabled = !busy)
+        if (state.conditionContext == null) TextButton(onClick = { onDialog(TrainDialog.PREVIEW) }) {
+            Text(stringResource(R.string.today_view_exercises))
         }
     }
 }
 
 @Composable
-private fun ExercisePreviewRow(
-    index: Int,
-    exercise: GeneratedExercise
-) {
-    val locale = LocalConfiguration.current.locales[0]
+private fun SourceRow(intent: WorkoutPlanningIntent, onChange: () -> Unit, enabled: Boolean) {
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(stringResource(if (intent == WorkoutPlanningIntent.PROGRAM) R.string.program_session_choice
+            else R.string.guided_train_ordinary), Modifier.weight(1f), style = MaterialTheme.typography.labelLarge)
+        TextButton(onClick = onChange, enabled = enabled) { Text(stringResource(R.string.guided_train_change)) }
+    }
+}
+
+@Composable
+private fun ExercisePreview(state: TodayUiState.Success) {
+    val workout = state.suggestedWorkout
     val vocabulary = LocalExerciseVocabulary.current
-    val name = vocabulary.exerciseName(exercise.exerciseId)
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(
-            modifier = Modifier.weight(1f),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(
-                    R.string.today_exercise_position,
-                    LocaleFormatting.formatCount(index, locale)
-                ),
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                color = CrimsonRedPrimary,
-                modifier = Modifier.width(24.dp)
-            )
-            Text(
-                text = name,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Text(
-            text = prescriptionSummary(exercise),
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
-
-/** The compact "3 × 8–12" style target shown beside a planned exercise. */
-@Composable
-internal fun prescriptionSummary(exercise: GeneratedExercise): String {
     val locale = LocalConfiguration.current.locales[0]
-    val prescription = exercise.prescription
-    val sets = LocaleFormatting.formatCount(exercise.targetSets, locale)
-    return when (prescription.exerciseType) {
-        ExerciseType.WEIGHT_REPS,
-        ExerciseType.BODYWEIGHT_REPS,
-        ExerciseType.ASSISTED_BODYWEIGHT -> {
-            val range = prescription.repRange
-            val reps = if (range == null) {
-                ""
-            } else if (range.min == range.max) {
-                LocaleFormatting.formatCount(range.min, locale)
-            } else {
-                stringResource(
-                    R.string.prescription_rep_range,
-                    LocaleFormatting.formatCount(range.min, locale),
-                    LocaleFormatting.formatCount(range.max, locale)
-                )
+    workout.exercises.forEachIndexed { index, exercise ->
+        Column(Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("${LocaleFormatting.formatCount(index + 1, locale)}. ${vocabulary.exerciseName(exercise.exerciseId)}",
+                style = MaterialTheme.typography.titleMedium, modifier = Modifier.semantics { heading() })
+            PrescriptionPreview(exercise, state.prescriptionUnit)
+            if (exercise.notes.isNotBlank()) Text(exercise.notes)
+            ConditionExecution(state.conditionContext, exercise.exerciseId, exercise.prescription.purpose)
+            workout.progressionDecisions.firstOrNull { it.exerciseId == exercise.exerciseId }?.let {
+                Text(progressionNotice(it, state.prescriptionUnit, state.prescriptionUnit), style = MaterialTheme.typography.bodySmall)
             }
-            stringResource(R.string.prescription_sets_by_reps, sets, reps)
         }
-
-        ExerciseType.DURATION -> stringResource(
-            R.string.prescription_sets_by_reps,
-            sets,
-            stringResource(
-                R.string.prescription_seconds,
-                LocaleFormatting.formatCount(prescription.targetDurationSeconds ?: 0, locale)
-            )
-        )
-
-        ExerciseType.DISTANCE_DURATION -> prescription.targetDurationSeconds?.let { seconds ->
-            stringResource(
-                R.string.prescription_minutes,
-                LocaleFormatting.formatCount(seconds / 60, locale)
-            )
-        } ?: stringResource(
-            R.string.prescription_meters,
-            LocaleFormatting.formatCount(
-                prescription.targetDistanceMeters?.toInt() ?: 0,
-                locale
-            )
-        )
     }
 }
 
 @Composable
-private fun PlanContextCard(
-    goal: String,
-    unit: String,
-    equipmentCount: Int
-) {
-    val locale = LocalConfiguration.current.locales[0]
-    WallCrawlCard(
-        cornerRadius = 12.dp,
-        contentPadding = 12.dp
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(R.string.today_plan_context_target, goal)
-                        .uppercase(locale),
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = stringResource(
-                        R.string.template_summary,
-                        pluralStringResource(
-                            R.plurals.count_equipment_available,
-                            equipmentCount,
-                            LocaleFormatting.formatCount(equipmentCount, locale)
-                        ),
-                        unit
-                    ),
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.today_plan_context_offline),
-                fontSize = 11.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.secondary
-            )
+private fun TrainLink(label: String, summary: String? = null, onClick: () -> Unit) {
+    Row(Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick)
+        .heightIn(min = 48.dp).padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            Text(label, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+            if (summary != null) Text(summary, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
     }
+}
+
+@Composable
+private fun StatusText(message: String) {
+    Text(message, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+}
+
+@Composable
+private fun TrainDetail(title: Int, onDismiss: () -> Unit, content: @Composable () -> Unit) {
+    AlertDialog(onDismissRequest = onDismiss, title = { Text(stringResource(title)) },
+        text = { Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) { content() } },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_close)) } })
 }

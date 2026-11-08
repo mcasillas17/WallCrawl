@@ -1,0 +1,24 @@
+<resources>
+    <string name="guided_train_change">Change</string>
+    <string name="guided_train_source">Choose your workout</string>
+    <string name="guided_train_ordinary">Today\'s workout</string>
+    <string name="guided_train_explore">Explore programs</string>
+    <string name="guided_train_options">Workout options</string>
+    <string name="guided_train_regenerate_hint">Replace the displayed recommendation with another workout for the same source.</string>
+    <string name="guided_train_preview">Workout preview</string>
+    <string name="guided_train_resume">Resume workout</string>
+    <string name="guided_train_active">Workout in progress</string>
+    <string name="guided_train_focus_missing">Unavailable focus: %1$s</string>
+    <string name="guided_train_why">Why this workout?</string>
+    <string name="guided_train_adjustment_review">Review fewer sets</string>
+    <string name="guided_train_adjustment_unavailable">The proposed targets are unavailable. You can review them when there is a recommendation with working sets.</string>
+    <string name="guided_train_busy">Updating workout…</string>
+    <string name="guided_train_starting">Starting workout…</string>
+    <string name="guided_train_error">Workout unavailable</string>
+    <string name="guided_progress_recent">Recent workouts</string>
+    <string name="guided_progress_trends">Performance trends</string>
+    <string name="guided_progress_muscles">Muscle details</string>
+    <string name="guided_progress_train">Go to Train</string>
+    <string name="guided_train_no_active_program">There is no active program session to start. Manage your program or change your workout source.</string>
+    <string name="guided_train_unreadable_restrictions">Some stored movement restrictions could not be read. Automatic workout planning is paused.</string>
+</resources>

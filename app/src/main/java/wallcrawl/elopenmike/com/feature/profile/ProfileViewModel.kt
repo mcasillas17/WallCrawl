@@ -276,6 +276,7 @@ class ProfileViewModel(
     fun toggleTrainingConstraint(constraint: TrainingConstraint) {
         viewModelScope.launch {
             val current = userProfileRepository.getProfileOnce()
+            if (current.unresolvedTrainingConstraintsRaw != null) return@launch
             val updated = if (constraint in current.trainingConstraints) {
                 current.trainingConstraints - constraint
             } else {
@@ -320,11 +321,8 @@ class ProfileViewModel(
         val draft = capabilityEditorFlow.value.draft ?: return
         if (capabilityEditorFlow.value.isSaving) return
 
+        capabilityEditorFlow.value = capabilityEditorFlow.value.copy(isSaving = true, error = null)
         viewModelScope.launch {
-            capabilityEditorFlow.value = capabilityEditorFlow.value.copy(
-                isSaving = true,
-                error = null
-            )
             try {
                 equipmentEdits.withLock {
                     val current = userProfileRepository.getProfileOnce()

@@ -3,16 +3,14 @@ package wallcrawl.elopenmike.com.core.ui.components
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertWidthIsAtLeast
 import androidx.compose.ui.test.captureToImage
@@ -21,8 +19,6 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextClearance
-import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.unit.dp
@@ -42,7 +38,7 @@ class GymFloorSetRowTest {
     val composeRule = createComposeRule()
 
     @Test
-    fun completionControl_isALargeToggleWithSpokenState() {
+    fun loggingChangesTheActionToSaveChangesAndOffersExplicitUndo() {
         var completed by mutableStateOf(false)
         composeRule.setContent {
             WallCrawlTheme {
@@ -50,25 +46,19 @@ class GymFloorSetRowTest {
                     set = weightRepsSet(isCompleted = completed),
                     weightUnit = "kg",
                     previousSet = null,
-                    onValuesChanged = {},
                     onCompletionChanged = { _, isCompleted -> completed = isCompleted },
-                    onSkipSet = {},
+                    onSkipSet = { _, _ -> },
                     onRecordEffort = { _, _ -> },
                     onRecordFeltManageable = {}
                 )
             }
         }
 
-        val toggle = composeRule.onNodeWithContentDescription("Set 1 complete")
-        toggle.assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Checkbox))
-        toggle.assertHeightIsAtLeast(48.dp)
-        toggle.assertIsOff()
-
-        toggle.performClick()
-        composeRule.waitForIdle()
-
+        composeRule.onNodeWithText("Log set").assertHeightIsAtLeast(48.dp).performClick()
+        composeRule.onNodeWithText("Save changes").assertIsDisplayed()
         assertThat(completed).isTrue()
-        composeRule.onNodeWithContentDescription("Set 1 complete").assertIsOn()
+        composeRule.onNodeWithText("Mark unlogged").performClick()
+        assertThat(completed).isFalse()
     }
 
     @Test
@@ -80,9 +70,8 @@ class GymFloorSetRowTest {
                     set = weightRepsSet(),
                     weightUnit = "kg",
                     previousSet = null,
-                    onValuesChanged = { values += it },
-                    onCompletionChanged = { _, _ -> },
-                    onSkipSet = {},
+                    onCompletionChanged = { draft, _ -> values += draft },
+                    onSkipSet = { _, _ -> },
                     onRecordEffort = { _, _ -> },
                     onRecordFeltManageable = {}
                 )
@@ -98,97 +87,35 @@ class GymFloorSetRowTest {
         increaseReps.performClick()
         composeRule.waitForIdle()
 
+        assertThat(values).isEmpty()
+        composeRule.onNodeWithText("Log set").performClick()
         assertThat(values.last().reps).isEqualTo(9)
     }
 
     @Test
-    fun aHalfTypedDecimalIsNotSubmittedAndDoesNotClearTheField() {
-        // "47." is what a reader types on the way to "47.5", and "47," on the way to
-        // "47,5". The parser refuses both rather than guessing at a magnitude, which is
-        // right for a finished value and wrong for a keystroke: submitting one as a null
-        // stored a null, and the stored null came back and wiped the field, so a decimal
-        // load could not be typed at all.
-        var set by mutableStateOf(weightRepsSet())
-        val values = mutableListOf<SetValuesDraft>()
-        composeRule.setContent {
+    fun restoringAnUnfinishedDecimalKeepsTheDraftAndDisablesSaveUntilComplete() {
+        val committed = mutableListOf<SetValuesDraft>()
+        val restore = StateRestorationTester(composeRule)
+        restore.setContent {
             WallCrawlTheme {
                 GymFloorSetRow(
-                    set = set,
-                    weightUnit = "kg",
-                    previousSet = null,
-                    onValuesChanged = {
-                        values += it
-                        // What the repository does with a submitted draft, which is what
-                        // re-seeds the field on the next composition.
-                        set = set.copy(completedWeight = it.weight, completedReps = it.reps)
-                    },
-                    onCompletionChanged = { _, _ -> },
-                    onSkipSet = {},
-                    onRecordEffort = { _, _ -> },
-                    onRecordFeltManageable = {}
+                    set = weightRepsSet(isCompleted = true), weightUnit = "kg", previousSet = null,
+                    onCompletionChanged = { values, _ -> committed += values },
+                    onSkipSet = { _, _ -> }, onRecordEffort = { _, _ -> }, onRecordFeltManageable = {}
                 )
             }
         }
-
-        val load = composeRule.onNodeWithContentDescription("Load (kg) for set 1")
-        load.performTextClearance()
-        composeRule.waitForIdle()
-        // Clearing a field really does clear the value, so that submission is expected;
-        // what follows is only the typing.
-        values.clear()
-        listOf("4", "7", ".", "5").forEach { keystroke ->
-            load.performTextInput(keystroke)
-            composeRule.waitForIdle()
-        }
-
-        load.assertTextContains("47.5")
-        assertThat(values.map { it.weight }).doesNotContain(null)
-        assertThat(values.last().weight).isEqualTo(47.5)
-    }
-
-    @Test
-    fun completingWithAHalfTypedDecimalIsRefusedAndSaysWhy() {
-        // The repository rejects a completed weight/reps set with no load, so submitting
-        // "47." as a null would surface as a generic failure banner and no logged set. The
-        // field says what is wrong instead, and completion waits for a whole number.
-        var set by mutableStateOf(weightRepsSet())
-        val completions = mutableListOf<SetValuesDraft>()
-        composeRule.setContent {
-            WallCrawlTheme {
-                GymFloorSetRow(
-                    set = set,
-                    weightUnit = "kg",
-                    previousSet = null,
-                    onValuesChanged = {
-                        set = set.copy(completedWeight = it.weight, completedReps = it.reps)
-                    },
-                    onCompletionChanged = { values, _ -> completions += values },
-                    onSkipSet = {},
-                    onRecordEffort = { _, _ -> },
-                    onRecordFeltManageable = {}
-                )
-            }
-        }
-
-        val load = composeRule.onNodeWithContentDescription("Load (kg) for set 1")
-        load.performTextClearance()
-        composeRule.waitForIdle()
-        listOf("4", "7", ".").forEach { keystroke ->
-            load.performTextInput(keystroke)
-            composeRule.waitForIdle()
-        }
-
+        composeRule.onNodeWithContentDescription("Load (kg) for set 1").performClick()
+        listOf("4", "7", ".").forEach { composeRule.onNodeWithText(it).performClick() }
+        composeRule.onAllNodes(hasSetTextAction()).assertCountEquals(0)
+        restore.emulateSavedInstanceStateRestore()
+        composeRule.onNodeWithText("47.").assertIsDisplayed()
         composeRule.onNodeWithText("Enter a complete number").assertIsDisplayed()
-        composeRule.onNodeWithContentDescription("Set 1 complete").performClick()
-        composeRule.waitForIdle()
-        assertThat(completions).isEmpty()
-
-        load.performTextInput("5")
-        composeRule.waitForIdle()
-        composeRule.onNodeWithContentDescription("Set 1 complete").performClick()
-        composeRule.waitForIdle()
-
-        assertThat(completions.last().weight).isEqualTo(47.5)
+        composeRule.onNodeWithText("Save changes").assertIsNotEnabled()
+        composeRule.onNodeWithText("5").performClick()
+        assertThat(committed).isEmpty()
+        composeRule.onNodeWithText("Save changes").performClick()
+        assertThat(committed.single().weight).isEqualTo(47.5)
     }
 
     @Test
@@ -201,9 +128,8 @@ class GymFloorSetRowTest {
                     set = weightRepsSet(),
                     weightUnit = "kg",
                     previousSet = previous,
-                    onValuesChanged = { values += it },
-                    onCompletionChanged = { _, _ -> },
-                    onSkipSet = {},
+                    onCompletionChanged = { draft, _ -> values += draft },
+                    onSkipSet = { _, _ -> },
                     onRecordEffort = { _, _ -> },
                     onRecordFeltManageable = {}
                 )
@@ -211,7 +137,7 @@ class GymFloorSetRowTest {
         }
 
         composeRule.onAllNodes(
-            hasContentDescriptionStartingWith("Use previous")
+            hasContentDescriptionStartingWith("Use the previous")
         ).assertCountEquals(0)
 
         previous = weightRepsSet(isCompleted = true).copy(
@@ -224,6 +150,8 @@ class GymFloorSetRowTest {
         composeRule.onNodeWithContentDescription("Use the previous Load of 47.5 for set 1").performClick()
         composeRule.waitForIdle()
 
+        assertThat(values).isEmpty()
+        composeRule.onNodeWithText("Log set").performClick()
         assertThat(values.last().weight).isEqualTo(47.5)
     }
 
@@ -240,9 +168,8 @@ class GymFloorSetRowTest {
                     ),
                     weightUnit = "kg",
                     previousSet = null,
-                    onValuesChanged = {},
                     onCompletionChanged = { _, isCompleted -> completed = isCompleted },
-                    onSkipSet = {},
+                    onSkipSet = { _, _ -> },
                     onRecordEffort = { _, _ -> },
                     onRecordFeltManageable = {
                         answers += it
@@ -256,7 +183,8 @@ class GymFloorSetRowTest {
             hasContentDescriptionStartingWith("Set 1 felt manageable")
         ).assertCountEquals(0)
 
-        composeRule.onNodeWithContentDescription("Set 1 complete").performClick()
+        composeRule.onNodeWithText("Log set").performClick()
+        composeRule.onNodeWithText("Add feedback (optional)").performClick()
         composeRule.waitForIdle()
 
         composeRule.onNodeWithContentDescription("Set 1 felt manageable, Yes").performClick()
@@ -275,9 +203,8 @@ class GymFloorSetRowTest {
                     set = weightRepsSet(),
                     weightUnit = "kg",
                     previousSet = null,
-                    onValuesChanged = {},
                     onCompletionChanged = { _, _ -> },
-                    onSkipSet = { reasons += it },
+                    onSkipSet = { reason, _ -> reasons += reason },
                     onRecordEffort = { _, _ -> },
                     onRecordFeltManageable = {}
                 )
@@ -313,9 +240,8 @@ class GymFloorSetRowTest {
                     set = weightRepsSet(isCompleted = true),
                     weightUnit = "kg",
                     previousSet = null,
-                    onValuesChanged = {},
                     onCompletionChanged = { _, _ -> },
-                    onSkipSet = {},
+                    onSkipSet = { _, _ -> },
                     onRecordEffort = { rpe, rir -> effort += rpe to rir },
                     onRecordFeltManageable = {}
                 )
@@ -323,7 +249,7 @@ class GymFloorSetRowTest {
         }
 
         // Completion is already recorded before any effort control is even visible.
-        composeRule.onNodeWithContentDescription("Set 1 complete").assertIsOn()
+        composeRule.onNodeWithText("Save changes").assertIsDisplayed()
 
         composeRule.onNodeWithText("Add feedback (optional)").performClick()
         composeRule.waitForIdle()
@@ -332,6 +258,33 @@ class GymFloorSetRowTest {
 
         assertThat(effort.last().second).isEqualTo(2)
         assertThat(effort.last().first).isNull()
+    }
+
+    @Test
+    fun exactEntryRejectsAnOutOfBoundsCountAndLogsOnlyApplicableFields() {
+        var set by mutableStateOf(weightRepsSet().copy(exerciseType = ExerciseType.BODYWEIGHT_REPS, targetWeight = null))
+        val committed = mutableListOf<SetValuesDraft>()
+        composeRule.setContent {
+            WallCrawlTheme {
+                GymFloorSetRow(set, "kg", null, { values, _ -> committed += values },
+                    { _, _ -> }, { _, _ -> }, {})
+            }
+        }
+        composeRule.onNodeWithContentDescription("Reps for set 1").performClick()
+        listOf("1", "0", "0", "1").forEach { composeRule.onNodeWithText(it).performClick() }
+        composeRule.onNodeWithText(".").assertDoesNotExist()
+        composeRule.onNodeWithText("Log set").assertIsNotEnabled()
+        composeRule.onNodeWithContentDescription("Delete last digit").performClick()
+        composeRule.onNodeWithText("Log set").performClick()
+        val base = weightRepsSet().copy(targetWeight = null, targetReps = null)
+        set = base.copy(id = "assist", exerciseType = ExerciseType.ASSISTED_BODYWEIGHT, targetReps = 7)
+        composeRule.onNodeWithText("Log set").performClick()
+        set = base.copy(id = "time", exerciseType = ExerciseType.DURATION, targetDurationSeconds = 12)
+        composeRule.onNodeWithText("Log set").performClick()
+        set = base.copy(id = "distance", exerciseType = ExerciseType.DISTANCE_DURATION, targetDistanceMeters = 101.125)
+        composeRule.onNodeWithText("Log set").performClick()
+        assertThat(committed).containsExactly(SetValuesDraft(reps = 100), SetValuesDraft(reps = 7),
+            SetValuesDraft(durationSeconds = 12), SetValuesDraft(distanceMeters = 101.125)).inOrder()
     }
 
     private fun weightRepsSet(isCompleted: Boolean = false) = WorkoutSet(
@@ -354,9 +307,8 @@ class GymFloorSetRowTest {
                     set = weightRepsSet(),
                     weightUnit = "kg",
                     previousSet = null,
-                    onValuesChanged = {},
                     onCompletionChanged = { _, _ -> },
-                    onSkipSet = {},
+                    onSkipSet = { _, _ -> },
                     onRecordEffort = { _, _ -> },
                     onRecordFeltManageable = {}
                 )
