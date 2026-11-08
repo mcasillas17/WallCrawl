@@ -477,6 +477,24 @@ class ActiveWorkoutScreenTest {
         assertThat(message.fetchSemanticsNode().id).isNotEqualTo(first)
     }
 
+    /** The compact demo has no control; the expanded demo's Pause holds both, and stays when the demo is reopened. */
+    @Test
+    fun aPauseInTheExpandedDemoHoldsTheWorkoutsDemo() {
+        showScreen()
+        val (before, after) = InstrumentationRegistry.getInstrumentation().targetContext
+            .getString(R.string.guided_expand_demo, "\u0000").split("\u0000")
+        val expand = SemanticsMatcher("expands the demo") { node ->
+            node.config.getOrNull(SemanticsProperties.ContentDescription).orEmpty()
+                .any { it.startsWith(before) && it.endsWith(after) }
+        }
+        composeRule.onNode(expand).performScrollTo().performClick()
+        composeRule.onNodeWithContentDescription(text(R.string.illustration_pause)).performClick()
+        composeRule.onNodeWithText(text(R.string.action_close)).performClick()
+        composeRule.onNode(expand).performScrollTo().performClick()
+        // A dialog-local state would start playing again; the workout's shared one stays paused.
+        composeRule.onNodeWithContentDescription(text(R.string.illustration_play)).assertExists()
+    }
+
     private fun showScreen(
         fontScale: Float = 1f,
         narrow: Boolean = false,

@@ -16,7 +16,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import wallcrawl.elopenmike.com.core.model.ThemePreference
 
-private val DarkColorScheme = darkColorScheme(
+internal val DarkColorScheme = darkColorScheme(
     primary = CrimsonRedLight,
     onPrimary = ObsidianBlack,
     primaryContainer = CrimsonRedDark,
@@ -39,7 +39,7 @@ private val DarkColorScheme = darkColorScheme(
     outlineVariant = GraphiteDivider
 )
 
-private val LightColorScheme = lightColorScheme(
+internal val LightColorScheme = lightColorScheme(
     // The brand red reads under 4.5:1 as text on light surfaces, and Material draws text and outlined
     // button labels in primary, so the light scheme uses the readable red. Brand fills stay CrimsonRedPrimary.
     primary = AccentTextOnLight,

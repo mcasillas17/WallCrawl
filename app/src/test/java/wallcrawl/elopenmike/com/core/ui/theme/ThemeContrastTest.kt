@@ -43,4 +43,12 @@ class ThemeContrastTest {
     @Test fun textOnFilledControls() {
         assertText("label on red", TextWhite, listOf(SpiderRedPrimary))
     }
+
+    /** Material draws text and outlined button labels in primary, so each scheme's primary is text. */
+    @Test fun schemePrimaryReadsAsText() {
+        assertText("light primary", LightColorScheme.primary, listOf(LightBackground, LightSurface, LightSurfaceCard))
+        assertText("dark primary", DarkColorScheme.primary, listOf(ObsidianBlack, GraphiteSurface, GraphiteSurfaceElevated))
+        assertText("light label on primary", LightColorScheme.onPrimary, listOf(LightColorScheme.primary))
+        assertText("dark label on primary", DarkColorScheme.onPrimary, listOf(DarkColorScheme.primary))
+    }
 }
