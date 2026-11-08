@@ -90,12 +90,13 @@ fun ProfileScreen(
             is ProfileUiState.Success -> {
                 val selected = group
                 if (selected == null) {
+                    val unknownReports = current.profile.reportedConditions.any { it !in ReportedCondition.ids }
                     LazyColumn(state = overviewScroll, contentPadding = PaddingValues(vertical = 4.dp)) {
-                        if (current.profile.unresolvedTrainingConstraintsRaw != null || current.profile.reportedConditions.isNotEmpty() ||
+                        if (current.profile.unresolvedTrainingConstraintsRaw != null || unknownReports ||
                             !conditions.pending.isNullOrEmpty() || conditions.pendingFailed) item {
                             Column(Modifier.padding(horizontal = 16.dp)) {
                                 if (current.profile.unresolvedTrainingConstraintsRaw != null) Text(stringResource(R.string.guided_train_unreadable_restrictions))
-                                if (current.profile.reportedConditions.isNotEmpty()) Text(stringResource(R.string.guided_review_legacy))
+                                if (unknownReports) Text(stringResource(R.string.guided_review_legacy))
                                 if (!conditions.pending.isNullOrEmpty()) Text(stringResource(R.string.condition_pending_title))
                                 if (conditions.pendingFailed) Text(stringResource(R.string.condition_pending_read_error))
                                 TextButton(onClick = { group = SettingsGroup.MOVEMENT }) {
@@ -142,9 +143,12 @@ private fun groupSummary(group: SettingsGroup, profile: UserProfile): String {
                 profile.trainingConstraints.size
             val exclusions = profile.excludedExerciseIds.distinct().size
             when {
-                profile.hasConditionReports || profile.unresolvedTrainingConstraintsRaw != null -> stringResource(R.string.guided_saved_restrictions)
-                limits == 0 && exclusions == 0 -> stringResource(R.string.guided_no_marked_limits)
-                else -> stringResource(R.string.guided_restrictions_summary, count(limits), count(exclusions))
+                profile.unresolvedTrainingConstraintsRaw != null -> stringResource(R.string.guided_saved_restrictions)
+                limits == 0 && exclusions == 0 && !profile.hasConditionReports -> stringResource(R.string.guided_no_marked_limits)
+                else -> {
+                    val reports = profile.reportedConditions + profile.activeConditions.map { it.conditionId }
+                    stringResource(R.string.guided_restrictions_summary, count(reports.size), count(limits), count(exclusions))
+                }
             }
         }
         SettingsGroup.APP -> listOf(
@@ -304,14 +308,9 @@ private fun ProfileConditions(profile: UserProfile, conditions: ConditionUiState
             Text(stringResource(R.string.guided_original_restriction, raw))
         }
         if (conditions.loadFailed) Text(stringResource(R.string.condition_load_error), color = MaterialTheme.colorScheme.error)
-        if (profile.reportedConditions.isNotEmpty()) {
-            SettingsHeading(R.string.condition_legacy_title)
-            Text(stringResource(R.string.condition_legacy_refusal))
-            profile.reportedConditions.sorted().forEach { id ->
-                TextButton(onClick = { viewModel.removeReportedCondition(id) }) {
-                    Text(stringResource(R.string.condition_legacy_remove, reportedConditionName(id)))
-                }
-            }
+        ReportedConditionPicker(profile.reportedConditions, !conditions.saving, viewModel::setReportedCondition)
+        if (conditions.reportedSaveFailed) {
+            Text(stringResource(R.string.reported_conditions_save_error), color = MaterialTheme.colorScheme.error)
         }
         val selected = conditions.draft ?: profile.activeConditions
         if (conditions.records.isNotEmpty() || selected.isNotEmpty() || conditions.draft != null) {
@@ -573,17 +572,4 @@ private fun <T> SegmentedPill(
             }
         }
     }
-}
-
-@Composable
-private fun reportedConditionName(id: String): String = when (id) {
-    "piriformis_syndrome" -> stringResource(R.string.condition_name_piriformis_syndrome)
-    "gluteal_tendinopathy" -> stringResource(R.string.condition_name_gluteal_tendinopathy)
-    "lumbar_radiculopathy" -> stringResource(R.string.condition_name_lumbar_radiculopathy)
-    "nonspecific_low_back_pain" -> stringResource(R.string.condition_name_nonspecific_low_back_pain)
-    "rotator_cuff_related_shoulder_pain" -> stringResource(R.string.condition_name_rotator_cuff_related_shoulder_pain)
-    "lateral_elbow_tendinopathy" -> stringResource(R.string.condition_name_lateral_elbow_tendinopathy)
-    "carpal_tunnel_syndrome" -> stringResource(R.string.condition_name_carpal_tunnel_syndrome)
-    "patellofemoral_pain" -> stringResource(R.string.condition_name_patellofemoral_pain)
-    else -> id
 }

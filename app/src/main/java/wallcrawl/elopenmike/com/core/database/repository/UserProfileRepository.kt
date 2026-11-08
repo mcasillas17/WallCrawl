@@ -16,6 +16,7 @@ import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.ThemePreference
+import wallcrawl.elopenmike.com.core.model.ReportedCondition
 import wallcrawl.elopenmike.com.core.model.ProfileGender
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -52,8 +53,8 @@ interface UserProfileRepository {
         throw UnsupportedOperationException("Individual exercise exclusions are unavailable.")
     }
     suspend fun updateTrainingConstraints(constraints: Set<TrainingConstraint>)
-    suspend fun removeReportedCondition(conditionId: String) {
-        error("Reported condition removal is unavailable.")
+    suspend fun setReportedCondition(conditionId: String, selected: Boolean) {
+        error("Reported condition editing is unavailable.")
     }
     suspend fun updateActiveConditions(conditions: List<SelectedCondition>) {
         throw UnsupportedOperationException("Condition selection is unavailable in this repository.")
@@ -193,9 +194,12 @@ class OfflineUserProfileRepository(
         }
     }
 
-    override suspend fun removeReportedCondition(conditionId: String) {
+    override suspend fun setReportedCondition(conditionId: String, selected: Boolean) {
+        require(!selected || conditionId in ReportedCondition.ids) { "Unrecognized condition report." }
         mutateProfile { current ->
-            if (conditionId in current.reportedConditions) current.copy(reportedConditions = current.reportedConditions - conditionId) else null
+            val reports = current.reportedConditions
+            if ((conditionId in reports) == selected) return@mutateProfile null
+            current.copy(reportedConditions = if (selected) reports + conditionId else reports - conditionId)
         }
     }
 

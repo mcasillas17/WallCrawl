@@ -324,14 +324,7 @@ full gym, and Today does not generate or render until onboarding is complete.
 The 8-step wizard collects your name, multi-select fitness goals, units and
 experience level, seven movement preferences, schedule and break duration,
 available gear, and sensitive-joint restrictions before saving your training preferences. Every movement preference requires an explicit answer;
-**Not sure** is a valid answer and persists as `UNKNOWN`. A sensitive-joint
-selection is saved and automatic workouts do read it: production checks each
-candidate's `clearedTrainingConstraints`, and because every accepted record
-currently clears none, selecting any joint sensitivity refuses automatic
-planning with a typed `TRAINING_CONSTRAINTS_REMOVED_ALL` reason rather than
-silently ignoring the selection. Browsing and manual workouts are unaffected.
-Movement preferences are the answers today's
-reviewed-path tests already act on.
+**Not sure** is a valid answer and persists as `UNKNOWN`. Automatic workouts filter each exercise against the selected joint sensitivities, movement preferences and reported conditions. If no exercises meet those settings, Train offers the profile editor and My workouts.
 
 ### Fixed-anchor band setups
 
@@ -621,11 +614,7 @@ AI provenance (reviewer model, review time, content digest, source references, r
 and limitations) — it is **not** human approval and **not** a clinical validation or
 safety-for-everyone claim. **Zero records are `APPROVED`: no genuine human reviewer has
 signed off on any of them.** Reviewed schema version 2 adds `clearedTrainingConstraints`,
-the joint sensitivities a reviewer explicitly cleared an exercise for; every record —
-`AI_ACCEPTED` included — currently clears none, so a profile that selects shoulder, elbow,
-wrist, lower-back, hip or knee sensitivity gets a typed no-plan rather than a guess.
-Absence is never read as clearance, and a clearance is a reviewer's judgement about a
-self-reported label, not a diagnosis. `APPROVED` requires an explicit human-review role,
+which lists explicit joint clearances. Every bundled record currently leaves that field empty. A separate, versioned demand assessment can qualify an individual exercise when it has no conflicting demand for a selected joint. `APPROVED` requires an explicit human-review role,
 timestamp, and provenance change; pull-request approval, code review, or a passing test
 suite does not change review state. Missing, draft, or otherwise-unaccepted reviewed
 metadata never hides an exercise from browsing or manual templates. See
@@ -937,6 +926,6 @@ See [artwork packaging, provenance, and known limitations](docs/exercise-illustr
 
 ### Condition-aware planning
 
-Open **Exercises → Condition reference** to browse 50 conditions, 196 citation records and their 187 distinct sources. Eight pages also offer related reading from the merged search. The reference supports English and Spanish search. Each source links to the illustrated movements that match its study description.
+Open **Library → Condition reference** to browse 50 conditions, 196 citation records and their 187 distinct sources. Eight pages also offer related reading from the merged search. The reference supports English and Spanish search. Each source links to the illustrated movements that match its study description.
 
-The exercise catalog includes 25 neutral WallCrawl additions with both illustration variants. All 50 conditions await qualified clinical review, so zero conditions are enabled as workout restrictions. [Artwork and PNG masters](docs/art/condition-exercises.md) · [Workout generation and verification](docs/condition-aware-workouts.md)
+The exercise catalog includes 25 neutral WallCrawl additions with both illustration variants. Eight reported conditions, including piriformis syndrome, can guide exercise selection in **Profile and settings → Movement and restrictions**. All 50 reference conditions await qualified clinical review for therapeutic prescriptions. [Artwork and PNG masters](docs/art/condition-exercises.md) · [Workout generation and verification](docs/condition-aware-workouts.md)

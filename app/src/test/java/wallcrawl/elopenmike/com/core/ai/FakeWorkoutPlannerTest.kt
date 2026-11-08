@@ -1147,9 +1147,11 @@ class FakeWorkoutPlannerTest {
             experienceLevel = ExperienceLevel.BEGINNER,
             preferredDurationMinutes = 60,
             availableEquipment = listOf(
+                StandardEquipment.BARBELL,
                 StandardEquipment.BODYWEIGHT,
                 StandardEquipment.DUMBBELL,
-                StandardEquipment.BENCH
+                StandardEquipment.BENCH,
+                StandardEquipment.SQUAT_RACK
             ),
             musclePriorities = mapOf(StandardMuscles.CHEST to PriorityLevel.HIGH),
             trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE),

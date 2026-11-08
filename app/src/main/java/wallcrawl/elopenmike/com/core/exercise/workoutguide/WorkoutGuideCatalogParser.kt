@@ -1447,7 +1447,7 @@ class WorkoutGuideCatalogParser(
     private companion object {
         const val SUPPORTED_SCHEMA_VERSION = 1
         const val CATALOG_ID = "workout-guide"
-        const val SUPPLEMENT_ID = "wallcrawl"
+        const val SUPPLEMENT_ID = ExerciseSource.SUPPLEMENT_CATALOG_ID
         const val SUPPLEMENT_ASSET_PREFIX = "exercise-illustrations/male/"
         const val ASSET_PATH_PREFIX = "workout-guide/assets/"
         const val EXPECTED_FRAME_COUNT = 3

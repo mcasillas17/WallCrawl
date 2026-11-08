@@ -243,19 +243,8 @@ The manifest retains these fourteen historical fixtures, followed by nine condit
     `ProductionPlannerCompositionTest` and
     [the enabled rollout contract](reviewed-capability-eligibility.md#enabled-rollout-contract)
     for that actual behavior.
-12. `reviewed-enabled-uncleared-joint-constraint` — the `reviewed-enabled-bodyweight` pool with
-    `SHOULDER_SENSITIVE` selected. The fixture declares no
-    `syntheticClearedTrainingConstraints`, so the synthetic approvals clear nothing — matching
-    the bundled records, which clear nothing either — and the enabled policy returns
-    `REVIEWED_ELIGIBILITY_NO_CANDIDATES` with `TRAINING_CONSTRAINTS_REMOVED_ALL` and no legacy
-    fallback. This is the shipped behavior for a joint-sensitive profile.
-13. `reviewed-enabled-cleared-joint-constraints` — `KNEE_SENSITIVE` and `WRIST_SENSITIVE`
-    selected together against a core-priority bodyweight pool whose synthetic approval **sets**
-    `clearedTrainingConstraints` to exactly those two, via the fixture's
-    `syntheticClearedTrainingConstraints`; it replaces the authored value rather than copying it. It proves the
-    combined-restriction path reaches a raw-valid proposal when — and only when — every
-    selected sensitivity is explicitly cleared. The clearance is synthetic test data in the
-    same sense as the approval itself; no bundled record clears anything.
+12. `reviewed-enabled-uncleared-joint-constraint` selects `SHOULDER_SENSITIVE` with barbell and bench equipment. The sole synthetic approval is the barbell bench press. Its assessed heavy external load conflicts with that sensitivity, so eligibility returns `TRAINING_CONSTRAINTS_REMOVED_ALL`.
+13. `reviewed-enabled-cleared-joint-constraints` selects knee and wrist sensitivity together. Synthetic approvals explicitly clear both sensitivities and yield a valid proposal. Production can also admit an exercise through an assessed demand match for each selected sensitivity.
 14. `concurrent-activity` — a dumbbell/bench/cardio owner in `BUILD` whose accounting week
     already holds both logged resistance work and an aerobic session. Its declared history is
     a Tuesday session of twelve logged chest sets (one warm-up and one unfinished set among

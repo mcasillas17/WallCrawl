@@ -240,6 +240,11 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
                 .put("withoutDrafts", second.workout?.let(::workoutJson)
                     ?: JSONObject().put("planningFailure", second.failure?.name))
             assertThat(first).isEqualTo(second)
+            if (caseId == "joint-constraint" || caseId == "joint-constraint-cleared") {
+                val ids = requireNotNull(first.workout).exercises.map { it.exerciseId }
+                assertThat(ids).isNotEmpty()
+                assertThat(ids).containsNoneOf("bodyweight-squat", "barbell-back-squat")
+            }
             if (first.workout != null) {
                 val withDraftValidation = ProgramValidator(
                     GeneratedWorkoutValidator(InMemoryExerciseCatalog(built.catalogExercises))
@@ -534,14 +539,6 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
                     assertThat(it.reasons).containsExactly(EligibilityReason.MISSING_APPROVED_METADATA)
                 }
             }
-            "joint-constraint" -> {
-                assertThat(result.failure)
-                    .isEqualTo(AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL)
-                assertThat(syntheticApprovedIds).isNotEmpty()
-                result.decisions.filter { it.exerciseId in syntheticApprovedIds }.forEach {
-                    assertThat(it.reasons).contains(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
-                }
-            }
             "no-equipment" -> {
                 assertThat(syntheticApprovedIds).isNotEmpty()
                 result.decisions.filter { it.exerciseId in syntheticApprovedIds }.forEach {
@@ -588,6 +585,17 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
     ) {
         val byId = context.allowedExercises.associateBy(Exercise::id)
         val selected = workout.exercises.map { byId.getValue(it.exerciseId) }
+        if (caseId == "joint-constraint" || caseId == "joint-constraint-cleared") {
+            assertThat(byId.keys).contains("glute-bridge")
+            val squat = requireNotNull(context.automaticEligibilityResult).decisions.single { it.exerciseId == "bodyweight-squat" }
+            if (caseId == "joint-constraint") {
+                assertThat(squat.reasons).contains(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
+                assertThat(byId.keys).doesNotContain(squat.exerciseId)
+            } else {
+                assertThat(squat.eligible).isTrue()
+                assertThat(byId.keys).contains(squat.exerciseId)
+            }
+        }
 
         // The shipped focus contract, on every case rather than only the push ones: the
         // split a session advertises has to be one its own exercises train.
@@ -937,7 +945,7 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
         private const val COHORT = "all-authored-structural-upper-bound"
         private const val READY_COHORT = "ai-accepted-synthetic"
         private const val READINESS_LEDGER_PATH = "docs/research/2026-09-07-full-exercise-catalog-review.json"
-        private val NO_PLAN_CASES = setOf("joint-constraint", "no-equipment", "synthetic-no-accepted")
+        private val NO_PLAN_CASES = setOf("no-equipment", "synthetic-no-accepted")
         private val PUSH_PATTERNS = setOf(MovementPattern.HORIZONTAL_PUSH, MovementPattern.VERTICAL_PUSH)
         private val PUSH_CASES = setOf(
             "bodyweight-push", "dumbbells-push", "machines-push",

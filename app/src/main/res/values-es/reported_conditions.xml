@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reported_conditions_title">Afecciones indicadas</string>
+    <string name="reported_conditions_hint">Selecciona las afecciones que quieres que el planificador tenga en cuenta al elegir ejercicios.</string>
+    <string name="reported_conditions_save_error">No se pudieron actualizar las afecciones indicadas. Si hay un entrenamiento activo, termínalo o cancélalo y vuelve a intentarlo.</string>
+</resources>

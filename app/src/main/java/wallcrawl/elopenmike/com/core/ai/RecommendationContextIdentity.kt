@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.core.ai
 
+import wallcrawl.elopenmike.com.core.model.ExerciseDemandRestrictions
 import java.security.MessageDigest
 import java.util.Locale
 import java.time.Instant
@@ -89,6 +90,10 @@ object RecommendationContextIdentity {
             line("constraints", context.programConstraints.canonicalForm())
         )
         lines += line("conditions", conditionFacts(context))
+        if (context.userProfile.demandRestrictions.active) {
+            lines += line("exerciseDemandPolicy", ExerciseDemandRestrictions.VERSION,
+                context.userProfile.trainingConstraints.map { it.name }.sorted().joinToString(","))
+        }
         if (context.userProfile.reportedConditions.isNotEmpty()) {
             lines += line("reportedConditions", conditionDigest(context.userProfile.reportedConditions.sorted()))
         }

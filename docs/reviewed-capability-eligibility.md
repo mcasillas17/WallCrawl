@@ -105,33 +105,13 @@ earlier stages.
 | 2 | No complete reviewed equipment alternative or required fixed-anchor setup is available | `MISSING_EQUIPMENT` | `EQUIPMENT_REMOVED_ALL` |
 | 3 | Metadata is absent or not accepted | `MISSING_APPROVED_METADATA` | `NO_APPROVED_METADATA` |
 | 4 | A required capability is `AVOID` | `CAPABILITY_AVOID` | `CAPABILITIES_REMOVED_ALL` |
-| 5 | A selected joint sensitivity is not in this exercise's `clearedTrainingConstraints` | `UNMAPPED_TRAINING_CONSTRAINT` | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
+| 5 | A selected joint has neither explicit clearance nor an assessment without conflicting demands | `UNMAPPED_TRAINING_CONSTRAINT` | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
 | 5 | `LOW_IMPACT_ONLY` meets `ImpactLevel.HIGH` | `HIGH_IMPACT_DISALLOWED` | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
 | 6 | `ADVANCED` lacks the existing demonstrated-family or legal supported-regression exception, in any state | `ADVANCED_WHILE_UNCALIBRATED` or `ADVANCED_WHILE_RETURNING` | `CALIBRATION_COMPLEXITY_REMOVED_ALL` |
 
-Stage 5's joint decision is **per exercise**, not per pool. Each accepted record carries
-`clearedTrainingConstraints`: the joint sensitivities a reviewer explicitly cleared it for.
-A selected sensitivity that the record does not list keeps that one exercise out of the
-automatic pool; it no longer removes every candidate on the strength of the profile alone.
-`LOW_IMPACT_ONLY` is never listed there, because `impactLevel` already decides it, and both
-the importer and the Android parser reject a record that tries to list it.
+Stage 5 checks each selected sensitivity for each exercise. An explicit `clearedTrainingConstraints` entry qualifies an exercise for that joint. Otherwise the exercise needs an assessment in the versioned demand table and none of its demands may conflict with the selected joint. An absent assessment disqualifies it. Each reported condition adds its own demand checks. Low-impact selection excludes exercises with reviewed `ImpactLevel.HIGH`. [Condition-aware workouts](condition-aware-workouts.md)
 
-Absence is not clearance. No clearance is inferred from an exercise's name, muscles,
-movement pattern, complexity or equipment, and there is no numeric joint-stress score. Every
-bundled record currently clears nothing, so any selected joint sensitivity still produces
-`TRAINING_CONSTRAINTS_REMOVED_ALL` — an honest typed refusal, not a blanket policy. A
-clearance is a reviewer's product judgement about a self-reported label; it is not a
-diagnosis, and reviewer agreement is not clinical validation.
-
-The supported-regression exception applies the same rule. A regression is an alternative
-*inside* the user's restrictions: an uncleared regression cannot lift the advanced ceiling,
-so a restriction can never be bypassed by substituting an easier movement.
-
-`StateBasedTrainingPolicy` re-checks both training-constraint rules before prescribing — the
-same clearance, and `LOW_IMPACT_ONLY` against `ImpactLevel.HIGH` — and refuses either with
-`TRAINING_CONSTRAINT_REACHED_POLICY`. That is the second boundary the `AVOID` capability rule
-already had. The clearance check is one shared predicate called from both policies, so they
-cannot drift into different readings of the same reviewed field.
+The same joint predicate applies to supported regressions and to `StateBasedTrainingPolicy` before prescription. If the whole pool conflicts with the selected restrictions, the planner returns `TRAINING_CONSTRAINTS_REMOVED_ALL`.
 
 An eligible exercise has the hard reason `APPROVED`, whose name is frozen and means
 accepted. `EligibilityPreference`
@@ -321,7 +301,7 @@ passes `ProgramValidator` with repair disabled or repaired, as recorded.
 | Band-only (`Resistance Band` only) | 11 | Served; no genuine `Chest` push exists, so the session is labelled by what it actually trains |
 | Inventory matching no accepted record (`Cardio` only) | 0 | `NO_APPROVED_METADATA` — the remaining 120 pending/outside-scope records are the last ones standing, not the equipment |
 | Every catalog exercise excluded by the user | 0 | `USER_EXCLUSIONS_REMOVED_ALL` |
-| Any selected joint sensitivity | 0 | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
+| Shoulder sensitivity with only a conflicting bench press available | 0 | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
 
 Avoiding one capability removes exactly the accepted exercises that require it without
 stopping the plan; avoiding **every** capability still leaves a plan, because accepted
@@ -331,12 +311,6 @@ assert it as an unsupported case.
 
 ### Not supported at this rollout
 
-- **Any selected joint sensitivity.** The audit found no way to record a non-empty
-  `clearedTrainingConstraints` list for any of the 182 accepted records (see
-  [the exact partition](reviewed-exercise-metadata.md#ai-acceptance-audit)), so selecting
-  one still produces the typed `TRAINING_CONSTRAINTS_REMOVED_ALL` refusal above. This is
-  missing reviewed content, not a contradictory user request, and there is no legacy
-  fallback.
 - **Band-only chest or push work.** No band chest exercise exists in the pinned source.
   The band-only session above is labelled by what it actually trains and reports `Chest`
   as an unavailable priority. See the [coverage report](reviewed-catalog-coverage.md).
@@ -384,10 +358,7 @@ neither state nor dose. Returning guidance is independent of acceptance; accepte
 `HOLD` retains the conservative allowance rather than raising it to the old
 inert `HOLD` default. There is no multi-session block or pattern-based diagnosis.
 
-Selected joint sensitivities are mapped but unpopulated: the
-`clearedTrainingConstraints` contract exists in the schema, the importer, the Android parser
-and the eligibility policy, and every bundled record clears nothing. Filling it in is part of
-the same human sign-off pass, not separate work.
+The reviewed schema, importer and Android parser support explicit joint clearance. Every bundled record has an empty clearance list. Production also checks the independent movement-demand assessments described above.
 
 The next enablement requirement is genuine human `APPROVED` review of the metadata —
 not another flag change, since the reviewed path is already enabled and already reads

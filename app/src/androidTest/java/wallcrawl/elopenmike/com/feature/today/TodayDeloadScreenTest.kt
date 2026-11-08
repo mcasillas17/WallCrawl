@@ -231,6 +231,26 @@ class TodayDeloadScreenTest {
         assertEquals(WorkoutPlanningIntent.ORDINARY, selection)
     }
 
+    @Test fun unsatisfiableMovementRestrictionsOfferProfileAndRoutinesWithoutRetrying() {
+        var openedProfile = false
+        var openedRoutines = false
+        compose.setContent { WallCrawlTheme {
+            TodayContent(
+                TodayUiState.Error(TodayError.REVIEWED_CONSTRAINTS_REMOVED_ALL), "",
+                onStartWorkout = { error("no eligible workout") }, onResumeWorkout = {},
+                onRegenerate = { error("same restrictions") }, onOpenTemplates = { openedRoutines = true },
+                onOpenProfile = { openedProfile = true }
+            )
+        } }
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        compose.onNodeWithText(context.getString(R.string.today_error_reviewed_constraints)).assertIsDisplayed()
+        compose.onNodeWithText(context.getString(R.string.action_try_again)).assertDoesNotExist()
+        showAction(context.getString(R.string.program_edit_profile))
+        showAction(context.getString(R.string.today_my_workouts_title))
+        assertTrue(openedProfile)
+        assertTrue(openedRoutines)
+    }
+
     @Test fun actualRecommendationShowsTypedProgressionNotice() {
         val prescription = ExercisePrescription(ExerciseType.BODYWEIGHT_REPS, 2, RepRange(8, 12))
         val decision = ProgressionDecision("push-up", ProgressionReason.ADVANCED, ProgressionAxis.REP_RANGE,

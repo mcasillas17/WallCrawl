@@ -55,12 +55,17 @@ class FakeWorkoutPlanner(
         val ready = planning as? ConditionPlanningResult.Ready
         fun refuse(reason: String): Nothing = conditionPlanningFailure(listOf(ConditionViolation(
             reason, ready?.context?.selectedConditions.orEmpty().map { it.conditionId }.toSet())))
+        if (!context.userProfile.demandRestrictions.recognizesReports) refuse("legacy-condition-report")
         val supportive = ready?.let { supportiveExercises(context, it) }.orEmpty()
         val reservedIds = supportive.map { it.exerciseId }.toSet()
         val budgetSeconds = context.preferredWorkoutDurationMinutes.toLong() * 60L
         val supportiveSeconds = WorkoutDurationEstimator.estimateSeconds(supportive)
         if (ready != null && supportiveSeconds >= budgetSeconds) refuse("insufficient-duration")
-        val candidates = if (ready == null) context.allowedExercises else context.allowedExercises.filter {
+        val eligible = if (context.userProfile.demandRestrictions.active) {
+            val policy = ConditionPlanningPolicy()
+            context.allowedExercises.filter { policy.ordinaryEligible(it, context.userProfile, context.automaticEligibilityResult != null) }
+        } else context.allowedExercises
+        val candidates = if (ready == null) eligible else eligible.filter {
             it.id in ready.ordinaryRules && it.id !in reservedIds
         }
         if (ready != null && candidates.isEmpty()) refuse("insufficient-ordinary-focus")
@@ -399,6 +404,7 @@ class FakeWorkoutPlanner(
             exercises = result,
             rankingReasons = appliedRankingReasons(
                 candidates = matchingCandidates,
+                context = context,
                 selectedExercises = selectionTrace,
                 baselineExercises = baselineResult,
                 split = split,
@@ -481,6 +487,7 @@ class FakeWorkoutPlanner(
             .filter { it.programming?.mechanics == MechanicsType.COMPOUND }
             .sortedWith(
                 compareByDescending<Exercise> { split.trainsAsFocus(it) }
+                    .thenBy { context.userProfile.demandRestrictions.ranksLower(it.id) }
                     .thenBy { capabilityPenalties.getValue(it.id) }
                     .thenBy { if (it.id in supportedRegressionPreferences) 0 else 1 }
                     .thenBy {
@@ -527,6 +534,7 @@ class FakeWorkoutPlanner(
         schedulingPreferences: Set<String>
     ): Comparator<Exercise> =
         compareByDescending<Exercise> { split.trainsAsFocus(it) }
+            .thenBy { context.userProfile.demandRestrictions.ranksLower(it.id) }
             .thenByDescending { it.programming?.mechanics == MechanicsType.ISOLATION }
             .thenByDescending { it.programming != null }
             .thenBy { capabilityPenalties.getValue(it.id) }
@@ -571,6 +579,8 @@ class FakeWorkoutPlanner(
                             // An accessory cannot claim a cross-pass compound displacement.
                             (pass !== selected.accessories ||
                                 (alternative !in selected.compounds && target !in baseline.compounds)) &&
+                            context.userProfile.demandRestrictions.ranksLower(target.id) ==
+                                context.userProfile.demandRestrictions.ranksLower(alternative.id) &&
                             target.sharesStrongerRankingTierWith(alternative, split, capabilityPenalties) &&
                             (target.id in regressions) == (alternative.id in regressions) &&
                             difficultyRankingPolicy.aboveExperiencePenalty(target, context.experienceLevel, true) ==
@@ -594,6 +604,7 @@ class FakeWorkoutPlanner(
     private fun appliedRankingReasons(
         split: WorkoutSplit,
         candidates: List<Exercise>,
+        context: WorkoutGenerationContext,
         selectedExercises: SelectionTrace,
         baselineExercises: SelectionTrace,
         capabilityPenalties: Map<String, Int>,
@@ -639,6 +650,8 @@ class FakeWorkoutPlanner(
                         it.id == preference.sourceExerciseId
                     }.takeIf { it >= 0 } ?: selectedPass.size
                     val applied = sourceBaselinePosition in 0 until targetBaselinePosition &&
+                        context.userProfile.demandRestrictions.ranksLower(target.id) ==
+                            context.userProfile.demandRestrictions.ranksLower(source.id) &&
                         source.sharesStrongerRankingTierWith(
                             other = target,
                             split = split,

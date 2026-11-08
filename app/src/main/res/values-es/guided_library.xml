@@ -20,13 +20,13 @@
     <string name="guided_credits_summary">Ilustraciones, atribuciones y licencias</string>
     <string name="guided_review_restrictions">Revisar restricciones</string>
     <string name="guided_review_legacy">La planificación de entrenamientos está en pausa por una afección indicada anteriormente.</string>
-    <string name="guided_restrictions_summary">Limitaciones de movimiento: %1$s · Ejercicios excluidos: %2$s</string>
+    <string name="guided_restrictions_summary">Afecciones: %1$s · Limitaciones de movimiento: %2$s · Ejercicios excluidos: %3$s</string>
     <string name="guided_goals">Objetivos</string>
     <string name="guided_muscle_priorities">Prioridades musculares</string>
     <string name="guided_sensitivities">Preferencias de sensibilidad</string>
     <string name="guided_workouts_load_error">No se pudieron cargar los entrenamientos guardados.</string>
     <string name="guided_research_about">Consulta los resultados de los estudios, sus limitaciones y los ejercicios utilizados en la investigación. Estas referencias tienen fines educativos.</string>
     <string name="guided_original_restriction">Valor guardado originalmente: %1$s</string>
-    <string name="guided_no_marked_limits">Sin limitaciones ni exclusiones marcadas</string>
+    <string name="guided_no_marked_limits">Afecciones, limitaciones de movimiento y ejercicios excluidos</string>
     <string name="guided_saved_restrictions">Restricciones registradas</string>
 </resources>

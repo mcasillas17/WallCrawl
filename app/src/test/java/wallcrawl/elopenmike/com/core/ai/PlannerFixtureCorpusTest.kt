@@ -166,8 +166,7 @@ class PlannerFixtureCorpusTest {
             .isEqualTo(182)
         assertThat(exercises.count { it.reviewedMetadata?.reviewState == ReviewState.APPROVED })
             .isEqualTo(0)
-        // The rollout contract's central claim: no bundled record clears any joint
-        // sensitivity, so a joint-sensitive profile gets a typed refusal rather than a guess.
+        // The bundled records carry no explicit joint clearances; demand assessments are separate.
         assertThat(
             exercises.mapNotNull { it.reviewedMetadata }
                 .flatMap { it.clearedTrainingConstraints }

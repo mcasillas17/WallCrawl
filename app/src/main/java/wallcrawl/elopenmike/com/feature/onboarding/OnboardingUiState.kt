@@ -73,6 +73,9 @@ data class OnboardingUiState(
     val retainedConditions: List<wallcrawl.elopenmike.com.core.model.SelectedCondition> = emptyList(),
     val conditionRecords: List<wallcrawl.elopenmike.com.core.model.ConditionSupportRecord> = emptyList(),
     val conditionLoadFailed: Boolean = false,
+    val retainedReports: Set<String> = emptySet(),
+    val addedReports: Set<String> = emptySet(),
+    val removedReports: Set<String> = emptySet(),
     val currentStep: OnboardingStep = OnboardingStep.WELCOME,
     val name: String = "",
     val gender: ProfileGender = ProfileGender.UNSPECIFIED,
@@ -91,6 +94,10 @@ data class OnboardingUiState(
     val error: OnboardingError? = null,
     val isComplete: Boolean = false
 ) {
+    val reportedConditions: Set<String> get() = applyReportEdits(retainedReports)
+
+    fun applyReportEdits(saved: Set<String>): Set<String> = (saved + addedReports) - removedReports
+
     val goal: FitnessGoal get() = goals.firstOrNull() ?: FitnessGoal.BUILD_MUSCLE
 
     val canProceedCurrentStep: Boolean

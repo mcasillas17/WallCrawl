@@ -13,7 +13,8 @@ import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.UserProfile
-import wallcrawl.elopenmike.com.core.model.clearsJointConstraintsOf
+import wallcrawl.elopenmike.com.core.model.clearsJointSensitivities
+import wallcrawl.elopenmike.com.core.model.hasRequiredEquipment
 import wallcrawl.elopenmike.com.core.model.hasRequiredFixedAnchorEquipment
 import wallcrawl.elopenmike.com.core.model.violatesImpactRestrictionOf
 import wallcrawl.elopenmike.com.core.model.isEquipmentSatisfiedBy
@@ -45,7 +46,8 @@ class ExerciseEligibilityPolicy {
                 if (
                     acceptedMetadata != null &&
                     (!acceptedMetadata.equipmentAlternatives.isEquipmentSatisfiedBy(ownedEquipment) ||
-                        !exercise.hasRequiredFixedAnchorEquipment(ownedEquipment))
+                        !exercise.hasRequiredFixedAnchorEquipment(ownedEquipment) ||
+                        profile.demandRestrictions.active && !exercise.hasRequiredEquipment(profile.availableEquipment))
                 ) {
                     add(EligibilityReason.MISSING_EQUIPMENT)
                 }
@@ -59,11 +61,14 @@ class ExerciseEligibilityPolicy {
                     ) {
                         add(EligibilityReason.CAPABILITY_AVOID)
                     }
-                    if (!acceptedMetadata.clearsJointConstraintsOf(profile)) {
+                    if (!clearsJointSensitivities(exercise.id, profile, acceptedMetadata.clearedTrainingConstraints)) {
                         add(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
                     }
                     if (acceptedMetadata.violatesImpactRestrictionOf(profile)) {
                         add(EligibilityReason.HIGH_IMPACT_DISALLOWED)
+                    }
+                    if (!profile.demandRestrictions.permitsReportDemands(exercise.id)) {
+                        add(EligibilityReason.REPORTED_CONDITION_RESTRICTION)
                     }
                     val advancedCeilingApplies =
                         acceptedMetadata.complexity == ComplexityTier.ADVANCED &&
@@ -160,11 +165,13 @@ class ExerciseEligibilityPolicy {
             regression.id !in excludedExerciseIds &&
             regressionMetadata.equipmentAlternatives.isEquipmentSatisfiedBy(ownedEquipment) &&
             regression.hasRequiredFixedAnchorEquipment(ownedEquipment) &&
+            (!profile.demandRestrictions.active || regression.hasRequiredEquipment(profile.availableEquipment)) &&
             regressionMetadata.capabilityRequirements.none { capability ->
                 profile.movementCapabilities[capability] == CapabilityLevel.AVOID
             } &&
             // A regression is an alternative inside the user's restrictions, never around them.
-            regressionMetadata.clearsJointConstraintsOf(profile) &&
+            profile.demandRestrictions.permitsReportDemands(regression.id) &&
+            clearsJointSensitivities(regression.id, profile, regressionMetadata.clearedTrainingConstraints) &&
             !regressionMetadata.violatesImpactRestrictionOf(profile)
     }
 
@@ -180,7 +187,8 @@ class ExerciseEligibilityPolicy {
                 AutomaticEligibilityFailure.CAPABILITIES_REMOVED_ALL,
             setOf(
                 EligibilityReason.HIGH_IMPACT_DISALLOWED,
-                EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT
+                EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT,
+                EligibilityReason.REPORTED_CONDITION_RESTRICTION
             ) to AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL,
             setOf(
                 EligibilityReason.ADVANCED_WHILE_UNCALIBRATED,
