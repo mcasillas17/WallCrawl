@@ -8,6 +8,7 @@ data class ConditionUiState(
     val draft: List<SelectedCondition>? = null,
     val saving: Boolean = false,
     val saveFailed: Boolean = false,
+    val reportedSaveFailed: Boolean = false,
     val pending: List<PendingConditionReassessment>? = null,
     val pendingFailed: Boolean = false,
     val reassessmentEventId: String? = null,

@@ -418,12 +418,7 @@ disabled legacy path with a locally built `PlannerFeatureFlags(reviewedCapabilit
 never falls back to an unreviewed exercise. Genuine human `APPROVED` review of the
 metadata remains the outstanding gate before any record can carry that state instead.
 
-Selected joint sensitivities are decided per exercise on that path, against the reviewed
-`clearedTrainingConstraints` field, and the supported-regression exception applies the same
-rule so a restriction cannot be routed around. No bundled record clears any sensitivity, so
-a joint-sensitive profile currently receives a typed `TRAINING_CONSTRAINTS_REMOVED_ALL`
-refusal. `LOW_IMPACT_ONLY` is decided by `impactLevel` alone. See the
-[eligibility boundary](reviewed-capability-eligibility.md).
+Each exercise must satisfy every selected joint sensitivity through an explicit `clearedTrainingConstraints` entry or an assessment with no conflicting movement demand for that joint. The same test applies to supported regressions and prescriptions. `LOW_IMPACT_ONLY` uses the reviewed impact level. The eight recognized condition reports further constrain eligible IDs and exercise ordering. See the [eligibility boundary](reviewed-capability-eligibility.md) and [condition-aware workouts](condition-aware-workouts.md).
 
 On that reviewed-enabled path only, `StateBasedTrainingPolicy` consumes the composed
 `TrainingProgramState`. Production emits `PROGRAM_STATE_V2` (V1 contexts remain

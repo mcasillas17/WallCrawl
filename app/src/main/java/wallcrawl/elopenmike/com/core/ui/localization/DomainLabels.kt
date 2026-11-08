@@ -13,6 +13,7 @@ import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.MovementPattern
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.ReportedCondition
 import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
@@ -83,6 +84,19 @@ val ExperienceLevel.descriptionRes: Int
         ExperienceLevel.BEGINNER -> R.string.experience_beginner_description
         ExperienceLevel.INTERMEDIATE -> R.string.experience_intermediate_description
         ExperienceLevel.ADVANCED -> R.string.experience_advanced_description
+    }
+
+@get:StringRes
+val ReportedCondition.labelRes: Int
+    get() = when (this) {
+        ReportedCondition.PIRIFORMIS_SYNDROME -> R.string.condition_name_piriformis_syndrome
+        ReportedCondition.GLUTEAL_TENDINOPATHY -> R.string.condition_name_gluteal_tendinopathy
+        ReportedCondition.LUMBAR_RADICULOPATHY -> R.string.condition_name_lumbar_radiculopathy
+        ReportedCondition.NONSPECIFIC_LOW_BACK_PAIN -> R.string.condition_name_nonspecific_low_back_pain
+        ReportedCondition.ROTATOR_CUFF_RELATED_SHOULDER_PAIN -> R.string.condition_name_rotator_cuff_related_shoulder_pain
+        ReportedCondition.LATERAL_ELBOW_TENDINOPATHY -> R.string.condition_name_lateral_elbow_tendinopathy
+        ReportedCondition.CARPAL_TUNNEL_SYNDROME -> R.string.condition_name_carpal_tunnel_syndrome
+        ReportedCondition.PATELLOFEMORAL_PAIN -> R.string.condition_name_patellofemoral_pain
     }
 
 @get:StringRes

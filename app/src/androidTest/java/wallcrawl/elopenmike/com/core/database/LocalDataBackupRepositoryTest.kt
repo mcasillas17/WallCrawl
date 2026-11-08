@@ -77,6 +77,29 @@ class LocalDataBackupRepositoryTest {
         assertThat(LocalDataArchiveCodec.read(reexport.toByteArray().inputStream()).snapshot).isEqualTo(updated.snapshot)
     }
 
+    @Test fun individualConditionEditsPreserveOpaqueReportsAndRoundTripThroughArchive() = runBlocking<Unit> {
+        val profiles = OfflineUserProfileRepository(database.userProfileDao())
+        val opaque = " future|||condition "
+        profiles.saveProfile(UserProfile(reportedConditions = setOf(opaque)))
+        val ids = setOf("piriformis_syndrome", "gluteal_tendinopathy", "lumbar_radiculopathy", "nonspecific_low_back_pain",
+            "rotator_cuff_related_shoulder_pain", "lateral_elbow_tendinopathy", "carpal_tunnel_syndrome", "patellofemoral_pain")
+        assertThat(wallcrawl.elopenmike.com.core.model.ReportedCondition.ids).containsExactlyElementsIn(ids)
+        for (id in ids) profiles.setReportedCondition(id, true)
+        val profile = profiles.getProfileOnce()
+        assertThat(profile.reportedConditions).containsExactlyElementsIn(ids + opaque)
+        assertThat(profile.activeConditions).isEmpty()
+        profiles.setReportedCondition("piriformis_syndrome", true)
+        assertThat(profiles.getProfileOnce().revision).isEqualTo(profile.revision)
+
+        val bytes = ByteArrayOutputStream().also { repository.exportTo { it } }.toByteArray()
+        repository.deleteAllLocalData()
+        repository.restoreFrom(bytes.inputStream())
+        assertThat(profiles.getProfileOnce().reportedConditions).containsExactlyElementsIn(ids + opaque)
+        profiles.setReportedCondition(opaque, false)
+        assertThat(profiles.getProfileOnce().reportedConditions).containsExactlyElementsIn(ids)
+        assertThrows(IllegalArgumentException::class.java) { runBlocking { profiles.setReportedCondition(opaque, true) } }
+    }
+
     @Test fun conditionRowsSurviveExportDeleteAndRestore() = runBlocking<Unit> {
         seedFixtureData()
         val context = SessionConditionContext(1, 1,

@@ -191,6 +191,33 @@ class ConditionPlanningPolicyTest {
             .containsExactly("legacy-condition-report")
     }
 
+    @Test fun allEightKnownReportsRestrictOrdinaryWorkWithoutRequiringAReleasedRoutine() {
+        for (id in ReportedCondition.ids) {
+            val profile = UserProfile(reportedConditions = setOf(id))
+            assertThat(profile.demandRestrictions.recognizesReports).isTrue()
+            assertThat(profile.demandRestrictions.permitsReportDemands("glute-bridge")).isTrue()
+            assertThat(profile.demandRestrictions.permitsReportDemands("unknown-exercise")).isFalse()
+            assertThat(resolve(profile = profile, records = emptyList())).isEqualTo(ConditionPlanningResult.NotApplicable)
+        }
+        val restrictions = UserProfile(reportedConditions = setOf("piriformis_syndrome", "gluteal_tendinopathy")).demandRestrictions
+        assertThat(restrictions.permitsReportDemands("barbell-back-squat")).isTrue()
+        assertThat(restrictions.ranksLower("barbell-back-squat")).isTrue()
+        assertThat(restrictions.ranksLower("glute-bridge")).isFalse()
+        assertThat(restrictions.permitsReportDemands("lying-piriformis-stretch")).isFalse()
+        val unknown = UserProfile(reportedConditions = setOf("piriformis_syndrome", "withdrawn"))
+        assertThat(unknown.demandRestrictions.permitsReportDemands("glute-bridge")).isFalse()
+    }
+
+    @Test fun anUnassessedRegressionCannotLiftTheAdvancedCeilingForAReportedCondition() {
+        val target = ordinary().copy(id = "unassessed-regression")
+        val source = ordinary().let { it.copy(id = "push-up", reviewedMetadata = it.reviewedMetadata!!.copy(
+            complexity = ComplexityTier.ADVANCED, approvedRegressions = listOf(ReviewedExerciseLink(target.id, "fixture")))) }
+        val profile = UserProfile(reportedConditions = setOf("piriformis_syndrome"))
+        val result = ExerciseEligibilityPolicy().evaluate(listOf(source, target), profile, AdaptationState.RETURNING)
+        assertThat(result.decisions.first().reasons).contains(EligibilityReason.ADVANCED_WHILE_RETURNING)
+        assertThat(result.decisions.last().reasons).contains(EligibilityReason.REPORTED_CONDITION_RESTRICTION)
+    }
+
     @Test fun pendingCannotBeHiddenByRemovingLastConditionOrSelectingAnother() {
         val marker = PendingConditionReassessment("default_user", "removed", "fictional", "event", "a".repeat(64), 1, now - 1, null)
         blocked(resolve(profile = UserProfile(), history = history(pending = listOf(marker))))

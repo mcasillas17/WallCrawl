@@ -679,19 +679,14 @@ class ProductionPlannerCompositionTest {
     }
 
     @Test
-    fun aSelectedJointConstraintRefusesAutomaticPlanningRatherThanIgnoringIt() = runTest {
-        // No accepted record clears any joint constraint, so selecting one is a refusal on
-        // the production path. Ignoring the selection silently would be the untruthful
-        // alternative, and the legacy filter does exactly that.
+    fun aKneeSensitiveProfileGetsAPlanWithoutDeepKneeFlexionExercises() = runTest {
         val constrained = fullGymProfile().copy(
             trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)
         )
-        val legacyCandidates = ExerciseFilter().filterCandidates(bundledExercises, constrained)
-        assertThat(legacyCandidates).isNotEmpty()
-
-        val refused = planFor(Cohort("knee-sensitive", constrained)) as Refused
-        assertThat(refused.eligibilityFailure)
-            .isEqualTo(AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL)
+        val served = planFor(Cohort("knee-sensitive", constrained)) as Served
+        assertThat(served.workout.exercises).isNotEmpty()
+        assertThat(served.byId.keys).contains("glute-bridge")
+        assertThat(served.byId.keys).containsNoneOf("bodyweight-squat", "barbell-back-squat")
     }
 
     @Test
@@ -1180,10 +1175,11 @@ class ProductionPlannerCompositionTest {
             ),
             UnsupportedCohort(
                 Cohort(
-                    "joint-constraint-selected",
+                    "shoulder-sensitive-bench-only",
                     UserProfile(
                         availableEquipment = StandardEquipment.ALL,
                         trainingConstraints = setOf(TrainingConstraint.SHOULDER_SENSITIVE),
+                        excludedExerciseIds = bundledExercises.map(Exercise::id).filterNot { it == "barbell-bench-press" },
                         movementCapabilities = comfortableCapabilities(),
                         onboardingCompleted = true
                     )

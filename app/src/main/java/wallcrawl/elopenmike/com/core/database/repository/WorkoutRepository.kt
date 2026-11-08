@@ -286,10 +286,11 @@ class OfflineWorkoutRepository(
         if (pending.isNotEmpty()) throw ConditionStartRefused(pending.map {
             ConditionViolation("pending-reassessment", setOf(it.conditionId), setOf(it.exerciseId))
         })
-        val needsConditions = userProfile.hasConditionReports || recommendation?.conditionContext != null ||
+        val needsConditions = userProfile.activeConditions.isNotEmpty() || userProfile.demandRestrictions.active ||
+            recommendation?.conditionContext != null ||
             exercises.any { it.prescription.purpose != PrescriptionPurpose.ORDINARY }
         if (generated != null && needsConditions) {
-            if (recommendation?.conditionContext == null) throw ConditionStartRefused("missing-condition-context")
+            if (recommendation == null) throw ConditionStartRefused("missing-condition-context")
             val build = generationContext ?: throw ConditionStartRefused("condition-validation-unavailable")
             val rebuilt = try {
                 build(if (recommendation.programSession == null) WorkoutPlanningIntent.ORDINARY else WorkoutPlanningIntent.PROGRAM,
@@ -390,44 +391,53 @@ class OfflineWorkoutRepository(
             expectedProgramHeader = recommendation?.expectedProgramHeader,
             programSession = recommendation?.programSession,
             conditionCheck = if (needsConditions) {
-                {
-                    val support = try { conditionSupport?.invoke() ?: throw ConditionStartRefused("missing-support")
+                check@{ profile ->
+                    val catalog = exerciseCatalog?.getAllExercises()?.first() ?: throw ConditionStartRefused("missing-exercise")
+                    val catalogById = catalog.associateBy { it.id }
+                    val policy = ConditionPlanningPolicy()
+                    if (profile.demandRestrictions.active) {
+                        val reviewed = generated == null || recommendation?.reviewedPathEnabled != false
+                        val invalid = exercises.filterNot { policy.permitsRestrictedExercise(catalogById[it.exerciseId], it, profile, reviewed) }
+                        if (invalid.isNotEmpty()) throw ConditionStartRefused("exercise-restricted",
+                            profile.reportedConditions, invalid.map { it.exerciseId }.filter { it in catalogById }.take(512).toSet())
+                    }
+                    // A manual ordinary workout needs no released rule, schedule or frozen support context.
+                    val needsReleaseCheck = profile.activeConditions.isNotEmpty() || recommendation?.conditionContext != null ||
+                        exercises.any { it.prescription.purpose != PrescriptionPurpose.ORDINARY }
+                    if (!needsReleaseCheck && generated == null) return@check null
+                    val support = if (!needsReleaseCheck) ConditionSupportCatalog("unselected", emptyMap()) else try {
+                        conditionSupport?.invoke() ?: throw ConditionStartRefused("missing-support")
                     } catch (error: CancellationException) { throw error
                     } catch (error: ConditionStartRefused) { throw error
                     } catch (error: Exception) { throw ConditionStartRefused("support-unavailable").also { it.initCause(error) } }
-                    val catalog = exerciseCatalog?.getAllExercises()?.first() ?: throw ConditionStartRefused("missing-exercise")
-                    val read = readConditionContext(userProfile.id, support, nowTimestamp(), currentZone(), recommendation?.programSession != null)
-                    val catalogById = catalog.associateBy { it.id }
-                    val planning = ConditionPlanningPolicy().resolve(read.profile, catalog, catalogById, support, read.history)
-                    when (planning) {
-                        is ConditionPlanningResult.Blocked -> throw ConditionStartRefused(planning.reasons)
-                        ConditionPlanningResult.NotApplicable -> throw ConditionStartRefused("missing-condition-context", exerciseIds = exercises.map { it.exerciseId }.toSet())
-                        is ConditionPlanningResult.Ready -> {
-                            if (generated != null) {
-                                val rebuild = generationContextInTransaction ?: throw ConditionStartRefused("condition-validation-unavailable")
-                                val checked = try {
-                                    rebuild(if (recommendation?.programSession == null) WorkoutPlanningIntent.ORDINARY else WorkoutPlanningIntent.PROGRAM,
-                                        generated.generationIndex, read, support)
-                                } catch (error: CancellationException) { throw error
-                                } catch (error: ConditionStartRefused) { throw error
-                                } catch (error: Exception) {
-                                    throw ConditionStartRefused("condition-context-unavailable").also { it.initCause(error) }
-                                }
-                                validateCurrentGenerated(generated, requireNotNull(recommendation), checked)
-                                // Only the original receipt's exact checked times may be frozen on this session.
-                                recommendation.conditionContext
-                            } else {
-                                val violations = exercises.flatMap { ConditionPlanningPolicy().validate(it, planning) }.toMutableList()
-                                planning.supportive.forEach { required ->
-                                    if (exercises.count { it.exerciseId == required.exerciseId && it.prescription.purpose == PrescriptionPurpose.SUPPORTIVE } != 1)
-                                        violations += ConditionViolation("missing-required-support", read.profile.activeConditions.map { it.conditionId }.toSet(), setOf(required.exerciseId))
-                                }
-                                if (exercises.map { it.exerciseId }.distinct().size != exercises.size)
-                                    violations += ConditionViolation("duplicate-exercise", emptySet(), exercises.map { it.exerciseId }.toSet())
-                                if (violations.isNotEmpty()) throw ConditionStartRefused(violations)
-                                planning.context
-                            }
+                    val read = readConditionContext(profile.id, support, nowTimestamp(), currentZone(), recommendation?.programSession != null)
+                    val planning = policy.resolve(profile, catalog, catalogById, support, read.history)
+                    if (planning is ConditionPlanningResult.Blocked) throw ConditionStartRefused(planning.reasons)
+                    if (generated != null) {
+                        val rebuild = generationContextInTransaction ?: throw ConditionStartRefused("condition-validation-unavailable")
+                        val checked = try {
+                            rebuild(if (recommendation?.programSession == null) WorkoutPlanningIntent.ORDINARY else WorkoutPlanningIntent.PROGRAM,
+                                generated.generationIndex, read, support)
+                        } catch (error: CancellationException) { throw error
+                        } catch (error: ConditionStartRefused) { throw error
+                        } catch (error: Exception) {
+                            throw ConditionStartRefused("condition-context-unavailable").also { it.initCause(error) }
                         }
+                        val receipt = recommendation ?: throw ConditionStartRefused("missing-condition-context")
+                        validateCurrentGenerated(generated, receipt, checked)
+                        // Only the original receipt's exact checked times may be frozen on this session.
+                        receipt.conditionContext
+                    } else {
+                        if (planning !is ConditionPlanningResult.Ready) throw ConditionStartRefused("missing-condition-context")
+                        val violations = exercises.flatMap { policy.validate(it, planning) }.toMutableList()
+                        planning.supportive.forEach { required ->
+                            if (exercises.count { it.exerciseId == required.exerciseId && it.prescription.purpose == PrescriptionPurpose.SUPPORTIVE } != 1)
+                                violations += ConditionViolation("missing-required-support", profile.activeConditions.map { it.conditionId }.toSet(), setOf(required.exerciseId))
+                        }
+                        if (exercises.map { it.exerciseId }.distinct().size != exercises.size)
+                            violations += ConditionViolation("duplicate-exercise", emptySet(), exercises.map { it.exerciseId }.toSet())
+                        if (violations.isNotEmpty()) throw ConditionStartRefused(violations)
+                        planning.context
                     }
                 }
             } else null
@@ -441,13 +451,16 @@ class OfflineWorkoutRepository(
         if (recommendation.profileRevision != context.userProfile.revision ||
             RecommendationContextIdentity.of(context) != recommendation.contextIdentity)
             throw ConditionStartRefused("changed-condition-facts", context.userProfile.activeConditions.map { it.conditionId }.toSet())
-        val frozen = recommendation.conditionContext ?: throw ConditionStartRefused("missing-condition-context")
-        val current = (planning as? ConditionPlanningResult.Ready)?.context ?: throw ConditionStartRefused("missing-condition-context")
-        if (frozen.formatVersion != current.formatVersion || frozen.policyVersion != current.policyVersion ||
+        val frozen = recommendation.conditionContext
+        val current = (planning as? ConditionPlanningResult.Ready)?.context
+        if ((frozen == null) != (current == null) || current == null && context.userProfile.activeConditions.isNotEmpty()) {
+            throw ConditionStartRefused("missing-condition-context")
+        }
+        if (frozen != null && current != null && (frozen.formatVersion != current.formatVersion || frozen.policyVersion != current.policyVersion ||
             frozen.selectedConditions != current.selectedConditions || frozen.sourceSupportVersions != current.sourceSupportVersions ||
             frozen.appliedRules != current.appliedRules || frozen.consumedReassessmentEventIds != current.consumedReassessmentEventIds ||
             frozen.consumedScheduleEvidence.map { it.reference to it.previousPerformedAtTimestamp } !=
-                current.consumedScheduleEvidence.map { it.reference to it.previousPerformedAtTimestamp })
+                current.consumedScheduleEvidence.map { it.reference to it.previousPerformedAtTimestamp }))
             throw ConditionStartRefused("changed-condition-facts")
         val validate = validateGenerated ?: throw ConditionStartRefused("condition-validation-unavailable")
         val result = validate(generated, context)

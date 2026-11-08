@@ -19,7 +19,7 @@ import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.UserRestPreference
 import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
-import wallcrawl.elopenmike.com.core.model.clearsJointConstraintsOf
+import wallcrawl.elopenmike.com.core.model.clearsJointSensitivities
 import wallcrawl.elopenmike.com.core.model.violatesImpactRestrictionOf
 
 enum class TrainingPolicyVersion {
@@ -273,7 +273,8 @@ class StateBasedTrainingPolicy(
         // training-constraint rules: eligibility should have removed this exercise, and a
         // selected restriction must not survive a gap in one gate.
         if (
-            !metadata.clearsJointConstraintsOf(profile) ||
+            !profile.demandRestrictions.permitsReportDemands(exercise.id) ||
+            !clearsJointSensitivities(exercise.id, profile, metadata.clearedTrainingConstraints) ||
             metadata.violatesImpactRestrictionOf(profile)
         ) {
             return TrainingPolicyResult.Failure(

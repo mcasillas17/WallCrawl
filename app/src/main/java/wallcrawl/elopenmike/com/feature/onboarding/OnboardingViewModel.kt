@@ -4,6 +4,7 @@ import wallcrawl.elopenmike.com.core.ui.encodeConditionDraft
 import wallcrawl.elopenmike.com.core.ui.decodeConditionDraft
 import wallcrawl.elopenmike.com.core.ai.ConditionPlanningPolicy
 import wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog
+import wallcrawl.elopenmike.com.core.model.ReportedCondition
 import wallcrawl.elopenmike.com.core.model.SelectedCondition
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -47,11 +48,19 @@ class OnboardingViewModel(
         viewModelScope.launch {
             try {
                 val current = userProfileRepository.getUserProfile().first()
-                updateState { it.copy(retainedConditions = current.activeConditions) }
+                updateState { it.copy(retainedConditions = current.activeConditions, retainedReports = current.reportedConditions) }
                 val records = conditionSupport().records.values.filter(ConditionPlanningPolicy()::supports)
                 updateState { it.copy(conditionRecords = records) }
             } catch (error: CancellationException) { throw error
             } catch (_: Exception) { updateState { it.copy(conditionLoadFailed = true) } }
+        }
+    }
+
+    fun setReportedCondition(id: String, selected: Boolean) {
+        if (mutableState.value.isSaving || (selected && id !in ReportedCondition.ids)) return
+        updateState { state ->
+            if (selected) state.copy(addedReports = state.addedReports + id, removedReports = state.removedReports - id)
+            else state.copy(addedReports = state.addedReports - id, removedReports = state.removedReports + id)
         }
     }
 
@@ -256,6 +265,7 @@ class OnboardingViewModel(
                     trainingConstraints = constraints,
                     returningAfterBreakWeeks = returningAfterBreakWeeks,
                     movementCapabilities = MovementCapabilities.from(capabilityAnswers),
+                    reportedConditions = mutableState.value.applyReportEdits(current.reportedConditions),
                     activeConditions = mutableState.value.conditionDraft ?: current.activeConditions,
                     onboardingCompleted = true
                 )
@@ -285,6 +295,8 @@ class OnboardingViewModel(
     }
 
     private fun persistDraft(state: OnboardingUiState) {
+        savedStateHandle[STATE_ADDED_REPORTS] = ArrayList(state.addedReports)
+        savedStateHandle[STATE_REMOVED_REPORTS] = ArrayList(state.removedReports)
         state.conditionDraft?.let { savedStateHandle[STATE_CONDITIONS] = encodeConditionDraft(it) }
         savedStateHandle[STATE_CURRENT_STEP] = state.currentStep.name
         savedStateHandle[STATE_NAME] = state.name
@@ -305,6 +317,8 @@ class OnboardingViewModel(
     }
 
     companion object {
+        private const val STATE_ADDED_REPORTS = "onboarding.addedReports"
+        private const val STATE_REMOVED_REPORTS = "onboarding.removedReports"
         private const val STATE_CONDITIONS = "onboarding.conditions"
         private const val NAME_MAX_LENGTH = 60
         private const val STATE_CURRENT_STEP = "onboarding.currentStep"
@@ -323,6 +337,8 @@ class OnboardingViewModel(
         private fun restoreDraft(savedStateHandle: SavedStateHandle): OnboardingUiState {
             val defaults = OnboardingUiState()
             return defaults.copy(
+                addedReports = savedStateHandle.get<List<String>>(STATE_ADDED_REPORTS).orEmpty().intersect(ReportedCondition.ids),
+                removedReports = savedStateHandle.get<List<String>>(STATE_REMOVED_REPORTS).orEmpty().toSet(),
                 conditionDraft = savedStateHandle.get<List<String>>(STATE_CONDITIONS)?.let(::decodeConditionDraft),
                 currentStep = enumValueOrDefault(
                     savedStateHandle[STATE_CURRENT_STEP],

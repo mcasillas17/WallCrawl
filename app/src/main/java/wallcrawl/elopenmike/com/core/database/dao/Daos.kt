@@ -212,7 +212,7 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao, Con
         acceptedDeloadOfferId: String? = null,
         expectedProgramHeader: ProgramHeader? = null,
         programSession: ProgramSessionSnapshot? = null,
-        conditionCheck: (suspend WorkoutSessionDao.() -> SessionConditionContext?)? = null
+        conditionCheck: (suspend WorkoutSessionDao.(UserProfile) -> SessionConditionContext?)? = null
     ): WorkoutSessionWithExercisesAndSets {
         if (getProfileRevision(expectedProfileId) != expectedProfileRevision) {
             throw ConditionStartRefused("stale-profile")
@@ -229,18 +229,18 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao, Con
         if (pending.isNotEmpty()) throw ConditionStartRefused(pending.map {
             ConditionViolation("pending-reassessment", setOf(it.conditionId), setOf(it.exerciseId))
         })
-        if (profile.reportedConditions.isNotEmpty()) throw ConditionStartRefused("legacy-condition-report")
-        if (conditionCheck == null && (profile.activeConditions.isNotEmpty() ||
+        if (!profile.demandRestrictions.recognizesReports) throw ConditionStartRefused("legacy-condition-report")
+        if (conditionCheck == null && (profile.activeConditions.isNotEmpty() || profile.demandRestrictions.active ||
                 session.conditionContextJson != null || exercises.any { it.purpose != PrescriptionPurpose.ORDINARY.name })) {
             throw ConditionStartRefused("missing-condition-context", profile.activeConditions.map { it.conditionId }.toSet())
         }
-        val checkedContext = conditionCheck?.invoke(this)
+        val checkedContext = conditionCheck?.invoke(this, profile)
         if (profile.activeConditions.isNotEmpty() && checkedContext == null ||
             checkedContext != null && checkedContext.selectedConditions != profile.activeConditions ||
             exercises.any { it.purpose == PrescriptionPurpose.SUPPORTIVE.name } && profile.activeConditions.isEmpty()) {
             throw ConditionStartRefused("missing-condition-context")
         }
-        if (session.origin == WorkoutOrigin.PLANNER && checkedContext != null && recommendation == null)
+        if (session.origin == WorkoutOrigin.PLANNER && (checkedContext != null || profile.demandRestrictions.active) && recommendation == null)
             throw ConditionStartRefused("missing-condition-context")
         val checkedSession = session.copy(conditionContextJson = checkedContext?.let(ConditionContextCodec::encodeSession))
         val contextDigest = checkedContext?.canonicalDigest

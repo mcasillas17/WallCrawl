@@ -29,7 +29,7 @@ class ConditionPlanningPolicy {
         if (pending.isNotEmpty()) return ConditionPlanningResult.Blocked(pending.take(512).map {
             ConditionViolation("pending-reassessment", setOf(it.conditionId), setOf(it.exerciseId))
         })
-        if (profile.reportedConditions.isNotEmpty()) return ConditionPlanningResult.Blocked(
+        if (!profile.demandRestrictions.recognizesReports) return ConditionPlanningResult.Blocked(
             listOf(ConditionViolation("legacy-condition-report", emptySet()))
         )
         if (profile.activeConditions.isEmpty()) return ConditionPlanningResult.NotApplicable
@@ -139,15 +139,32 @@ class ConditionPlanningPolicy {
             within(p.restSeconds, bounds.minRestSeconds, bounds.maxRestSeconds)) emptyList() else violation("outside-condition-bounds")
     }
 
-    private fun ordinaryEligible(exercise: Exercise, profile: UserProfile): Boolean {
+    internal fun permitsRestrictedExercise(exercise: Exercise?, planned: PlannedExercise, profile: UserProfile, reviewed: Boolean): Boolean =
+        exercise != null && exercise.id == planned.exerciseId && exercise.type == planned.prescription.exerciseType &&
+            when (planned.prescription.purpose) {
+                PrescriptionPurpose.ORDINARY -> ordinaryEligible(exercise, profile, reviewed)
+                PrescriptionPurpose.SUPPORTIVE -> profile.activeConditions.isNotEmpty() &&
+                    profile.demandRestrictions.permitsReportDemands(exercise.id)
+            }
+
+    internal fun ordinaryEligible(exercise: Exercise, profile: UserProfile, reviewed: Boolean = true): Boolean {
+        if (!profile.demandRestrictions.permitsReportDemands(exercise.id) ||
+            exercise.id in profile.planningExclusions || !exercise.hasRequiredEquipment(profile.availableEquipment)) return false
+        if (!reviewed && profile.activeConditions.isEmpty()) {
+            // The legacy path has no impact/capability evidence and never places supplement routines in ordinary slots.
+            return exercise.source?.catalogId != ExerciseSource.SUPPLEMENT_CATALOG_ID &&
+                TrainingConstraint.LOW_IMPACT_ONLY !in profile.trainingConstraints &&
+                CapabilityLevel.AVOID !in profile.movementCapabilities.values.values &&
+                clearsJointSensitivities(exercise.id, profile, emptySet())
+        }
         val metadata = exercise.acceptedMetadata() ?: return false
-        return exercise.id !in profile.planningExclusions && exercise.hasRequiredEquipment(profile.availableEquipment) &&
-            metadata.equipmentAlternatives.isEquipmentSatisfiedBy(profile.availableEquipment.normalizedEquipmentSet()) &&
+        return metadata.equipmentAlternatives.isEquipmentSatisfiedBy(profile.availableEquipment.normalizedEquipmentSet()) &&
             metadata.capabilityRequirements.none { profile.movementCapabilities[it] == CapabilityLevel.AVOID } &&
-            metadata.clearsJointConstraintsOf(profile) && !metadata.violatesImpactRestrictionOf(profile)
+            clearsJointSensitivities(exercise.id, profile, metadata.clearedTrainingConstraints) && !metadata.violatesImpactRestrictionOf(profile)
     }
     private fun supportiveEligible(exercise: Exercise, profile: UserProfile, requirements: ConditionSupportiveRequirements): Boolean =
-        exercise.id !in profile.planningExclusions && exercise.hasRequiredEquipment(profile.availableEquipment) &&
+        profile.demandRestrictions.permitsReportDemands(exercise.id) &&
+            exercise.id !in profile.planningExclusions && exercise.hasRequiredEquipment(profile.availableEquipment) &&
             requirements.equipmentAlternatives.isEquipmentSatisfiedBy(profile.availableEquipment.normalizedEquipmentSet()) &&
             requirements.capabilities.none { profile.movementCapabilities[it] == CapabilityLevel.AVOID } &&
             profile.trainingConstraints.none { it != TrainingConstraint.LOW_IMPACT_ONLY && it !in requirements.clearedConstraints } &&

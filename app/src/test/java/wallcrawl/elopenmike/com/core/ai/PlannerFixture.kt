@@ -95,10 +95,8 @@ internal data class PlannerFixtureReviewedEligibility(
     /**
      * Joint sensitivities the synthetic approval also clears, for every approved ID.
      *
-     * Bundled DRAFT records clear none, so a fixture that selects a joint sensitivity would
-     * otherwise only ever be able to assert the typed no-plan outcome. This is test-only
-     * synthetic review data, exactly like [syntheticApprovedExerciseIds]; nothing here is
-     * written to bundled assets and it is never human approval.
+     * Tests can supply explicit clearances independently of the exercise demand assessment.
+     * These values and [syntheticApprovedExerciseIds] are confined to the fixture.
      */
     val syntheticClearedTrainingConstraints: Set<TrainingConstraint> = emptySet()
 )

@@ -99,8 +99,7 @@ authorizes the relationship only — it grants no eligibility exception, no capa
 evidence, and no substitution eligibility until the target is independently accepted.
 Every one of the 182 accepted records still carries an **empty**
 `clearedTrainingConstraints` list: the audit found no basis to record a joint-sensitivity
-clearance for any exercise, so a joint-sensitive profile still receives a typed refusal
-(see [reviewed capability eligibility](reviewed-capability-eligibility.md)).
+clearance for any exercise. The automatic planner also reads the separate, ID-specific demand assessment when processing a joint selection. [Reviewed capability eligibility](reviewed-capability-eligibility.md)
 
 The audit is a **committed, reproducible artifact**, not a one-time claim:
 [`docs/research/2026-09-13-ai-acceptance-audit.json`](research/2026-09-13-ai-acceptance-audit.json)
@@ -164,13 +163,7 @@ exception.
 `clearedTrainingConstraints` arrived with reviewed schema version 2. It is required on every
 record and lists the joint sensitivities — shoulder, elbow, wrist, lower back, hip, knee —
 that a reviewer explicitly cleared the exercise for. It is a compatibility statement about a
-self-reported label, not a diagnosis, an injury rule, or clinical clearance. Absence is not
-clearance: a selected sensitivity that a record does not list keeps that record out of
-automatic planning. `LOW_IMPACT_ONLY` cannot appear there, because `impactLevel` already
-decides it; the importer and the parser both reject a record that lists it. All 211
-authored `reviewedMetadata` entries currently clear nothing — including the 182
-`AI_ACCEPTED` ones — so a joint-sensitive profile receives a typed refusal on the
-production path.
+self-reported label, not a diagnosis, an injury rule, or clinical clearance. The eligibility policy also accepts a movement-demand assessment with no conflict for the selected joint. An exercise with neither form of evidence is excluded. `LOW_IMPACT_ONLY` uses the reviewed `impactLevel`. Both the importer and parser reject it in the clearance list. All 211 authored records currently have empty explicit clearance lists.
 Nothing in this contract infers a clearance from a name, a muscle, a movement pattern or
 equipment.
 

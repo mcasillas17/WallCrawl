@@ -118,7 +118,7 @@ class AiAcceptedCatalogTest {
     }
 
     @Test
-    fun allAcceptedRecordsAreEligibleOnlyUnderAnExplicitUnrestrictedTestProfile() {
+    fun acceptedRecordsRemainSubjectToEachSelectedJointSensitivity() {
         val decisions = ExerciseEligibilityPolicy()
             .evaluate(exercises, fullInventoryProfile(), AdaptationState.BUILD,
                 demonstratedProgressionFamilies = exercises.mapNotNullTo(mutableSetOf()) {
@@ -130,15 +130,24 @@ class AiAcceptedCatalogTest {
         decisions.filterNot { it.exerciseId in acceptedIds }.forEach {
             assertThat(it.reasons).contains(EligibilityReason.MISSING_APPROVED_METADATA)
         }
-        for (constraint in TrainingConstraint.entries.filterNot { it == TrainingConstraint.LOW_IMPACT_ONLY }) {
+        val conflicting = mapOf(
+            TrainingConstraint.SHOULDER_SENSITIVE to "barbell-bench-press",
+            TrainingConstraint.ELBOW_SENSITIVE to "barbell-row",
+            TrainingConstraint.WRIST_SENSITIVE to "push-up",
+            TrainingConstraint.LOWER_BACK_SENSITIVE to "barbell-back-squat",
+            TrainingConstraint.HIP_SENSITIVE to "barbell-back-squat",
+            TrainingConstraint.KNEE_SENSITIVE to "bodyweight-squat"
+        )
+        assertThat(conflicting.keys).containsExactlyElementsIn(TrainingConstraint.entries - TrainingConstraint.LOW_IMPACT_ONLY)
+        for ((constraint, conflictId) in conflicting) {
             val constrained = ExerciseEligibilityPolicy().evaluate(
                 exercises, fullInventoryProfile().copy(trainingConstraints = setOf(constraint)),
                 AdaptationState.BUILD
-            ).decisions
-            assertWithMessage(constraint.name).that(constrained.none { it.eligible }).isTrue()
-            constrained.filter { it.exerciseId in acceptedIds }.forEach {
-                assertThat(it.reasons).contains(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
-            }
+            ).decisions.associateBy { it.exerciseId }
+            assertWithMessage(constraint.name).that(constrained.getValue("glute-bridge").eligible).isTrue()
+            val blocked = constrained.getValue(conflictId)
+            assertWithMessage(conflictId).that(blocked.eligible).isFalse()
+            assertWithMessage(conflictId).that(blocked.reasons).contains(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
         }
     }
 
