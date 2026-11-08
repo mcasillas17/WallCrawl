@@ -1,0 +1,257 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "patellar-tendinopathy",
+    "label": "patellar tendinopathy",
+    "aliases": [
+      "jumper’s knee",
+      "patellar tendinosis"
+    ],
+    "distinctions": "PT localized tendon pain differs from PFP and tendon rupture; image changes alone are not the app diagnosis."
+  },
+  "scope": {
+    "population": "Clinical load-related patellar tendon pain; primary anchor young ultrasound-confirmed athletes.",
+    "stage": "Mostly chronic in Breda trial; acute rupture/reactive short-duration generalization uncertain.",
+    "operativeStatus": "Nonoperative; unrehabilitated prior surgery excluded from trial.",
+    "exclusions": "Acute injury/rupture, coexisting knee pathology and inflammatory disease outside trial.",
+    "uncertainty": "Research extraction only; no universal safe dose, clearance or diagnosis inferred."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "patellar tendinopathy progressive tendon loading exercise therapy 2021 Breda 76 randomized trial",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "\"10.1136/bjsports-2020-103403\" correction retraction",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    }
+  ],
+  "sources": [
+    {
+      "id": "breda-2021",
+      "title": "Effectiveness of progressive tendon-loading exercise therapy in patients with patellar tendinopathy: a randomised clinical trial",
+      "doi": "10.1136/bjsports-2020-103403",
+      "pmid": "33219115",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8070614/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text, tables, methods, results and limitations retrieved through lawful Europe PMC fullTextXML: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8070614/fullTextXML . PMC direct browser access sometimes challenged; XML retrieval succeeded. Figures not visually verified."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance."
+      },
+      "design": "Investigator-blinded RCT, n 76.",
+      "population": "Athletes 18–35, sport>=3/week, clinical+ultrasound PT, VISA-P<80; median 2-year symptoms; 76%male. Acute injury, rupture and other pathology excluded.",
+      "comparator": "Pain-provoking 25-degree decline eccentric squat twice daily 12 weeks, then sport-specific work; different progression.",
+      "coInterventions": "Both: education, activity modification, hip/calf/core/flexibility work; no reported extra treatment.",
+      "outcomes": "24-week VISA-P improvement 28 vs 18; adjusted MD 9 (95%CI 1, 16). Return-preinjury-sport 43% vs 27%, p.13; adherence 40% vs 49%, p.33.",
+      "followUp": "12/24 weeks.",
+      "uncertainty": "Unblinded patients; missing-data sensitivity; mostly chronic young athletes; individual component not isolated.",
+      "harms": "No serious exercise events; two ankle sprains during sport.",
+      "limitations": "Unblinded patients; missing-data sensitivity; mostly chronic young athletes; individual component not isolated.",
+      "protocol": {
+        "execution": "Single-leg machine leg-press/extension; sequential isometric, isotonic, energy-storage, sport stages.",
+        "dose": "Stage 1: 5x 45 s at 60-degree flexion, 70%MVC. Stage 2: 4x 15(10–60 degrees) progressing 4x 6(almost 0–90). Stage 3: 3x 10 bilateral to 6x 10 unilateral jumps.",
+        "frequency": "Isometric daily; isotonic alternate days; energy-storage every third day; sport every 2–3 days; maintenance 2/week.",
+        "supervision": "Unsupervised, physician instruction, video/brochure; gym reimbursement.",
+        "progression": "Pain<=3/10 on single-leg squat and>=1 week at stage before next; increase load/range in stage 2.",
+        "stoppingRules": "Reduce/avoid considerable-pain sport>=4 weeks; acceptable pain<=3/10 in this study. Not a universal app threshold."
+      },
+      "locations": [
+        "Methods > Patients",
+        "Methods > Interventions; Figure 2",
+        "Results > Clinical outcomes; Adverse events; Discussion > limitations"
+      ]
+    },
+    {
+      "id": "dutch-2025",
+      "title": "Dutch multidisciplinary guideline on anterior knee pain: Patellofemoral pain and patellar tendinopathy",
+      "doi": "10.1002/ksa.12367",
+      "pmid": "39045713",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11792096/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text, tables, methods, results and limitations retrieved through lawful Europe PMC fullTextXML: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11792096/fullTextXML . PMC direct browser access sometimes challenged; XML retrieval succeeded. Figures not visually verified."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance."
+      },
+      "design": "Multidisciplinary guideline, onlineJuly 2024, journal 2025; systematic reviews+RCTs, GRADE, informal consensus.",
+      "population": "Clinically distinguished PFP and PT; not generic anterior knee pain; nonoperative initial management.",
+      "comparator": "Exercise and multiple additional conservative treatments.",
+      "coInterventions": "Education/loading advice; additional treatment decisions after response review.",
+      "outcomes": "PFP: quadriceps/hip exercise 6–12 weeks; reconsider diagnosis if no improvement 12 weeks. PT: progressive quadriceps resistance>=12 weeks; heavy-slow preferred with alternate contractions for reactivity; review if no meaningful change 12 weeks.",
+      "followUp": "Recommended 6/12-week reassessment, not a trial follow-up.",
+      "uncertainty": "Evidence low/very-low; exercise reporting incomplete; informal consensus; scheduled guideline review after 2027, not automatic currentness guarantee.",
+      "harms": "Harms inconsistently reported; survey pain worsening is not randomized harm evidence.",
+      "limitations": "Evidence low/very-low; exercise reporting incomplete; informal consensus; scheduled guideline review after 2027, not automatic currentness guarantee.",
+      "protocol": {
+        "execution": "PFP: quadriceps/hip; PT: education/loading, strength, energy-storage, maintenance.",
+        "dose": "No universal sets/reps/load; PT>=12 weeks strength, PFP 6–12 weeks.",
+        "frequency": "not reported as universal frequency",
+        "supervision": "PFP preferably partly PT-supervised; individualized management.",
+        "progression": "Adjust intensity to pain; stage PT toward sport-dependent plyometrics then maintenance.",
+        "stoppingRules": "No universal numeric threshold; reassess poor response after 12 weeks."
+      },
+      "locations": [
+        "Methods > Evidence review and guideline development",
+        "Results > Module 1: Exercise therapy for PFP",
+        "Results > Module 5: Exercise therapy for PT; Figure 2",
+        "Discussion > limitations and updating"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "ptle-benefit",
+      "kind": "study-result",
+      "statement": "24-week VISA-P improvement 28 vs 18; adjusted MD 9 (95%CI 1, 16). Return-preinjury-sport 43% vs 27%, p.13; adherence 40% vs 49%, p.33.",
+      "citations": [
+        {
+          "sourceId": "breda-2021",
+          "location": "Methods > Interventions; Figure 2"
+        },
+        {
+          "sourceId": "breda-2021",
+          "location": "Results > Clinical outcomes; Adverse events; Discussion > limitations"
+        }
+      ],
+      "applicability": "Athletes 18–35, sport>=3/week, clinical+ultrasound PT, VISA-P<80; median 2-year symptoms; 76%male. Acute injury, rupture and other pathology excluded.",
+      "limitations": "No significant sport-return/adherence superiority; unblinded and missing-data sensitivity."
+    },
+    {
+      "id": "ptle-pain-monitoring",
+      "kind": "published-recommendation",
+      "statement": "Breda program advised reducing/avoiding considerable-pain sport>=4 weeks and using<=3/10 pain; stage progression required single-leg squat pain<=3 and>=1 week in current stage.",
+      "citations": [
+        {
+          "sourceId": "breda-2021",
+          "location": "Methods > Interventions; Figure 2"
+        }
+      ],
+      "applicability": "Only this diagnosed young athletic PT protocol.",
+      "limitations": "Not a universally validated pain or rupture-safety threshold."
+    },
+    {
+      "id": "pt-guideline-stage",
+      "kind": "published-recommendation",
+      "statement": "Dutch guideline stages care through education/loading advice,>=12 weeks progressive quadriceps resistance, sport-dependent energy storage and maintenance; intensity individually adjusted; heavy-slow preferred with other contractions for reactivity.",
+      "citations": [
+        {
+          "sourceId": "dutch-2025",
+          "location": "Results > Module 5: Exercise therapy for PT; Figure 2"
+        }
+      ],
+      "applicability": "Clinically diagnosed PT conservative care.",
+      "limitations": "Low/very-low evidence and incomplete reporting; no optimal common sets/reps."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "pt-single-leg-isometric-machine-extension-candidate",
+      "exerciseId": null,
+      "requestId": "knee-pt-single-leg-isometric-machine-extension",
+      "findingIds": [
+        "ptle-benefit"
+      ],
+      "matchRationale": "Catalog leg-extension is dynamic weight_reps with repetition progression; it does not encode MVC-calibrated sustained force or fixed knee angle. A duration/force clinical identity is required; not equivalent to generic5-second progression.",
+      "status": "candidate"
+    },
+    {
+      "id": "pt-single-leg-isotonic-machine-press-candidate",
+      "exerciseId": null,
+      "requestId": "knee-pt-single-leg-isotonic-machine-press",
+      "findingIds": [
+        "ptle-benefit"
+      ],
+      "matchRationale": "Catalog leg-press has generic Machine/weight_reps and routine progression; no documented equivalence to this unilateral stage-specific range. Preserve alternative to knee-extension machine, not a mandatory sequence between machines.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "pt-review-staged-loading",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain separate isometric and isotonic loading candidates for independent clinical review within a pain-monitored staged program. Do not import trial pain criteria, loads or return-to-sport timing as defaults.",
+      "findingIds": [
+        "ptle-benefit",
+        "pt-guideline-stage"
+      ],
+      "citations": [
+        {
+          "sourceId": "breda-2021",
+          "location": "Methods > Interventions; Figure 2"
+        },
+        {
+          "sourceId": "dutch-2025",
+          "location": "Results > Module 5: Exercise therapy for PT; Figure 2"
+        }
+      ],
+      "applicability": {
+        "population": "Clinical load-related patellar tendon pain; primary anchor young ultrasound-confirmed athletes.",
+        "stage": "Mostly chronic in Breda trial; acute rupture/reactive short-duration generalization uncertain.",
+        "rationale": "Trial compares complete programs and guideline supports individualized strength progression."
+      },
+      "limitations": "No component-specific benefit, universal pain threshold or guarantee; injury stage and equipment must be checked.",
+      "mappingIds": [
+        "pt-single-leg-isometric-machine-extension-candidate",
+        "pt-single-leg-isotonic-machine-press-candidate"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "pt-load-response-review",
+      "kind": "symptom-response",
+      "basis": "unresolved-hypothesis",
+      "statement": "Candidate ordinary-workout implication: identify symptom-provoking tendon load and clinician-set response limits before scheduling additional jumping or heavy knee-extension load. A published trial model can inform review; it does not establish universal avoidance.",
+      "findingIds": [
+        "ptle-pain-monitoring"
+      ],
+      "citations": [
+        {
+          "sourceId": "breda-2021",
+          "location": "Methods > Interventions; Figure 2"
+        }
+      ],
+      "applicability": {
+        "population": "Clinical load-related patellar tendon pain; primary anchor young ultrasound-confirmed athletes.",
+        "stage": "Mostly chronic in Breda trial; acute rupture/reactive short-duration generalization uncertain.",
+        "rationale": "Activity modification was part of both treatment arms, not proof all jumping or strength is harmful."
+      },
+      "limitations": "No automatic numeric limit; acute rupture or another diagnosis requires separate assessment.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Researcher appraisal, not formal GRADE: moderate confidence in the complete Breda program comparison for selected chronic athletes; low confidence in isolated component effects or general app dosing.",
+    "No isolated isometric-versus-isotonic component effect; four-stage program, education and other exercises bundled.",
+    "Breda supplemental 37-page protocol attempted but publisher 403; main Methods supplies stage details, actual execution figures not visually reviewed.",
+    "Trial<=3/10 pain criterion belongs to this selected cohort/program, not a validated universal safety cutoff or app clearance.",
+    "Independent clinical review absent; doses are reported study protocols, not app prescriptions.",
+    "No universal contraindication follows from trial exclusion or another exercise showing benefit. No generic five-second progression or stretch strength-set credit."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

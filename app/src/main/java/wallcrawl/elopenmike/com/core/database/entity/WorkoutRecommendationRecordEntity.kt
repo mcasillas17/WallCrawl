@@ -66,5 +66,6 @@ data class WorkoutRecommendationRecordEntity(
     val doseAccounting: String,
     /** Diagnostics only. Nothing reads it to decide anything. */
     val recordedAtTimestamp: Long,
-    val programAssociationDigest: String? = null
+    val programAssociationDigest: String? = null,
+    val conditionContextDigest: String? = null
 )

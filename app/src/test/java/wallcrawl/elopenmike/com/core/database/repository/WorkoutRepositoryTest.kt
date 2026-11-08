@@ -459,6 +459,12 @@ private data class SetCompletionUpdate(
 )
 
 private class RecordingWorkoutSetDao : WorkoutSetDao {
+    override suspend fun getOutcomeConditionContext(setId: String): String? = null
+    override suspend fun getOutcomeExercise(setId: String): wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity? = error("Not used")
+    override suspend fun getOutcomeProfile(profileId: String): wallcrawl.elopenmike.com.core.database.entity.UserProfileEntity? = error("Not used")
+    override suspend fun advanceOutcomeProfileRevision(profileId: String, expectedRevision: Long): Int = error("Not used")
+    override suspend fun replaceOutcomeMarker(marker: wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendingEntity) = error("Not used")
+
     val completionUpdates = mutableListOf<SetCompletionUpdate>()
     var affectedRows: Int = 1
     var exerciseType: ExerciseType = ExerciseType.WEIGHT_REPS
@@ -523,6 +529,13 @@ private class EmptyWorkoutSessionDao(
     private val rangeRows: List<WorkoutSessionWithExercisesAndSets> = emptyList(),
     private val records: List<WorkoutRecommendationRecordEntity> = emptyList()
 ) : WorkoutSessionDao {
+    override suspend fun conditionOutcomeProbe(exerciseIds: List<String>, start: Long, limit: Int): List<wallcrawl.elopenmike.com.core.database.dao.ConditionOutcomeRow> = error("Not used")
+    override fun observeConditionPendingProbe(profileId: String, limit: Int) = kotlinx.coroutines.flow.flow {
+        emit(conditionPendingProbe(profileId, limit))
+    }
+
+    override suspend fun conditionPendingProbe(profileId: String, limit: Int): List<wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendingEntity> = error("Not used")
+
     override suspend fun selectCitedPerformanceIds(sessionId: String, sourceIds: List<String>, sourceExercisePairs: List<String>):
         List<wallcrawl.elopenmike.com.core.database.dao.PreviousPerformanceIds> =
         error("This fake does not model cited performance.")

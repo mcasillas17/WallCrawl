@@ -1,0 +1,466 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "hip-osteoarthritis",
+    "label": "Hip osteoarthritis",
+    "aliases": [],
+    "distinctions": "Symptomatic hip OA; do not merge knee-only OA, FAI, inflammatory arthritis or postoperative precautions."
+  },
+  "scope": {
+    "population": "Adults with diagnosed symptomatic hip OA.",
+    "stage": "Nonoperative; severity varies.",
+    "operativeStatus": "Nonoperative rehabilitation only; postoperative pathways require separate assessment.",
+    "exclusions": "Acute unexplained pain, surgical precautions and systemic disease not resolved.",
+    "uncertainty": "Source eligibility limits applicability; it does not establish contraindications."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "hip osteoarthritis PHOENIX 2025 resistance aerobic trial outcomes",
+      "decision": "Retained primary abstract plus separate full protocol.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "hip osteoarthritis exercise therapy no treatment placebo ultrasound 2014 25249361 full text",
+      "decision": "Retrieved positive THüKo and contrary sham-controlled Bennell trial.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "site.pubmed.ncbi.nlm.nih.gov \"Exercise for osteoarthritis of the hip\" 2026 2025 CD007912",
+      "decision": "Used current 2026 review rather than stale 2014 abstract.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "site.nice.org.uk/guidance/ng226 \"1.3.1\" \"exercise\" \"pain\"",
+      "decision": "Retained guideline recommendation separately from trial effects.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "\"10.1001/jama.2014.4591\" correction retraction",
+      "decision": "Letters/reply found; no correction identified.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST, primary MED abstracts; selected PubMed reopens",
+      "query": "Exact primary-record queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A39922217%20AND%20SRC%3AMED&format=json&resultType=core; https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A42486497%20AND%20SRC%3AMED&format=json&resultType=core",
+      "decision": "Bounded accessible-protocol audit restored explicitly reported facts for hall-2025-phoenix, hall-2026-review. Program/contact totals are distinguished from isolated exercise schedules; no unseen protocol, new search discovery or clinical release.",
+      "limitations": "Abstract-only/partial access unchanged. Unreported mechanics, home frequency, progression or stopping criteria remain unknown; no frequency computed from total contacts/duration."
+    }
+  ],
+  "sources": [
+    {
+      "id": "bennell-2014",
+      "title": "Effect of physical therapy on pain and function in patients with hip osteoarthritis: a randomized clinical trial",
+      "doi": "10.1001/jama.2014.4591",
+      "pmid": "24846036",
+      "url": "https://jamanetwork.com/journals/jama/fullarticle/1872817",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Publisher HTML full text inspected; PubMed corroborated identifiers."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed and DOI correction/retraction query inspected.",
+        "result": "Letters/reply surfaced, not a correction or retraction; no notice located."
+      },
+      "design": "Participant/assessor-blinded sham-controlled RCT; n=102.",
+      "population": "Radiographic symptomatic hip OA; pain ≥ 40/100 mm; community volunteers.",
+      "comparator": "Inactive ultrasound/inert gel.",
+      "coInterventions": "Education, manual therapy, optional walking stick; home exercises.",
+      "outcomes": "At 13 weeks pain difference 6.9/100 mm (95% CI −3.9 to 17.7) favored sham nonsignificantly; function difference 1.4 (−3.8 to 6.5).",
+      "followUp": "13 and 36 weeks.",
+      "uncertainty": "Multimodal package; cannot separate components.",
+      "harms": "26 mild/transient events in 19/46 active vs 9 in 7/49 sham; participant reporting.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "Hip abductor/quadriceps strength, mobility, balance/gait; individualized variants.",
+        "dose": "4–6 home exercises; per-exercise dose not extracted.",
+        "frequency": "4/week; 10 visits/12 weeks.",
+        "supervision": "Therapist sessions plus home work.",
+        "progression": "Individualized.",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Methods > Interventions",
+        "Results > Tables 2 and 5; Discussion"
+      ]
+    },
+    {
+      "id": "krauss-2014",
+      "title": "Exercise Therapy in Hip Osteoarthritis—a Randomized Controlled Trial",
+      "doi": "10.3238/arztebl.2014.0592",
+      "pmid": "25249361",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4174683/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Primary full text inspected at linked archive/publisher; Europe PMC XML used where PMC HTML challenged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "RCT, three main arms; analyzed n=209.",
+      "population": "Hip OA with relatively preserved vitality; contralateral prostheses permitted.",
+      "comparator": "No intervention; placebo ultrasound.",
+      "coInterventions": "Education/social interaction.",
+      "outcomes": "12-week SF-36 bodily-pain difference vs control 5.7/100 (0.4–11.1); WOMAC pain vs placebo 5.1 (0.7–9.4).",
+      "followUp": "Controlled comparison 12 weeks; later treatment unrestricted.",
+      "uncertainty": "Unblinded exercise, ceiling effects; materials support and author book royalties.",
+      "harms": "No withdrawal attributed to therapy adverse effects; not equivalent to no events.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "Strength, proprioception, balance and flexibility bundle.",
+        "dose": "Group 60–90 min; home 30–40 min.",
+        "frequency": "Group weekly plus home twice weekly for 12 weeks.",
+        "supervision": "Qualified group instruction.",
+        "progression": "not reported in extracted article protocol.",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Methods > Study design and intervention",
+        "Results > Tables 2–4; Footnotes > Conflict of interest"
+      ]
+    },
+    {
+      "id": "hall-2025-phoenix",
+      "title": "Addition of aerobic physical activity to resistance exercise for hip osteoarthritis (PHOENIX): a randomised comparative effectiveness trial",
+      "doi": "10.1016/S2665-9913(24)00373-4",
+      "pmid": "39922217",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39922217/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed abstract inspected; ScienceDirect full text 403. Protocol below separately retrieved. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 39922217); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "RCT; n=196.",
+      "population": "Symptomatic hip OA adults.",
+      "comparator": "Resistance exercise alone.",
+      "coInterventions": "Resistance exercise and physiotherapist contacts both groups.",
+      "outcomes": "Adding aerobic activity did not improve 3-month pain more: MD 0.3/10 (−0.3 to 0.8), function −0.9 (−3.6 to 1.8).",
+      "followUp": "3-month primary endpoint; 9-month follow-up described.",
+      "uncertainty": "No superiority is not proof of equivalence; NHMRC funding.",
+      "harms": "24 related events combined vs 31 resistance-only; none serious (abstract); ascertainment unavailable.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Methods (primary abstract, PMID 39922217): home resistance exercise alone versus home resistance exercise plus aerobic physical activity. The abstract does not identify exact strength/aerobic executions, equipment or ranges.",
+        "dose": "reported in accessible text: Abstract > Methods (primary abstract, PMID 39922217): both groups received nine physiotherapist consultations over three months plus a home program. These are contact/program facts, not exercise-specific dose or confirmation of all delivery details in the separately published protocol.",
+        "frequency": "not reported",
+        "supervision": "reported in accessible text: Abstract > Methods (primary abstract, PMID 39922217): nine physiotherapist consultations and a home exercise program are reported. Continuous exercise supervision and home monitoring are not established; home frequency cannot be inferred from the consultation total.",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Methods, Findings, Interpretation",
+        "Abstract > Methods"
+      ]
+    },
+    {
+      "id": "hall-2022-protocol",
+      "title": "Effects of adding aerobic physical activity to strengthening exercise on hip osteoarthritis symptoms: protocol for the PHOENIX randomised controlled trial",
+      "doi": "10.1186/s12891-022-05282-0",
+      "pmid": "35436914",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9014787/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Europe PMC XML (PMC9014787.2) and Additional file 5 PDF text via native PDFKit inspected: https://static-content.springer.com/esm/art%3A10.1186%2Fs12891-022-05282-0/MediaObjects/12891_2022_5282_MOESM5_ESM.pdf . No visual figure inspection."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "Prospective trial protocol; no treatment-effect estimate.",
+      "population": "Age ≥ 45, clinical symptomatic hip OA > 3 months; exercise health screening.",
+      "comparator": "Resistance exercise vs same plus aerobic activity.",
+      "coInterventions": "OA/pain education, behavior support.",
+      "outcomes": "Prespecified design and execution, not evidence of efficacy.",
+      "followUp": "Planned 3 and 9 months.",
+      "uncertainty": "Protocol amendments for COVID/recruitment; published results linked separately.",
+      "harms": "Participant/therapist reports; investigators adjudicate causality.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "4–6 selected lower-limb exercises; bridge and sit-to-stand detailed in supplement.",
+        "dose": "Initially 1–2 sets ×8–12; progress to 3 sets; modified Borg ≥ 7 initially, then 7–8.",
+        "frequency": "3/week at home; nine video consultations/3 months.",
+        "supervision": "Therapist teaches and adjusts.",
+        "progression": "Individualized load/volume; supplement options.",
+        "stoppingRules": "Discontinue as necessary after adverse event; arrange medical advice."
+      },
+      "locations": [
+        "Methods > Strengthening exercise program",
+        "Additional file 5 > Bridging; Functional / Knee Extensors",
+        "Methods/design > Adverse events"
+      ]
+    },
+    {
+      "id": "hall-2026-review",
+      "title": "Exercise for osteoarthritis of the hip",
+      "doi": "10.1002/14651858.CD007912.pub3",
+      "pmid": "42486497",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42486497/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Current PubMed abstract inspected. Cochrane public webpage mixes updated summary with older 10-trial abstract; current PubMed version used. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 42486497); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "2026 pub 3 is formal update of 2014 pub 2; not a retraction."
+      },
+      "design": "Cochrane review; 18 RCTs/1368; search to 5 Feb 2025.",
+      "population": "Adult hip OA; excludes perioperative programs.",
+      "comparator": "Placebo; usual care/no treatment; matched cointerventions.",
+      "coInterventions": "not reported",
+      "outcomes": "Vs usual care: pain −7.19/100 (−10.70 to −3.68), function −8.79 (−12.00 to −5.41); moderate certainty, probably small clinical impact.",
+      "followUp": "Primarily immediately after treatment.",
+      "uncertainty": "Small/unblinded studies; placebo comparison less certain.",
+      "harms": "Exercise vs usual care RR 2.95 (0.62–13.96), very low certainty.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Objectives and Eligibility criteria (primary abstract, PMID 42486497): land-based exercise is the review intervention, alone or with co-interventions; perioperative programs and gait-aid/retraining interventions were excluded. No particular land-based execution or shared regimen is described.",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Search methods; Synthesis of results; Conclusions",
+        "Abstract > Objectives and Eligibility criteria"
+      ]
+    },
+    {
+      "id": "nice-ng226",
+      "title": "Osteoarthritis in over 16s: diagnosis and management (NG226)",
+      "doi": null,
+      "pmid": null,
+      "url": "https://www.nice.org.uk/guidance/NG226/chapter/recommendations",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "NICE indexed recommendation text inspected; lower-case URL returned 403; guideline PDF also indexed."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "National guideline, published 2022; current retrieved recommendations.",
+      "population": "People over 16 with OA; joint-tailored management.",
+      "comparator": "Not a trial.",
+      "coInterventions": "Education/behavior-change approaches considered.",
+      "outcomes": "Recommends tailored strengthening/aerobic exercise; consider supervision and education.",
+      "followUp": "Long-term adherence recommendation.",
+      "uncertainty": "Guideline predates 2026 hip-specific review.",
+      "harms": "Initial pain/discomfort can increase; guideline does not supply a numeric stopping threshold.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "Tailored local strengthening/general aerobic fitness.",
+        "dose": "not reported",
+        "frequency": "Regular/consistent; no fixed frequency.",
+        "supervision": "Consider supervised sessions.",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Recommendations > 1.3.1–1.3.4"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "multimodal-null",
+      "kind": "study-result",
+      "statement": "At 13 weeks pain difference 6.9/100 mm (95% CI −3.9 to 17.7) favored sham nonsignificantly; function difference 1.4 (−3.8 to 6.5).",
+      "citations": [
+        {
+          "sourceId": "bennell-2014",
+          "location": "Results > Tables 2 and 5; Discussion"
+        }
+      ],
+      "applicability": "Radiographic symptomatic hip OA; pain ≥ 40/100 mm; community volunteers.",
+      "limitations": "Multimodal package; cannot separate components."
+    },
+    {
+      "id": "thuko-signal",
+      "kind": "study-result",
+      "statement": "12-week SF-36 bodily-pain difference vs control 5.7/100 (0.4–11.1); WOMAC pain vs placebo 5.1 (0.7–9.4).",
+      "citations": [
+        {
+          "sourceId": "krauss-2014",
+          "location": "Results > Tables 2–4; Footnotes > Conflict of interest"
+        }
+      ],
+      "applicability": "Hip OA with relatively preserved vitality; contralateral prostheses permitted.",
+      "limitations": "Unblinded exercise, ceiling effects; materials support and author book royalties."
+    },
+    {
+      "id": "aerobic-addition-null",
+      "kind": "study-result",
+      "statement": "Adding aerobic activity did not improve 3-month pain more: MD 0.3/10 (−0.3 to 0.8), function −0.9 (−3.6 to 1.8).",
+      "citations": [
+        {
+          "sourceId": "hall-2025-phoenix",
+          "location": "Abstract > Methods, Findings, Interpretation"
+        }
+      ],
+      "applicability": "Symptomatic hip OA adults.",
+      "limitations": "No superiority is not proof of equivalence; NHMRC funding."
+    },
+    {
+      "id": "phoenix-execution",
+      "kind": "published-recommendation",
+      "statement": "Protocol supplies supervised individualized resistance choices, with actual dose retained in source.",
+      "citations": [
+        {
+          "sourceId": "hall-2022-protocol",
+          "location": "Methods > Strengthening exercise program"
+        }
+      ],
+      "applicability": "Age ≥ 45, clinical symptomatic hip OA > 3 months; exercise health screening.",
+      "limitations": "Protocol is not an approved app regimen."
+    },
+    {
+      "id": "current-review",
+      "kind": "study-result",
+      "statement": "Vs usual care: pain −7.19/100 (−10.70 to −3.68), function −8.79 (−12.00 to −5.41); moderate certainty, probably small clinical impact.",
+      "citations": [
+        {
+          "sourceId": "hall-2026-review",
+          "location": "Abstract > Search methods; Synthesis of results; Conclusions"
+        }
+      ],
+      "applicability": "Adult hip OA; excludes perioperative programs.",
+      "limitations": "Small/unblinded studies; placebo comparison less certain."
+    },
+    {
+      "id": "tailor-exercise",
+      "kind": "published-recommendation",
+      "statement": "Recommends tailored strengthening/aerobic exercise; consider supervision and education.",
+      "citations": [
+        {
+          "sourceId": "nice-ng226",
+          "location": "Recommendations > 1.3.1–1.3.4"
+        }
+      ],
+      "applicability": "People over 16 with OA; joint-tailored management.",
+      "limitations": "Guideline predates 2026 hip-specific review."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "phoenix-bilateral-floor-bridge-mapping",
+      "exerciseId": null,
+      "requestId": "phoenix-bilateral-floor-bridge",
+      "findingIds": [
+        "phoenix-execution"
+      ],
+      "matchRationale": "Catalog glute-bridge names floor bridging but does not verify the study hold/stance from inspected metadata; exact-match review remains open.",
+      "status": "candidate"
+    },
+    {
+      "id": "phoenix-chair-sit-to-stand-mapping",
+      "exerciseId": null,
+      "requestId": "phoenix-chair-sit-to-stand",
+      "findingIds": [
+        "phoenix-execution"
+      ],
+      "matchRationale": "Catalog squat variants do not verify this chair execution; inspect artwork and source supplement before reuse.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "tailored-resistance-candidate",
+      "kind": "supportive-prescription",
+      "basis": "published-recommendation",
+      "statement": "Consider individually selected resistance candidates during content review; source study doses remain research data.",
+      "findingIds": [
+        "tailor-exercise",
+        "phoenix-execution"
+      ],
+      "citations": [
+        {
+          "sourceId": "nice-ng226",
+          "location": "Recommendations > 1.3.1–1.3.4"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with diagnosed symptomatic hip OA.",
+        "stage": "Nonoperative; severity varies.",
+        "rationale": "Draft inference constrained to the linked population and intervention; no individual clearance."
+      },
+      "limitations": "No release or promise of individual symptom benefit.",
+      "mappingIds": [
+        "phoenix-bilateral-floor-bridge-mapping",
+        "phoenix-chair-sit-to-stand-mapping"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "avoid-blanket-oa-ban",
+      "kind": "load-limit",
+      "basis": "product-precaution",
+      "statement": "Withhold blanket gym/lifting bans and fixed load caps; tailored tolerability remains unresolved.",
+      "findingIds": [
+        "current-review",
+        "multimodal-null"
+      ],
+      "citations": [
+        {
+          "sourceId": "hall-2026-review",
+          "location": "Abstract > Search methods; Synthesis of results; Conclusions"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with diagnosed symptomatic hip OA.",
+        "stage": "Nonoperative; severity varies.",
+        "rationale": "Draft inference constrained to the linked population and intervention; no individual clearance."
+      },
+      "limitations": "Product evidence-handling precaution, not a medical load limit.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "All material is draft and clinically unreviewed; no runtime mapping, supported-condition claim, default dose or escalation clearance follows.",
+    "No universal numeric load/range cap or hard exercise contraindication was established; benefit from alternatives and trial exclusions do not prove harm.",
+    "Concurrent condition restrictions, equipment requirements and independent joint limits remain controlling; stretching never earns strength-set credit or generic five-second progression.",
+    "Exact clinically acceptable pain response/ROM and load starting points remain individual; severe surgical-indication OA needs separate applicability review.",
+    "PHOENIX final full text inaccessible; its protocol cannot prove implemented adherence or final deviations."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

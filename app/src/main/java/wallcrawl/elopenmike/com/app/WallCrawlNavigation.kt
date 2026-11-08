@@ -24,7 +24,7 @@ sealed class Screen(val route: String, @StringRes val titleRes: Int, val icon: I
     data object Profile : Screen("profile", R.string.nav_profile, Icons.Default.Person)
 
     companion object {
-        val bottomNavItems = listOf(Today, Progress, Exercises, Profile)
+        val bottomNavItems = listOf(Today, Progress, Exercises)
     }
 }
 
@@ -33,7 +33,10 @@ object AppRoutes {
     const val TODAY = "today"
     const val PROGRAM = "program"
     const val PROGRESS = "progress"
+    const val TRENDS = "progress/trends"
+    const val MUSCLES = "progress/muscles"
     const val EXERCISES = "exercises"
+    const val CONDITION_REFERENCE = "condition_reference"
     const val PROFILE = "profile"
     const val ACTIVE_WORKOUT = "workout_active/{sessionId}"
     const val WORKOUT_TEMPLATES = "workout_templates"

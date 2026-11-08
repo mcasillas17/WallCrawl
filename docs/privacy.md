@@ -15,11 +15,9 @@ offline, one-time authoring and acceptance process before this build was assembl
 running the app never calls an AI model, uploads profile or workout data for review,
 or re-runs that acceptance at runtime.
 
-**Reported conditions are health-related information.** If you choose any, the condition
-names are stored with your profile in the same local Room database. They stay on the device
-under the backup exclusions below and are used only by local planning rules. They are written
-to an export only when you ask for one, and a restore brings them back. An exported file holds
-them in clear text.
+The condition reference bundles its bibliography and study notes for offline reading.
+Search terms and the selected condition are local screen state. Tapping **Open
+publication** passes the selected paper’s HTTPS address to the device’s browser.
 
 **Implicit Android backup stays disabled.** The application sets
 `android:allowBackup="false"` and explicitly excludes all documented app-data
@@ -39,8 +37,7 @@ install can use it without first building a profile it would discard.
 One JSON file, written where you choose:
 
 - the profile: codename, goals, experience, units, schedule, equipment,
-  constraints, reported conditions (health-related; see the Policy section),
-  muscle priorities, confirmed starting loads, movement-capability
+  constraints, muscle priorities, confirmed starting loads, movement-capability
   answers, theme, and optional self-described gender (plus legacy illustration-preference
   data from the initial integration preview, if present);
 - every saved template with its exercises and prescriptions;
@@ -60,7 +57,7 @@ or the weekly-ledger cache, which is derived (see
 [deriving the ledger](weekly-dose-ledger.md)).
 
 **An export is readable personal information.** Training history, physical
-capability answers, reported conditions, and body-adjacent preferences are in clear text. Anyone who
+capability answers, and body-adjacent preferences are in clear text. Anyone who
 opens the file can read them. Choose the destination deliberately: Android's
 document picker can offer cloud-backed providers as well as local storage, and
 WallCrawl cannot tell which one you picked. The app itself never uploads
@@ -104,7 +101,7 @@ from the same local history. It writes nothing, not even the ledger cache. Its s
 holds only the four filter choices, which week is expanded and how many rows are shown,
 never history or chart values. It sends no telemetry and makes no
 network or model call. Package 15 adds the weight unit a template's loads are in.
-Current storage is Room 16 and archive 6.
+Current storage uses Room 18 and archive version 8.
 
 The repository's [Room schema JSON](room-schemas.md) is separate build evidence: table
 definitions and compiler metadata, with no user records. It is not a user-data archive,
@@ -126,7 +123,7 @@ it cannot recreate historical profile or catalog inputs that were never stored.
 ### Archive compatibility
 
 The archive format has its own version, separate from the Room schema version. This
-build **writes version 6** and **reads versions 1 through 6**. The schema version, app
+build **writes version 8** and **reads versions 1 through 8**. The schema version, app
 version, creation time, and the bundled catalog commit are recorded as provenance only;
 they never decide whether a file can be restored.
 
@@ -163,6 +160,14 @@ one. It is the same kind of training data the template already held, stays on-de
 is exported only when the user asks, and is removed by Delete all data. Earlier
 archives keep their checksums and restore their templates with no unit. Unsaved
 template-editor drafts are never written to the database, a file, or an archive.
+
+Two builds used version 7. One saved reported condition IDs, the role of a session
+exercise and an optional hold on each repetition. The other saved selected answers,
+frozen session context, prescription purpose, recommendation bindings, unresolved
+restrictions and pending reassessments. Version 8 preserves either history. A reported
+ID carries no answers or clearance. Historical mobility stays supportive and earns
+no strength credit. Both the recorded repetitions and the prescribed hold are retained.
+Each version 7 document must use one consistent format and match its original checksum.
 
 A file written by a newer WallCrawl is still refused with a message saying so, rather than
 partially understood — a future format may attach meaning to fields this build would drop.
@@ -213,8 +218,7 @@ no longer contains keeps its identifier rather than being remapped.
 ### What deletion does and does not reach
 
 Deleting all local data asks for explicit confirmation, naming what is lost —
-including a workout in progress — and then removes the profile (with any reported
-conditions) and preferences,
+including a workout in progress — and then removes the profile and preferences,
 movement answers, templates, every session with its exercises and sets, every
 validation record, deload preferences, program enrollment and associations, and the
 derived weekly-ledger cache. The app returns to
@@ -393,3 +397,14 @@ not erase/reset a shared device or run destructive restore scripts on real data.
 - [Application manifest: allowBackup and manufacturer caveats](https://developer.android.com/guide/topics/manifest/application-element#allowbackup)
 - [Android 12 backup/restore behavior changes](https://developer.android.com/about/versions/12/behavior-changes-12#backup-restore)
 - [Testing backup and transfer](https://developer.android.com/identity/data/testingbackup)
+
+Condition selections (which may reveal diagnoses), session context and pending reassessments are stored locally. A user-selected export includes these details in readable form; deleting local data removes them from the device but does not delete previously exported files.
+
+Frozen session context includes selected answers, exact support/execution/policy
+identities and instructions. Pending reassessment events remain after condition
+removal, workout cancellation or source-set deletion; only explicit exact-event
+reassessment clears them. These records and prescription purpose round-trip in
+the versioned local archive and are removed by Delete all local data. Restore
+still requires an empty destination and applies atomically; it does not silently
+merge, discard unknown facts or grant clearance. No new network service, telemetry
+or background upload was introduced. See [condition-aware behavior](condition-aware-workouts.md).

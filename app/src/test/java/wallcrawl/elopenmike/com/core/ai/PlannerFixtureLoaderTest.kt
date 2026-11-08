@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import java.io.InputStream
 import org.junit.Assert.assertThrows
 import org.junit.Test
+import org.json.JSONObject
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
@@ -16,6 +17,52 @@ import wallcrawl.elopenmike.com.core.model.WeightUnit
 class PlannerFixtureLoaderTest {
 
     private val loader = PlannerFixtureLoader()
+
+    @Test
+    fun conditionDescriptorsRejectUnknownDuplicateOverBoundAndContradictoryData() {
+        val source = checkNotNull(javaClass.classLoader!!.getResourceAsStream("planner-fixtures/condition-released.json"))
+            .bufferedReader().use { it.readText() }
+        val mutations: List<(JSONObject) -> Unit> = listOf(
+            { it.getJSONObject("conditions").put("unexpected", true) },
+            { it.getJSONObject("conditions").put("supportVariant", "REAL_DIAGNOSIS") },
+            { root -> val selections = root.getJSONObject("conditions").getJSONArray("selections"); selections.put(selections.get(0)) },
+            { root -> val selections = root.getJSONObject("conditions").getJSONArray("selections"); repeat(2) { selections.put(selections.get(0)) } },
+            { it.getJSONObject("conditions").getJSONArray("selections").getJSONObject(0).put("conditionId", "real-condition") },
+            { it.getJSONObject("conditions").getJSONArray("selections").getJSONObject(0).getJSONObject("answers").put("unknown", "answer") },
+            { it.getJSONObject("conditions").getJSONArray("selections").getJSONObject(0).put("contextSchemaVersion", 1.5) },
+            { it.getJSONObject("expected").put("outcome", "CONDITION_REQUIREMENTS_UNSATISFIED") },
+            { it.getJSONObject("expected").getJSONObject("prescriptions").getJSONObject("butterfly-stretch").put("sets", 0) },
+            { it.getJSONObject("expected").getJSONObject("prescriptions").getJSONObject("butterfly-stretch").put("seconds", 1.5) },
+            { it.getJSONObject("expected").getJSONObject("ordinaryDose").put("purpose", "SUPPORTIVE") },
+            { it.getJSONObject("expected").getJSONObject("ordinaryDose").put("minRir", 0) },
+            { it.getJSONObject("expected").remove("ordinaryDose") },
+            { it.remove("reviewedEligibility") }
+        )
+        mutations.forEach { mutate ->
+            val value = JSONObject(source).also(mutate)
+            assertThrows(PlannerFixtureFormatException::class.java) {
+                loaderWithResource("planner-fixtures/condition-invalid.json", value.toString())
+                    .loadResource("planner-fixtures/condition-invalid.json")
+            }
+        }
+    }
+
+    @Test
+    fun conditionFailuresCannotCarryDosesAndSuccessCannotCarryReasons() {
+        val failure = checkNotNull(javaClass.classLoader!!.getResourceAsStream("planner-fixtures/condition-pain-stop.json"))
+            .bufferedReader().use { JSONObject(it.readText()) }
+        failure.getJSONObject("expected").put("outcome", "SUCCESS")
+        assertThrows(PlannerFixtureFormatException::class.java) {
+            loaderWithResource("planner-fixtures/condition-invalid.json", failure.toString())
+                .loadResource("planner-fixtures/condition-invalid.json")
+        }
+        failure.getJSONObject("expected").put("outcome", "CONDITION_REQUIREMENTS_UNSATISFIED")
+            .getJSONObject("prescriptions").put("butterfly-stretch", JSONObject("""{"purpose":"SUPPORTIVE","sets":2,"seconds":20,"rest":17}"""))
+        assertThrows(PlannerFixtureFormatException::class.java) {
+            loaderWithResource("planner-fixtures/condition-invalid.json", failure.toString())
+                .loadResource("planner-fixtures/condition-invalid.json")
+        }
+    }
 
     @Test
     fun loadResource_parsesValidFixtureAndNormalizesCapabilities() {
@@ -91,9 +138,15 @@ class PlannerFixtureLoaderTest {
             "reviewed-enabled-uncleared-joint-constraint",
             "reviewed-enabled-cleared-joint-constraints",
             "concurrent-activity",
-            "condition-piriformis",
-            "joint-label-hip",
-            "condition-removes-all"
+            "condition-released",
+            "condition-compatible",
+            "condition-incompatible",
+            "condition-missing-context",
+            "condition-withdrawn",
+            "condition-duration",
+            "condition-equipment",
+            "condition-pain-stop",
+            "condition-removed-pain-stop"
         ).inOrder()
         assertThat(fixtures.map { it.id }).doesNotContain("valid-basic")
     }

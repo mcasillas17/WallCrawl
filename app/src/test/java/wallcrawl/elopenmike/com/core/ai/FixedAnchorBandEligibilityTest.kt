@@ -6,7 +6,6 @@ import org.junit.Test
 import org.json.JSONObject
 import java.io.File
 import wallcrawl.elopenmike.com.core.exercise.ExerciseFilter
-import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.EligibilityReason
@@ -60,7 +59,7 @@ class FixedAnchorBandEligibilityTest {
             }.keys
             val legacy = ExerciseFilter().filterCandidates(anchored, profile)
             val reviewed = ExerciseEligibilityPolicy().evaluate(
-                anchored.map(::syntheticApproval), profile, AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+                anchored.map(::syntheticApproval), profile, AdaptationState.BUILD
             )
             assertWithMessage("Legacy inventory: $owned").that(legacy.map(Exercise::id))
                 .containsExactlyElementsIn(expected)
@@ -80,7 +79,7 @@ class FixedAnchorBandEligibilityTest {
         ))
         assertThat(ExerciseFilter().filterCandidates(anchored, profile)).isEmpty()
         assertThat(ExerciseEligibilityPolicy().evaluate(
-            anchored.map(::syntheticApproval), profile, AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            anchored.map(::syntheticApproval), profile, AdaptationState.BUILD
         ).decisions.all { EligibilityReason.MISSING_EQUIPMENT in it.reasons }).isTrue()
     }
 
@@ -95,7 +94,7 @@ class FixedAnchorBandEligibilityTest {
         }
         val result = ExerciseEligibilityPolicy().evaluate(
             incompleteApprovals, UserProfile(availableEquipment = listOf(BAND)),
-            AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            AdaptationState.BUILD
         )
         assertThat(result.decisions.all { EligibilityReason.MISSING_EQUIPMENT in it.reasons })
             .isTrue()
@@ -108,18 +107,18 @@ class FixedAnchorBandEligibilityTest {
         ), excludedExerciseIds = REQUIRED.keys.toList())
         assertThat(ExerciseFilter().filterCandidates(anchored, profile)).isEmpty()
         assertThat(ExerciseEligibilityPolicy().evaluate(
-            anchored.map(::syntheticApproval), profile, AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            anchored.map(::syntheticApproval), profile, AdaptationState.BUILD
         ).decisions.all { EligibilityReason.USER_EXCLUDED in it.reasons }).isTrue()
 
         val notExcluded = profile.copy(excludedExerciseIds = emptyList())
         assertThat(ExerciseEligibilityPolicy().evaluate(
-            anchored, notExcluded, AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            anchored, notExcluded, AdaptationState.BUILD
         ).decisions.all { EligibilityReason.MISSING_APPROVED_METADATA in it.reasons }).isTrue()
         val draft = anchored.map(::syntheticApproval).map {
             it.copy(reviewedMetadata = it.reviewedMetadata!!.copy(reviewState = ReviewState.DRAFT))
         }
         assertThat(ExerciseEligibilityPolicy().evaluate(
-            draft, notExcluded, AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            draft, notExcluded, AdaptationState.BUILD
         ).decisions.none { it.eligible }).isTrue()
 
         val standing = syntheticApproval(anchored.single { it.id == "banded-pallof-press" })
@@ -127,14 +126,13 @@ class FixedAnchorBandEligibilityTest {
             mapOf(MovementCapabilityType.BALANCE_WITHOUT_SUPPORT to CapabilityLevel.AVOID)
         ))
         assertThat(ExerciseEligibilityPolicy().evaluate(
-            listOf(standing), avoidBalance, AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            listOf(standing), avoidBalance, AdaptationState.BUILD
         ).decisions.single().reasons).contains(EligibilityReason.CAPABILITY_AVOID)
         assertThat(ExerciseEligibilityPolicy().evaluate(
             listOf(standing),
             notExcluded.copy(trainingConstraints = setOf(TrainingConstraint.SHOULDER_SENSITIVE)),
-            AdaptationState.BUILD,
-            restrictions = ConditionRestrictions.Unavailable
-        ).decisions.single().reasons).contains(EligibilityReason.CONDITION_GUIDANCE_UNAVAILABLE)
+            AdaptationState.BUILD
+        ).decisions.single().reasons).contains(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
     }
 
     @Test
@@ -149,7 +147,7 @@ class FixedAnchorBandEligibilityTest {
         )
         assertThat(profile.availableEquipment).containsExactly(BAND)
         assertThat(profile.confirmedStartingLoads).isEmpty()
-        assertThat(catalog).hasSize(309)
+        assertThat(catalog).hasSize(302)
         assertThat(catalog.count { it.reviewedMetadata?.reviewState == ReviewState.APPROVED })
             .isEqualTo(0)
         // The value WallCrawlApplication injects, not merely the constructor default, so a
@@ -177,7 +175,7 @@ class FixedAnchorBandEligibilityTest {
         }
         val result = ExerciseEligibilityPolicy().evaluate(
             listOf(advanced, regression), UserProfile(availableEquipment = listOf(BAND)),
-            AdaptationState.UNCALIBRATED, restrictions = ConditionRestrictions.None
+            AdaptationState.UNCALIBRATED
         )
         assertThat(result.decisions.first().reasons)
             .contains(EligibilityReason.ADVANCED_WHILE_UNCALIBRATED)

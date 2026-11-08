@@ -7,10 +7,10 @@ import androidx.compose.ui.graphics.Color
 // ==========================================
 
 // 1. Signature Spider Scarlet Red (Primary Action & Branding)
-val SpiderRedPrimary = Color(0xFFE81A21)
-val SpiderRedVibrant = Color(0xFFFF2A3A)
-val SpiderRedDeep = Color(0xFF9E0012)
-val SpiderRedGlow = Color(0x33E81A21)
+val SpiderRedPrimary = Color(0xFFDE2045)
+val SpiderRedVibrant = Color(0xFFFF6C87)
+val SpiderRedDeep = Color(0xFF602334)
+val SpiderRedGlow = Color(0x33DE2045)
 
 // Aliases for compatibility
 val CrimsonRedPrimary = SpiderRedPrimary
@@ -29,12 +29,12 @@ val WebBlueAccent = SpiderBlueElectric
 val WebBlueGlow = SpiderBlueGlow
 
 // 3. Symbiote Obsidian & Dark Suit Graphite (Surfaces & Backgrounds)
-val ObsidianBlack = Color(0xFF08090C)
-val DarkGraphiteBackground = Color(0xFF0D1017)
-val GraphiteSurface = Color(0xFF131722)
-val GraphiteSurfaceElevated = Color(0xFF1A2030)
-val GraphiteBorder = Color(0xFF273248)
-val GraphiteDivider = Color(0xFF1D2536)
+val ObsidianBlack = Color(0xFF101113)
+val DarkGraphiteBackground = Color(0xFF151618)
+val GraphiteSurface = Color(0xFF17181B)
+val GraphiteSurfaceElevated = Color(0xFF202125)
+val GraphiteBorder = Color(0xFF47494F)
+val GraphiteDivider = Color(0xFF313238)
 
 // 4. Functional State Colors
 val SuccessGreen = Color(0xFF10B981)
@@ -48,26 +48,26 @@ val WarningAmber = Color(0xFFF59E0B)
 
 // 5. Web Silver & Typography Colors
 val TextWhite = Color(0xFFFFFFFF)
-val TextWebSilver = Color(0xFFE2E8F0)
-val TextPrimary = Color(0xFFF1F5F9)
-val TextSecondary = Color(0xFF94A3B8)
+val TextWebSilver = Color(0xFFDEDCDF)
+val TextPrimary = Color(0xFFF5F4F2)
+val TextSecondary = Color(0xFFB7B6BB)
 val TextMuted = Color(0xFF64748B)
-val TextDisabled = Color(0xFF475569)
+val TextDisabled = Color(0xFF54545C)
 
 // ==========================================
 // Light Theme Palette (Clean Athletic Daylight)
 // ==========================================
-val LightBackground = Color(0xFFF8FAFC)
+val LightBackground = Color(0xFFF8F7F5)
 val LightSurface = Color(0xFFFFFFFF)
 val LightSurfaceElevated = Color(0xFFFFFFFF)
-val LightSurfaceCard = Color(0xFFF1F5F9)
-val LightBorder = Color(0xFFCBD5E1)
-val LightDivider = Color(0xFFE2E8F0)
+val LightSurfaceCard = Color(0xFFF5F4F2)
+val LightBorder = Color(0xFF9B9A9F)
+val LightDivider = Color(0xFFDEDCDF)
 
-val LightTextPrimary = Color(0xFF0F172A)
-val LightTextSecondary = Color(0xFF475569)
+val LightTextPrimary = Color(0xFF1B1B1F)
+val LightTextSecondary = Color(0xFF54545C)
 val LightTextMuted = Color(0xFF64748B)
-val LightTextDisabled = Color(0xFF94A3B8)
+val LightTextDisabled = Color(0xFFB7B6BB)
 
-val LightSpiderBluePrimary = Color(0xFF0284C7)
-val LightSpiderBlueGlow = Color(0x1A0284C7)
+val LightSpiderBluePrimary = Color(0xFF126494)
+val LightSpiderBlueGlow = Color(0x1A126494)

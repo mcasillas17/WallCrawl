@@ -32,9 +32,27 @@ data class GeneratedWorkout(
     val unavailableFocusMuscles: List<String> = emptyList(),
     /** Recorded separately from freshness: advancing the planner must not stale this plan. */
     val generationIndex: Int? = null,
-    /** Mobility work shown and started before the exercises. Empty without a condition routine. */
-    val mobilityBlock: List<PlannedExercise> = emptyList()
+    val conditionDecisions: List<ConditionPrescriptionDecision> = emptyList()
 )
+
+/** The exact condition rule provenance for one generated exercise instance. */
+class ConditionPrescriptionDecision(
+    val exerciseIdentity: ConditionExerciseIdentity,
+    val purpose: PrescriptionPurpose,
+    val executionIdentity: String,
+    sourceRuleReferences: Set<ConditionRuleReference>
+) {
+    val sourceRuleReferences = conditionSet(sourceRuleReferences)
+
+    init {
+        requireConditionToken(executionIdentity)
+        require(sourceRuleReferences.size in 1..512)
+    }
+
+    private fun valueFields(): List<Any?> = listOf(exerciseIdentity, purpose, executionIdentity, sourceRuleReferences)
+    override fun equals(other: Any?): Boolean = other is ConditionPrescriptionDecision && valueFields() == other.valueFields()
+    override fun hashCode(): Int = valueFields().hashCode()
+}
 
 sealed interface WorkoutRankingReason {
     data class TrainingFrequencyRecencyPreference(
@@ -90,7 +108,8 @@ data class WorkoutSession(
     val sourceTemplateId: String? = null,
     val focusMuscles: List<String> = emptyList(),
     val exercises: List<WorkoutExercise> = emptyList(),
-    val notes: String = ""
+    val notes: String = "",
+    val conditionContext: SessionConditionContext? = null
 ) {
     val totalVolume: Double
         get() = exercises.sumOf { it.totalVolume }
@@ -100,6 +119,13 @@ data class WorkoutSession(
 
     val totalSetsCount: Int
         get() = exercises.sumOf { it.sets.size }
+}
+
+/** Empty workouts predate the mobility block and retain their original training-day semantics. */
+internal fun WorkoutSession.trainingActivity(): WorkoutSession? {
+    if (exercises.none { it.isLegacyMobility }) return this
+    val counted = exercises.filterNot { it.isLegacyMobility }
+    return if (counted.isEmpty()) null else copy(exercises = counted)
 }
 
 enum class SessionStatus {
@@ -136,8 +162,11 @@ data class WorkoutExercise(
     val prescription: ExercisePrescription,
     val notes: String = "",
     val sets: List<WorkoutSet> = emptyList(),
-    val role: ExerciseRole = ExerciseRole.MAIN
+    /** Mobility from the earlier routine block is visible in history but excluded from training totals. */
+    val isLegacyMobility: Boolean = false
 ) {
+    init { require(!isLegacyMobility || prescription.purpose == PrescriptionPurpose.SUPPORTIVE) }
+
     /** Compatibility constructor for persisted repetition-only sessions before schema 4. */
     constructor(
         id: String = UUID.randomUUID().toString(),
@@ -173,19 +202,7 @@ data class WorkoutExercise(
     val targetRepMax: Int get() = prescription.repRange?.max ?: 0
     val targetWeight: Double? get() = prescription.targetWeight
     val targetRepRange: RepRange? get() = prescription.repRange
-    val targetHoldSeconds: Int? get() = prescription.holdSeconds
 }
-
-/** MOBILITY exercises are written by the routine block; everything else is MAIN. */
-enum class ExerciseRole { MAIN, MOBILITY }
-
-/** The rows that earn training credit: mobility work is logged like any set but never counted. */
-internal val WorkoutSession.mainExercises: List<WorkoutExercise>
-    get() = exercises.filter { it.role == ExerciseRole.MAIN }
-
-/** Logged work that is only mobility: it stays in history but is not a training session. */
-internal val WorkoutSession.isMobilityOnly: Boolean
-    get() = exercises.isNotEmpty() && mainExercises.isEmpty()
 
 /**
  * An individual set within a [WorkoutExercise].

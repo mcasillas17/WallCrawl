@@ -1,14 +1,18 @@
 package wallcrawl.elopenmike.com.feature.profile
 
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import wallcrawl.elopenmike.com.core.ui.*
+import wallcrawl.elopenmike.com.core.model.*
+import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
+import wallcrawl.elopenmike.com.core.ai.ConditionPlanningPolicy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
-import wallcrawl.elopenmike.com.R
-import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
-import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
-import wallcrawl.elopenmike.com.feature.conditions.PendingCondition
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
@@ -34,30 +38,118 @@ import kotlinx.coroutines.sync.withLock
 
 class ProfileViewModel(
     private val userProfileRepository: UserProfileRepository,
-    conditionGuidanceSource: ConditionGuidanceSource? = null
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
+    conditionSupport: suspend () -> ConditionSupportCatalog = { ConditionSupportCatalog("empty", emptyMap()) },
+    workoutRepository: WorkoutRepository? = null
 ) : ViewModel() {
 
+    private val conditionState = MutableStateFlow(ConditionUiState(
+        draft = savedStateHandle.get<List<String>>(CONDITION_DRAFT)?.let(::decodeConditionDraft),
+        reassessmentEventId = savedStateHandle[REASSESS_EVENT],
+        reassessmentAnswers = savedStateHandle.get<List<String>>(REASSESS_ANSWERS)
+            ?.let { decodeConditionDraft(it).single().answers } ?: emptyMap()
+    ))
+    val conditions: StateFlow<ConditionUiState> = conditionState
+
+    init {
+        viewModelScope.launch {
+            try {
+                val records = conditionSupport().records.values.filter(ConditionPlanningPolicy()::supports)
+                conditionState.value = conditionState.value.copy(records = records)
+            } catch (error: CancellationException) { throw error
+            } catch (_: Exception) { conditionState.value = conditionState.value.copy(loadFailed = true) }
+        }
+        if (workoutRepository != null) viewModelScope.launch {
+            workoutRepository.observePendingConditionReassessments(UserProfile.DEFAULT_PROFILE_ID)
+                .catch { error ->
+                    if (error is CancellationException) throw error
+                    conditionState.value = conditionState.value.copy(pendingFailed = true)
+                }.collect { rows -> conditionState.value = conditionState.value.copy(pending = rows, pendingFailed = false) }
+        }
+    }
+
+    fun startConditionEditing() {
+        val profile = (uiState.value as? ProfileUiState.Success)?.profile ?: return
+        if (conditionState.value.draft == null) updateConditionDraft(profile.activeConditions)
+    }
+
+    fun updateConditionDraft(selections: List<SelectedCondition>) {
+        if (conditionState.value.saving) return
+        savedStateHandle[CONDITION_DRAFT] = encodeConditionDraft(selections)
+        conditionState.value = conditionState.value.copy(draft = selections.toList(), saveFailed = false)
+    }
+
+    fun cancelConditionEditing() {
+        if (conditionState.value.saving) return
+        savedStateHandle.remove<List<String>>(CONDITION_DRAFT)
+        conditionState.value = conditionState.value.copy(draft = null, saveFailed = false)
+    }
+
+    fun saveConditions() {
+        val draft = conditionState.value.draft ?: return
+        if (conditionState.value.saving) return
+        conditionState.value = conditionState.value.copy(saving = true, saveFailed = false)
+        viewModelScope.launch {
+            try {
+                userProfileRepository.updateActiveConditions(draft)
+                conditionState.value = conditionState.value.copy(saving = false)
+                cancelConditionEditing()
+            } catch (error: CancellationException) { throw error
+            } catch (_: Exception) { conditionState.value = conditionState.value.copy(saving = false, saveFailed = true) }
+        }
+    }
+
+    fun updateReassessmentAnswers(eventId: String, answers: Map<String, String?>) {
+        if (conditionState.value.saving) return
+        if (answers.size > SelectedCondition.MAX_ANSWERS) {
+            conditionState.value = conditionState.value.copy(reassessmentAnswerLimitEventId = eventId)
+            return
+        }
+        val encoded = encodeConditionDraft(listOf(SelectedCondition("answers", 1, answers)))
+        savedStateHandle[REASSESS_EVENT] = eventId
+        savedStateHandle[REASSESS_ANSWERS] = encoded
+        conditionState.value = conditionState.value.copy(reassessmentEventId = eventId,
+            reassessmentAnswers = answers.toMap(), reassessmentRefusal = null, reassessmentAnswerLimitEventId = null, saveFailed = false)
+    }
+
+    fun reassess(event: PendingConditionReassessment) {
+        val state = conditionState.value
+        if (state.saving || state.reassessmentEventId != event.eventId) return
+        conditionState.value = state.copy(saving = true, saveFailed = false)
+        viewModelScope.launch {
+            try {
+                userProfileRepository.reassessCondition(event.conditionId, event.exerciseId, event.eventId, state.reassessmentAnswers)
+                savedStateHandle.remove<String>(REASSESS_EVENT)
+                savedStateHandle.remove<List<String>>(REASSESS_ANSWERS)
+                conditionState.value = conditionState.value.copy(saving = false, reassessmentEventId = null,
+                    reassessmentAnswers = emptyMap(), reassessmentRefusal = null, reassessmentAnswerLimitEventId = null)
+            } catch (error: CancellationException) { throw error
+            } catch (error: ConditionReassessmentRefused) {
+                conditionState.value = conditionState.value.copy(saving = false, reassessmentRefusal = error)
+            } catch (_: Exception) { conditionState.value = conditionState.value.copy(saving = false, saveFailed = true) }
+        }
+    }
+
     private val capabilityEditorFlow = MutableStateFlow(CapabilityEditorState())
-    private val conditionEditorFlow = MutableStateFlow(ConditionEditorState())
     // Capability saves also replace the equipment list as part of a whole-profile write.
     private val equipmentEdits = Mutex()
+
+    private val exclusionSaveFailed = MutableStateFlow(false)
 
     val uiState: StateFlow<ProfileUiState> = combine(
         userProfileRepository.getUserProfile(),
         capabilityEditorFlow,
-        conditionEditorFlow
-    ) { profile, editor, conditions ->
+        exclusionSaveFailed
+    ) { profile, editor, exclusionFailed ->
         val state: ProfileUiState = ProfileUiState.Success(
             profile = profile,
             isSaving = editor.isSaving,
             movementCapabilityDraft = editor.draft,
             movementCapabilityError = editor.error,
+            exclusionSaveFailed = exclusionFailed,
             availableEquipmentOptions = StandardEquipment.ALL,
             availableMuscleOptions = StandardMuscles.PRIORITY_OPTIONS,
-            availableConstraintOptions = TrainingConstraint.entries,
-            conditionGuidance = conditions.guidance,
-            pendingCondition = conditions.pending,
-            safetyErrorRes = conditions.errorRes
+            availableConstraintOptions = TrainingConstraint.entries
         )
         state
     }.catch { error ->
@@ -71,83 +163,27 @@ class ProfileViewModel(
         initialValue = ProfileUiState.Loading
     )
 
-    init {
-        conditionGuidanceSource?.let { source ->
-            viewModelScope.launch {
-                val result = try {
-                    source.guidance()
-                } catch (error: CancellationException) {
-                    throw error
-                } catch (error: Exception) {
-                    ConditionGuidanceResult.Unavailable
-                }
-                conditionEditorFlow.value = conditionEditorFlow.value.copy(guidance = result)
-            }
-        }
-    }
-
-    /** Starts adding [id]. Nothing is saved until the warning signs are acknowledged and confirmed. */
-    fun selectCondition(id: String) {
-        val guidance = conditionEditorFlow.value.guidance as? ConditionGuidanceResult.Loaded ?: return
-        if (id !in guidance.guidance.conditions) return
-        conditionEditorFlow.value =
-            conditionEditorFlow.value.copy(pending = PendingCondition(id), errorRes = null)
-    }
-
-    fun setConditionAcknowledged(acknowledged: Boolean) {
-        val pending = conditionEditorFlow.value.pending ?: return
-        conditionEditorFlow.value = conditionEditorFlow.value.copy(
-            pending = pending.copy(acknowledged = acknowledged)
-        )
-    }
-
-    fun cancelPendingCondition() {
-        conditionEditorFlow.value = conditionEditorFlow.value.copy(pending = null, errorRes = null)
-    }
-
-    fun confirmPendingCondition() {
-        val pending = conditionEditorFlow.value.pending?.takeIf { it.acknowledged } ?: return
+    fun removeReportedCondition(conditionId: String) {
         viewModelScope.launch {
             try {
-                userProfileRepository.editReportedConditions { it + pending.id }
-                conditionEditorFlow.value =
-                    conditionEditorFlow.value.copy(pending = null, errorRes = null)
+                userProfileRepository.removeReportedCondition(conditionId)
             } catch (error: CancellationException) {
                 throw error
-            } catch (error: Exception) {
-                // The prompt stays open so the user can try again; nothing was saved.
-                conditionEditorFlow.value =
-                    conditionEditorFlow.value.copy(errorRes = R.string.profile_condition_save_error)
+            } catch (_: Exception) {
+                conditionState.value = conditionState.value.copy(saveFailed = true)
             }
         }
     }
 
-    /** Removing never asks for acknowledgement, and works whether or not the overlay loaded. */
-    fun removeCondition(id: String) {
-        viewModelScope.launch {
-            try {
-                userProfileRepository.editReportedConditions { it - id }
-                conditionEditorFlow.value = conditionEditorFlow.value.copy(errorRes = null)
-            } catch (error: CancellationException) {
-                throw error
-            } catch (error: Exception) {
-                conditionEditorFlow.value =
-                    conditionEditorFlow.value.copy(errorRes = R.string.profile_condition_save_error)
-            }
-        }
-    }
-
-    /** Undoes a pain-stop exclusion (or any other): the exercise may be planned again. */
     fun removeExcludedExercise(exerciseId: String) {
         viewModelScope.launch {
             try {
-                userProfileRepository.editExcludedExercises { it - exerciseId }
-                conditionEditorFlow.value = conditionEditorFlow.value.copy(errorRes = null)
+                userProfileRepository.setExerciseExcluded(exerciseId, false)
+                exclusionSaveFailed.value = false
             } catch (error: CancellationException) {
                 throw error
-            } catch (error: Exception) {
-                conditionEditorFlow.value =
-                    conditionEditorFlow.value.copy(errorRes = R.string.profile_exclusion_save_error)
+            } catch (_: Exception) {
+                exclusionSaveFailed.value = true
             }
         }
     }
@@ -240,6 +276,7 @@ class ProfileViewModel(
     fun toggleTrainingConstraint(constraint: TrainingConstraint) {
         viewModelScope.launch {
             val current = userProfileRepository.getProfileOnce()
+            if (current.unresolvedTrainingConstraintsRaw != null) return@launch
             val updated = if (constraint in current.trainingConstraints) {
                 current.trainingConstraints - constraint
             } else {
@@ -284,11 +321,8 @@ class ProfileViewModel(
         val draft = capabilityEditorFlow.value.draft ?: return
         if (capabilityEditorFlow.value.isSaving) return
 
+        capabilityEditorFlow.value = capabilityEditorFlow.value.copy(isSaving = true, error = null)
         viewModelScope.launch {
-            capabilityEditorFlow.value = capabilityEditorFlow.value.copy(
-                isSaving = true,
-                error = null
-            )
             try {
                 equipmentEdits.withLock {
                     val current = userProfileRepository.getProfileOnce()
@@ -314,22 +348,17 @@ class ProfileViewModel(
     }
 
     companion object {
+        private const val CONDITION_DRAFT = "profile.conditions"
+        private const val REASSESS_EVENT = "profile.reassessment.event"
+        private const val REASSESS_ANSWERS = "profile.reassessment.answers"
         fun provideFactory(
             userProfileRepository: UserProfileRepository,
-            conditionGuidanceSource: ConditionGuidanceSource
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return ProfileViewModel(userProfileRepository, conditionGuidanceSource) as T
-            }
+            conditionSupport: suspend () -> ConditionSupportCatalog = { ConditionSupportCatalog("empty", emptyMap()) },
+            workoutRepository: WorkoutRepository? = null
+        ): ViewModelProvider.Factory = viewModelFactory {
+            initializer { ProfileViewModel(userProfileRepository, createSavedStateHandle(), conditionSupport, workoutRepository) }
         }
     }
-
-    private data class ConditionEditorState(
-        val guidance: ConditionGuidanceResult? = null,
-        val pending: PendingCondition? = null,
-        @androidx.annotation.StringRes val errorRes: Int? = null
-    )
 
     private data class CapabilityEditorState(
         val draft: MovementCapabilities? = null,

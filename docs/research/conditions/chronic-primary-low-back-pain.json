@@ -1,0 +1,404 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "chronic-primary-low-back-pain",
+    "label": "Chronic primary low-back pain",
+    "aliases": [
+      "chronic nonspecific low-back pain"
+    ],
+    "distinctions": "Chronic primary/nonspecific low-back pain is separate from nerve-root pain, specific pathology, stenosis and postoperative states. Mechanical-nociceptive trial subgroup is narrower than the inventory diagnosis."
+  },
+  "scope": {
+    "population": "Recurrent mechanical/nociceptive-dominant low-back pain; Mechanical nociceptive-dominant low-back pain over three months; primarily ages 25–60; nerve-root compression/acute disc herniation and specific pathology excluded",
+    "stage": "Varies by source; acute/recent versus chronic and symptom irritability are explicitly retained. Unknown stage remains unknown.",
+    "operativeStatus": "Nonsurgical evidence predominates; no postoperative protocol approved or inferred.",
+    "exclusions": "Source-specific exclusions are applicability boundaries, not diagnosis-wide contraindications. Coexisting conditions and independently selected joint limits retain precedence.",
+    "uncertainty": "- Ordinary training: preserve activity, tailor tolerable starting demand and progression. Do not encode diagnosis-wide bans on flexion, extension, rotation, axial loading, squats or deadlifts; retrieved studies do not justify them. LBP-P2's neutral deadlift technique is protocol-specific, not proof of harm from all spinal motion.\n- Supportive candidates: general progressive strengthening, motor-control work, aerobic exercise; select exact executions only after catalog comparison. No novel identity required solely because an exercise is described as “core.” Stretching remains mobility, not strength-set credit.\n- Unresolved: universally safe load/ROM/pain threshold, acute flare algorithms, safe unsupervised high-load dose, subgroup effects, and older-adult transfer. Specific pathology, postoperative restrictions and radicular symptoms cannot inherit this record.\n- Currentness search found a 2025 Cochrane overview (DOI 10.1002/14651858.CD014691.pub2; PMC11945228) and a 2026 JAMA clinical review; they were located but not fully extracted. They do not replace direct execution-level evidence. No claim of exhaustive current coverage."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Completed targeted spine research; PubMed/PMC, official guidelines and publishers",
+      "query": "Original exact search strings were not retained in the source report; the report records the actual scientific sources and access attempts. No reconstructed search string is presented as executed.",
+      "decision": "Faithfully serialize all 5 extracted substantive sources, including contrary/indirect evidence.",
+      "limitations": "Targeted English-access-dominated investigation; not a database-complete systematic review. Retained report: .superpowers/sdd/2026-11-01-condition-aware-workouts/spine-source-report.md"
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST exact DOI metadata lookup; targeted official/primary-source reopen",
+      "query": "Individual executed DOI queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1007/s10926-023-10124-4; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1002/14651858.CD009790.pub2; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.2519/jospt.2015.5021; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.2340/16501977-2091",
+      "decision": "Retrieve missing exact title/PMID/publication metadata; compare titles and dates. Protocol reopens identified in source.access.details.",
+      "limitations": "Metadata API access does not upgrade abstract-only clinical extraction. Correction/retraction/supersession registry search not comprehensive."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST, primary MED abstracts; selected PubMed reopens",
+      "query": "Exact primary-record queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A25641309%20AND%20SRC%3AMED&format=json&resultType=core",
+      "decision": "Bounded accessible-protocol audit restored explicitly reported facts for lbp-p1. Program/contact totals are distinguished from isolated exercise schedules; no unseen protocol, new search discovery or clinical release.",
+      "limitations": "Abstract-only/partial access unchanged. Unreported mechanics, home frequency, progression or stopping criteria remain unknown; no frequency computed from total contacts/duration."
+    }
+  ],
+  "sources": [
+    {
+      "id": "lbp-g1",
+      "title": "WHO guideline for non-surgical management of chronic primary low back pain in adults in primary and community care settings",
+      "doi": null,
+      "pmid": null,
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK599213/",
+      "publicationStatus": "Final official guideline; 2023-12-07",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Official source header/version inspected",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Final WHO evidence-based guideline",
+      "population": "Adults including older adults with chronic primary low-back pain in primary/community care",
+      "comparator": "Structured exercise versus comparators in underpinning review",
+      "coInterventions": "Multicomponent person-centered care considered",
+      "outcomes": "WHO, 2023 final guideline. Official publication; recommendations; ISBN 9789240081789. FT relevant exercise recommendation. Adults including older adults, chronic primary LBP in primary/community care; specific causes require separate assessment. Structured exercise may be offered as part of care (conditional; low certainty). Individualization, preferences, capacity and access matter; a single preferred exercise modality or universal load/ROM ceiling is not established. Evidence includes temporary symptom exacerbation; harms are incompletely captured. This is a treatment recommendation, not evidence that every gym execution is appropriate.",
+      "followUp": "Varies across underlying trials",
+      "uncertainty": "Conditional recommendation; low certainty; no preferred universal exercise modality",
+      "harms": "Temporary symptom exacerbations; reporting incomplete",
+      "limitations": "Conditional recommendation; low certainty; no preferred universal exercise modality Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Structured exercise category; specific execution individualized",
+        "dose": "No single approved dose",
+        "frequency": "Individualized",
+        "supervision": "Health-worker delivered primary/community care",
+        "progression": "Individualized to preferences/capacity",
+        "stoppingRules": "not reported as an executable numerical threshold"
+      },
+      "locations": [
+        "Recommendations and evidence > Physical interventions > Structured exercise programmes"
+      ]
+    },
+    {
+      "id": "lbp-s1",
+      "title": "Systematic Review to Inform a World Health Organization (WHO) Clinical Practice Guideline: Benefits and Harms of Structured Exercise Programs for Chronic Primary Low Back Pain in Adults.",
+      "doi": "10.1007/s10926-023-10124-4",
+      "pmid": "37991647",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10684665/",
+      "publicationStatus": "Published journal article; indexed publication 2023-11-22; all dates precede access.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md. Europe PMC fullTextXML re-opened during serialization: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10684665/fullTextXML."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1007/s10926-023-10124-4",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Systematic review informing WHO; 13 low/unclear-risk primary-analysis RCTs, 1362 participants",
+      "population": "Adults with chronic primary low-back pain; two trials included adults aged at least 60",
+      "comparator": "No intervention, usual care or sham",
+      "coInterventions": "Varied by underlying trial",
+      "outcomes": "Verville et al., 2023, WHO exercise systematic review. DOI 10.1007/s10926-023-10124-4, PMID 37991647, PMC10684665. FT. Search updated through May 2022; primary analysis 13 low/unclear-risk RCTs, 1362 adults; two trials included adults ≥60. Aerobic, strengthening, mixed, Pilates, flexibility, yoga and motor-control programs versus no intervention/usual care/sham. Benefits vary by modality, comparator and time; certainty for individual modalities low/very low. Harms sparse, mainly temporary pain increases. Supports an exercise category with individual selection; not an exact sequence or exclusion list.",
+      "followUp": "Varied; search updated May 2022",
+      "uncertainty": "Individual modality evidence low/very low certainty; pooled categories do not identify exact executions",
+      "harms": "Sparse; mainly temporary pain increases",
+      "limitations": "Individual modality evidence low/very low certainty; pooled categories do not identify exact executions Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Aerobic, strengthening, mixed, Pilates, flexibility, yoga and motor-control trial categories",
+        "dose": "Heterogeneous studied programs; no single protocol",
+        "frequency": "Varies across trials",
+        "supervision": "Varies across trials",
+        "progression": "not reported as one transferable progression",
+        "stoppingRules": "not reported as one transferable stopping rule"
+      },
+      "locations": [
+        "Results > Pooled Analysis of All Exercise Types Versus Comparison Interventions With Isolated Exercise Effects",
+        "Discussion"
+      ]
+    },
+    {
+      "id": "lbp-s2",
+      "title": "Exercise therapy for chronic low back pain.",
+      "doi": "10.1002/14651858.CD009790.pub2",
+      "pmid": "34580864",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34580864/",
+      "publicationStatus": "Published journal article; indexed publication 2021-09-28; all dates precede access.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1002/14651858.CD009790.pub2",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Cochrane systematic review, 249 RCTs, 24486 participants",
+      "population": "Chronic nonspecific low-back pain lasting over 12 weeks",
+      "comparator": "No treatment, usual care, placebo and other conservative treatments",
+      "coInterventions": "Varied across trials",
+      "outcomes": "Hayden et al., 2021 Cochrane review. DOI 10.1002/14651858.CD009790.pub2, PMID 34580864, PMC8477273. Abstract and publisher conclusions inspected; not all underlying trials. 249 RCTs, 24,486 participants, chronic nonspecific LBP >12 weeks. Earliest follow-up: exercise versus no treatment/usual care/placebo reduced pain 15.2/100 (95% CI 12.2–18.3), functional limitation 6.8/100 (5.3–8.3); functional difference below review's clinical-importance threshold. Heterogeneity and trial bias matter. Adverse reporting insufficient to establish comprehensive safety; reported events mostly minor muscle pain. No evidence here for a blanket spinal flexion, rotation, squat or lifting ban.",
+      "followUp": "Earliest and later follow-up; abstract extraction",
+      "uncertainty": "Heterogeneity and trial bias; functional effect below review clinical-importance threshold",
+      "harms": "Reported events mostly minor muscle pain; comprehensive reporting insufficient",
+      "limitations": "Heterogeneity and trial bias; functional effect below review clinical-importance threshold Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "not reported from full protocol; abstract-only/partial access does not establish execution",
+        "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
+        "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
+        "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
+        "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
+        "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
+      },
+      "locations": [
+        "Abstract > Main results and Authors’ conclusions"
+      ]
+    },
+    {
+      "id": "lbp-p1",
+      "title": "Individualized low-load motor control exercises and education versus a high-load lifting exercise and education to improve activity, pain intensity, and physical performance in patients with low back pain: a randomized controlled trial.",
+      "doi": "10.2519/jospt.2015.5021",
+      "pmid": "25641309",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25641309/",
+      "publicationStatus": "Published journal article; indexed publication 2015-02-01; all dates precede access.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 25641309); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.2519/jospt.2015.5021",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "RCT, 70 adults; same cohort as LBP-P2",
+      "population": "Recurrent mechanical/nociceptive-dominant low-back pain",
+      "comparator": "Individualized low-load motor control versus high-load lifting",
+      "coInterventions": "Education in both arms",
+      "outcomes": "Aasa et al., 2015 RCT. DOI 10.2519/jospt.2015.5021, PMID 25641309. Abstract. 70 adults with recurrent mechanical/nociceptive-dominant LBP; low-load motor control versus high-load lifting, both education; 12 sessions/8 weeks. Motor control improved patient-specific activity more (4.2 versus 2.5 points); no significant between-group pain difference. Does not establish lifting as universally unsafe or equivalent for every chronic-primary-LBP phenotype. Detailed adverse/progression data taken from its same-cohort follow-up below, not invented from abstract.",
+      "followUp": "Post-treatment at eight weeks in accessible abstract",
+      "uncertainty": "Activity favored low-load intervention; pain between-group difference nonsignificant; not independent of LBP-P2",
+      "harms": "not reported in accessed abstract; see same-cohort follow-up separately",
+      "limitations": "Activity favored low-load intervention; pain between-group difference nonsignificant; not independent of LBP-P2 Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Methods (primary abstract, PMID 25641309): low-load motor-control exercise versus high-load lifting exercise, with pain-mechanism education in both arms. Specific movements, implements and mechanics are not identified in this abstract.",
+        "dose": "reported in accessible text: Abstract > Methods (primary abstract, PMID 25641309): 12 treatment sessions were offered over eight weeks. This is a treatment-contact/program total; exercise-specific repetitions, sets and hold/load are not stated.",
+        "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
+        "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
+        "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
+        "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
+      },
+      "locations": [
+        "Abstract > Methods and Results",
+        "Abstract > Methods"
+      ]
+    },
+    {
+      "id": "lbp-p2",
+      "title": "High load lifting exercise and low load motor control exercises as interventions for patients with mechanical low back pain: A randomized controlled trial with 24-month follow-up.",
+      "doi": "10.2340/16501977-2091",
+      "pmid": "27097785",
+      "url": "https://medicaljournalssweden.se/jrm/article/download/15412/19219/56936",
+      "publicationStatus": "Published journal article; indexed publication 2016-04-01; all dates precede access.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md. Primary full text reopened for exact execution during serialization."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.2340/16501977-2091",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "RCT 24-month same-cohort follow-up; 35 per arm",
+      "population": "Mechanical nociceptive-dominant low-back pain over three months; primarily ages 25–60; nerve-root compression/acute disc herniation and specific pathology excluded",
+      "comparator": "High-load deadlift versus low-load motor control",
+      "coInterventions": "Pain education in both arms",
+      "outcomes": "Michaelson et al., 2016 same-cohort RCT follow-up. DOI 10.2340/16501977-2091, journal full text PDF. FT. 35/group; mechanical LBP >3 months; 8-week intervention, 2-,12-,24-month outcomes. No significant between-group pain/disability/QoL differences; no untreated control. Deadlift progression was supervised and contingent on pain before/during/after; no 1RM testing. Two high-load participants reported adverse effects, one withdrew; none reported in low-load arm. Selected population and close technique/progression supervision limit unsupervised generalization. Supports individualized progression and a lower-load alternative; not a rule that all patients must avoid deadlifts or remain neutral in every daily movement.",
+      "followUp": "2, 12 and 24 months",
+      "uncertainty": "No untreated control; close supervision and selected phenotype limit app transfer",
+      "harms": "Two high-load participants reported adverse effects; one withdrew; none reported in low-load arm",
+      "limitations": "No untreated control; close supervision and selected phenotype limit app transfer Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Barbell deadlift with abdominal bracing/breath hold and monitored neutral lumbar alignment; low-load arm individualized lumbar control in supine/sitting/quadruped/standing",
+        "dose": "12 treatments over eight weeks; deadlift began 10 kg including bar, sets/repetitions/load individually adjusted, no 1RM test",
+        "frequency": "Twice weekly first month, once weekly thereafter; low-load arm 1–3 daily home exercises",
+        "supervision": "Experienced PT; high-load groups of 2–6",
+        "progression": "Increase repetitions/sets/load only when pain had not increased before/during/after; PT and participant decide; intervening symptom increases considered",
+        "stoppingRules": "not reported as numeric cutoff; pain increase altered progression, not an approved app rule"
+      },
+      "locations": [
+        "Methods > Interventions > High load lifting exercise, journal pp. 457–458",
+        "Methods > Interventions > Low load motor control exercises, journal p. 458",
+        "Results and Discussion, journal pp. 459–462"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "lbp-g1-extraction",
+      "kind": "published-recommendation",
+      "statement": "Official publication; recommendations; ISBN 9789240081789. FT relevant exercise recommendation. Adults including older adults, chronic primary LBP in primary/community care; specific causes require separate assessment. Structured exercise may be offered as part of care (conditional; low certainty). Individualization, preferences, capacity and access matter; a single preferred exercise modality or universal load/ROM ceiling is not established. Evidence includes temporary symptom exacerbation; harms are incompletely captured. This is a treatment recommendation, not evidence that every gym execution is appropriate.",
+      "citations": [
+        {
+          "sourceId": "lbp-g1",
+          "location": "Recommendations and evidence > Physical interventions > Structured exercise programmes"
+        }
+      ],
+      "applicability": "Adults including older adults with chronic primary low-back pain in primary/community care",
+      "limitations": "Conditional recommendation; low certainty; no preferred universal exercise modality Access: full-text."
+    },
+    {
+      "id": "lbp-s1-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.1007/s10926-023-10124-4, PMID 37991647, PMC10684665. FT. Search updated through May 2022; primary analysis 13 low/unclear-risk RCTs, 1362 adults; two trials included adults ≥60. Aerobic, strengthening, mixed, Pilates, flexibility, yoga and motor-control programs versus no intervention/usual care/sham. Benefits vary by modality, comparator and time; certainty for individual modalities low/very low. Harms sparse, mainly temporary pain increases. Supports an exercise category with individual selection; not an exact sequence or exclusion list.",
+      "citations": [
+        {
+          "sourceId": "lbp-s1",
+          "location": "Results > Pooled Analysis of All Exercise Types Versus Comparison Interventions With Isolated Exercise Effects"
+        },
+        {
+          "sourceId": "lbp-s1",
+          "location": "Discussion"
+        }
+      ],
+      "applicability": "Adults with chronic primary low-back pain; two trials included adults aged at least 60",
+      "limitations": "Individual modality evidence low/very low certainty; pooled categories do not identify exact executions Access: full-text."
+    },
+    {
+      "id": "lbp-s2-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.1002/14651858.CD009790.pub2, PMID 34580864, PMC8477273. Abstract and publisher conclusions inspected; not all underlying trials. 249 RCTs, 24,486 participants, chronic nonspecific LBP >12 weeks. Earliest follow-up: exercise versus no treatment/usual care/placebo reduced pain 15.2/100 (95% CI 12.2–18.3), functional limitation 6.8/100 (5.3–8.3); functional difference below review's clinical-importance threshold. Heterogeneity and trial bias matter. Adverse reporting insufficient to establish comprehensive safety; reported events mostly minor muscle pain. No evidence here for a blanket spinal flexion, rotation, squat or lifting ban.",
+      "citations": [
+        {
+          "sourceId": "lbp-s2",
+          "location": "Abstract > Main results and Authors’ conclusions"
+        }
+      ],
+      "applicability": "Chronic nonspecific low-back pain lasting over 12 weeks",
+      "limitations": "Heterogeneity and trial bias; functional effect below review clinical-importance threshold Access: abstract-only."
+    },
+    {
+      "id": "lbp-p1-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.2519/jospt.2015.5021, PMID 25641309. Abstract. 70 adults with recurrent mechanical/nociceptive-dominant LBP; low-load motor control versus high-load lifting, both education; 12 sessions/8 weeks. Motor control improved patient-specific activity more (4.2 versus 2.5 points); no significant between-group pain difference. Does not establish lifting as universally unsafe or equivalent for every chronic-primary-LBP phenotype. Detailed adverse/progression data taken from its same-cohort follow-up below, not invented from abstract.",
+      "citations": [
+        {
+          "sourceId": "lbp-p1",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "applicability": "Recurrent mechanical/nociceptive-dominant low-back pain",
+      "limitations": "Activity favored low-load intervention; pain between-group difference nonsignificant; not independent of LBP-P2 Access: abstract-only."
+    },
+    {
+      "id": "lbp-p2-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.2340/16501977-2091, journal full text PDF. FT. 35/group; mechanical LBP >3 months; 8-week intervention, 2-,12-,24-month outcomes. No significant between-group pain/disability/QoL differences; no untreated control. Deadlift progression was supervised and contingent on pain before/during/after; no 1RM testing. Two high-load participants reported adverse effects, one withdrew; none reported in low-load arm. Selected population and close technique/progression supervision limit unsupervised generalization. Supports individualized progression and a lower-load alternative; not a rule that all patients must avoid deadlifts or remain neutral in every daily movement.",
+      "citations": [
+        {
+          "sourceId": "lbp-p2",
+          "location": "Methods > Interventions > High load lifting exercise, journal pp. 457–458"
+        },
+        {
+          "sourceId": "lbp-p2",
+          "location": "Methods > Interventions > Low load motor control exercises, journal p. 458"
+        },
+        {
+          "sourceId": "lbp-p2",
+          "location": "Results and Discussion, journal pp. 459–462"
+        }
+      ],
+      "applicability": "Mechanical nociceptive-dominant low-back pain over three months; primarily ages 25–60; nerve-root compression/acute disc herniation and specific pathology excluded",
+      "limitations": "No untreated control; close supervision and selected phenotype limit app transfer Access: full-text."
+    },
+    {
+      "id": "ordinary-training-restriction-evidence-gap",
+      "kind": "evidence-gap",
+      "statement": "Neither this selected supervised lifting trial nor the broad exercise reviews establish a diagnosis-wide ban on spinal flexion, rotation, axial loading, squats or deadlifts. Its neutral-spine technique is a studied protocol, not evidence that all spinal motion is harmful. Numeric load/ROM and unsupervised high-load limits remain unresolved.",
+      "citations": [
+        {
+          "sourceId": "lbp-p2",
+          "location": "Methods > Interventions > High load lifting exercise, journal pp. 457–458"
+        }
+      ],
+      "applicability": "Mechanical nociceptive-dominant low-back pain over three months; primarily ages 25–60; nerve-root compression/acute disc herniation and specific pathology excluded",
+      "limitations": "This is a bounded evidence gap in the retrieved corpus, not proof that all training is harmless. Trial exclusions are applicability boundaries. No runtime restriction or therapeutic release follows."
+    },
+    {
+      "id": "barbell-deadlift-lbp-study-setup-unresolved-execution",
+      "kind": "study-result",
+      "statement": "Barbell deadlift with abdominal bracing/breath hold and therapist-monitored neutral lumbar alignment through ascent/descent. The article refers to a prior pilot for full lift setup; stance, grip and start height are not independently established here.",
+      "citations": [
+        {
+          "sourceId": "lbp-p2",
+          "location": "Methods > Interventions > High load lifting exercise, journal pp. 457–458"
+        }
+      ],
+      "applicability": "Mechanical nociceptive-dominant low-back pain over three months; primarily ages 25–60; nerve-root compression/acute disc herniation and specific pathology excluded",
+      "limitations": "Studied/described execution only. All unreported setup, ROM, dosing, eligibility and clinical approval remain unresolved."
+    },
+    {
+      "id": "lbp-monitored-lifting-progression",
+      "kind": "study-result",
+      "statement": "Same-cohort follow-up used individualized PT-monitored lifting progression when pain before/during/after had not increased; intervening symptoms informed next-session adjustment. It did not test unsupervised universal progression.",
+      "citations": [
+        {
+          "sourceId": "lbp-p2",
+          "location": "Methods > Interventions > High load lifting exercise, journal pp. 457–458"
+        }
+      ],
+      "applicability": "Mechanical nociceptive-dominant low-back pain over three months; primarily ages 25–60; nerve-root compression/acute disc herniation and specific pathology excluded",
+      "limitations": "No untreated control; close supervision and selected phenotype limit app transfer"
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "barbell-deadlift-lbp-study-setup-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "barbell-deadlift-lbp-study-setup-unresolved",
+      "findingIds": [
+        "barbell-deadlift-lbp-study-setup-unresolved-execution"
+      ],
+      "matchRationale": "Catalog barbell-deadlift is a plausible execution candidate, with Barbell and weight_reps; metadata alone cannot verify study start height/grip/ROM. Romanian, sumo, trap-bar and dumbbell variants are distinct. Supervision/dose does not itself create a new exercise identity.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "lbp-lifting-progression-boundary",
+      "kind": "symptom-response",
+      "basis": "unresolved-hypothesis",
+      "statement": "Candidate: if considering the studied high-load lifting pathway, preserve assessment, technique coaching and individualized symptom-based adjustment rather than automatically importing study loads or progression into general workouts.",
+      "findingIds": [
+        "lbp-monitored-lifting-progression"
+      ],
+      "citations": [
+        {
+          "sourceId": "lbp-p2",
+          "location": "Methods > Interventions > High load lifting exercise, journal pp. 457–458"
+        }
+      ],
+      "applicability": {
+        "population": "Mechanical nociceptive-dominant low-back pain over three months; primarily ages 25–60; nerve-root compression/acute disc herniation and specific pathology excluded",
+        "stage": "Nonsurgical chronic mechanical nociceptive-dominant presentation matching trial; nerve-root compression and acute disc herniation excluded from trial. Not a postoperative protocol.",
+        "rationale": "Condition-specific extracted guidance/protocol supports this draft interpretation; it does not override another condition restriction, equipment requirement or joint limit."
+      },
+      "limitations": "Mechanical nociceptive-selected trial, not every chronic-primary-LBP phenotype; two adverse effects reported. No universal pain threshold or lifting prohibition established. Unreviewed candidate; no runtime or clinical release.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "- Ordinary training: preserve activity, tailor tolerable starting demand and progression. Do not encode diagnosis-wide bans on flexion, extension, rotation, axial loading, squats or deadlifts; retrieved studies do not justify them. LBP-P2's neutral deadlift technique is protocol-specific, not proof of harm from all spinal motion.\n- Supportive candidates: general progressive strengthening, motor-control work, aerobic exercise; select exact executions only after catalog comparison. No novel identity required solely because an exercise is described as “core.” Stretching remains mobility, not strength-set credit.\n- Unresolved: universally safe load/ROM/pain threshold, acute flare algorithms, safe unsupervised high-load dose, subgroup effects, and older-adult transfer. Specific pathology, postoperative restrictions and radicular symptoms cannot inherit this record.\n- Currentness search found a 2025 Cochrane overview (DOI 10.1002/14651858.CD014691.pub2; PMC11945228) and a 2026 JAMA clinical review; they were located but not fully extracted. They do not replace direct execution-level evidence. No claim of exhaustive current coverage.",
+    "No exact catalog execution equivalence or numeric diagnosis-wide load/ROM/pain threshold established. All request/mapping/rule material is candidate-only, and clinical review provenance is absent."
+  ],
+  "disposition": "unresolved",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

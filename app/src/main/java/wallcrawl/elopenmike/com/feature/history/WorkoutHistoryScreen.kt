@@ -136,15 +136,14 @@ fun WorkoutHistoryDetailScreen(
                 }
                 is WorkoutHistoryDetailUiState.Loaded -> {
                     sessionFacts(state.detail)
+                    state.detail.session.conditionContext?.let { context ->
+                        item { wallcrawl.elopenmike.com.core.ui.components.RecordedConditions(context) }
+                    }
                     recordedReasons(state.reasons)
                     state.detail.session.exercises.sortedWith(compareBy({ it.orderIndex }, { it.id })).forEach { exercise ->
-                        item {
-                            HistoryHeading(
-                                if (exercise.role == ExerciseRole.MOBILITY) {
-                                    "${stringResource(R.string.mobility_section_label)} · ${exercise.exerciseId}"
-                                } else exercise.exerciseId
-                            )
-                        }
+                        item { HistoryHeading(exercise.exerciseId) }
+                        item { wallcrawl.elopenmike.com.core.ui.components.ConditionExecution(
+                            state.detail.session.conditionContext, exercise.exerciseId, exercise.prescription.purpose) }
                         field(R.string.history_exercise_type) { stringResource(exerciseTypeRes(exercise.prescription.exerciseType)) }
                         if (exercise.notes.isNotEmpty()) field(R.string.history_notes) { exercise.notes }
                         heading(R.string.history_previous)
@@ -251,6 +250,7 @@ private fun LazyListScope.prescription(prescription: ExercisePrescription, unit:
         field(R.string.set_field_load) { weight(prescription.targetWeight, unit) }
     if (prescription.exerciseType == ExerciseType.ASSISTED_BODYWEIGHT)
         field(R.string.history_assistance) { weight(prescription.targetAssistanceWeight, unit) }
+    prescription.holdSeconds?.let { field(R.string.history_hold_per_rep) { seconds(it) } }
     prescription.targetDurationSeconds?.let { field(R.string.set_field_seconds) { seconds(it) } }
     prescription.targetDistanceMeters?.let { field(R.string.set_field_meters) { meters(it) } }
     field(R.string.history_effort_target) {
@@ -453,10 +453,7 @@ private fun violationRes(code: ProgramViolationCode) = when (code) {
     ProgramViolationCode.EMPTY_RECOMMENDATION -> R.string.history_violation_empty
     ProgramViolationCode.DURATION_OUT_OF_BOUNDS -> R.string.history_violation_duration_bounds
     ProgramViolationCode.BLANK_EXERCISE_ID, ProgramViolationCode.UNKNOWN_EXERCISE_ID -> R.string.history_violation_id
-    ProgramViolationCode.NOT_IN_CANDIDATE_SET,
-    ProgramViolationCode.MOBILITY_ENTRY_NOT_IN_ROUTINE,
-    ProgramViolationCode.MOBILITY_BLOCK_TOO_LONG -> R.string.history_violation_candidate
-    ProgramViolationCode.MOBILITY_ENTRY_RESTRICTED -> R.string.history_violation_constraint
+    ProgramViolationCode.NOT_IN_CANDIDATE_SET -> R.string.history_violation_candidate
     ProgramViolationCode.PRESCRIPTION_TYPE_MISMATCH, ProgramViolationCode.PRESCRIPTION_SHAPE_MISMATCH -> R.string.history_violation_type
     ProgramViolationCode.UNSUPPORTED_WORKOUT_FOCUS -> R.string.history_violation_focus
     ProgramViolationCode.DUPLICATE_EXERCISE_IN_SESSION, ProgramViolationCode.DUPLICATE_PROGRESSION_FAMILY -> R.string.history_violation_duplicate

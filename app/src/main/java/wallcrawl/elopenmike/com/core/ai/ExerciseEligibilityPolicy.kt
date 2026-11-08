@@ -1,7 +1,5 @@
 package wallcrawl.elopenmike.com.core.ai
 
-import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
-import wallcrawl.elopenmike.com.core.conditions.decisionFor
 import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
@@ -15,6 +13,7 @@ import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.clearsJointConstraintsOf
 import wallcrawl.elopenmike.com.core.model.hasRequiredFixedAnchorEquipment
 import wallcrawl.elopenmike.com.core.model.violatesImpactRestrictionOf
 import wallcrawl.elopenmike.com.core.model.isEquipmentSatisfiedBy
@@ -32,11 +31,10 @@ class ExerciseEligibilityPolicy {
         exercises: List<Exercise>,
         profile: UserProfile,
         adaptationState: AdaptationState,
-        demonstratedProgressionFamilies: Set<String> = emptySet(),
-        restrictions: ConditionRestrictions
+        demonstratedProgressionFamilies: Set<String> = emptySet()
     ): AutomaticEligibilityResult {
         val ownedEquipment = profile.availableEquipment.normalizedEquipmentSet()
-        val excludedExerciseIds = profile.excludedExerciseIds.toSet()
+        val excludedExerciseIds = profile.planningExclusions.toSet()
         val exercisesById = exercises.associateBy(Exercise::id)
         val decisions = exercises.map { exercise ->
             val acceptedMetadata = exercise.acceptedMetadata()
@@ -61,17 +59,18 @@ class ExerciseEligibilityPolicy {
                     ) {
                         add(EligibilityReason.CAPABILITY_AVOID)
                     }
+                    if (!acceptedMetadata.clearsJointConstraintsOf(profile)) {
+                        add(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
+                    }
                     if (acceptedMetadata.violatesImpactRestrictionOf(profile)) {
                         add(EligibilityReason.HIGH_IMPACT_DISALLOWED)
                     }
-                    restrictions.decisionFor(exercise.id)?.let(::add)
                     val advancedCeilingApplies =
                         acceptedMetadata.complexity == ComplexityTier.ADVANCED &&
                             acceptedMetadata.progressionFamily !in demonstratedProgressionFamilies &&
                             !acceptedMetadata.hasAvailableAcceptedSupportedRegression(
                                 exercisesById = exercisesById,
                                 profile = profile,
-                                restrictions = restrictions,
                                 ownedEquipment = ownedEquipment,
                                 excludedExerciseIds = excludedExerciseIds,
                                 demonstratedProgressionFamilies = demonstratedProgressionFamilies
@@ -147,7 +146,6 @@ class ExerciseEligibilityPolicy {
     private fun ReviewedExerciseMetadata.hasAvailableAcceptedSupportedRegression(
         exercisesById: Map<String, Exercise>,
         profile: UserProfile,
-        restrictions: ConditionRestrictions,
         ownedEquipment: Set<String>,
         excludedExerciseIds: Set<String>,
         demonstratedProgressionFamilies: Set<String>
@@ -166,7 +164,7 @@ class ExerciseEligibilityPolicy {
                 profile.movementCapabilities[capability] == CapabilityLevel.AVOID
             } &&
             // A regression is an alternative inside the user's restrictions, never around them.
-            restrictions.decisionFor(regression.id) == null &&
+            regressionMetadata.clearsJointConstraintsOf(profile) &&
             !regressionMetadata.violatesImpactRestrictionOf(profile)
     }
 
@@ -180,14 +178,10 @@ class ExerciseEligibilityPolicy {
                 AutomaticEligibilityFailure.NO_APPROVED_METADATA,
             setOf(EligibilityReason.CAPABILITY_AVOID) to
                 AutomaticEligibilityFailure.CAPABILITIES_REMOVED_ALL,
-            setOf(EligibilityReason.HIGH_IMPACT_DISALLOWED) to
-                AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL,
             setOf(
-                EligibilityReason.CONDITION_RESTRICTED_DEMAND,
-                EligibilityReason.CONDITION_DEMANDS_UNREVIEWED
-            ) to AutomaticEligibilityFailure.CONDITIONS_REMOVED_ALL,
-            setOf(EligibilityReason.CONDITION_GUIDANCE_UNAVAILABLE) to
-                AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE,
+                EligibilityReason.HIGH_IMPACT_DISALLOWED,
+                EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT
+            ) to AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL,
             setOf(
                 EligibilityReason.ADVANCED_WHILE_UNCALIBRATED,
                 EligibilityReason.ADVANCED_WHILE_RETURNING

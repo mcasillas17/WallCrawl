@@ -10,6 +10,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -331,7 +332,7 @@ class ProgressAnalyticsCardTest {
         metric = AnalyticsMetric.EXTERNAL_LOAD_VOLUME
         composeRule.setContent {
             val density = LocalDensity.current.density
-            CompositionLocalProvider(LocalContext provides spanish,
+            CompositionLocalProvider(LocalContext provides spanish, LocalResources provides spanish.resources,
                 LocalConfiguration provides spanish.resources.configuration,
                 LocalDensity provides Density(density, 1.8f)) {
                 WallCrawlTheme(themePreference = theme) {
@@ -393,7 +394,7 @@ class ProgressAnalyticsCardTest {
 
     @androidx.compose.runtime.Composable
     private fun localizedScreen(content: @androidx.compose.runtime.Composable () -> Unit) {
-        CompositionLocalProvider(LocalContext provides english, LocalConfiguration provides english.resources.configuration) {
+        CompositionLocalProvider(LocalContext provides english, LocalResources provides english.resources, LocalConfiguration provides english.resources.configuration) {
             WallCrawlTheme(themePreference = ThemePreference.LIGHT) { content() }
         }
     }
@@ -407,7 +408,7 @@ class ProgressAnalyticsCardTest {
         val selection = selectionOverride
             ?: analytics?.let { AnalyticsSelection(it.range, it.scope, metric) } ?: AnalyticsSelection()
         ProgressScreen(
-            uiState = success(), onRetry = {}, onOpenSession = { opened = it },
+            uiState = success(), section = ProgressSection.TRENDS, onRetry = {}, onOpenSession = { opened = it },
             analyticsState = state, analyticsSelection = selection,
             analyticsActions = ProgressAnalyticsActions(
                 onSelectRange = { calls += "range:${it.name}" },
@@ -432,7 +433,7 @@ class ProgressAnalyticsCardTest {
     )
 
     private fun ledger(week: TrainingWeek) = WeeklyDoseLedger(
-        LedgerPolicyVersion.PRIMARY_ONLY_V1, week.startEpochDay, "UTC", "test", 1, emptyMap(), emptyMap(), emptyMap()
+        LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2, week.startEpochDay, "UTC", "test", 1, emptyMap(), emptyMap(), emptyMap()
     )
 
     /** The metric the rendered selection shows; every metric gets the same fixture series. */

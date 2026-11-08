@@ -1,0 +1,12 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Image 1 is the target. Keep image 1's three poses and geometry exactly, including the weight in the left-position hand, lower open hand resting under the pillow at table height, cheek on pillow in every panel and second cushion between upper arm and flank. Change the ink treatment only. Image 2 is a WHITE CONTOUR STROKE and alpha reference only. Render every contour from image 1 as a simple thin WHITE line. Make the interiors of all objects transparent, including face, skin, shirt, shorts, pillows, dumbbells, table and shoes. Remove every area of white interior fill and every shadow. The image must look like spare white outline ink on clear acetate, with the color of any dark background behind it visible through the entire body and equipment. Retain three equal square cells on the same wide transparent canvas. No labels or arrows.",
+  "outputSha256": "0a424d6e4e1f3bb22f88c4fd78e1c81dab701c2a796b5c59248ca6a92f8105a9",
+  "layout": "three-panels",
+  "variant": "female",
+  "exerciseId": "hsd-side-lying-dumbbell-er-pillow",
+  "nativeStrip": {
+    "path": "masters/hsd-side-lying-dumbbell-er-pillow/female/native-strip.png",
+    "sha256": "0a424d6e4e1f3bb22f88c4fd78e1c81dab701c2a796b5c59248ca6a92f8105a9"
+  }
+}

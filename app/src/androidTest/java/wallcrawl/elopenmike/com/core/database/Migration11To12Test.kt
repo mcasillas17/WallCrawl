@@ -105,9 +105,9 @@ class Migration11To12Test {
             "contextIdentity",
             "reasonCodes",
             "doseAccounting",
-            "recordedAtTimestamp", "programAssociationDigest"
+            "recordedAtTimestamp", "programAssociationDigest", "conditionContextDigest"
         )
-        listOf("catalogVersion", "trainingPolicyVersion", "adaptationState", "timeZoneId")
+        listOf("catalogVersion", "trainingPolicyVersion", "adaptationState", "timeZoneId", "conditionContextDigest")
             .forEach { nullable -> assertThat(columns.getValue(nullable).second).isEqualTo(0) }
         assertThat(columns.getValue("sessionId").second).isEqualTo(1)
         assertThat(columns.values.map { it.third }.filterNotNull()).isEmpty()

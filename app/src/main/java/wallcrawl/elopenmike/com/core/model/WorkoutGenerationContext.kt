@@ -1,7 +1,5 @@
 package wallcrawl.elopenmike.com.core.model
 
-import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
-
 /**
  * Inputs used by [wallcrawl.elopenmike.com.core.ai.WorkoutPlanner]
  * to generate a rules-based workout recommendation.
@@ -30,14 +28,6 @@ data class WorkoutGenerationContext(
     val excludedExerciseIds: List<String> = userProfile.excludedExerciseIds,
     val allowedExercises: List<Exercise> = emptyList(),
     val automaticEligibilityResult: AutomaticEligibilityResult? = null,
-    /** What the profile's conditions and joint labels mean for ranking and the state policy. */
-    val conditionRestrictions: ConditionRestrictions = ConditionRestrictions.None,
-    /**
-     * Catalog exercises named by the active conditions' routines, whether or not they are
-     * automatic candidates (stretches have no accepted metadata). Only the mobility block
-     * reads it. Not part of the context digest: the catalog and guidance versions cover it.
-     */
-    val routineExercises: Map<String, Exercise> = emptyMap(),
     /**
      * Reviewed-only capability evidence derived from the bounded completed-history snapshot.
      *
@@ -85,7 +75,11 @@ data class WorkoutGenerationContext(
     val regenerationIndex: Int? = null,
     val planningIntent: WorkoutPlanningIntent = WorkoutPlanningIntent.ORDINARY,
     val programHeader: ProgramHeader = ProgramHeader.absent(userProfile.id),
-    val programInput: ProgramPlanningInput? = null
+    val programInput: ProgramPlanningInput? = null,
+    val conditionPlanning: ConditionPlanningResult = ConditionPlanningResult.NotApplicable,
+    /** Stable source facts are separate from the checked-time-bearing frozen receipt. */
+    val conditionHistory: wallcrawl.elopenmike.com.core.ai.ConditionHistory? = null,
+    val conditionSupport: ConditionSupportCatalog? = null
 )
 
 enum class WorkoutPlanningIntent { ORDINARY, PROGRAM }

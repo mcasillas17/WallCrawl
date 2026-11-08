@@ -589,7 +589,7 @@ class ProductionPlannerCompositionTest {
             assertWithMessage(cohort.name).that(served.snapshot.trainingPolicyVersion)
                 .isEqualTo(TrainingPolicyVersion.STATE_BASED_DOSE_EFFORT_REST_V2)
             assertWithMessage(cohort.name).that(served.snapshot.ledgerPolicyVersion)
-                .isEqualTo(LedgerPolicyVersion.PRIMARY_ONLY_V1)
+                .isEqualTo(LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2)
             assertWithMessage(cohort.name).that(served.snapshot.outcome)
                 .isIn(listOf(RecommendationOutcome.VALID, RecommendationOutcome.REPAIRED))
         }
@@ -680,9 +680,9 @@ class ProductionPlannerCompositionTest {
 
     @Test
     fun aSelectedJointConstraintRefusesAutomaticPlanningRatherThanIgnoringIt() = runTest {
-        // This composition passes no overlay source, so a selected joint label cannot be applied
-        // and is a typed refusal. Ignoring the selection silently
-        // would be the untruthful alternative, and the legacy filter does exactly that.
+        // No accepted record clears any joint constraint, so selecting one is a refusal on
+        // the production path. Ignoring the selection silently would be the untruthful
+        // alternative, and the legacy filter does exactly that.
         val constrained = fullGymProfile().copy(
             trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)
         )
@@ -691,7 +691,7 @@ class ProductionPlannerCompositionTest {
 
         val refused = planFor(Cohort("knee-sensitive", constrained)) as Refused
         assertThat(refused.eligibilityFailure)
-            .isEqualTo(AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE)
+            .isEqualTo(AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL)
     }
 
     @Test
@@ -815,7 +815,7 @@ class ProductionPlannerCompositionTest {
         assertThat(record.catalogVersion).isEqualTo(bundledCatalog.sourceCommit)
         assertThat(record.reviewPolicyVersion).isEqualTo(REVIEW_POLICY_VERSION)
         assertThat(record.trainingPolicyVersion).isEqualTo("STATE_BASED_DOSE_EFFORT_REST_V2")
-        assertThat(record.ledgerPolicyVersion).isEqualTo("PRIMARY_ONLY_V1")
+        assertThat(record.ledgerPolicyVersion).isEqualTo("ORDINARY_PRIMARY_ONLY_V2")
         assertThat(record.programStatePolicyVersion).isEqualTo("PROGRAM_STATE_V2")
         assertThat(record.adaptationState).isEqualTo(AdaptationState.UNCALIBRATED.name)
         assertThat(record.weekStartEpochDay).isEqualTo(MONDAY_EPOCH_DAY)
@@ -964,7 +964,7 @@ class ProductionPlannerCompositionTest {
     ): WeeklyDoseLedger = WeeklyDoseLedgerCalculator().calculate(
         sessions = sessions,
         exercisesById = exercises.associateBy(Exercise::id),
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         week = week,
         catalogVersion = bundledCatalog.sourceCommit,
         reviewPolicyVersion = REVIEW_POLICY_VERSION
@@ -978,7 +978,7 @@ class ProductionPlannerCompositionTest {
     ): String = LedgerSourceFingerprint.of(
         sessions = sessions,
         exercisesById = attributedExercises.associateBy(Exercise::id),
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         week = week,
         catalogVersion = bundledCatalog.sourceCommit,
         reviewPolicyVersion = reviewPolicyVersion
@@ -1188,7 +1188,7 @@ class ProductionPlannerCompositionTest {
                         onboardingCompleted = true
                     )
                 ),
-                AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE
+                AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL
             )
         )
     }
@@ -1229,8 +1229,6 @@ internal class StaticUserProfileRepository(
         unsupported()
 
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) = unsupported()
-    override suspend fun editReportedConditions(change: (Set<String>) -> Set<String>) = error("Not used")
-    override suspend fun editExcludedExercises(change: (List<String>) -> List<String>) = error("Not used")
     override suspend fun updateGender(
         gender: wallcrawl.elopenmike.com.core.model.ProfileGender
     ) = unsupported()
@@ -1247,6 +1245,8 @@ internal class StaticWorkoutRepository(
     private val completedSessions: List<WorkoutSession>,
     private val records: List<RecommendationRecord> = emptyList()
 ) : WorkoutRepository {
+    override suspend fun hasPendingConditionReassessment(profileId: String) = false
+
     override suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long) =
         completedSessions.filter { it.status == wallcrawl.elopenmike.com.core.model.SessionStatus.COMPLETED &&
             it.completedAtTimestamp?.let { time -> time >= startTimestamp && time < endTimestampExclusive } == true }
@@ -1339,7 +1339,7 @@ internal class RecomputingLedgerRepository(
     private fun current(): WeeklyDoseLedger = calculator.calculate(
         sessions = sessions.filter { it.completedAtTimestamp?.let(week::contains) == true },
         exercisesById = exercises.associateBy(Exercise::id),
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         week = week,
         catalogVersion = catalogVersion,
         reviewPolicyVersion = exercises

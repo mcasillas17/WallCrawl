@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
+import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 
@@ -97,6 +98,18 @@ class SetRowTest {
             SetPerformanceInput(isCompleted = true)
                 .isSubmittableFor(ExerciseType.DISTANCE_DURATION)
         ).isFalse()
+    }
+
+    @Test
+    fun repeatedFineStepsPreserveHundredthsAndClampAtTheLimit() {
+        var load = 12.34
+        repeat(10) { load = SetInputField.LOAD.stepped(load, true, increment = 0.01) }
+        assertThat(load).isEqualTo(12.44)
+        val precise = SetInputField.LOAD.stepped(101.123456789, true, increment = 0.01)
+        assertThat(LocaleFormatting.parseExactMeasurement(exactMeasurement(precise, ','))).isEqualTo(101.133456789)
+        assertThat(SetInputField.LOAD.stepped(0.005, false, increment = 0.01)).isEqualTo(0.0)
+        assertThat(SetInputField.DISTANCE.stepped(999_999.99, true, increment = 0.1))
+            .isEqualTo(SetInputField.DISTANCE.maximum)
     }
 
     @Test

@@ -1,0 +1,12 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Correct only the length of the straight working arm above its shoulder in panels 2 and 3. The current hand rises about 35 pixels while the actual shoulder rises only 14 pixels; this makes the arm stretch like rubber. Keep cell 1 and the torso/head/shoulder-cap contours and their existing small progressive lift in the other two cells. Copy the first arm, wrist, hand and held dumbbell as a single rigid unit at identical scale onto those rising shoulder caps. Lower the dumbbells in cells 2 and 3 relative to their current positions, so the three dumbbells appear ALMOST at the same height. On the 2172 x 724 strip, target the top-of-dumbbell y coordinates approximately 214, 207, and 200 pixels from the top in the three cells. This is a tiny, anatomically fixed-length vertical reach. Keep the elbow unbent in every cell. Preserve the fixed plinth, head/back/extended legs, free hand on abdomen, transparent unfilled interiors and simple pure white linework on transparent background. No numbers, guides or annotations on the image.",
+  "outputSha256": "be52d1ff6829d0c88d2b61108e87f67b9d2a029f3eb9535d80c29a720e5ba35d",
+  "layout": "three-panels",
+  "variant": "female",
+  "exerciseId": "hsd-supine-dumbbell-scapular-protraction",
+  "nativeStrip": {
+    "path": "masters/hsd-supine-dumbbell-scapular-protraction/female/native-strip.png",
+    "sha256": "be52d1ff6829d0c88d2b61108e87f67b9d2a029f3eb9535d80c29a720e5ba35d"
+  }
+}

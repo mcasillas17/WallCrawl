@@ -99,6 +99,20 @@ class WorkoutTemplatesViewModelTest {
             }
         }
 
+    @Test fun conditionRefusalRetainsActionableIdentities() = runTest {
+        val refused = wallcrawl.elopenmike.com.core.model.ConditionStartRefused("pending-reassessment", setOf("condition"), setOf("exercise"))
+        val saved = template(unit = WeightUnit.KG, load = 10.0)
+        val viewModel = viewModel(saved, workoutRepository = object : WorkoutRepository by FakeRepository(null) {
+            override suspend fun startWorkoutFromTemplate(template: WorkoutTemplate, userProfile: UserProfile): WorkoutSession = throw refused
+        })
+        backgroundScope.launch { viewModel.uiState.collect {} }
+        viewModel.uiState.first { it.templates.isNotEmpty() }
+        viewModel.startTemplate(saved)
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value.conditionRefusal).isSameInstanceAs(refused)
+        assertThat(viewModel.uiState.value.startedSessionId).isNull()
+    }
+
     @Test
     fun aLegacyTemplateWithAnUnrecordedLoadUnitIsNotStartedUnderAGuessedUnit() = runTest {
         val viewModel = viewModel(template(unit = null, load = 100.0))
@@ -190,6 +204,7 @@ class WorkoutTemplatesViewModelTest {
         // Back to back, as a double tap lands: the second call must see the first's lock
         // before either coroutine has run.
         viewModel.startTemplate(shown)
+        assertThat(viewModel.navigationLocked.value).isTrue()
         viewModel.startTemplate(shown)
         advanceUntilIdle()
         assertThat(entered).isEqualTo(1)
@@ -200,8 +215,14 @@ class WorkoutTemplatesViewModelTest {
         assertThat(viewModel.uiState.value.startedSessionId).isEqualTo("session")
         assertThat(viewModel.uiState.value.startingTemplateId).isNull()
 
+        assertThat(viewModel.navigationLocked.value).isTrue()
+        viewModel.startTemplate(shown)
+        advanceUntilIdle()
+        assertThat(entered).isEqualTo(1)
+
         // Held until the screen has navigated, then gone, so it opens the workout once.
         viewModel.onStartHandled()
+        assertThat(viewModel.navigationLocked.value).isFalse()
         advanceUntilIdle()
         assertThat(viewModel.uiState.value.startedSessionId).isNull()
     }

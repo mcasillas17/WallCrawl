@@ -42,6 +42,28 @@ class ActiveWorkoutViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     @Test
+    fun previousSetsMatchTheActiveInstancePurposeForTheSameCatalogId() = runTest {
+        val active = workoutSession(SessionStatus.IN_PROGRESS)
+        val ordinary = workoutSession(SessionStatus.COMPLETED).copy(id = "ordinary", completedAtTimestamp = 1_000)
+        val supportive = ordinary.copy(id = "support", completedAtTimestamp = 2_000,
+            exercises = ordinary.exercises.map { ex -> ex.copy(
+                prescription = ex.prescription.copy(purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE),
+                sets = ex.sets.map { it.copy(completedWeight = 50.0) }) })
+        val stored = FakeRepository(active)
+        val repository = object : WorkoutRepository by stored {
+            override fun observeCompletedSessions(limit: Int): Flow<List<WorkoutSession>> = flowOf(listOf(ordinary, supportive))
+        }
+        val vm = viewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat((vm.uiState.value as ActiveWorkoutUiState.Active).previousSets.single().completedWeight).isEqualTo(20.0)
+        stored.publishSession(active.copy(exercises = active.exercises.map { ex -> ex.copy(
+            prescription = ex.prescription.copy(purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE)) }))
+        advanceUntilIdle()
+        assertThat((vm.uiState.value as ActiveWorkoutUiState.Active).previousSets.single().completedWeight).isEqualTo(50.0)
+    }
+
+    @Test
     fun invalidMembershipIdentityAtSubscriptionKeepsTheLoggerAndReadRetryAvailable() = runTest {
         val stored = FakeRepository(workoutSession(SessionStatus.IN_PROGRESS))
         val programs = object : wallcrawl.elopenmike.com.core.database.repository.ProgramRepository by

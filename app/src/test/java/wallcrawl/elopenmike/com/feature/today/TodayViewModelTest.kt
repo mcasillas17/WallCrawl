@@ -58,6 +58,26 @@ import wallcrawl.elopenmike.com.test.MainDispatcherRule
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TodayViewModelTest {
+    @Test fun conditionGenerationFailureUsesExistingLocalizedErrorFlow() = runTest {
+        val now = 20 * DAY_MILLIS
+        val profileRepository = TodayUserProfileRepository(UserProfile(availableEquipment = StandardEquipment.ALL))
+        val workoutRepository = TodayWorkoutRepository(emptyList())
+        val catalog = InMemoryExerciseCatalog()
+        val planner = object : WorkoutPlanner {
+            override suspend fun generateWorkout(context: WorkoutGenerationContext): GeneratedWorkout =
+                throw wallcrawl.elopenmike.com.core.ai.WorkoutValidationException("condition",
+                    wallcrawl.elopenmike.com.core.ai.WorkoutPlanningFailure.CONDITION_REQUIREMENTS_UNSATISFIED,
+                    conditionReasons = listOf(wallcrawl.elopenmike.com.core.model.ConditionViolation("insufficient-duration", setOf("fictional"))))
+        }
+        val viewModel = TodayViewModel(profileRepository, workoutRepository,
+            WorkoutGenerationContextBuilder(profileRepository, workoutRepository, catalog, ExerciseFilter(), WorkoutHistoryAnalyzer(), nowTimestamp = { now }),
+            planner, ProgramValidator(GeneratedWorkoutValidator(catalog)), nowTimestamp = { now }, clock = flowOf(now))
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Error).error).isEqualTo(TodayError.FIRST_GENERATION_FAILED)
+        assertThat(workoutRepository.startRequests).isEmpty()
+    }
+
     @Test
     fun startWorkout_revalidatesTheProposalEvenWhenContextIdentityMatches() = runTest {
         val now = 20 * DAY_MILLIS
@@ -96,6 +116,28 @@ class TodayViewModelTest {
         advanceUntilIdle()
         assertThat(workoutRepository.startRequests).isEmpty()
         assertThat((viewModel.uiState.value as TodayUiState.Error).error).isEqualTo(TodayError.START_VALIDATION_FAILED)
+    }
+
+    @Test fun authoritativeConditionRefusalIsRetainedForTheNextAction() = runTest {
+        val now = 20 * DAY_MILLIS
+        val catalog = InMemoryExerciseCatalog(listOf(syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest")))
+        val profiles = TodayUserProfileRepository(UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT)))
+        val refused = wallcrawl.elopenmike.com.core.model.ConditionStartRefused("pending-reassessment", setOf("condition"), setOf("exercise"))
+        val workouts = object : WorkoutRepository by TodayWorkoutRepository(emptyList()) {
+            override suspend fun startWorkoutFromGenerated(generated: GeneratedWorkout, displayName: String,
+                displayRationale: String, userProfile: UserProfile, recommendation: RecommendationSnapshot?): WorkoutSession = throw refused
+        }
+        val builder = WorkoutGenerationContextBuilder(profiles, workouts, catalog, ExerciseFilter(), WorkoutHistoryAnalyzer(), nowTimestamp = { now })
+        val viewModel = TodayViewModel(profiles, workouts, builder, FixedPlanWorkoutPlanner(),
+            ProgramValidator(GeneratedWorkoutValidator(catalog)), nowTimestamp = { now }, clock = flowOf(now))
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value).isInstanceOf(TodayUiState.Success::class.java)
+        var started = false
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) { started = true }
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Error).conditionRefusal).isSameInstanceAs(refused)
+        assertThat(started).isFalse()
     }
 
     @get:Rule
@@ -782,8 +824,6 @@ private class TodayUserProfileRepository(
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) =
         updateProfile { it.copy(returningAfterBreakWeeks = weeks) }
 
-    override suspend fun editReportedConditions(change: (Set<String>) -> Set<String>) = error("Not used")
-    override suspend fun editExcludedExercises(change: (List<String>) -> List<String>) = error("Not used")
     override suspend fun updateGender(gender: wallcrawl.elopenmike.com.core.model.ProfileGender) = saveProfile(getProfileOnce().copy(gender = gender))
     override suspend fun updateThemePreference(themePreference: wallcrawl.elopenmike.com.core.model.ThemePreference) =
         updateProfile { it.copy(themePreference = themePreference) }
@@ -798,6 +838,8 @@ private class TodayUserProfileRepository(
 private class TodayWorkoutRepository(
     completedSessions: List<WorkoutSession>
 ) : WorkoutRepository {
+    override suspend fun hasPendingConditionReassessment(profileId: String) = false
+
     val startRequests = mutableListOf<StartWorkoutRequest>()
     private val activeSession = MutableStateFlow<WorkoutSession?>(null)
     private val completed = MutableStateFlow(completedSessions)
@@ -971,7 +1013,7 @@ private fun ledger(
     directPrimarySets: Map<String, Int>,
     weekStartEpochDay: Long = 20_696L
 ) = WeeklyDoseLedger(
-    policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+    policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
     weekStartEpochDay = weekStartEpochDay,
     timeZoneId = "UTC",
     catalogVersion = "catalog-commit-under-test",

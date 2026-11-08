@@ -17,6 +17,13 @@ import wallcrawl.elopenmike.com.core.model.RepRange
 class WorkoutDurationEstimatorTest {
 
     @Test
+    fun seconds_areNotClampedOrTruncated() {
+        assertThat(WorkoutDurationEstimator.estimateSeconds(emptyList())).isEqualTo(0L)
+        assertThat(WorkoutDurationEstimator.estimateSeconds(listOf(repetitionExercise(3, 90)))).isEqualTo(405L)
+        assertThat(WorkoutDurationEstimator.estimateSeconds(List(20) { repetitionExercise(20, 1800) })).isEqualTo(738000L)
+    }
+
+    @Test
     fun version_isTheNamedEstimator() {
         assertThat(WorkoutDurationEstimator.VERSION).isEqualTo("DURATION_ESTIMATOR_V1")
     }

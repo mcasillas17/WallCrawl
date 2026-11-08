@@ -8,7 +8,7 @@ from pathlib import Path
 import unittest
 from urllib.parse import urlsplit
 
-from import_catalog import _read_object, _validate_json_schema, upstream_entries_only
+from import_catalog import _read_object, _validate_json_schema
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -57,7 +57,7 @@ class AiAcceptedCorpusTest(unittest.TestCase):
         cls.entries = {entry["id"]: entry for entry in cls.ledger["entries"]}
         cls.document = _read_object(METADATA, "reviewed metadata")
         cls.metadata = cls.document["exercises"]
-        cls.catalog = upstream_entries_only(_read_object(BUNDLE, "bundled catalog"))
+        cls.catalog = _read_object(BUNDLE, "bundled catalog")
         cls.accepted = set(cls.fixture["aiAccepted"])
         cls.pending_drafts = set(cls.fixture["pendingWithDraft"])
         cls.pending_absent = set(cls.fixture["pendingWithoutMetadata"])

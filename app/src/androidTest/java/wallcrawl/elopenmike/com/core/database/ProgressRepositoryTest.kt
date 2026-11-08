@@ -31,7 +31,6 @@ import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepos
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWeeklyDoseLedgerRepository
 import wallcrawl.elopenmike.com.core.database.repository.ProgressSnapshot
 import wallcrawl.elopenmike.com.core.database.repository.WeeklyDoseLedgerRepository
-import wallcrawl.elopenmike.com.core.model.ExerciseRole
 import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
 import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.SessionStatus
@@ -66,6 +65,19 @@ class ProgressRepositoryTest {
 
     @After fun tearDown() { db.close() }
 
+    @Test fun supportiveSameIdRemainsLoggedActivityWithoutStrengthCredit() = runBlocking {
+        insert("ordinary", monday.toEpochMilli(), "approved")
+        insert("support", monday.toEpochMilli() + 1, "approved")
+        db.openHelper.writableDatabase.execSQL("UPDATE workout_exercises SET purpose = 'SUPPORTIVE' WHERE sessionId = 'support'")
+        val snapshot = requireNotNull(repository().observeProgress({ now }, zone).first())
+        assertThat(snapshot.reviewedDose.creditedWorkSets).isEqualTo(1)
+        assertThat(snapshot.overview.workoutsThisWeek).isEqualTo(2)
+        assertThat(snapshot.overview.completedSetsThisWeek).isEqualTo(2)
+        assertThat(snapshot.overview.totalRepsThisWeek).isEqualTo(20)
+        assertThat(snapshot.overview.totalVolumeThisWeek).isEqualTo(400.0)
+        assertThat(snapshot.overview.recentHistory).hasSize(2)
+    }
+
     @Test fun currentAndPreviousWeeksAreNotTruncatedToTheRecent500() = runBlocking {
         repeat(501) { index -> insert("current-$index", monday.toEpochMilli() + index, "approved") }
         insert("previous", monday.toEpochMilli() - 1, "approved")
@@ -78,20 +90,6 @@ class ProgressRepositoryTest {
         assertThat(snapshot.previousReviewedDose.creditedWorkSets).isEqualTo(1)
         assertThat(snapshot.overview.legacyPrimaryActivity.single { it.muscle == "Chest" }.setsPreviousWeek)
             .isEqualTo(1)
-    }
-
-    @Test fun aMobilityOnlySessionIsAbsentFromStreakAndTotalButPresentInRecentHistory() = runBlocking<Unit> {
-        insert("main", monday.toEpochMilli(), "approved")
-        // The previous week holds only mobility work, so it must not extend the streak.
-        insert("mobility-last-week", monday.toEpochMilli() - 1_000, "approved", role = ExerciseRole.MOBILITY)
-        insert("mobility-now", monday.toEpochMilli() + 1_000, "approved", role = ExerciseRole.MOBILITY)
-        val overview = requireNotNull(repository().observeProgress({ now }, zone).first()).overview
-        assertThat(overview.workoutsThisWeek).isEqualTo(1)
-        assertThat(overview.totalWorkoutsLogged).isEqualTo(1)
-        assertThat(overview.currentStreakWeeks).isEqualTo(1)
-        assertThat(overview.completedSetsThisWeek).isEqualTo(1)
-        assertThat(overview.recentHistory.map { it.id })
-            .containsExactly("mobility-now", "main", "mobility-last-week")
     }
 
     @Test fun activityAndLedgerReconcileWithoutAddingSecondaryInvolvement() = runBlocking {
@@ -272,8 +270,7 @@ class ProgressRepositoryTest {
         timestamp: Long,
         exerciseId: String,
         status: SessionStatus = SessionStatus.COMPLETED,
-        warmup: Boolean = false,
-        role: ExerciseRole = ExerciseRole.MAIN
+        warmup: Boolean = false
     ) {
         val types = if (warmup) listOf(SetType.NORMAL, SetType.WARMUP) else listOf(SetType.NORMAL)
         db.workoutSessionDao().insertWorkout(
@@ -286,7 +283,7 @@ class ProgressRepositoryTest {
             listOf(WorkoutExerciseEntity(
                 id = "$id-exercise", sessionId = id, exerciseId = exerciseId, orderIndex = 0,
                 targetSets = types.size, targetRepMin = 8, targetRepMax = 10, targetWeight = 20.0,
-                notes = "", role = role
+                notes = ""
             )),
             types.mapIndexed { index, type -> WorkoutSetEntity(
                 id = "$id-$index", workoutExerciseId = "$id-exercise", setNumber = index + 1,

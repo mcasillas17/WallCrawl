@@ -1,0 +1,254 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "medial-elbow-tendinopathy",
+    "label": "medial elbow tendinopathy",
+    "aliases": [],
+    "distinctions": "Medial epicondylosis is distinct from lateral elbow tendinopathy and from ulnar neuropathy/valgus ligament injury."
+  },
+  "scope": {
+    "population": "Adults with chronic medial flexor-pronator origin tendinopathy.",
+    "stage": "Chronic nonsurgical; coexisting ulnar neuropathy or ligament instability requires separate assessment.",
+    "operativeStatus": "Nonsurgical research unless explicitly noted; postoperative progression not established.",
+    "exclusions": "Source-specific trial exclusions are applicability limits,not universal contraindications; no automatic diagnosis-only ban.",
+    "uncertainty": "Draft research only. Side, stage, concurrent conditions, starting load and symptom response require individual clinical decisions."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Native web search with primary PubMed,publisher,PMC,and guideline retrieval",
+      "query": "medial epicondylitis eccentric exercise clinical study Tyler 2014",
+      "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
+      "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search with primary PubMed,publisher,PMC,and guideline retrieval",
+      "query": "\"medial epicondylitis\" \"systematic review\" \"exercise\" 2026 See",
+      "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
+      "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
+    }
+  ],
+  "sources": [
+    {
+      "id": "met-s1",
+      "title": "Eccentric exercise therapy for medial epicondylitis: A systematic review of clinical outcomes",
+      "doi": "10.1016/j.ctim.2026.103364",
+      "pmid": "41887339",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41887339/",
+      "publicationStatus": "Final systematic review, online March 24, 2026;Complementary Therapies in Medicine 98:103364, June 2026.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/41887339/). DOI 10.1016/j.ctim.2026.103364; PMID 41887339. Complementary Therapies in Medicine 98:103364, June 2026; online March 24. Indexed primary abstract inspected; full text not obtained despite a free-article label. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Systematic review, 5 studies/143 patients, search through January 2025",
+      "population": "Medial flexor-pronator origin tendinopathy",
+      "comparator": "Randomized, comparative and uncontrolled studies; heterogeneous comparators",
+      "coInterventions": "Often multimodal conservative management",
+      "outcomes": "Within-group pain/function improvement; one RCT superiority; other comparisons unclear; low overall certainty, no pooling.",
+      "followUp": "Study-specific; one uncontrolled 11-year report",
+      "uncertainty": "Small heterogeneous studies; complete primary methods unavailable, despite free-article label.",
+      "harms": "not reported in accessible abstract",
+      "limitations": "Search through January 2025; five clinical studies/143 patients receiving wrist flexor-pronator eccentric loading, including randomized, pre/post and comparative designs. Within-group pain/function improvements were frequent; one RCT showed between-group superiority, others did not. One uncontrolled 11-year report suggested persistence. Heterogeneity and small samples precluded pooling; authors rate overall certainty low. Abstract does not establish exact protocols, harms or a validated exercise restriction. Newer synthesis prevents claiming that no medial-specific research exists, while still leaving a weak evidence base.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Methods: review includes eccentric wrist flexor-pronator loading as a main intervention component. Heterogeneous programs; no single exact mechanics/dose available from the abstract.",
+        "dose": "not reported — exact primary protocol not independently established at this access level.",
+        "frequency": "not reported — exact primary protocol not independently established at this access level.",
+        "supervision": "not reported — exact primary protocol not independently established at this access level.",
+        "progression": "not reported — exact primary protocol not independently established at this access level.",
+        "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
+      },
+      "locations": [
+        "Abstract > Methods, Results, Conclusion",
+        "Abstract > Methods"
+      ]
+    },
+    {
+      "id": "met-p1",
+      "title": "Clinical outcomes of the addition of eccentrics for rehabilitation of previously failed treatments of golfers elbow",
+      "doi": null,
+      "pmid": "24944855",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4060314/",
+      "publicationStatus": "Final study, International Journal of Sports Physical Therapy 2014;9(3):365–370.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete primary text retrieved by HTTP once and relevant methods/results/caption inspected; later PMC requests challenged. No figure/video visual verification."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Uncontrolled pre/post clinical study, n=20",
+      "population": "Chronic medial epicondylosis after failed prior treatment, mean age49, 13 men/7 women",
+      "comparator": "No concurrent control",
+      "coInterventions": "Wrist stretching, ultrasound, cross-friction massage, heat/ice",
+      "outcomes": "DASH 34.7→7.9; sports DASH 73.9→13.2; attribution to eccentric component impossible.",
+      "followUp": "Mean 6.1 weeks, range1–10",
+      "uncertainty": "No comparator; short follow-up, inconsistent daily/twice-daily frequency and flexor/extensor figure-caption wording.",
+      "harms": "Adverse-event ascertainment not adequately reported.",
+      "limitations": "20 patients (13 male/7 female, mean 49 years) with chronic medial epicondylosis after unsuccessful prior treatment. Added rubber-bar eccentric wrist-flexor release to stretching, ultrasound, massage and heat/ice; no control group. Abstract reports 3×15 twice daily, while discussion says daily: internal frequency inconsistency is unresolved. Mean treatment 6.1 weeks; DASH 34.7→7.9 and sport-DASH 73.9→13.2. Improvement cannot isolate eccentrics or exclude natural history/expectation. Adverse-event ascertainment is not adequately reported. The text's flexor/extensor wording in a figure caption is inconsistent with the stated wrist-flexor intervention; do not build execution solely from that caption.",
+      "protocol": {
+        "execution": "Rubber bar preloaded using noninvolved wrist; involved wrist flexors eccentrically release the twist. Figure caption contains inconsistent flexor/extensor terminology; video/figure execution review remains required.",
+        "dose": "Three sets of 15 repetitions; frequency inconsistent between source sections.",
+        "frequency": "Abstract: twice daily. Discussion: daily. Do not silently select one.",
+        "supervision": "Physical therapy mean 12 visits, range 1–22, plus home work.",
+        "progression": "not reported sufficiently to define a generic starting resistance/progression.",
+        "stoppingRules": "not reported as a validated stopping threshold."
+      },
+      "locations": [
+        "Methods > Treatment; Results; Discussion; Figure 1 caption"
+      ]
+    },
+    {
+      "id": "met-r1",
+      "title": "Tendinopathies Around the Elbow Part 2: Medial Elbow, Distal Biceps and Triceps Tendinopathies",
+      "doi": "10.1111/sae.12022",
+      "pmid": "27582910",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4986646/",
+      "publicationStatus": "Final narrative review, Shoulder & Elbow 2014;6(1):47–56.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Review](https://pmc.ncbi.nlm.nih.gov/articles/PMC4986646/); [publisher](https://journals.sagepub.com/doi/10.1111/sae.12022). DOI 10.1111/sae.12022; PMID 27582910. Final Shoulder & Elbow 2014;6(1):47–56; indexed full-text sections and publisher metadata inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Narrative review, final2014",
+      "population": "Medial elbow, distal biceps and triceps discussed separately",
+      "comparator": "No randomized comparison supplied by this review",
+      "coInterventions": "Clinical context, conservative and surgical approaches",
+      "outcomes": "Sparse higher-level evidence; differential includes ulnar neuropathy/ligament pathology; activity modification is clinical advice.",
+      "followUp": "not a prospective intervention",
+      "uncertainty": "Indexed selected sections/publisher metadata inspected; not complete article inspection, not a numeric load/ROM threshold.",
+      "harms": "Not a quantitative exercise-harms study.",
+      "limitations": "Review addresses medial elbow, distal biceps and triceps separately; notes sparse high-level evidence and supports conservative management before surgery in appropriate presentations. This is context/expert interpretation, not an RCT defining allowable wrist flexion/pronation, valgus load or pulling volume. Medial pain can coexist with ulnar neuropathy and ligament pathology; diagnosis-specific evidence must remain separate. No dose or universal contraindication is extracted from this source.",
+      "protocol": {
+        "execution": "not reported — exact primary protocol not independently established at this access level.",
+        "dose": "not reported — exact primary protocol not independently established at this access level.",
+        "frequency": "not reported — exact primary protocol not independently established at this access level.",
+        "supervision": "not reported — exact primary protocol not independently established at this access level.",
+        "progression": "not reported — exact primary protocol not independently established at this access level.",
+        "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
+      },
+      "locations": [
+        "Medial elbow tendinopathy > Assessment and management; Distal biceps tendinopathy"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "met-s1-finding",
+      "kind": "study-result",
+      "statement": "Within-group pain/function improvement; one RCT superiority; other comparisons unclear; low overall certainty, no pooling.",
+      "citations": [
+        {
+          "sourceId": "met-s1",
+          "location": "Abstract > Methods, Results, Conclusion"
+        }
+      ],
+      "applicability": "Medial flexor-pronator origin tendinopathy",
+      "limitations": "Small heterogeneous studies; complete primary methods unavailable, despite free-article label. not reported in accessible abstract"
+    },
+    {
+      "id": "met-p1-finding",
+      "kind": "study-result",
+      "statement": "DASH 34.7→7.9; sports DASH 73.9→13.2; attribution to eccentric component impossible.",
+      "citations": [
+        {
+          "sourceId": "met-p1",
+          "location": "Methods > Treatment; Results; Discussion; Figure 1 caption"
+        }
+      ],
+      "applicability": "Chronic medial epicondylosis after failed prior treatment, mean age49, 13 men/7 women",
+      "limitations": "No comparator; short follow-up, inconsistent daily/twice-daily frequency and flexor/extensor figure-caption wording. Adverse-event ascertainment not adequately reported."
+    },
+    {
+      "id": "met-r1-finding",
+      "kind": "study-result",
+      "statement": "Sparse higher-level evidence; differential includes ulnar neuropathy/ligament pathology; activity modification is clinical advice.",
+      "citations": [
+        {
+          "sourceId": "met-r1",
+          "location": "Medial elbow tendinopathy > Assessment and management; Distal biceps tendinopathy"
+        }
+      ],
+      "applicability": "Medial elbow, distal biceps and triceps discussed separately",
+      "limitations": "Indexed selected sections/publisher metadata inspected; not complete article inspection, not a numeric load/ROM threshold. Not a quantitative exercise-harms study."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "rubber-bar-eccentric-wrist-flexion-mapping",
+      "exerciseId": null,
+      "requestId": "rubber-bar-eccentric-wrist-flexion",
+      "findingIds": [
+        "met-p1-finding"
+      ],
+      "matchRationale": "Catalog wrist-curl uses a standing barbell; wrist-extension uses unsupported dumbbells. Neither establishes torsion-bar execution. Different implement and preloading require review, rather than different clinical dose.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "met-loading-hypothesis",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Rubber-bar eccentric wrist-flexor exercise is a low-certainty research candidate. Resolve caption/frequency discrepancy before execution release.",
+      "findingIds": [
+        "met-p1-finding",
+        "met-s1-finding"
+      ],
+      "citations": [
+        {
+          "sourceId": "met-p1",
+          "location": "Methods > Treatment; Results; Discussion; Figure 1 caption"
+        },
+        {
+          "sourceId": "met-s1",
+          "location": "Abstract > Methods, Results, Conclusion"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with chronic medial flexor-pronator origin tendinopathy.",
+        "stage": "Chronic nonsurgical; coexisting ulnar neuropathy or ligament instability requires separate assessment.",
+        "rationale": "Source-specific draft implication. Preserve indirectness and all concurrent condition, equipment and joint restrictions."
+      },
+      "limitations": "Candidate only, unreviewed, not clinically released. No invented pain/load/ROM cutoff. Benefit does not establish that alternatives are harmful; trial exclusions are applicability limits.",
+      "mappingIds": [
+        "rubber-bar-eccentric-wrist-flexion-mapping"
+      ],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Low certainty: one uncontrolled primary program cannot isolate eccentric benefit.",
+    "Daily versus twice-daily frequency and flexor/extensor caption discrepancy remain unresolved.",
+    "Lateral-elbow dose/contraction evidence is indirect. No verified grip, pronation or valgus-load threshold."
+  ],
+  "disposition": "unresolved",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

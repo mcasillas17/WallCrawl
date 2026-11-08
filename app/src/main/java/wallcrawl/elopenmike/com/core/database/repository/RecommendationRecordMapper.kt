@@ -30,7 +30,8 @@ internal fun RecommendationRecord.toEntity(): WorkoutRecommendationRecordEntity 
         reasonCodes = reasonCodes.joinToString(PERSISTED_LIST_SEPARATOR),
         doseAccounting = RecommendationDoseAccountingPayload.encode(doseAccounting),
         recordedAtTimestamp = recordedAtEpochMillis,
-        programAssociationDigest = programAssociationDigest
+        programAssociationDigest = programAssociationDigest,
+        conditionContextDigest = conditionContextDigest
     )
 
 internal fun WorkoutRecommendationRecordEntity.toRecommendationRecord(): RecommendationRecord {
@@ -61,6 +62,7 @@ internal fun WorkoutRecommendationRecordEntity.toRecommendationRecord(): Recomme
             reasonCodes = codes,
             doseAccounting = accounting,
             recordedAtEpochMillis = recordedAtTimestamp,
-            programAssociationDigest = programAssociationDigest
+            programAssociationDigest = programAssociationDigest,
+            conditionContextDigest = conditionContextDigest
     )
 }

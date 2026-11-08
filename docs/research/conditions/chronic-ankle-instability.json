@@ -1,0 +1,443 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "chronic-ankle-instability",
+    "label": "chronic ankle instability",
+    "aliases": [],
+    "distinctions": "Coexisting injuries and operative cases are not established by selected trials; exclusions are generalisability boundaries."
+  },
+  "scope": {
+    "population": "People with recurrent giving-way/questionnaire-defined chronic ankle instability; direct trials predominantly young adults.",
+    "stage": "Chronic instability rather than an initial unassessed sprain.",
+    "operativeStatus": "Nonoperative evidence unless explicitly stated otherwise; no postoperative protocol proposed.",
+    "exclusions": "Coexisting injuries and operative cases are not established by selected trials; exclusions are generalisability boundaries.",
+    "uncertainty": "Draft research only; diagnosis, individual starting load, stage and clinical review remain unresolved."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "2021 lateral ankle ligament sprains clinical practice guideline chronic ankle instability exercise balance resistance training",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "chronic ankle instability balance strength training randomized trial 2018 Hall protocol six weeks",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "Balance Strength Training Chronic Ankle Instability Deficits Part I 2018 PMC Hall",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "Shamus 2004 hallux limitus sesamoid mobilization flexor hallucis strength trial 12 sessions",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.2519/jospt.2021.0302",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.4085/1062-6050-385-16",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.4085/1062-6050-49.3.71",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1186/s13643-024-02455-x",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "EXT_ID:25365134 AND SRC:MED",
+      "decision": "Bounded accessible-protocol audit: preserve explicitly reported category, program/visit/device schedule or context with the reported-in-accessible-text prefix. No unseen primary mechanics copied from secondary sources.",
+      "limitations": "Local 2026-11-01 / UTC 2026-11-02. Access status unchanged; exact missing exercise mechanics, per-exercise load/dose, and clinical applicability remain unresolved."
+    }
+  ],
+  "sources": [
+    {
+      "id": "ank-g",
+      "title": "Ankle Stability and Movement Coordination Impairments: Lateral Ankle Ligament Sprains Revision 2021.",
+      "doi": "10.2519/jospt.2021.0302",
+      "pmid": "33789434",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33789434/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2021-04-01. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Official80-page AOPT PDF retrieved and parsed in memory during serialization; summary CPG3 and acute/chronic intervention sections inspected. https://www.orthopt.org/uploads/content_files/files/jospt.2021.0302.pdf"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.2519/jospt.2021.0302 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Final2021 clinical practice guideline; distinct initial LAS and CAI evidence.",
+      "population": "Acute/postacute lateral sprains and chronic ankle instability, separately classified.",
+      "comparator": "Multiple rehabilitation/support comparisons, not one trial.",
+      "coInterventions": "External supports/manual therapy and education tailored to severity.",
+      "outcomes": "Acute: progressive weight bearing with external support, structured protected ROM/neuromuscular/balance rehab; severe injury may need up to10 daysimmobilisation. CAI: proprioceptive/neuromuscular exercise; supports alone insufficient for postural stability.",
+      "followUp": "Varied study intervals.",
+      "uncertainty": "Severity/healing/impairment assessment required; no self-prescribed acute fracture or severe-sprain protocol.",
+      "harms": "No single exercise harms denominator.",
+      "limitations": "Severity/healing/impairment assessment required; no self-prescribed acute fracture or severe-sprain protocol. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Acute protected active ROM, stretching, neuromuscular/postural/balance training; CAI proprioceptive/neuromuscular work.",
+        "dose": "not reported as one universal set/repetition dose.",
+        "frequency": "not reported as one universal frequency.",
+        "supervision": "Clinic and home selected for severity, impairments, preferences and resources.",
+        "progression": "Progressive weight bearing/protection and exercise selected for phase of healing; no universal increment.",
+        "stoppingRules": "Severity, pain and protection guide care; no universal numerical stop rule."
+      },
+      "locations": [
+        "Summary of Recommendations > Acute/Postacute Protection and Optimal Loading; Therapeutic Exercise (CPG3)",
+        "Summary of Recommendations > Chronic Ankle Instability > External Support; Therapeutic Exercise (CPG3)"
+      ]
+    },
+    {
+      "id": "cai-r1",
+      "title": "Balance- and Strength-Training Protocols to Improve Chronic Ankle Instability Deficits, Part I: Assessing Clinical Outcome Measures.",
+      "doi": "10.4085/1062-6050-385-16",
+      "pmid": "29975573",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6089027/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2018-06-01. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full PMC HTML methods/protocol/table inspected; XML returned500."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.4085/1062-6050-385-16 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "RCT,n=39; unblinded researcher; supervised multicomponent protocols.",
+      "population": "Young adults with CAI, questionnaire score≥11.",
+      "comparator": "Balance versus strength versus20 minmild cycling control.",
+      "coInterventions": "Strength included therapist manual PNF; no isolated component effects.",
+      "outcomes": "Both active arms improved balance/strength/side-hop at6 weeks; strength also improved eccentric eversion.",
+      "followUp": "6 weeks; no long-term recurrence endpoint.",
+      "uncertainty": "Small sample; whole-program effects cannot be assigned to isolated stance/band exercise.",
+      "harms": "One participant excluded because unable to progress balance; systematic harms result not established.",
+      "limitations": "Small sample; whole-program effects cannot be assigned to isolated stance/band exercise. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Band DF/inversion/eversion seated on floor anchored around treatment table, band at metatarsal heads; heel raises on step with rail for balance; manual PNF. Balance progressive single-leg stance/open-closed eyes/hop-stabilisation/reach.",
+        "dose": "Twenty-minute sessions. Band exercises: 3 × 10 and 4 × 10 on alternating weeks with increased resistance each fortnight. PNF and heel raises: 2 × 10 to 4 × 15. Band movement approximately 3–5 seconds per repetition.",
+        "frequency": "Three times weekly for six weeks.",
+        "supervision": "Researcher supervised all 18 sessions.",
+        "progression": "Balance only after error-free prior level; strength weekly sets/resistance schedule.",
+        "stoppingRules": "Balance progression required no touchdown, excessive trunk motion (trial defined >30 degrees), hand-position/bracing errors or missed target. These are progression criteria, not general contraindications."
+      },
+      "locations": [
+        "Methods > Rehabilitation Procedures > Balance-Training Protocol",
+        "Methods > Strength-Training Protocol; Table2",
+        "Results; Limitations"
+      ]
+    },
+    {
+      "id": "cai-r2",
+      "title": "Strength-training protocols to improve deficits in participants with chronic ankle instability: a randomized controlled trial.",
+      "doi": "10.4085/1062-6050-49.3.71",
+      "pmid": "25365134",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4299733/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2014-11-03. Version/access details below.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed abstract inspected; XML500; exact full exercise table not independently inspected. Bounded protocol audit re-read the primary abstract through Europe PMC core metadata; retained only explicitly reported program/category facts, with no full-method access upgrade."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.4085/1062-6050-49.3.71 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "RCT,n=39.",
+      "population": "Mostly college-age CAI defined with functional-instability questionnaire.",
+      "comparator": "Band strength versus manual PNF versus no rehabilitation.",
+      "coInterventions": "not reported beyond assigned protocols in accessible abstract.",
+      "outcomes": "Strength/perceived instability improved; neither active program improved Y-Balance/crossover-hop.",
+      "followUp": "6 weeks.",
+      "uncertainty": "Not equivalent to all-components2018 protocol; strength gain not restoration of all function.",
+      "harms": "not reported in abstract.",
+      "limitations": "Not equivalent to all-components2018 protocol; strength gain not restoration of all function. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Patients or other participants identifies resistance-band and PNF strength programs versus control; exact exercise mechanics and resistance table remain unverified.",
+        "dose": "not reported",
+        "frequency": "reported in accessible text: Abstract > Intervention(s) reports both rehabilitation protocols three times weekly for six weeks. This is rehabilitation-session frequency, not a verified per-exercise set, repetition or load prescription.",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Intervention, Results and Conclusions",
+        "Abstract > Patients or other participants; Intervention(s)"
+      ]
+    },
+    {
+      "id": "cai-s",
+      "title": "A systematic review and meta-analysis of balance training in patients with chronic ankle instability.",
+      "doi": "10.1186/s13643-024-02455-x",
+      "pmid": "38347564",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10860262/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2024-02-12. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Europe PMC full XML abstract/trial-characteristics/quality tables inspected. https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10860262/fullTextXML"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1186/s13643-024-02455-x rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Systematic review/meta-analysis,9 RCTs,341 participants.",
+      "population": "CAI trial mean ages~16–34 in Table1, despite abstract referring to older patients.",
+      "comparator": "Balance versus blank control or strength.",
+      "coInterventions": "Varied exercise components.",
+      "outcomes": "Balance versus blank improved CAIT MD3.95(95%CI3.26–4.64); selected SEBT directions improved. Versus strength, scale benefits but dynamic-stability differences not established.",
+      "followUp": "Most4–6 weeks.",
+      "uncertainty": "Small heterogeneous trials and limited blinding; not evidence for a universal balance dose.",
+      "harms": "No reliable exercise-specific harms estimate extracted.",
+      "limitations": "Small heterogeneous trials and limited blinding; not evidence for a universal balance dose. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Varied balance programs; no single execution validated as universally best.",
+        "dose": "Reported5–20 min/session; programs4–6 weeks.",
+        "frequency": "2–5 days/week across studies.",
+        "supervision": "Varied/not consistently reported.",
+        "progression": "not reported as one universal progression.",
+        "stoppingRules": "not reported as one universal stopping threshold."
+      },
+      "locations": [
+        "Abstract > Results and Conclusion",
+        "Results > Table1; Table2"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "ank-g-result",
+      "kind": "published-recommendation",
+      "statement": "Acute: progressive weight bearing with external support, structured protected ROM/neuromuscular/balance rehab; severe injury may need up to10 daysimmobilisation. CAI: proprioceptive/neuromuscular exercise; supports alone insufficient for postural stability. Harms: No single exercise harms denominator.",
+      "citations": [
+        {
+          "sourceId": "ank-g",
+          "location": "Summary of Recommendations > Acute/Postacute Protection and Optimal Loading; Therapeutic Exercise (CPG3)"
+        },
+        {
+          "sourceId": "ank-g",
+          "location": "Summary of Recommendations > Chronic Ankle Instability > External Support; Therapeutic Exercise (CPG3)"
+        }
+      ],
+      "applicability": "Acute/postacute lateral sprains and chronic ankle instability, separately classified.",
+      "limitations": "Severity/healing/impairment assessment required; no self-prescribed acute fracture or severe-sprain protocol."
+    },
+    {
+      "id": "ank-g-execution",
+      "kind": "published-recommendation",
+      "statement": "Reported execution: Acute protected active ROM, stretching, neuromuscular/postural/balance training; CAI proprioceptive/neuromuscular work. Study dose: not reported as one universal set/repetition dose. Frequency: not reported as one universal frequency.",
+      "citations": [
+        {
+          "sourceId": "ank-g",
+          "location": "Summary of Recommendations > Acute/Postacute Protection and Optimal Loading; Therapeutic Exercise (CPG3)"
+        },
+        {
+          "sourceId": "ank-g",
+          "location": "Summary of Recommendations > Chronic Ankle Instability > External Support; Therapeutic Exercise (CPG3)"
+        }
+      ],
+      "applicability": "Acute/postacute lateral sprains and chronic ankle instability, separately classified.",
+      "limitations": "Execution identity is independent of dose. Bundle/component and access limits apply; these are research protocols rather than app prescriptions."
+    },
+    {
+      "id": "cai-r1-result",
+      "kind": "study-result",
+      "statement": "Both active arms improved balance/strength/side-hop at6 weeks; strength also improved eccentric eversion. Harms: One participant excluded because unable to progress balance; systematic harms result not established.",
+      "citations": [
+        {
+          "sourceId": "cai-r1",
+          "location": "Methods > Rehabilitation Procedures > Balance-Training Protocol"
+        },
+        {
+          "sourceId": "cai-r1",
+          "location": "Methods > Strength-Training Protocol; Table2"
+        },
+        {
+          "sourceId": "cai-r1",
+          "location": "Results; Limitations"
+        }
+      ],
+      "applicability": "Young adults with CAI, questionnaire score≥11.",
+      "limitations": "Small sample; whole-program effects cannot be assigned to isolated stance/band exercise."
+    },
+    {
+      "id": "cai-r1-execution",
+      "kind": "study-result",
+      "statement": "Reported execution: Band DF/inversion/eversion seated on floor anchored around treatment table, band at metatarsal heads; heel raises on step with rail for balance; manual PNF. Balance progressive single-leg stance/open-closed eyes/hop-stabilisation/reach. Study dose: Twenty-minute sessions. Band exercises: 3 × 10 and 4 × 10 on alternating weeks with increased resistance each fortnight. PNF and heel raises: 2 × 10 to 4 × 15. Band movement approximately 3–5 seconds per repetition. Frequency: Three times weekly for six weeks.",
+      "citations": [
+        {
+          "sourceId": "cai-r1",
+          "location": "Methods > Rehabilitation Procedures > Balance-Training Protocol"
+        },
+        {
+          "sourceId": "cai-r1",
+          "location": "Methods > Strength-Training Protocol; Table2"
+        },
+        {
+          "sourceId": "cai-r1",
+          "location": "Results; Limitations"
+        }
+      ],
+      "applicability": "Young adults with CAI, questionnaire score≥11.",
+      "limitations": "Execution identity is independent of dose. Bundle/component and access limits apply; these are research protocols rather than app prescriptions."
+    },
+    {
+      "id": "cai-r2-result",
+      "kind": "study-result",
+      "statement": "Strength/perceived instability improved; neither active program improved Y-Balance/crossover-hop. Harms: not reported in abstract.",
+      "citations": [
+        {
+          "sourceId": "cai-r2",
+          "location": "Abstract > Intervention, Results and Conclusions"
+        }
+      ],
+      "applicability": "Mostly college-age CAI defined with functional-instability questionnaire.",
+      "limitations": "Not equivalent to all-components2018 protocol; strength gain not restoration of all function."
+    },
+    {
+      "id": "cai-s-result",
+      "kind": "study-result",
+      "statement": "Balance versus blank improved CAIT MD3.95(95%CI3.26–4.64); selected SEBT directions improved. Versus strength, scale benefits but dynamic-stability differences not established. Harms: No reliable exercise-specific harms estimate extracted.",
+      "citations": [
+        {
+          "sourceId": "cai-s",
+          "location": "Abstract > Results and Conclusion"
+        },
+        {
+          "sourceId": "cai-s",
+          "location": "Results > Table1; Table2"
+        }
+      ],
+      "applicability": "CAI trial mean ages~16–34 in Table1, despite abstract referring to older patients.",
+      "limitations": "Small heterogeneous trials and limited blinding; not evidence for a universal balance dose."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "seated-anchored-band-ankle-dorsiflexion-mapping",
+      "exerciseId": null,
+      "requestId": "seated-anchored-band-ankle-dorsiflexion",
+      "findingIds": [
+        "cai-r1-execution"
+      ],
+      "matchRationale": "Catalog metadata/ID inspection did not verify this direction-specific anchored-band execution. Band color/dose are protocol choices, not new identities.",
+      "status": "candidate"
+    },
+    {
+      "id": "seated-anchored-band-ankle-inversion-mapping",
+      "exerciseId": null,
+      "requestId": "seated-anchored-band-ankle-inversion",
+      "findingIds": [
+        "cai-r1-execution"
+      ],
+      "matchRationale": "Catalog metadata/ID inspection did not verify this direction-specific anchored-band execution. Band color/dose are protocol choices, not new identities.",
+      "status": "candidate"
+    },
+    {
+      "id": "seated-anchored-band-ankle-eversion-mapping",
+      "exerciseId": null,
+      "requestId": "seated-anchored-band-ankle-eversion",
+      "findingIds": [
+        "cai-r1-execution"
+      ],
+      "matchRationale": "Catalog metadata/ID inspection did not verify this direction-specific anchored-band execution. Band color/dose are protocol choices, not new identities.",
+      "status": "candidate"
+    },
+    {
+      "id": "single-leg-stance-eyes-open-progression-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "single-leg-stance-eyes-open-progression-unresolved",
+      "findingIds": [
+        "cai-r1-execution"
+      ],
+      "matchRationale": "Balance components were studied within a progressive supervised program; isolated stance cannot inherit the whole program effect. Catalog calf raise is not a stance exercise.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "cai-neuromuscular-candidates",
+      "kind": "supportive-prescription",
+      "basis": "published-recommendation",
+      "statement": "Consider proprioceptive/neuromuscular and direction-specific resistance candidates according to identified deficits. Hopping and unstable tasks require separate progression review; a whole supervised program effect is not proof for one isolated component.",
+      "findingIds": [
+        "ank-g-result",
+        "cai-r1-execution",
+        "cai-r2-result"
+      ],
+      "citations": [
+        {
+          "sourceId": "ank-g",
+          "location": "Summary of Recommendations > Chronic Ankle Instability > External Support; Therapeutic Exercise (CPG3)"
+        },
+        {
+          "sourceId": "cai-r1",
+          "location": "Methods > Rehabilitation Procedures > Balance-Training Protocol"
+        },
+        {
+          "sourceId": "cai-r2",
+          "location": "Abstract > Intervention, Results and Conclusions"
+        }
+      ],
+      "applicability": {
+        "population": "People with recurrent giving-way/questionnaire-defined chronic ankle instability; direct trials predominantly young adults.",
+        "stage": "Chronic instability, not an unassessed initial sprain.",
+        "rationale": "Draft interpretation of the linked condition-specific findings; evidence and product choice are separated by basis. Other conditions, equipment and independent joint limits remain controlling."
+      },
+      "limitations": "Young supervised samples and short follow-up; exact home stance progression remains unresolved. Candidate only; no clinical release.",
+      "mappingIds": [
+        "single-leg-stance-eyes-open-progression-unresolved-mapping",
+        "seated-anchored-band-ankle-dorsiflexion-mapping",
+        "seated-anchored-band-ankle-inversion-mapping",
+        "seated-anchored-band-ankle-eversion-mapping"
+      ],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Clinical content review and individual applicability are not established.",
+    "Single-leg stance standalone progression/support and band anchor safety need review.",
+    "PNF needs clinician resistance; hopping is not the default starting exercise."
+  ],
+  "disposition": "eligible-for-independent-content-review",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

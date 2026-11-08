@@ -18,9 +18,11 @@ import wallcrawl.elopenmike.com.core.model.WeightUnit
  * same thing in whichever language the reader chose.
  */
 enum class TodayError(@StringRes val messageRes: Int) {
+    UNREADABLE_RESTRICTIONS(R.string.guided_train_unreadable_restrictions),
     PROGRAM_UNSUPPORTED(R.string.program_unsupported),
     PROGRAM_PROFILE_MISMATCH(R.string.program_profile_mismatch),
     PROGRAM_UNAVAILABLE(R.string.program_read_failed),
+    PROGRAM_INACTIVE(R.string.guided_train_no_active_program),
     NO_CANDIDATES(R.string.today_error_no_candidates),
     NO_STRENGTH_CANDIDATES(R.string.today_error_no_strength_candidates),
     NO_CANDIDATES_FOR_ANY_SPLIT(R.string.today_error_no_split),
@@ -48,8 +50,6 @@ enum class TodayError(@StringRes val messageRes: Int) {
     REVIEWED_EQUIPMENT_REMOVED_ALL(R.string.today_error_reviewed_equipment),
     REVIEWED_CAPABILITIES_REMOVED_ALL(R.string.today_error_reviewed_capabilities),
     REVIEWED_CONSTRAINTS_REMOVED_ALL(R.string.today_error_reviewed_constraints),
-    REVIEWED_CONDITIONS_REMOVED_ALL(R.string.today_error_reviewed_conditions),
-    CONDITION_GUIDANCE_UNAVAILABLE(R.string.today_error_condition_guidance_unavailable),
     REVIEWED_CALIBRATION_REMOVED_ALL(R.string.today_error_reviewed_calibration),
     REVIEWED_NONE_ELIGIBLE(R.string.today_error_reviewed_none_eligible)
 }
@@ -78,7 +78,9 @@ sealed interface TodayUiState {
         /** Published with the workout; profile preferences may already be newer during regeneration. */
         val prescriptionUnit: WeightUnit = userProfile.preferredUnit,
         val planningIntent: wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent = wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.ORDINARY,
-        val programSession: wallcrawl.elopenmike.com.core.model.ProgramSessionSnapshot? = null
+        val conditionContext: wallcrawl.elopenmike.com.core.model.SessionConditionContext? = null,
+        val programSession: wallcrawl.elopenmike.com.core.model.ProgramSessionSnapshot? = null,
+        val isStarting: Boolean = false
     ) : TodayUiState
 
     /**
@@ -89,6 +91,8 @@ sealed interface TodayUiState {
     data class Error(
         val error: TodayError,
         val activeSession: WorkoutSession? = null,
-        val deload: TodayDeloadState? = null
+        val deload: TodayDeloadState? = null,
+        val conditionRefusal: wallcrawl.elopenmike.com.core.model.ConditionStartRefused? = null,
+        val isBusy: Boolean = false
     ) : TodayUiState
 }

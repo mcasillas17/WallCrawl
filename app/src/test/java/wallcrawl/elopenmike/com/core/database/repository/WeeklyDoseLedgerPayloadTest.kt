@@ -22,7 +22,7 @@ import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 class WeeklyDoseLedgerPayloadTest {
 
     private val ledger = WeeklyDoseLedger(
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         weekStartEpochDay = 20_696L,
         timeZoneId = "Asia/Kolkata",
         catalogVersion = "catalog-commit",
@@ -31,6 +31,13 @@ class WeeklyDoseLedgerPayloadTest {
         secondaryInvolvement = linkedMapOf("Triceps" to 5),
         unattributedWorkSets = linkedMapOf(LedgerOmissionReason.METADATA_NOT_APPROVED to 4)
     )
+
+    @Test
+    fun historicalPolicyPayloadStillDecodesWithoutRewritingItsIdentity() {
+        val old = ledger.copy(policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1)
+        assertThat(WeeklyDoseLedgerPayload.decode(WeeklyDoseLedgerPayload.encode(old), old.policyVersion,
+            old.weekStartEpochDay, old.timeZoneId, old.catalogVersion, old.reviewPolicyVersion)).isEqualTo(old)
+    }
 
     @Test
     fun encodingIsDeterministicAndIndependentOfInsertionOrder() {
@@ -166,7 +173,7 @@ class WeeklyDoseLedgerPayloadTest {
                     descriptiveSecondaryMuscles = setOf("Triceps", "Shoulders", "Core", "Lats")
                 )
             ),
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
             week = week,
             catalogVersion = "catalog-commit",
             reviewPolicyVersion = 1
@@ -267,7 +274,7 @@ class WeeklyDoseLedgerPayloadTest {
                     descriptiveSecondaryMuscles = secondaries
                 )
             ),
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
             week = week,
             catalogVersion = "catalog-commit",
             reviewPolicyVersion = 1

@@ -1,15 +1,17 @@
 package wallcrawl.elopenmike.com.core.ai
 
-import wallcrawl.elopenmike.com.core.model.mainExercises
 import java.security.MessageDigest
 import java.util.Locale
 import wallcrawl.elopenmike.com.core.model.AdaptationState
+import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
+import wallcrawl.elopenmike.com.core.model.ConditionViolation
 import wallcrawl.elopenmike.com.core.model.Exercise
-import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MechanicsType
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.ProgressionDecision
 import wallcrawl.elopenmike.com.core.model.ProgressionReason
 import wallcrawl.elopenmike.com.core.model.ProgressionReasonCode
@@ -17,8 +19,9 @@ import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.WeightUnit
-import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
+import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
+import wallcrawl.elopenmike.com.core.model.conditionDigest
 import wallcrawl.elopenmike.com.core.model.convertWeight
 
 /**
@@ -40,7 +43,8 @@ internal fun WorkoutGenerationContext.recordedWorkLoad(exerciseId: String, type:
             it.completedAtTimestamp
         }.thenBy { it.id })
         .flatMap { session ->
-            session.mainExercises.filter { it.exerciseId == exerciseId && it.prescription.exerciseType == type }
+            session.exercises.filter { it.exerciseId == exerciseId && it.prescription.exerciseType == type &&
+                it.prescription.purpose == PrescriptionPurpose.ORDINARY }
                 .flatMap { it.sets }.sortedByDescending { it.setNumber }.asSequence()
                 .filter { it.isCompleted && it.type != SetType.WARMUP && it.exerciseType == type &&
                     (it.completedReps ?: 0) > 0 && it.stopReason == null && it.stoppedAtTimestamp == null &&
@@ -73,6 +77,40 @@ class DefaultExercisePrescriptionFactory(
     ): ExercisePrescription = createDecision(exercise, context).prescription
 
     fun createDecision(exercise: Exercise, context: WorkoutGenerationContext): ProgressionDecision {
+        val planning = context.conditionPlanning
+        if (planning is ConditionPlanningResult.Blocked) conditionPlanningFailure(planning.reasons)
+        val decision = createOrdinaryDecision(exercise, context)
+        if (planning !is ConditionPlanningResult.Ready) return decision
+        if (planning.weightUnit != context.preferredUnits) conditionPlanningFailure(listOf(ConditionViolation(
+            "weight-unit-mismatch", planning.context.selectedConditions.map { it.conditionId }.toSet(), setOf(exercise.id))))
+        val progressionAllowed = planning.ordinaryRules[exercise.id]?.allowOrdinaryProgression == true
+        val base = if (!progressionAllowed && decision.reason == ProgressionReason.ADVANCED) {
+            decision.referencePrescription
+        } else decision.prescription
+        val applied = when (val result = ConditionPlanningPolicy().applyOrdinary(exercise, base, planning)) {
+            is ConditionPrescriptionResult.Blocked -> conditionPlanningFailure(result.reasons)
+            is ConditionPrescriptionResult.Applied -> result.prescription
+        }
+        if (applied.targetSets > decision.prescription.targetSets) {
+            val stateAllowsDose = context.trainingProgramState?.let { state ->
+                val result = stateBasedTrainingPolicy.evaluate(exercise, applied, context.userProfile,
+                    context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) }, state,
+                    context.priorUserRestPreferences[exercise.id])
+                result is TrainingPolicyResult.Applied && result.prescription.targetSets == applied.targetSets
+            } ?: (context.userProfile.returningAfterBreakWeeks < 4)
+            if (!stateAllowsDose || decision.reason == ProgressionReason.HOLD_ACCEPTED_DELOAD) {
+                conditionPlanningFailure(listOf(ConditionViolation("incompatible-ordinary-dose",
+                    planning.context.selectedConditions.map { it.conditionId }.toSet(), setOf(exercise.id))))
+            }
+        }
+        return if (applied == decision.prescription && (progressionAllowed || decision.reason != ProgressionReason.ADVANCED)) decision else {
+            // A condition changes the authorized reference; it is not a one-axis progression.
+            decision.copy(reason = ProgressionReason.HOLD_AT_BOUND, axis = null,
+                referencePrescription = applied, prescription = applied, sourceSessionIds = emptyList())
+        }
+    }
+
+    private fun createOrdinaryDecision(exercise: Exercise, context: WorkoutGenerationContext): ProgressionDecision {
         val ordinary = createGuidedBase(exercise, context)
         val basis = baseConfigurationDigest(exercise, context, ordinary)
         fun hold(reference: ExercisePrescription, reason: ProgressionReason, result: ExercisePrescription = reference) =
@@ -87,7 +125,8 @@ class DefaultExercisePrescriptionFactory(
         val latest = context.progressionHistory
             .filter { it.status == SessionStatus.COMPLETED &&
                 (it.completedAtTimestamp ?: Long.MAX_VALUE) <= context.historyAsOfTimestamp &&
-                it.mainExercises.count { ex -> ex.exerciseId == exercise.id } == 1
+                it.exercises.count { ex -> ex.exerciseId == exercise.id } == 1 &&
+                it.exercises.any { ex -> ex.exerciseId == exercise.id && ex.prescription.purpose == PrescriptionPurpose.ORDINARY }
             }
             .sortedWith(compareByDescending<wallcrawl.elopenmike.com.core.model.WorkoutSession> {
                 it.startedAtTimestamp
@@ -97,7 +136,7 @@ class DefaultExercisePrescriptionFactory(
                 ProgressionReasonCode.decode(record.reasonCodes).firstOrNull { it.exerciseId == exercise.id }
             }
         }
-        val latestPrescription = latest?.mainExercises?.single { it.exerciseId == exercise.id }?.prescription
+        val latestPrescription = latest?.exercises?.single { it.exerciseId == exercise.id }?.prescription
         val reference = if (previous?.baseConfigurationDigest == basis &&
             latest.origin == WorkoutOrigin.PLANNER &&
             latestPrescription?.exerciseType == ordinary.exerciseType
@@ -168,8 +207,7 @@ class DefaultExercisePrescriptionFactory(
                 profile = context.userProfile,
                 fitnessGoals = context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) },
                 programState = programState,
-                priorUserRestPreference = context.priorUserRestPreferences[exercise.id],
-                restrictions = context.conditionRestrictions
+                priorUserRestPreference = context.priorUserRestPreferences[exercise.id]
             )
         ) {
             is TrainingPolicyResult.Applied -> result.prescription
@@ -184,7 +222,7 @@ class DefaultExercisePrescriptionFactory(
         ordinary: ExercisePrescription
     ): String {
         val metadata = exercise.acceptedMetadata()
-        val text = listOf(
+        val legacyText = listOf(
             ProgressionDecision.VERSION, stateBasedTrainingPolicy.policyVersion.name,
             exercise.id, context.catalogVersion.orEmpty(),
             metadata?.provenance?.schemaVersion.toString(), metadata?.provenance?.policyVersion.toString(),
@@ -195,6 +233,28 @@ class DefaultExercisePrescriptionFactory(
             ordinary.exerciseType.name, ordinary.repRange.toString(),
             ordinary.targetDurationSeconds.toString(), ordinary.targetDistanceMeters.toString()
         ).joinToString("\u0000")
+        val planning = context.conditionPlanning as? ConditionPlanningResult.Ready
+        val resolved = planning?.ordinaryRules?.get(exercise.id)
+        val text = if (resolved == null) legacyText else legacyText + "\u0000" + conditionDigest(mapOf(
+            "conditionPolicy" to planning.context.policyVersion,
+            "selections" to planning.context.selectedConditions.sortedBy { it.conditionId }
+                .map { listOf(it.conditionId, it.contextSchemaVersion, it.answers) },
+            "rules" to resolved.sourceRuleReferences.sortedWith(compareBy({ it.conditionId }, { it.caseId }, { it.ruleId }))
+                .map { reference ->
+                    val record = context.conditionSupport?.records?.get(reference.conditionId)
+                    if (record == null || record.contentVersion != reference.supportVersion || record.policyVersion != reference.policyVersion) {
+                        conditionPlanningFailure(listOf(ConditionViolation("unresolved-support-content", setOf(reference.conditionId), setOf(exercise.id))))
+                    }
+                    listOf(reference.conditionId, reference.supportVersion, reference.caseId, reference.ruleId,
+                        reference.policyVersion, record.contentSha256)
+                },
+            "execution" to resolved.executionIdentity,
+            "bounds" to resolved.bounds.toString(),
+            "allowProgression" to resolved.allowOrdinaryProgression,
+            "exercise" to planning.context.appliedRules.filter { it.exerciseIdentity.exerciseId == exercise.id }
+                .map { listOf(it.exerciseIdentity.contentSha256, it.exerciseIdentity.artworkSha256) }.distinct(),
+            "unit" to planning.weightUnit.name
+        ))
         return MessageDigest.getInstance("SHA-256").digest(text.toByteArray(Charsets.UTF_8))
             .joinToString("") { "%02x".format(Locale.ROOT, it) }
     }
@@ -297,7 +357,9 @@ class DefaultExercisePrescriptionFactory(
         if (priorWeight != null && priorWeight.isFinite() && priorWeight >= 0.0) {
             val reachedTopOfRange = priorPerformance.minimumCompletedReps()
                 ?.let { it >= targetRepMaximum } == true
-            return if (reachedTopOfRange) {
+            val conditionProgressionAllowed = (context.conditionPlanning as? ConditionPlanningResult.Ready)
+                ?.ordinaryRules?.get(exercise.id)?.allowOrdinaryProgression != false
+            return if (reachedTopOfRange && conditionProgressionAllowed) {
                 priorWeight + when (context.preferredUnits) {
                     WeightUnit.LBS -> 5.0
                     WeightUnit.KG -> 2.5

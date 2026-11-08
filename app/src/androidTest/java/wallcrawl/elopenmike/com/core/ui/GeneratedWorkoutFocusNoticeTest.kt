@@ -8,6 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -135,6 +138,7 @@ class GeneratedWorkoutFocusNoticeTest {
             unavailableFocusMuscles = emptyList(),
             rankingReasons = listOf(supportedRegressionReason())
         )
+        openReasons(english)
         composeRule.onNodeWithText(
             english.getString(
                 R.string.generated_rationale_supported_regression_preference,
@@ -162,6 +166,7 @@ class GeneratedWorkoutFocusNoticeTest {
             WorkoutRankingReason.TrainingFrequencyRecencyPreference("lateral", "fly", "Shoulders", 6, 3)
         ), onRankingExplanation = { notice = it })
         val expected = resources.getString(R.string.generated_rationale_frequency_recency_preference, muscle, 6, 3)
+        openReasons(resources)
         assertThat(notice).isEqualTo(expected)
         composeRule.onNodeWithText(expected, substring = true).assertIsDisplayed()
     }
@@ -173,6 +178,7 @@ class GeneratedWorkoutFocusNoticeTest {
             unavailableFocusMuscles = emptyList(),
             rankingReasons = listOf(supportedRegressionReason())
         )
+        openReasons(spanish)
         composeRule.onNodeWithText(
             spanish.getString(
                 R.string.generated_rationale_supported_regression_preference,
@@ -222,6 +228,7 @@ class GeneratedWorkoutFocusNoticeTest {
             onRankingExplanation = { explanation = it }
         )
 
+        openReasons(if (locale == Locale.ENGLISH) english else spanish)
         assertThat(explanation).isEqualTo(expectedNotice)
         composeRule.onNodeWithText(expectedNotice, substring = true).assertIsDisplayed()
     }
@@ -236,6 +243,8 @@ class GeneratedWorkoutFocusNoticeTest {
     private fun assertTodayCardExplains(locale: Locale, resources: Context, muscle: String) {
         renderTodayCard(locale, unavailableFocusMuscles = listOf(StandardMuscles.CHEST))
 
+        composeRule.onNodeWithText(resources.getString(R.string.guided_train_focus_missing, muscle)).assertIsDisplayed()
+        openReasons(resources)
         composeRule
             .onNodeWithText(
                 resources.getString(R.string.generated_rationale_focus_unavailable, muscle),
@@ -270,6 +279,10 @@ class GeneratedWorkoutFocusNoticeTest {
         assertThat(ordinaryExplanation)
             .isEqualTo(english.getString(R.string.generated_rationale_goal_focus, "Build muscle", "Upper Back"))
         composeRule.onNodeWithText(ordinaryExplanation, substring = true).assertDoesNotExist()
+    }
+
+    private fun openReasons(resources: Context) {
+        composeRule.onNodeWithText(resources.getString(R.string.guided_train_why)).performScrollTo().performClick()
     }
 
     private fun renderTodayCard(
@@ -360,7 +373,7 @@ class GeneratedWorkoutFocusNoticeTest {
     private fun InLocale(locale: Locale, content: @Composable () -> Unit) {
         val localized = LocalContext.current.localizedTo(locale)
         CompositionLocalProvider(
-            LocalContext provides localized,
+            LocalContext provides localized, LocalResources provides localized.resources,
             LocalConfiguration provides localized.resources.configuration,
             LocalExerciseVocabulary provides ExerciseVocabulary(
                 localization = readBundledOverlay(localized),

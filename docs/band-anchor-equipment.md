@@ -74,7 +74,7 @@ regression. A synthetic or later incomplete approval cannot waive that minimum.
 Exclusions and all other applicable eligibility rules still apply. `ExerciseFilter`
 remains only the fallback when reviewed eligibility is explicitly disabled.
 
-All 309 entries remain browseable and explicitly selectable in manual templates.
+All 302 entries remain browseable and explicitly selectable in manual templates.
 The editor reports missing equipment alternatives or an unresolved setup without
 hiding the exercise, changing its variation, adding equipment to the profile or
 blocking the existing explicit manual-selection workflow.

@@ -16,7 +16,9 @@ class WorkoutGuideCatalogLoadException(
 /** Loads and validates the catalog once, off the main thread, then shares the snapshot. */
 class WorkoutGuideCatalogStore(
     private val assetManager: AssetManager,
-    private val parser: WorkoutGuideCatalogParser = WorkoutGuideCatalogParser(),
+    private val parser: WorkoutGuideCatalogParser = WorkoutGuideCatalogParser { path ->
+        try { assetManager.open(path).use { it.read() != -1 } } catch (_: IOException) { false }
+    },
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : WorkoutGuideCatalogSource {
 
@@ -33,7 +35,8 @@ class WorkoutGuideCatalogStore(
 
     private suspend fun loadSnapshot(): WorkoutGuideCatalogSnapshot = withContext(ioDispatcher) {
         try {
-            assetManager.open(CATALOG_ASSET_PATH).bufferedReader().use(parser::parse)
+            val upstream = assetManager.open(CATALOG_ASSET_PATH).bufferedReader().use(parser::parse)
+            assetManager.open(SUPPLEMENT_ASSET_PATH).bufferedReader().use { parser.parseSupplement(it, upstream) }
         } catch (error: WorkoutGuideCatalogLoadException) {
             throw error
         } catch (error: IOException) {
@@ -50,6 +53,7 @@ class WorkoutGuideCatalogStore(
     }
 
     companion object {
+        const val SUPPLEMENT_ASSET_PATH = "wallcrawl/catalog.json"
         const val CATALOG_ASSET_PATH = "workout-guide/catalog.json"
     }
 }

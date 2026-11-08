@@ -7,6 +7,7 @@ import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.onNodeWithText
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
@@ -37,8 +38,9 @@ class GymFloorSetRowContrastTest {
         assertReadable("Skip or stop")
         assertReadable("Add feedback (optional)")
         assertReadableByDescription("Load (kg) for set 1")
+        composeRule.onNodeWithText("Add feedback (optional)").performClick()
         assertReadableByDescription("Set 1 felt manageable, Yes")
-        assertReadableByDescription("Set 1 complete")
+        assertReadable("Save changes")
     }
 
     @Test
@@ -48,12 +50,14 @@ class GymFloorSetRowContrastTest {
         assertReadable("Skip or stop")
         assertReadable("Add feedback (optional)")
         assertReadableByDescription("Load (kg) for set 1")
+        composeRule.onNodeWithText("Add feedback (optional)").performClick()
         assertReadableByDescription("Set 1 felt manageable, Yes")
-        assertReadableByDescription("Set 1 complete")
+        assertReadable("Save changes")
     }
 
     private fun assertReadable(text: String) {
-        assertThat(composeRule.onNodeWithText(text).bestContrastRatio())
+        // Sample the glyph on its own background. A rounded button corner shows the surrounding card.
+        assertThat(composeRule.onNodeWithText(text, useUnmergedTree = true).bestContrastRatio())
             .isAtLeast(MINIMUM_TEXT_CONTRAST)
     }
 
@@ -73,9 +77,8 @@ class GymFloorSetRowContrastTest {
                     set = completedSet(),
                     weightUnit = "kg",
                     previousSet = null,
-                    onValuesChanged = {},
                     onCompletionChanged = { _, _ -> },
-                    onSkipSet = {},
+                    onSkipSet = { _, _ -> },
                     onRecordEffort = { _, _ -> },
                     onRecordFeltManageable = {}
                 )

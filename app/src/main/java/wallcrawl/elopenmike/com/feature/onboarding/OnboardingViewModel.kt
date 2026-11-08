@@ -1,5 +1,10 @@
 package wallcrawl.elopenmike.com.feature.onboarding
 
+import wallcrawl.elopenmike.com.core.ui.encodeConditionDraft
+import wallcrawl.elopenmike.com.core.ui.decodeConditionDraft
+import wallcrawl.elopenmike.com.core.ai.ConditionPlanningPolicy
+import wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog
+import wallcrawl.elopenmike.com.core.model.SelectedCondition
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.SavedStateHandle
@@ -8,14 +13,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
-import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
-import wallcrawl.elopenmike.com.feature.conditions.PendingCondition
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
@@ -34,56 +37,26 @@ import wallcrawl.elopenmike.com.core.model.ProfileGender
 class OnboardingViewModel(
     private val userProfileRepository: UserProfileRepository,
     private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
-    conditionGuidanceSource: ConditionGuidanceSource? = null
+    conditionSupport: suspend () -> ConditionSupportCatalog = { ConditionSupportCatalog("empty", emptyMap()) }
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(restoreDraft(savedStateHandle))
     val uiState: StateFlow<OnboardingUiState> = mutableState.asStateFlow()
 
     init {
-        conditionGuidanceSource?.let { source ->
-            viewModelScope.launch {
-                val result = try {
-                    source.guidance()
-                } catch (error: CancellationException) {
-                    throw error
-                } catch (error: Exception) {
-                    ConditionGuidanceResult.Unavailable
-                }
-                mutableState.value = mutableState.value.copy(conditionGuidance = result)
-            }
+        viewModelScope.launch {
+            try {
+                val current = userProfileRepository.getUserProfile().first()
+                updateState { it.copy(retainedConditions = current.activeConditions) }
+                val records = conditionSupport().records.values.filter(ConditionPlanningPolicy()::supports)
+                updateState { it.copy(conditionRecords = records) }
+            } catch (error: CancellationException) { throw error
+            } catch (_: Exception) { updateState { it.copy(conditionLoadFailed = true) } }
         }
     }
 
-    /** Starts adding [id]; it joins the draft only after the warning signs are acknowledged. */
-    fun selectCondition(id: String) {
-        val guidance = mutableState.value.conditionGuidance as? ConditionGuidanceResult.Loaded ?: return
-        if (id !in guidance.guidance.conditions) return
-        updateState { it.copy(pendingCondition = PendingCondition(id)) }
-    }
-
-    fun setConditionAcknowledged(acknowledged: Boolean) {
-        val pending = mutableState.value.pendingCondition ?: return
-        updateState { it.copy(pendingCondition = pending.copy(acknowledged = acknowledged)) }
-    }
-
-    fun cancelPendingCondition() {
-        updateState { it.copy(pendingCondition = null, error = null) }
-    }
-
-    fun confirmPendingCondition() {
-        val pending = mutableState.value.pendingCondition?.takeIf { it.acknowledged } ?: return
-        updateState {
-            it.copy(
-                reportedConditions = it.reportedConditions + pending.id,
-                pendingCondition = null,
-                error = null
-            )
-        }
-    }
-
-    fun removeCondition(id: String) {
-        updateState { it.copy(reportedConditions = it.reportedConditions - id) }
+    fun updateConditions(selections: List<SelectedCondition>) {
+        if (!mutableState.value.isSaving) updateState { it.copy(conditionDraft = selections.toList()) }
     }
 
     fun updateName(name: String) {
@@ -163,7 +136,7 @@ class OnboardingViewModel(
         updateState { state ->
             state.copy(
                 equipment = StandardEquipment.FULL_GYM.toSet() +
-                    state.equipment.filter { it in StandardEquipment.BAND_SETUPS },
+                    state.equipment.filter { it in StandardEquipment.BAND_SETUPS || it in StandardEquipment.SUPPORT_ASSEMBLY },
                 error = null
             )
         }
@@ -177,14 +150,7 @@ class OnboardingViewModel(
     }
 
     fun clearConstraints() {
-        updateState {
-            it.copy(
-                constraints = emptySet(),
-                reportedConditions = emptySet(),
-                pendingCondition = null,
-                error = null
-            )
-        }
+        updateState { it.copy(constraints = emptySet(), error = null) }
     }
 
     fun nextStep() {
@@ -194,8 +160,6 @@ class OnboardingViewModel(
                 it.copy(
                     error = if (state.currentStep == OnboardingStep.MOVEMENT_CAPABILITY) {
                         OnboardingError.MOVEMENT_REQUIRED
-                    } else if (state.currentStep == OnboardingStep.SAFETY) {
-                        OnboardingError.CONDITION_PENDING
                     } else {
                         OnboardingError.REQUIRED_FIELD
                     }
@@ -290,9 +254,9 @@ class OnboardingViewModel(
                     preferredUnit = unit,
                     availableEquipment = equipment.toList(),
                     trainingConstraints = constraints,
-                    reportedConditions = mutableState.value.reportedConditions,
                     returningAfterBreakWeeks = returningAfterBreakWeeks,
                     movementCapabilities = MovementCapabilities.from(capabilityAnswers),
+                    activeConditions = mutableState.value.conditionDraft ?: current.activeConditions,
                     onboardingCompleted = true
                 )
                 userProfileRepository.saveProfile(profile)
@@ -321,6 +285,7 @@ class OnboardingViewModel(
     }
 
     private fun persistDraft(state: OnboardingUiState) {
+        state.conditionDraft?.let { savedStateHandle[STATE_CONDITIONS] = encodeConditionDraft(it) }
         savedStateHandle[STATE_CURRENT_STEP] = state.currentStep.name
         savedStateHandle[STATE_NAME] = state.name
         savedStateHandle[STATE_GENDER] = state.gender.name
@@ -331,7 +296,6 @@ class OnboardingViewModel(
         savedStateHandle[STATE_UNIT] = state.unit.name
         savedStateHandle[STATE_EQUIPMENT] = ArrayList(state.equipment)
         savedStateHandle[STATE_CONSTRAINTS] = ArrayList(state.constraints.map { it.name })
-        savedStateHandle[STATE_REPORTED_CONDITIONS] = ArrayList(state.reportedConditions)
         savedStateHandle[STATE_BREAK_WEEKS] = state.returningAfterBreakWeeks
         savedStateHandle[STATE_CAPABILITY_ANSWERS] = ArrayList(
             state.capabilityAnswers.entries.map { (type, level) ->
@@ -341,6 +305,7 @@ class OnboardingViewModel(
     }
 
     companion object {
+        private const val STATE_CONDITIONS = "onboarding.conditions"
         private const val NAME_MAX_LENGTH = 60
         private const val STATE_CURRENT_STEP = "onboarding.currentStep"
         private const val STATE_NAME = "onboarding.name"
@@ -352,13 +317,13 @@ class OnboardingViewModel(
         private const val STATE_UNIT = "onboarding.unit"
         private const val STATE_EQUIPMENT = "onboarding.equipment"
         private const val STATE_CONSTRAINTS = "onboarding.constraints"
-        private const val STATE_REPORTED_CONDITIONS = "onboarding.reportedConditions"
         private const val STATE_BREAK_WEEKS = "onboarding.returningAfterBreakWeeks"
         private const val STATE_CAPABILITY_ANSWERS = "onboarding.capabilityAnswers"
 
         private fun restoreDraft(savedStateHandle: SavedStateHandle): OnboardingUiState {
             val defaults = OnboardingUiState()
             return defaults.copy(
+                conditionDraft = savedStateHandle.get<List<String>>(STATE_CONDITIONS)?.let(::decodeConditionDraft),
                 currentStep = enumValueOrDefault(
                     savedStateHandle[STATE_CURRENT_STEP],
                     defaults.currentStep
@@ -380,8 +345,6 @@ class OnboardingViewModel(
                     savedStateHandle[STATE_CONSTRAINTS],
                     defaults.constraints
                 ),
-                reportedConditions = savedStateHandle.get<List<String>>(STATE_REPORTED_CONDITIONS)
-                    ?.toSet() ?: defaults.reportedConditions,
                 returningAfterBreakWeeks = savedStateHandle[STATE_BREAK_WEEKS]
                     ?: defaults.returningAfterBreakWeeks,
                 capabilityAnswers = decodeCapabilityAnswers(
@@ -439,13 +402,13 @@ class OnboardingViewModel(
 
         fun provideFactory(
             userProfileRepository: UserProfileRepository,
-            conditionGuidanceSource: ConditionGuidanceSource
+            conditionSupport: suspend () -> ConditionSupportCatalog = { ConditionSupportCatalog("empty", emptyMap()) }
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 OnboardingViewModel(
                     userProfileRepository = userProfileRepository,
                     savedStateHandle = createSavedStateHandle(),
-                    conditionGuidanceSource = conditionGuidanceSource
+                    conditionSupport = conditionSupport
                 )
             }
         }

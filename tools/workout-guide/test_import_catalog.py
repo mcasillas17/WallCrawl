@@ -25,14 +25,12 @@ class ImportCatalogTest(unittest.TestCase):
         self.overrides = self.root / "programming-overrides.json"
         self.reviewed_metadata = self.root / "reviewed-metadata.json"
         self.review_report = self.root / "reviewed-metadata-report.md"
-        self.owned = self.root / "owned-exercises.json"
         self.source.mkdir()
         self._write_source_fixture()
         self.source_commit = self._commit_source()
         self._write_config()
         self._write_overrides()
         self._write_reviewed_metadata()
-        self._write_owned([])
 
     def test_import_generates_normalized_svg_only_bundle(self) -> None:
         result = self._run_import()
@@ -931,139 +929,6 @@ class ImportCatalogTest(unittest.TestCase):
                 self.assertIn(expected_error, result.stderr.lower())
                 self.assertNotIn(marker, result.stderr)
 
-    def test_owned_exercises_join_the_catalog_without_touching_upstream_entries(self) -> None:
-        upstream = self._run_import()
-        self.assertEqual(upstream.returncode, 0, upstream.stderr)
-        upstream_catalog = json.loads((self.output / "catalog.json").read_text())
-        upstream_bytes = {
-            path.relative_to(self.output).as_posix(): path.read_bytes()
-            for path in self.output.rglob("*")
-            if path.is_file() and path.name not in {"NOTICE.md", "ATTRIBUTION.md"}
-        }
-
-        self._write_owned([self._owned_exercise("lying-test-stretch", is_stretch=True)])
-        result = self._run_import()
-
-        self.assertEqual(result.returncode, 0, result.stderr)
-        catalog = json.loads((self.output / "catalog.json").read_text())
-        self.assertEqual(upstream_catalog["exercises"][0], catalog["exercises"][0])
-        self.assertEqual(
-            ["barbell-bench-press", "lying-test-stretch"], [e["id"] for e in catalog["exercises"]]
-        )
-        owned = catalog["exercises"][1]
-        self.assertEqual("owned-lying-test-stretch", owned["sourceId"])
-        self.assertEqual("lying-test-stretch", owned["sourceSlug"])
-        self.assertTrue(owned["isStretch"])
-        self.assertNotIn("reviewedMetadata", owned)
-        self.assertNotIn("programming", owned)
-        self.assertEqual("Original work by the WallCrawl project", owned["attribution"]["license"])
-        self.assertNotIn("attribution", catalog["exercises"][0])
-        for index in range(1, 4):
-            self.assertTrue((self.output / f"assets/lying-test-stretch/frame-{index}.svg").is_file())
-        # Every upstream file and SVG is byte-identical to the upstream-only import.
-        for relative, content in upstream_bytes.items():
-            if relative != "catalog.json":
-                self.assertEqual(content, (self.output / relative).read_bytes(), relative)
-        attribution = (self.output / "ATTRIBUTION.md").read_text()
-        self.assertTrue(attribution.startswith("Fixture attribution\n"))
-        self.assertIn("Original work by the WallCrawl project", attribution)
-        self.assertIn("lying-test-stretch", attribution)
-        notice = (self.output / "NOTICE.md").read_text()
-        self.assertIn("Imported exercises: 1", notice)
-        self.assertIn("Owned exercises: 1", notice)
-
-    def test_check_detects_upstream_and_owned_drift_with_owned_entries_present(self) -> None:
-        self._write_owned([self._owned_exercise("lying-test-stretch", is_stretch=True)])
-        self.assertEqual(0, self._run_import().returncode)
-        self.assertEqual(0, self._run_import(check_only=True).returncode)
-
-        for relative in ("assets/bench-press/frame-2.svg", "assets/lying-test-stretch/frame-2.svg"):
-            path = self.output / relative
-            original = path.read_bytes()
-            path.write_bytes(original + b"<!-- drift -->")
-            self.assertNotEqual(0, self._run_import(check_only=True).returncode, relative)
-            path.write_bytes(original)
-        self.assertEqual(0, self._run_import(check_only=True).returncode)
-
-    def test_rejects_owned_exercise_that_collides_with_upstream(self) -> None:
-        for identifier in ("barbell-bench-press", "bench-press"):
-            with self.subTest(identifier=identifier):
-                self._write_owned([self._owned_exercise(identifier)])
-                result = self._run_import()
-                self.assertNotEqual(result.returncode, 0)
-                self.assertIn("owned", result.stderr.lower())
-
-    def test_rejects_malformed_owned_entries(self) -> None:
-        cases = {
-            "duplicate id": [self._owned_exercise("a-stretch"), self._owned_exercise("a-stretch")],
-            "unsafe id": [self._owned_exercise("../escape")],
-            "two frames": [self._owned_exercise("a-stretch", frame_count=2)],
-            "missing frame file": [self._owned_exercise("a-stretch", write_art=False)],
-            "bad type": [self._owned_exercise("a-stretch", exercise_type="cardio_run")],
-            "bad viewBox": [self._owned_exercise("a-stretch", view_box="0 0 100 100")],
-            "script": [self._owned_exercise("a-stretch", body="<script/>")],
-        }
-        for name, exercises in cases.items():
-            with self.subTest(case=name):
-                self._write_owned(exercises)
-                result = self._run_import()
-                self.assertNotEqual(result.returncode, 0)
-                self.assertIn("owned", result.stderr.lower())
-
-    def test_rejects_owned_file_without_licence_attribution(self) -> None:
-        self._write_owned([self._owned_exercise("a-stretch")])
-        document = json.loads(self.owned.read_text())
-        del document["attribution"]["license"]
-        self.owned.write_text(json.dumps(document))
-        self.assertNotEqual(0, self._run_import().returncode)
-
-    def _write_owned(self, exercises: list[dict]) -> None:
-        document = {
-            "schemaVersion": 1,
-            "attribution": {
-                "creator": "WallCrawl project",
-                "creatorUrl": "https://github.com/mcasillas17/WallCrawl",
-                "license": "Original work by the WallCrawl project",
-                "licenseUrl": "https://github.com/mcasillas17/WallCrawl/blob/main/LICENSE",
-            },
-            "exercises": exercises,
-        }
-        self.owned.write_text(json.dumps(document, indent=2) + "\n")
-
-    def _owned_exercise(
-        self,
-        identifier: str,
-        *,
-        is_stretch: bool = False,
-        exercise_type: str = "duration",
-        frame_count: int = 3,
-        write_art: bool = True,
-        view_box: str = "0 0 512 512",
-        body: str = '<path fill="none" stroke="#fff" stroke-width="14" d="M10 10L500 500"/>',
-    ) -> dict:
-        frames = []
-        for index in range(1, frame_count + 1):
-            relative = f"owned-art/{identifier}/frame-{index}.svg"
-            if write_art and ".." not in identifier:
-                path = self.root / relative
-                path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_text(
-                    f'<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" '
-                    f'viewBox="{view_box}">{body}</svg>\n'
-                )
-            frames.append(relative)
-        return {
-            "id": identifier,
-            "name": "Lying Test Stretch",
-            "searchAliases": [],
-            "exerciseType": exercise_type,
-            "equipment": "Bodyweight",
-            "primaryMuscle": "Hips",
-            "secondaryMuscles": ["Mobility"],
-            "isStretch": is_stretch,
-            "frames": frames,
-        }
-
     def _write_source_fixture(self) -> None:
         attribution = {
             "creator": "Bryl Lim",
@@ -1335,8 +1200,6 @@ class ImportCatalogTest(unittest.TestCase):
             str(self.reviewed_metadata),
             "--review-report",
             str(self.review_report),
-            "--owned",
-            str(self.owned),
         ]
         if check_only:
             command.append("--check")

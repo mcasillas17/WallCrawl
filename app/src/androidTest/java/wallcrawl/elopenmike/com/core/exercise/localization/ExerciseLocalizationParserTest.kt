@@ -20,6 +20,28 @@ class ExerciseLocalizationParserTest {
     private val parser = ExerciseLocalizationParser()
 
     @Test
+    fun bundledConditionLabelsAndGuidanceLoadInSpanish() {
+        val assets = androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().targetContext.assets
+        val localization = assets.open("localization/exercise-localization.json").bufferedReader()
+            .use { parser.parse(it) }
+        val entries = assets.open("wallcrawl/catalog.json").bufferedReader().use {
+            org.json.JSONObject(it.readText()).getJSONArray("exercises")
+        }
+        val ids = List(entries.length()) { entries.getJSONObject(it).getString("id") }
+        ids.forEach { id ->
+            assertThat(localization.exerciseName(id, "es")).isNotEmpty()
+            assertThat(localization.coachingSummary(id, "es")).isNotEmpty()
+            assertThat(localization.searchTerms(id)).isNotEmpty()
+        }
+        assertThat(localization.muscle("Neck", "es")).isEqualTo("Cuello")
+        assertThat(localization.muscle("Foot Intrinsics", "es")).isEqualTo("Músculos intrínsecos del pie")
+        assertThat(localization.equipment("Padded Plinth", "es")).isEqualTo("Camilla acolchada")
+        assertThat(localization.equipment("Calf Support", "es")).isEqualTo("Apoyo para la pantorrilla")
+        assertThat(localization.equipment("Pillow", "es")).isEqualTo("Almohada")
+        assertThat(localization.equipment("Upper-Arm Support Roll", "es")).isEqualTo("Rodillo de apoyo para el brazo")
+    }
+
+    @Test
     fun aWellFormedOverlayParsesIntoLookupsKeyedByCanonicalIdentifiers() {
         val localization = parser.parse(
             overlay(

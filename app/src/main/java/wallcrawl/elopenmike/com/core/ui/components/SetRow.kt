@@ -1,51 +1,48 @@
 package wallcrawl.elopenmike.com.core.ui.components
 
-import androidx.annotation.StringRes
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
+import java.text.DecimalFormatSymbols
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.annotation.StringRes
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -53,9 +50,12 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
@@ -65,22 +65,21 @@ import wallcrawl.elopenmike.com.core.model.asPerformanceInput
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
-import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
-import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreenDeep
-import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 
 /** One editable measurement of a set, with the step a gym-floor adjustment actually uses. */
 enum class SetInputField(
     @StringRes val labelRes: Int,
-    val stepSize: Double,
+    val increments: List<Double>,
     val isDecimal: Boolean,
-    private val maximum: Double
+    val maximum: Double
 ) {
-    LOAD(R.string.set_field_load, stepSize = 2.5, isDecimal = true, maximum = 100_000.0),
-    ASSISTANCE(R.string.set_field_assist, stepSize = 2.5, isDecimal = true, maximum = 100_000.0),
-    REPS(R.string.set_field_reps, stepSize = 1.0, isDecimal = false, maximum = 1_000.0),
-    DURATION(R.string.set_field_seconds, stepSize = 5.0, isDecimal = false, maximum = 86_400.0),
-    DISTANCE(R.string.set_field_meters, stepSize = 50.0, isDecimal = true, maximum = 1_000_000.0);
+    LOAD(R.string.set_field_load, increments = listOf(2.5, 1.0, 0.1, 0.01), isDecimal = true, maximum = 100_000.0),
+    ASSISTANCE(R.string.set_field_assist, increments = listOf(2.5, 1.0, 0.1, 0.01), isDecimal = true, maximum = 100_000.0),
+    REPS(R.string.set_field_reps, increments = listOf(1.0), isDecimal = false, maximum = 1_000.0),
+    DURATION(R.string.set_field_seconds, increments = listOf(5.0, 1.0), isDecimal = false, maximum = 86_400.0),
+    DISTANCE(R.string.set_field_meters, increments = listOf(50.0, 1.0, 0.1, 0.01), isDecimal = true, maximum = 1_000_000.0);
+
+    val stepSize: Double get() = increments.first()
 
     /**
      * One step up or down from [current], clamped to the range the repository accepts.
@@ -89,10 +88,10 @@ enum class SetInputField(
      * for this set -- so the control offers what was prescribed instead of inventing a
      * value. With no target either, stepping up starts at one step.
      */
-    fun stepped(current: Double?, increase: Boolean, fallback: Double? = null): Double {
+    fun stepped(current: Double?, increase: Boolean, fallback: Double? = null, increment: Double = stepSize): Double {
         if (current == null && fallback != null && increase) return fallback.coerceIn(0.0, maximum)
         val base = current ?: 0.0
-        val next = if (increase) base + stepSize else base - stepSize
+        val next = (base.toBigDecimal() + (if (increase) increment else -increment).toBigDecimal()).toDouble()
         return next.coerceIn(0.0, maximum)
     }
 
@@ -129,14 +128,6 @@ enum class SetInputField(
 @Composable
 fun stopReasonLabel(reason: SetStopReason): String = stringResource(reason.labelRes)
 
-/**
- * Success accent that stays readable on whichever surface the current theme paints.
- * [SuccessGreen] has enough contrast on a dark card but not on a light one.
- */
-@Composable
-private fun completedAccent(): Color =
-    if (MaterialTheme.colorScheme.background.luminance() > 0.5f) SuccessGreenDeep else SuccessGreen
-
 /** Remaining rest as minutes and seconds, with the reader's digits. */
 @Composable
 fun restCountdownLabel(remainingSeconds: Int): String {
@@ -145,272 +136,186 @@ fun restCountdownLabel(remainingSeconds: Int): String {
     return stringResource(R.string.rest_countdown, minutes, seconds)
 }
 
-/**
- * The gym-floor logger for one set.
- *
- * Completion is a single large tap; every numeric outcome has plus/minus controls with a
- * text field beside them for precise entry; a previous comparable value can be copied in
- * one tap. Effort and the manageable confirmation are optional and never gate completion.
- *
- * Values are shown with the reader's decimal mark and read back through
- * [LocaleFormatting.parseDecimalInput], so a load typed as "2,5" is stored as 2.5 rather
- * than 25 and the stored number is identical whichever language the app is in.
- */
+private fun SetInputField.target(set: WorkoutSet): Double? = when (this) {
+    SetInputField.LOAD -> set.targetWeight
+    SetInputField.ASSISTANCE -> set.targetAssistanceWeight
+    SetInputField.REPS -> set.targetReps?.toDouble()
+    SetInputField.DURATION -> set.targetDurationSeconds?.toDouble()
+    SetInputField.DISTANCE -> set.targetDistanceMeters
+}
+
+private fun SetInputField.recorded(set: WorkoutSet): Double? = when (this) {
+    SetInputField.LOAD -> set.completedWeight
+    SetInputField.ASSISTANCE -> set.completedAssistanceWeight
+    SetInputField.REPS -> set.completedReps?.toDouble()
+    SetInputField.DURATION -> set.completedDurationSeconds?.toDouble()
+    SetInputField.DISTANCE -> set.completedDistanceMeters
+}
+
+internal fun exactMeasurement(value: Double, decimal: Char): String =
+    value.toBigDecimal().stripTrailingZeros().toPlainString().replace('.', decimal)
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GymFloorSetRow(
     set: WorkoutSet,
     weightUnit: String,
     previousSet: WorkoutSet?,
-    onValuesChanged: (SetValuesDraft) -> Unit,
     onCompletionChanged: (values: SetValuesDraft, completed: Boolean) -> Unit,
-    onSkipSet: (SetStopReason) -> Unit,
+    onSkipSet: (SetStopReason, SetValuesDraft) -> Unit,
     onRecordEffort: (rpe: Float?, rir: Int?) -> Unit,
     onRecordFeltManageable: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    saving: Boolean = false
 ) {
     val locale = LocalConfiguration.current.locales[0]
-    var reps by remember(set.id, set.completedReps, locale) {
-        mutableStateOf(
-            (set.completedReps ?: set.targetReps)
-                ?.let { LocaleFormatting.formatEditableInt(it, locale) }
-                .orEmpty()
-        )
-    }
-    var weight by remember(set.id, set.completedWeight, locale) {
-        mutableStateOf(
-            (set.completedWeight ?: set.targetWeight)
-                ?.let { LocaleFormatting.formatEditableDecimal(it, locale) }
-                .orEmpty()
-        )
-    }
-    var assistance by remember(set.id, set.completedAssistanceWeight, locale) {
-        mutableStateOf(
-            (set.completedAssistanceWeight ?: set.targetAssistanceWeight)
-                ?.let { LocaleFormatting.formatEditableDecimal(it, locale) }
-                .orEmpty()
-        )
-    }
-    var duration by remember(set.id, set.completedDurationSeconds, locale) {
-        mutableStateOf(
-            (set.completedDurationSeconds ?: set.targetDurationSeconds)
-                ?.let { LocaleFormatting.formatEditableInt(it, locale) }
-                .orEmpty()
-        )
-    }
-    var distance by remember(set.id, set.completedDistanceMeters, locale) {
-        mutableStateOf(
-            (set.completedDistanceMeters ?: set.targetDistanceMeters)
-                ?.let { LocaleFormatting.formatEditableDecimal(it, locale) }
-                .orEmpty()
-        )
-    }
-    var showStopReasons by remember(set.id) { mutableStateOf(false) }
-    var showFeedback by remember(set.id) { mutableStateOf(false) }
-
-    fun draft() = SetValuesDraft(
-        reps = LocaleFormatting.parseIntInput(reps),
-        weight = LocaleFormatting.parseDecimalInput(weight),
-        assistanceWeight = LocaleFormatting.parseDecimalInput(assistance),
-        durationSeconds = LocaleFormatting.parseIntInput(duration),
-        distanceMeters = LocaleFormatting.parseDecimalInput(distance)
-    )
-
-    fun textFor(field: SetInputField) = when (field) {
-        SetInputField.LOAD -> weight
-        SetInputField.ASSISTANCE -> assistance
-        SetInputField.REPS -> reps
-        SetInputField.DURATION -> duration
-        SetInputField.DISTANCE -> distance
-    }
-
-    fun setText(field: SetInputField, value: String) {
-        when (field) {
-            SetInputField.LOAD -> weight = value
-            SetInputField.ASSISTANCE -> assistance = value
-            SetInputField.REPS -> reps = value
-            SetInputField.DURATION -> duration = value
-            SetInputField.DISTANCE -> distance = value
-        }
-    }
-
-    fun targetFor(field: SetInputField): Double? = when (field) {
-        SetInputField.LOAD -> set.targetWeight
-        SetInputField.ASSISTANCE -> set.targetAssistanceWeight
-        SetInputField.REPS -> set.targetReps?.toDouble()
-        SetInputField.DURATION -> set.targetDurationSeconds?.toDouble()
-        SetInputField.DISTANCE -> set.targetDistanceMeters
-    }
-
-    /**
-     * Whether some field holds text that is on its way to a number but is not one yet.
-     *
-     * "47." is what a reader types halfway through "47.5", and "47," halfway through
-     * "47,5". [LocaleFormatting] refuses both rather than guessing at them, which is
-     * correct for a finished value and wrong for a keystroke: submitting it would store a
-     * null, and the stored null flows back and clears the field mid-word. A blank field
-     * is not in this state -- clearing a value really does clear it.
-     */
-    fun hasUnfinishedInput(): Boolean =
-        listOf(weight, assistance, distance).any {
-            it.isNotBlank() && LocaleFormatting.parseDecimalInput(it) == null
-        } || listOf(reps, duration).any {
-            it.isNotBlank() && LocaleFormatting.parseIntInput(it) == null
-        }
-
-    // Field edits preserve whatever outcome the set already has, so correcting a digit on
-    // a completed set does not un-complete it. A transient in-progress value -- a field
-    // momentarily cleared to retype a number, or one holding a half-typed decimal -- is
-    // never submitted, because the repository would reject it or store a null and a
-    // keystroke is neither a failed write nor a cleared value.
-    fun submitEdit() {
-        if (hasUnfinishedInput()) return
-        if (draft().asPerformanceInput(set.isCompleted).isSubmittableFor(set.exerciseType)) {
-            onValuesChanged(draft())
-        }
-    }
-
-    val accent = completedAccent()
-    // Read-only labels use the locale's own digits; only field text must be ASCII.
+    val decimal = DecimalFormatSymbols.getInstance(locale).decimalSeparator.takeIf { it == ',' } ?: '.'
+    val fields = SetInputField.forType(set.exerciseType)
     val setNumber = LocaleFormatting.formatCount(set.setNumber, locale)
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(
-                if (set.isCompleted) {
-                    accent.copy(alpha = 0.12f)
-                } else {
-                    MaterialTheme.colorScheme.surfaceVariant
-                },
-                RoundedCornerShape(12.dp)
-            )
-            .border(
-                1.dp,
-                if (set.isCompleted) {
-                    accent.copy(alpha = 0.5f)
-                } else {
-                    MaterialTheme.colorScheme.outline
-                },
-                RoundedCornerShape(12.dp)
-            )
-            .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                stringResource(R.string.set_number, setNumber),
-                color = if (set.isCompleted) {
-                    accent
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                },
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f)
-            )
-            set.stopReason?.let { reason ->
-                Text(
-                    text = stopReasonLabel(reason),
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
+    // Only overrides are saved. Untouched legacy/null measurements follow the recorded row.
+    var edits by rememberSaveable(set.id) { mutableStateOf(hashMapOf<String, String>()) }
+    var showStopReasons by rememberSaveable(set.id) { mutableStateOf(false) }
+    var showFeedback by rememberSaveable(set.id) { mutableStateOf(false) }
+    var submitted by rememberSaveable(set.id) { mutableStateOf(false) }
 
-        SetInputField.forType(set.exerciseType).forEach { field ->
-            SetValueRow(
-                field = field,
-                setNumber = setNumber,
-                value = textFor(field),
-                unitSuffix = if (field == SetInputField.LOAD || field == SetInputField.ASSISTANCE) {
-                    weightUnit
-                } else {
-                    null
-                },
-                previousValue = field.previousValue(previousSet),
-                onValueChange = { updated ->
-                    setText(field, updated)
-                    submitEdit()
-                },
-                onStep = { increase ->
-                    val stepped = field.stepped(
-                        current = LocaleFormatting.parseDecimalInput(textFor(field)),
-                        increase = increase,
-                        fallback = targetFor(field)
-                    )
-                    setText(field, LocaleFormatting.formatEditableDecimal(stepped, locale))
-                    submitEdit()
-                },
-                onCopyPrevious = { previous ->
-                    setText(field, LocaleFormatting.formatEditableDecimal(previous, locale))
-                    submitEdit()
-                }
-            )
-        }
-
-        CompleteSetButton(
-            setNumber = setNumber,
-            isCompleted = set.isCompleted,
-            // Same guard as submitEdit: a half-typed number would reach the repository as a
-            // null and come back as a failed completion. The field that holds it shows its
-            // own error, so this is explained on screen rather than silently ignored.
-            onToggle = { completed ->
-                if (!hasUnfinishedInput()) onCompletionChanged(draft(), completed)
+    fun initial(field: SetInputField) = field.recorded(set) ?: field.target(set).takeUnless { set.isResolved }
+    fun textFor(field: SetInputField) = edits[field.name]?.replace('.', decimal)?.replace(',', decimal)
+        ?: initial(field)?.let { exactMeasurement(it, decimal) }.orEmpty()
+    fun parsed(field: SetInputField): Double? {
+        val text = edits[field.name] ?: return initial(field)
+        return if (field.isDecimal) LocaleFormatting.parseExactMeasurement(text) else LocaleFormatting.parseIntInput(text)?.toDouble()
+    }
+    fun edit(field: SetInputField, value: String) {
+        submitted = false
+        edits = HashMap(edits).apply { put(field.name, value) }
+    }
+    fun draft(partial: Boolean = false): SetValuesDraft {
+        fun number(field: SetInputField): Double? {
+            if (field !in fields) return null
+            if (partial && field.name !in edits) return field.recorded(set)
+            val value = parsed(field)
+            if (partial && !textFor(field).isBlank() && (value == null || value !in 0.0..field.maximum)) {
+                return field.recorded(set)
             }
+            return value?.takeIf { it in 0.0..field.maximum }
+        }
+        return SetValuesDraft(
+            reps = number(SetInputField.REPS)?.toInt(), weight = number(SetInputField.LOAD),
+            assistanceWeight = number(SetInputField.ASSISTANCE),
+            durationSeconds = number(SetInputField.DURATION)?.toInt(),
+            distanceMeters = number(SetInputField.DISTANCE)
         )
+    }
+    val error = fields.firstNotNullOfOrNull { field ->
+        val text = textFor(field)
+        val value = parsed(field)
+        when {
+            text.isBlank() -> null
+            value == null -> stringResource(R.string.set_field_incomplete_number)
+            value > field.maximum -> stringResource(R.string.guided_set_maximum,
+                stringResource(field.labelRes), LocaleFormatting.formatCount(field.maximum.toInt(), locale))
+            else -> null
+        }
+    } ?: if (!draft().asPerformanceInput(true).isSubmittableFor(set.exerciseType)) {
+        stringResource(when (set.exerciseType) {
+            ExerciseType.WEIGHT_REPS -> R.string.guided_set_need_load_reps
+            ExerciseType.BODYWEIGHT_REPS, ExerciseType.ASSISTED_BODYWEIGHT -> R.string.guided_set_need_reps
+            ExerciseType.DURATION -> R.string.guided_set_need_duration
+            ExerciseType.DISTANCE_DURATION -> R.string.guided_set_need_distance_duration
+        })
+    } else null
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // These secondary actions use the surface content colour rather than the
-            // brand accent: at 13sp the accent red does not reach a comfortable contrast
-            // ratio on either theme's card background.
-            TextButton(
-                onClick = { showStopReasons = true },
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                ),
-                modifier = Modifier.heightIn(min = MIN_TOUCH_TARGET)
-            ) {
-                Text(
-                    stringResource(R.string.set_skip_or_stop),
-                    fontSize = 13.sp,
-                    color = LocalContentColor.current
-                )
+    LaunchedEffect(set, submitted, saving) {
+        if (submitted && !saving && set.isCompleted && fields.all { parsed(it) == it.recorded(set) }) {
+            edits = hashMapOf()
+            submitted = false
+        }
+    }
+
+    Column(modifier.fillMaxWidth()
+        .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
+        .padding(horizontal = 8.dp, vertical = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        set.stopReason?.let { Text(stopReasonLabel(it), style = MaterialTheme.typography.labelLarge) }
+        fields.forEach { field ->
+            val label = stringResource(field.labelRes)
+            val fieldName = if (field == SetInputField.LOAD || field == SetInputField.ASSISTANCE)
+                stringResource(R.string.set_field_with_unit, label, weightUnit) else label
+            val description = stringResource(R.string.set_field_value_accessibility, fieldName, setNumber)
+            var stepIndex by rememberSaveable(set.id, field) { mutableStateOf(0) }
+            val increment = field.increments[stepIndex]
+
+            fun step(increase: Boolean) {
+                val current = parsed(field)
+                val next = field.stepped(current, increase, field.target(set), increment)
+                val optional = field == SetInputField.ASSISTANCE || set.exerciseType == ExerciseType.DISTANCE_DURATION
+                val clear = optional && !increase && (current == null || current == 0.0)
+                val value = if (clear) "" else exactMeasurement(next, decimal)
+                if (value != textFor(field)) edit(field, value)
             }
-            TextButton(
-                onClick = { showFeedback = !showFeedback },
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                ),
-                modifier = Modifier.heightIn(min = MIN_TOUCH_TARGET)
-            ) {
-                Text(
-                    text = stringResource(
-                        if (showFeedback) R.string.set_feedback_hide else R.string.set_feedback_show
-                    ),
-                    fontSize = 13.sp,
-                    color = LocalContentColor.current
-                )
+
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                if (field.increments.size > 1) {
+                    val amount = exactMeasurement(increment, decimal)
+                    val adjustDescription = stringResource(R.string.guided_change_step, fieldName, amount)
+                    Column(
+                        Modifier.weight(1f).heightIn(min = MIN_TOUCH_TARGET)
+                            .clickable(enabled = !saving, role = Role.Button) {
+                                stepIndex = (stepIndex + 1) % field.increments.size
+                            }.semantics { contentDescription = adjustDescription },
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(fieldName, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface)
+                        Text("±$amount", style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                } else {
+                    Text(fieldName, Modifier.weight(1f), style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface)
+                }
+                StepButton(false, stringResource(R.string.set_field_decrease_accessibility, label, setNumber),
+                    { step(false) }, enabled = !saving, repeatOnHold = (parsed(field) ?: 0.0) > 0.0)
+                Box(Modifier.weight(1f).heightIn(min = MIN_TOUCH_TARGET)
+                    .semantics(mergeDescendants = true) { contentDescription = description },
+                    contentAlignment = Alignment.Center) {
+                    Text(textFor(field).ifBlank { stringResource(R.string.value_not_available) },
+                        style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface)
+                }
+                StepButton(true, stringResource(R.string.set_field_increase_accessibility, label, setNumber),
+                    { step(true) }, enabled = !saving, repeatOnHold = parsed(field) != field.maximum)
+                field.previousValue(previousSet)?.let { previous ->
+                    val copy = stringResource(R.string.set_copy_previous_accessibility, label,
+                        exactMeasurement(previous, decimal), setNumber)
+                    IconButton(enabled = !saving, onClick = { edit(field, exactMeasurement(previous, decimal)) }) {
+                        Icon(Icons.Default.ContentCopy, copy, Modifier.size(18.dp))
+                    }
+                }
             }
         }
-
-        if (set.isCompleted) {
-            ManageableConfirmation(
-                setNumber = setNumber,
-                feltManageable = set.feltManageable,
-                onRecord = onRecordFeltManageable
-            )
+        error?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error) }
+        WallCrawlPrimaryButton(
+            text = stringResource(if (set.isCompleted) R.string.guided_save_changes else R.string.guided_log_set),
+            onClick = { submitted = true; onCompletionChanged(draft(), true) },
+            enabled = !saving && error == null
+        )
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+            TextButton(enabled = !saving, onClick = { showStopReasons = true }) {
+                Text(stringResource(R.string.set_skip_or_stop), color = MaterialTheme.colorScheme.onSurface)
+            }
+            if (set.isResolved) {
+                TextButton(enabled = !saving, onClick = { showFeedback = !showFeedback }) {
+                    Text(stringResource(if (showFeedback) R.string.set_feedback_hide else R.string.set_feedback_show),
+                        color = MaterialTheme.colorScheme.onSurface)
+                }
+                TextButton(enabled = !saving, onClick = { onCompletionChanged(draft(partial = true), false) }) {
+                    Text(stringResource(R.string.guided_mark_unlogged), color = MaterialTheme.colorScheme.onSurface)
+                }
+            }
         }
-
-        if (showFeedback) {
-            EffortControls(
-                setNumber = setNumber,
-                rpe = set.rpe,
-                rir = set.rir,
-                onRecordEffort = onRecordEffort
-            )
+        if (set.isResolved && showFeedback) {
+            if (set.isCompleted) ManageableConfirmation(setNumber, set.feltManageable, !saving, onRecordFeltManageable)
+            EffortControls(setNumber, set.rpe, set.rir, !saving, onRecordEffort)
         }
     }
 
@@ -424,7 +329,7 @@ fun GymFloorSetRow(
                 )
             },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
                         stringResource(R.string.stop_reason_body),
                         fontSize = 13.sp,
@@ -432,9 +337,10 @@ fun GymFloorSetRow(
                     )
                     SetStopReason.entries.forEach { reason ->
                         TextButton(
+                            enabled = !saving,
                             onClick = {
                                 showStopReasons = false
-                                onSkipSet(reason)
+                                onSkipSet(reason, draft(partial = true))
                             },
                             colors = ButtonDefaults.textButtonColors(
                                 contentColor = MaterialTheme.colorScheme.onSurface
@@ -468,200 +374,60 @@ fun GymFloorSetRow(
 }
 
 @Composable
-private fun SetValueRow(
-    field: SetInputField,
-    setNumber: String,
-    value: String,
-    unitSuffix: String?,
-    previousValue: Double?,
-    onValueChange: (String) -> Unit,
-    onStep: (increase: Boolean) -> Unit,
-    onCopyPrevious: (Double) -> Unit
-) {
-    val locale = LocalConfiguration.current.locales[0]
-    val fieldLabel = stringResource(field.labelRes)
-    val fieldName = if (unitSuffix != null) {
-        stringResource(R.string.set_field_with_unit, fieldLabel, unitSuffix)
-    } else {
-        fieldLabel
-    }
-    // The label goes into every announcement exactly as written. It used to be lower-cased
-    // to read naturally inside an English sentence, which would mangle a language whose
-    // nouns do not change case mid-sentence, so the announcement strings carry the
-    // sentence and the label stays a value.
-    val fieldValueDescription = stringResource(
-        R.string.set_field_value_accessibility,
-        fieldName,
-        setNumber
-    )
-    // "47." on the way to "47.5" is not a number yet. Saying so beats a Complete button
-    // that appears to do nothing.
-    val isUnfinished = value.isNotBlank() && if (field.isDecimal) {
-        LocaleFormatting.parseDecimalInput(value) == null
-    } else {
-        LocaleFormatting.parseIntInput(value) == null
-    }
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        StepButton(
-            increase = false,
-            contentDescription = stringResource(
-                R.string.set_field_decrease_accessibility,
-                fieldLabel,
-                setNumber
-            ),
-            onClick = { onStep(false) }
-        )
-        OutlinedTextField(
-            value = value,
-            onValueChange = { input -> if (input.length <= MAX_INPUT_LENGTH) onValueChange(input) },
-            isError = isUnfinished,
-            supportingText = if (isUnfinished) {
-                { Text(stringResource(R.string.set_field_incomplete_number), fontSize = 11.sp) }
-            } else {
-                null
-            },
-            label = {
-                Text(
-                    fieldName,
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            textStyle = LocalTextStyle.current.copy(
-                color = MaterialTheme.colorScheme.onSurface
-            ),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = if (field.isDecimal) KeyboardType.Decimal else KeyboardType.Number
-            ),
-            modifier = Modifier
-                .weight(1f)
-                .semantics {
-                    contentDescription = fieldValueDescription
-                }
-        )
-        StepButton(
-            increase = true,
-            contentDescription = stringResource(
-                R.string.set_field_increase_accessibility,
-                fieldLabel,
-                setNumber
-            ),
-            onClick = { onStep(true) }
-        )
-        if (previousValue != null) {
-            val previousText = LocaleFormatting.formatMeasurement(previousValue, locale)
-            val copyDescription = stringResource(
-                R.string.set_copy_previous_accessibility,
-                fieldLabel,
-                previousText,
-                setNumber
-            )
-            AssistChip(
-                onClick = { onCopyPrevious(previousValue) },
-                label = {
-                    Text(
-                        previousText,
-                        fontSize = 12.sp,
-                        color = LocalContentColor.current
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.ContentCopy,
-                        contentDescription = null,
-                        modifier = Modifier.size(14.dp)
-                    )
-                },
-                modifier = Modifier
-                    .heightIn(min = MIN_TOUCH_TARGET)
-                    .semantics { contentDescription = copyDescription }
-            )
-        }
-    }
-}
-
-@Composable
 private fun StepButton(
     increase: Boolean,
     contentDescription: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    repeatOnHold: Boolean = false
 ) {
+    val latestClick by rememberUpdatedState(onClick)
     IconButton(
         onClick = onClick,
+        enabled = enabled,
         modifier = Modifier.sizeIn(minWidth = MIN_TOUCH_TARGET, minHeight = MIN_TOUCH_TARGET)
     ) {
-        Icon(
-            imageVector = if (increase) Icons.Default.Add else Icons.Default.Remove,
-            contentDescription = contentDescription,
-            tint = MaterialTheme.colorScheme.onSurface
-        )
-    }
-}
-
-@Composable
-private fun CompleteSetButton(
-    setNumber: String,
-    isCompleted: Boolean,
-    onToggle: (Boolean) -> Unit
-) {
-    val description = stringResource(R.string.set_complete_accessibility, setNumber)
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(LARGE_TOUCH_TARGET)
-            .background(
-                // Filled with the deep green in both themes: white on the lighter green
-                // sits at about 2.2:1, well under WCAG AA.
-                if (isCompleted) SuccessGreenDeep else MaterialTheme.colorScheme.surface,
-                RoundedCornerShape(12.dp)
-            )
-            .border(
-                1.dp,
-                if (isCompleted) SuccessGreenDeep else MaterialTheme.colorScheme.outline,
-                RoundedCornerShape(12.dp)
-            )
-            .toggleable(
-                value = isCompleted,
-                role = Role.Checkbox,
-                onValueChange = onToggle
-            )
-            .semantics { contentDescription = description },
-        contentAlignment = Alignment.Center
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        val gesture = if (repeatOnHold && enabled) Modifier.pointerInput(Unit) {
+            detectTapGestures(onPress = {
+                coroutineScope {
+                    var repeated = false
+                    val repeater = launch {
+                        delay(viewConfiguration.longPressTimeoutMillis)
+                        repeated = true
+                        while (isActive) {
+                            latestClick()
+                            delay(90L)
+                        }
+                    }
+                    try {
+                        if (tryAwaitRelease() && !repeated) latestClick()
+                    } finally {
+                        repeater.cancel()
+                    }
+                }
+            })
+        } else Modifier
+        Box(Modifier.size(MIN_TOUCH_TARGET).then(gesture), contentAlignment = Alignment.Center) {
             Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = null,
-                tint = if (isCompleted) TextWhite else MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(22.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(
-                    if (isCompleted) R.string.set_completed else R.string.set_complete
-                ),
-                color = if (isCompleted) TextWhite else MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Bold
+                imageVector = if (increase) Icons.Default.Add else Icons.Default.Remove,
+                contentDescription = contentDescription,
+                tint = LocalContentColor.current
             )
         }
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ManageableConfirmation(
     setNumber: String,
     feltManageable: Boolean?,
+    enabled: Boolean,
     onRecord: (Boolean) -> Unit
 ) {
-    Row(
+    FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
             text = stringResource(R.string.set_felt_manageable),
@@ -677,6 +443,7 @@ private fun ManageableConfirmation(
             )
             FilterChip(
                 selected = feltManageable == answer,
+                enabled = enabled,
                 onClick = { onRecord(answer) },
                 label = { Text(label, color = LocalContentColor.current) },
                 modifier = Modifier
@@ -693,6 +460,7 @@ private fun EffortControls(
     setNumber: String,
     rpe: Float?,
     rir: Int?,
+    enabled: Boolean,
     onRecordEffort: (rpe: Float?, rir: Int?) -> Unit
 ) {
     val locale = LocalConfiguration.current.locales[0]
@@ -719,6 +487,7 @@ private fun EffortControls(
                 modifier = Modifier.width(36.dp)
             )
             StepButton(
+                enabled = enabled,
                 increase = false,
                 contentDescription = stringResource(
                     R.string.effort_rpe_decrease_accessibility,
@@ -737,6 +506,7 @@ private fun EffortControls(
                     .clearAndSetSemantics { contentDescription = rpeAnnouncement }
             )
             StepButton(
+                enabled = enabled,
                 increase = true,
                 contentDescription = stringResource(
                     R.string.effort_rpe_increase_accessibility,
@@ -748,12 +518,13 @@ private fun EffortControls(
             )
             TextButton(
                 onClick = { onRecordEffort(null, rir) },
+                enabled = enabled,
                 modifier = Modifier.heightIn(min = MIN_TOUCH_TARGET)
             ) {
                 Text(
                     stringResource(R.string.action_clear),
                     fontSize = 12.sp,
-                    color = LocalContentColor.current
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -778,6 +549,7 @@ private fun EffortControls(
                 )
                 FilterChip(
                     selected = rir == value,
+                    enabled = enabled,
                     onClick = { onRecordEffort(rpe, if (rir == value) null else value) },
                     label = { Text(valueText, color = LocalContentColor.current) },
                     modifier = Modifier
@@ -789,27 +561,7 @@ private fun EffortControls(
     }
 }
 
-private const val MAX_INPUT_LENGTH = LocaleFormatting.MAX_INPUT_LENGTH
 internal val MIN_TOUCH_TARGET = 48.dp
-private val LARGE_TOUCH_TARGET = 56.dp
-
-/**
- * Labels the load field. A null target means no confirmed baseline and no usable
- * history exist yet, so the logger must ask the user to choose one rather than
- * silently accepting whatever value happens to be left in the field.
- */
-@Composable
-internal fun weightInputLabel(targetWeight: Double?, weightUnit: String): String =
-    if (targetWeight == null) {
-        stringResource(R.string.set_choose_starting_load)
-    } else {
-        stringResource(
-            R.string.set_field_with_unit,
-            stringResource(R.string.set_field_load),
-            weightUnit
-        )
-    }
-
 /**
  * Whether this performance update is safe to submit to the repository as-is. A set
  * marked complete must carry valid, positive values for whatever this exercise type

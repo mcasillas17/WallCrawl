@@ -8,6 +8,8 @@ import java.util.Locale
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisual
 import wallcrawl.elopenmike.com.core.io.BoundedCharacterReader
 import wallcrawl.elopenmike.com.core.model.AiReviewProvenance
+import wallcrawl.elopenmike.com.core.model.ConditionExerciseIdentity
+import wallcrawl.elopenmike.com.core.model.conditionDigest
 import wallcrawl.elopenmike.com.core.model.ComplexityTier
 import wallcrawl.elopenmike.com.core.model.Difficulty
 import wallcrawl.elopenmike.com.core.model.Exercise
@@ -39,9 +41,17 @@ class WorkoutGuideCatalogFormatException(
 ) : IllegalArgumentException(message, cause)
 
 /** Converts the import format into WallCrawl-owned domain and visual models. */
-class WorkoutGuideCatalogParser {
+class WorkoutGuideCatalogParser(
+    private val canonicalAssetExists: (String) -> Boolean = { false }
+) {
 
-    fun parse(input: Reader): WorkoutGuideCatalogSnapshot {
+    fun parse(input: Reader): WorkoutGuideCatalogSnapshot = parseCatalog(input, null)
+
+    fun parseSupplement(input: Reader, upstream: WorkoutGuideCatalogSnapshot): WorkoutGuideCatalogSnapshot =
+        parseCatalog(input, upstream)
+
+    private fun parseCatalog(input: Reader, upstream: WorkoutGuideCatalogSnapshot?): WorkoutGuideCatalogSnapshot {
+        val supplement = upstream != null
         try {
             val reader = JsonReader(
                 BoundedCharacterReader(input, MAX_CATALOG_CHARACTERS) { limit ->
@@ -62,7 +72,7 @@ class WorkoutGuideCatalogParser {
                     "schemaVersion" -> schemaVersion = reader.nextInt()
                     "source" -> source = reader.readCatalogSource()
                     "visuals" -> visualSpecification = reader.readVisualSpecification()
-                    "exercises" -> parsedExercises = reader.readExercises()
+                    "exercises" -> parsedExercises = reader.readExercises(supplement)
                     else -> reader.skipBoundedValue("catalog.${safeField(field)}")
                 }
             }
@@ -77,11 +87,14 @@ class WorkoutGuideCatalogParser {
                         "expected $SUPPORTED_SCHEMA_VERSION."
                 )
             }
-            val validatedSource = source.requireValid()
-            val visuals = visualSpecification.requireValid()
+            val validatedSource = source.requireValid(supplement)
+            val visuals = visualSpecification.requireValid(supplement)
             val entries = parsedExercises
                 ?: malformed("Catalog is missing its exercises array.")
-            if (entries.isEmpty()) malformed("Catalog must contain at least one exercise.")
+            if (entries.isEmpty()) {
+                if (upstream != null) return upstream
+                malformed("Catalog must contain at least one exercise.")
+            }
 
             val duplicateId = entries.groupingBy(ParsedExercise::id).eachCount()
                 .entries.firstOrNull { it.value > 1 }?.key
@@ -92,7 +105,21 @@ class WorkoutGuideCatalogParser {
             val duplicateSlug = entries.groupingBy(ParsedExercise::sourceSlug).eachCount()
                 .entries.firstOrNull { it.value > 1 }?.key
             if (duplicateSlug != null) malformed("Duplicate source exercise slug: $duplicateSlug")
-            val knownExerciseIds = entries.mapTo(mutableSetOf(), ParsedExercise::id)
+            if (upstream != null) {
+                val upstreamIds = upstream.exercises.map { it.id }.toSet()
+                val upstreamReferences = upstream.exercises.mapNotNull { it.source?.sourceId }.toSet()
+                val upstreamSlugs = upstream.exercises.mapNotNull { it.source?.sourceSlug }.toSet()
+                entries.forEach { entry ->
+                    if (entry.id in upstreamIds || entry.sourceId in upstreamReferences || entry.sourceSlug in upstreamSlugs) {
+                        malformed("Supplement repeats an upstream exercise id or source reference.")
+                    }
+                }
+            }
+            val exercises = entries.map { entry ->
+                entry.toExercise(validatedSource.attribution, if (supplement) SUPPLEMENT_ID else CATALOG_ID)
+            }
+            val allExercises = upstream?.exercises.orEmpty() + exercises
+            val knownExerciseIds = allExercises.mapTo(mutableSetOf(), Exercise::id)
             entries.forEach { entry ->
                 entry.programming?.alternativeExerciseIds.orEmpty().forEach { alternativeId ->
                     if (alternativeId !in knownExerciseIds) {
@@ -103,33 +130,47 @@ class WorkoutGuideCatalogParser {
                     }
                 }
             }
-            validateReviewedGraphs(entries)
+            validateReviewedGraphs(allExercises)
 
             val framesByExerciseId = entries.associate { entry ->
                 entry.id to (1..visuals.frameCount).map { frameIndex ->
                     ExerciseVisual(
-                        assetPath = "$ASSET_PATH_PREFIX${entry.sourceSlug}/frame-$frameIndex.svg",
+                        assetPath = "${if (supplement) SUPPLEMENT_ASSET_PREFIX else ASSET_PATH_PREFIX}${entry.sourceSlug}/frame-$frameIndex.svg".also { path ->
+                            if (supplement && !canonicalAssetExists(path)) malformed("Supplement canonical artwork is missing: $path")
+                        },
                         widthPx = visuals.widthPx,
                         heightPx = visuals.heightPx,
-                        attribution = entry.attribution ?: validatedSource.attribution
+                        attribution = validatedSource.attribution
                     )
                 }
             }
-            // The credits screen states the original source catalog's size, so the entries
-            // WallCrawl owns (they carry their own attribution) stay out of both counts.
-            val upstreamIds = entries.filter { it.attribution == null }.mapTo(mutableSetOf(), ParsedExercise::id)
 
-            return WorkoutGuideCatalogSnapshot(
-                exercises = entries.map { entry -> entry.toExercise(validatedSource.attribution) },
-                framesByExerciseId = framesByExerciseId,
-                catalogAttribution = CatalogAttribution(
-                    repository = validatedSource.repository,
-                    commit = validatedSource.commit,
-                    assetLicense = validatedSource.assetLicense,
-                    attribution = validatedSource.attribution,
-                    exerciseCount = upstreamIds.size,
-                    // Counted, not inferred: the credits screen states this number publicly.
-                    frameCount = framesByExerciseId.filterKeys { it in upstreamIds }.values.sumOf { it.size }
+            val attribution = CatalogAttribution(
+                repository = validatedSource.repository,
+                commit = validatedSource.commit,
+                assetLicense = validatedSource.assetLicense,
+                attribution = validatedSource.attribution,
+                exerciseCount = entries.size,
+                // Counted, not inferred: the credits screen states this number publicly.
+                frameCount = framesByExerciseId.values.sumOf { it.size }
+            )
+            if (upstream == null) return WorkoutGuideCatalogSnapshot(exercises, framesByExerciseId, attribution)
+            // Hash canonical domain content: formatting and object-key order are not catalog changes.
+            val digest = conditionDigest(mapOf(
+                "schemaVersion" to schemaVersion, "sourceVersion" to 1,
+                "repository" to validatedSource.repository, "assetLicense" to validatedSource.assetLicense,
+                "visuals" to listOf(visuals.widthPx, visuals.heightPx, visuals.frameCount, SUPPLEMENT_ASSET_PREFIX),
+                "exercises" to exercises.map { exercise -> listOf(
+                    ConditionExerciseIdentity.contentSha256(exercise), exercise.searchAliases)
+                }
+            ))
+            return upstream.copy(
+                exercises = allExercises,
+                framesByExerciseId = upstream.framesByExerciseId + framesByExerciseId,
+                catalogVersion = "${upstream.catalogVersion}+$SUPPLEMENT_ID:$digest",
+                supplementAttribution = SupplementAttribution(
+                    SUPPLEMENT_ID, 1, validatedSource.repository, validatedSource.assetLicense,
+                    validatedSource.attribution, entries.size, framesByExerciseId.values.sumOf { it.size }
                 )
             )
         } catch (error: WorkoutGuideCatalogFormatException) {
@@ -142,6 +183,8 @@ class WorkoutGuideCatalogParser {
     }
 
     private fun JsonReader.readCatalogSource(): CatalogSource {
+        var catalogId: String? = null
+        var version: Int? = null
         var repository: String? = null
         var commit: String? = null
         var assetLicense: String? = null
@@ -152,6 +195,8 @@ class WorkoutGuideCatalogParser {
             val field = nextName()
             requireUniqueField(seenFields, field, "source")
             when (field) {
+                "id" -> catalogId = readString("source.id")
+                "version" -> version = readBoundedInt("source.version", 1, 1)
                 "repository" -> repository = readString("source.repository")
                 "commit" -> commit = readString("source.commit")
                 "assetLicense" -> assetLicense = readString("source.assetLicense")
@@ -160,7 +205,7 @@ class WorkoutGuideCatalogParser {
             }
         }
         endObject()
-        return CatalogSource(repository, commit, assetLicense, attribution)
+        return CatalogSource(repository, commit, assetLicense, attribution, catalogId, version)
     }
 
     private fun JsonReader.readVisualSpecification(): VisualSpecification {
@@ -168,12 +213,14 @@ class WorkoutGuideCatalogParser {
         var widthPx: Int? = null
         var heightPx: Int? = null
         var format: String? = null
+        var assetPathPrefix: String? = null
         val seenFields = mutableSetOf<String>()
         beginObject()
         while (hasNext()) {
             val field = nextName()
             requireUniqueField(seenFields, field, "visuals")
             when (field) {
+                "assetPathPrefix" -> assetPathPrefix = readString("visuals.assetPathPrefix")
                 "frameCount" -> frameCount = nextInt()
                 "widthPx" -> widthPx = nextInt()
                 "heightPx" -> heightPx = nextInt()
@@ -182,23 +229,23 @@ class WorkoutGuideCatalogParser {
             }
         }
         endObject()
-        return VisualSpecification(frameCount, widthPx, heightPx, format)
+        return VisualSpecification(frameCount, widthPx, heightPx, format, assetPathPrefix)
     }
 
-    private fun JsonReader.readExercises(): List<ParsedExercise> {
+    private fun JsonReader.readExercises(supplement: Boolean): List<ParsedExercise> {
         val exercises = mutableListOf<ParsedExercise>()
         beginArray()
         while (hasNext()) {
             if (exercises.size >= MAX_EXERCISES) {
                 malformed("Catalog exceeds the $MAX_EXERCISES exercise limit.")
             }
-            exercises += readExercise(exercises.size)
+            exercises += readExercise(exercises.size, supplement)
         }
         endArray()
         return exercises
     }
 
-    private fun JsonReader.readExercise(position: Int): ParsedExercise {
+    private fun JsonReader.readExercise(position: Int, supplement: Boolean): ParsedExercise {
         var id: String? = null
         var sourceId: String? = null
         var sourceSlug: String? = null
@@ -211,7 +258,7 @@ class WorkoutGuideCatalogParser {
         var isStretch: Boolean? = null
         var programming: ExerciseProgrammingMetadata? = null
         var reviewedMetadata: ReviewedExerciseMetadata? = null
-        var ownAttribution: ExerciseAttribution? = null
+        var executionGuidance: String? = null
         val seenFields = mutableSetOf<String>()
 
         beginObject()
@@ -229,9 +276,11 @@ class WorkoutGuideCatalogParser {
                 "listedEquipment" -> listedEquipment = readStringArray("exercise.listedEquipment")
                 "exerciseType" -> exerciseType = readExerciseType(readString("exercise.exerciseType"))
                 "isStretch" -> isStretch = nextBoolean()
+                "executionGuidance" -> {
+                    if (!supplement) malformed("executionGuidance belongs to the WallCrawl supplement.")
+                    executionGuidance = readReviewedString("exercise.executionGuidance", 1_000)
+                }
                 "programming" -> programming = readProgramming()
-                // Present only on entries WallCrawl owns; upstream entries inherit the catalog's.
-                "attribution" -> ownAttribution = readAttribution("exercise[$position].attribution")
                 "reviewedMetadata" -> reviewedMetadata = readReviewedMetadata(
                     id?.takeIf(SAFE_IDENTIFIER::matches)?.let { safeId ->
                         "Exercise $safeId reviewedMetadata"
@@ -248,6 +297,9 @@ class WorkoutGuideCatalogParser {
         requireSafeIdentifier(upstreamId, "exercise $exerciseId sourceId")
         val upstreamSlug = sourceSlug ?: malformed("Exercise $exerciseId is missing sourceSlug.")
         requireSafeIdentifier(upstreamSlug, "exercise $exerciseId sourceSlug")
+        if (supplement && (upstreamId != exerciseId || upstreamSlug != exerciseId)) {
+            malformed("Supplement sourceId and sourceSlug must match the exercise id.")
+        }
 
         val primary = primaryMuscles
             ?: malformed("Exercise $exerciseId is missing primaryMuscles.")
@@ -260,6 +312,13 @@ class WorkoutGuideCatalogParser {
         // the demoted groups keep the exercise eligible for those splits' accessory slots.
         // They do not establish a split's advertised focus, which reads primary muscles only
         // — see `core/ai/WorkoutFocus.kt`.
+        if (supplement && (primary + secondaryMuscles.orEmpty()).any { !MuscleVocabulary.isCanonical(it) }) {
+            malformed("Supplement contains an unknown muscle.")
+        }
+        if (supplement && listedEquipment.orEmpty().any { it !in StandardEquipment.ALL }) {
+            malformed("Supplement contains unknown equipment.")
+        }
+        if (supplement && executionGuidance == null) malformed("Supplement requires neutral executionGuidance.")
         val canonicalPrimary = primary.mapNotNull(MuscleVocabulary::canonicalizePrimary).distinct()
         if (canonicalPrimary.isEmpty()) {
             malformed("Exercise $exerciseId has no recognizable primary muscle.")
@@ -299,7 +358,7 @@ class WorkoutGuideCatalogParser {
             isStretch = resolvedIsStretch,
             programming = programming,
             reviewedMetadata = reviewedMetadata,
-            attribution = ownAttribution
+            executionGuidance = executionGuidance
         )
     }
 
@@ -995,8 +1054,8 @@ class WorkoutGuideCatalogParser {
         }
     }
 
-    private fun validateReviewedGraphs(entries: List<ParsedExercise>) {
-        val entriesById = entries.associateBy(ParsedExercise::id)
+    private fun validateReviewedGraphs(entries: List<Exercise>) {
+        val entriesById = entries.associateBy(Exercise::id)
         val reviewedEntries = entries.filter { it.reviewedMetadata != null }
         if (reviewedEntries.size > MAX_REVIEWED_EXERCISES) {
             malformed(
@@ -1251,14 +1310,17 @@ class WorkoutGuideCatalogParser {
         if (!SAFE_IDENTIFIER.matches(value)) malformed("$label is not a safe identifier.")
     }
 
-    private fun CatalogSource?.requireValid(): ValidatedCatalogSource {
+    private fun CatalogSource?.requireValid(supplement: Boolean): ValidatedCatalogSource {
         val source = this ?: malformed("Catalog is missing source metadata.")
         val repository = source.repository.orEmpty()
         if (!repository.startsWith("https://")) {
             malformed("Catalog source.repository must be an HTTPS URL.")
         }
-        val commit = source.commit.orEmpty()
-        if (!COMMIT_HASH.matches(commit)) {
+        if (supplement && (source.catalogId != SUPPLEMENT_ID || source.version != 1 || source.commit != null)) {
+            malformed("Supplement source must be wallcrawl version 1, without an upstream commit.")
+        }
+        val commit = if (supplement) "" else source.commit.orEmpty()
+        if (!supplement && !COMMIT_HASH.matches(commit)) {
             malformed("Catalog source.commit must be a full Git commit hash.")
         }
         val assetLicense = source.assetLicense
@@ -1274,8 +1336,11 @@ class WorkoutGuideCatalogParser {
         )
     }
 
-    private fun VisualSpecification?.requireValid(): ValidatedVisualSpecification {
+    private fun VisualSpecification?.requireValid(supplement: Boolean): ValidatedVisualSpecification {
         val visuals = this ?: malformed("Catalog is missing visuals metadata.")
+        if (supplement && visuals.assetPathPrefix != SUPPLEMENT_ASSET_PREFIX) {
+            malformed("Supplement visuals.assetPathPrefix must be $SUPPLEMENT_ASSET_PREFIX.")
+        }
         if (visuals.frameCount != EXPECTED_FRAME_COUNT) {
             malformed("Catalog visuals.frameCount must be $EXPECTED_FRAME_COUNT.")
         }
@@ -1317,7 +1382,9 @@ class WorkoutGuideCatalogParser {
         val repository: String?,
         val commit: String?,
         val assetLicense: String?,
-        val attribution: ExerciseAttribution?
+        val attribution: ExerciseAttribution?,
+        val catalogId: String?,
+        val version: Int?
     )
 
     private data class ParsedExercise(
@@ -1333,16 +1400,15 @@ class WorkoutGuideCatalogParser {
         val isStretch: Boolean,
         val programming: ExerciseProgrammingMetadata?,
         val reviewedMetadata: ReviewedExerciseMetadata?,
-        /** Set only for exercises WallCrawl owns; null means the upstream catalog attribution. */
-        val attribution: ExerciseAttribution?
+        val executionGuidance: String?
     ) {
-        fun toExercise(catalogAttribution: ExerciseAttribution): Exercise = Exercise(
+        fun toExercise(attribution: ExerciseAttribution, catalogId: String): Exercise = Exercise(
             id = id,
             source = ExerciseSource(
-                catalogId = if (attribution == null) CATALOG_ID else OWNED_CATALOG_ID,
+                catalogId = catalogId,
                 sourceId = sourceId,
                 sourceSlug = sourceSlug,
-                attribution = attribution ?: catalogAttribution
+                attribution = attribution
             ),
             name = name,
             searchAliases = searchAliases,
@@ -1352,7 +1418,8 @@ class WorkoutGuideCatalogParser {
             type = type,
             isStretch = isStretch,
             programming = programming,
-            reviewedMetadata = reviewedMetadata
+            reviewedMetadata = reviewedMetadata,
+            executionGuidance = executionGuidance
         )
     }
 
@@ -1360,7 +1427,8 @@ class WorkoutGuideCatalogParser {
         val frameCount: Int?,
         val widthPx: Int?,
         val heightPx: Int?,
-        val format: String?
+        val format: String?,
+        val assetPathPrefix: String?
     )
 
     private data class ValidatedCatalogSource(
@@ -1379,7 +1447,8 @@ class WorkoutGuideCatalogParser {
     private companion object {
         const val SUPPORTED_SCHEMA_VERSION = 1
         const val CATALOG_ID = "workout-guide"
-        const val OWNED_CATALOG_ID = ExerciseSource.OWNED_CATALOG_ID
+        const val SUPPLEMENT_ID = "wallcrawl"
+        const val SUPPLEMENT_ASSET_PREFIX = "exercise-illustrations/male/"
         const val ASSET_PATH_PREFIX = "workout-guide/assets/"
         const val EXPECTED_FRAME_COUNT = 3
         const val MAX_VISUAL_DIMENSION = 8_192

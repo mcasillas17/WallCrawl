@@ -1,0 +1,12 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Scientific educational exercise sprite strip for a mobile exercise catalog. Wide 3:1 transparent canvas, exactly three invisible EQUAL WIDTH square cells arranged left to right. In each cell center a complete full-body portrait at identical scale, alignment and camera angle with clear empty margins on all sides. All anatomy, equipment and contact points fully inside that cell. Depict the SAME adult demonstrator, clothing, hand, dumbbell and viewpoint in all three cells. Clean moderately thin WHITE contour-only ink with transparent interiors, pure white solid strokes, transparent negative space. No solid silhouettes, gray shading, textures, glow, colored areas, floor strip, panel dividers, arrows, captions, numbers, or labels. Sparse clear line work, accurate joints and hands. No secondary/inset views. Adult male demonstrator. Prone dumbbell external rotation with shoulder abducted and elbow bent. Fixed side three-quarter camera from the working-arm side; head at viewer RIGHT and feet left. Person lies face down fully supported on padded plinth; forehead resting on nonworking forearm. The working upper arm from shoulder to elbow extends sideways, perpendicular to the trunk, resting continuously on a clearly visible small cylindrical towel roll on the near table edge. Elbow bent at 90 degrees throughout. Small dumbbell always in working hand. LEFT: elbow resting at edge and forearm hangs vertically down below tabletop. MIDDLE: rotate forearm halfway from hanging downward toward the head end, keeping upper arm and elbow planted on roll. RIGHT: forearm rotated up to approximately horizontal in line with tabletop, hand toward head end, still at 90 degrees to upper arm. Do not raise or retract upper arm, do not extend elbow or wrist. Same roll, same contact, same head support. Short-sleeve shirt and shorts.",
+  "outputSha256": "5eed2125e328ca7040577d73f6619c32e484cc677aa81b2672ccaac3bffec699",
+  "layout": "three-panels",
+  "variant": "male",
+  "exerciseId": "hsd-prone-er-shoulder-elbow-90",
+  "nativeStrip": {
+    "path": "masters/hsd-prone-er-shoulder-elbow-90/male/native-strip.png",
+    "sha256": "5eed2125e328ca7040577d73f6619c32e484cc677aa81b2672ccaac3bffec699"
+  }
+}

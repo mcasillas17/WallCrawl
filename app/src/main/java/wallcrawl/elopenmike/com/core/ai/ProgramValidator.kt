@@ -1,7 +1,10 @@
 package wallcrawl.elopenmike.com.core.ai
 
+import wallcrawl.elopenmike.com.core.model.ConditionExerciseIdentity
+import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
+import wallcrawl.elopenmike.com.core.model.ConditionPrescriptionDecision
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.Exercise
-import wallcrawl.elopenmike.com.core.conditions.MobilityBlockPolicy
 import wallcrawl.elopenmike.com.core.model.GeneratedWorkout
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.MovementPattern
@@ -100,7 +103,7 @@ class ProgramValidator(
             )
         }
 
-        val repaired = if (allowRepair) repair(workout, first) else null
+        val repaired = if (allowRepair) repair(workout, first, context) else null
         if (repaired == null) {
             return ProgramValidationResult.Invalid(first.violations)
         }
@@ -128,7 +131,9 @@ class ProgramValidator(
         workout: GeneratedWorkout,
         context: WorkoutGenerationContext
     ): Evaluation {
-        val allowedById = context.allowedExercises.associateBy(Exercise::id)
+        val ready = context.conditionPlanning as? ConditionPlanningResult.Ready
+        val allowedById = context.allowedExercises.filter { ready == null || it.id in ready.ordinaryRules }.associateBy(Exercise::id)
+        val authorizedIds = allowedById.keys + ready?.supportive.orEmpty().map { it.exerciseId }
         val violations = mutableListOf<ProgramViolation>()
 
         try {
@@ -137,7 +142,8 @@ class ProgramValidator(
             violations += ProgramViolation(ProgramViolationCode.MULTI_WEEK_PROGRAM_INVALID, detail = failure.failure.name)
         }
 
-        violations += structuralValidator.structuralViolations(workout, allowedById.keys)
+        violations += structuralValidator.structuralViolations(workout, authorizedIds)
+        violations += conditionViolations(workout, context)
         if (violations.any { it.code == ProgramViolationCode.EMPTY_RECOMMENDATION }) {
             return Evaluation(violations.sorted(), emptyList())
         }
@@ -150,10 +156,8 @@ class ProgramValidator(
         val requiresProgressionReceipts = context.automaticEligibilityResult != null &&
             context.trainingProgramState?.policyVersion == TrainingProgramStatePolicyVersion.PROGRAM_STATE_V2
         if ((requiresProgressionReceipts || workout.progressionDecisions.isNotEmpty()) &&
-            workout.progressionDecisions.map { it.exerciseId } != workout.exercises.map { it.exerciseId }
+            workout.progressionDecisions.map { it.exerciseId } != workout.exercises.filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }.map { it.exerciseId }
         ) violations += ProgramViolation(ProgramViolationCode.PROGRESSION_POLICY_MISMATCH)
-        violations += structuralValidator.mobilityIdViolations(workout.mobilityBlock)
-        violations += mobilityViolations(workout, context)
         violations += durationViolations(workout)
 
         val accounting = accountProposedDose(workout, context, allowedById)
@@ -164,6 +168,64 @@ class ProgramValidator(
             doseAccounting = accounting.perMuscle,
             attributionByExerciseId = accounting.attributionByExerciseId
         )
+    }
+
+    private suspend fun conditionViolations(workout: GeneratedWorkout, context: WorkoutGenerationContext): List<ProgramViolation> {
+        fun violation(reason: String, id: String? = null) = ProgramViolation(
+            ProgramViolationCode.EXPLICIT_CONSTRAINT_VIOLATED, exerciseId = id, detail = "CONDITION:$reason")
+        val planning = context.conditionPlanning
+        val history = context.conditionHistory
+        if (history?.pending?.any { it.profileId == context.userProfile.id } == true) return listOf(violation("pending-reassessment"))
+        if (context.userProfile.reportedConditions.isNotEmpty()) return listOf(violation("legacy-condition-report"))
+        if (planning is ConditionPlanningResult.Blocked) return planning.reasons.map { violation(it.reason) }
+        if (planning !is ConditionPlanningResult.Ready) {
+            return if (context.userProfile.hasConditionReports || workout.conditionDecisions.isNotEmpty() ||
+                workout.exercises.any { it.prescription.purpose != PrescriptionPurpose.ORDINARY }) listOf(violation("missing-condition-context")) else emptyList()
+        }
+        val support = context.conditionSupport ?: return listOf(violation("missing-support"))
+        if (history == null) return listOf(violation("missing-history"))
+        val ids = context.userProfile.activeConditions.flatMap { selection ->
+            support.records[selection.conditionId]?.cases.orEmpty().filter { case ->
+                case.requiredAnswers.all { (id, answer) -> selection.answers[id] == answer }
+            }.flatMap { case -> case.rules.map { it.exerciseIdentity.exerciseId } }
+        }.toSet() + context.allowedExercises.map { it.id }
+        val catalog = ids.mapNotNull { structuralValidator.catalogExercise(it) }.associateBy { it.id }
+        if (context.allowedExercises.any { it.id in planning.ordinaryRules &&
+                ConditionExerciseIdentity.contentSha256(it) != catalog[it.id]?.let(ConditionExerciseIdentity::contentSha256) }) {
+            return listOf(violation("changed-candidate-content"))
+        }
+        val current = ConditionPlanningPolicy().resolve(context.userProfile,
+            context.allowedExercises.mapNotNull { catalog[it.id] }, catalog, support, history)
+        if (RecommendationContextIdentity.conditionPlanningFacts(current) != RecommendationContextIdentity.conditionPlanningFacts(planning)) {
+            return listOf(violation("changed-condition-facts"))
+        }
+        val violations = mutableListOf<ProgramViolation>()
+        planning.context.consumedScheduleEvidence.forEach { evidence ->
+            val reference = evidence.reference
+            val rule = support.records[reference.conditionId]?.cases?.singleOrNull { it.id == reference.caseId }
+                ?.rules?.singleOrNull { it.id == reference.ruleId }
+            if (rule?.schedule == null || rule.schedule.sessionsPerWeek > context.trainingFrequencyDaysPerWeek) {
+                violations += violation("unsupported-schedule")
+            }
+        }
+        if (planning.weightUnit != context.preferredUnits) violations += violation("weight-unit-mismatch")
+        if (WorkoutDurationEstimator.estimateSeconds(workout.exercises) > context.preferredWorkoutDurationMinutes.toLong() * 60L) {
+            violations += violation("insufficient-duration")
+        }
+        planning.supportive.forEach { required ->
+            if (workout.exercises.count { it.exerciseId == required.exerciseId && it.prescription.purpose == PrescriptionPurpose.SUPPORTIVE } != 1) {
+                violations += violation("missing-required-support", required.exerciseId)
+            }
+        }
+        val expectedDecisions = mutableListOf<ConditionPrescriptionDecision>()
+        workout.exercises.forEach { planned ->
+            violations += ConditionPlanningPolicy().validate(planned, planning).map { violation(it.reason, planned.exerciseId) }
+            val rules = planning.context.appliedRules.filter { it.exerciseIdentity.exerciseId == planned.exerciseId && it.purpose == planned.prescription.purpose }
+            if (rules.isNotEmpty()) expectedDecisions += ConditionPrescriptionDecision(rules.first().exerciseIdentity,
+                planned.prescription.purpose, rules.first().executionIdentity, rules.map { it.reference }.toSet())
+        }
+        if (workout.conditionDecisions != expectedDecisions) violations += violation("condition-decision-mismatch")
+        return violations
     }
 
     // region advertised focus
@@ -186,7 +248,7 @@ class ProgramValidator(
         allowedById: Map<String, Exercise>
     ): List<ProgramViolation> {
         val violations = mutableListOf<ProgramViolation>()
-        val selected = workout.exercises.mapNotNull { allowedById[it.exerciseId] }
+        val selected = workout.exercises.filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }.mapNotNull { allowedById[it.exerciseId] }
         val split = workout.title.split
         if (selected.none(split::trainsAsFocus)) {
             violations += ProgramViolation(
@@ -230,7 +292,7 @@ class ProgramValidator(
         val constraints = context.programConstraints
         val violations = mutableListOf<ProgramViolation>()
 
-        if (constraints.uniqueExerciseIds) {
+        if (constraints.uniqueExerciseIds || context.conditionPlanning is ConditionPlanningResult.Ready) {
             val seen = mutableSetOf<String>()
             workout.exercises.forEachIndexed { index, planned ->
                 if (!seen.add(planned.exerciseId)) {
@@ -246,6 +308,7 @@ class ProgramValidator(
         if (constraints.uniqueProgressionFamilies) {
             val seen = mutableSetOf<String>()
             workout.exercises.forEachIndexed { index, planned ->
+                if (planned.prescription.purpose != PrescriptionPurpose.ORDINARY) return@forEachIndexed
                 // Accepted metadata only, matching the constraint's own contract: an
                 // unaccepted draft record still carries an authored family, and a draft must
                 // never be what drives a product-policy rejection.
@@ -265,7 +328,7 @@ class ProgramValidator(
         }
 
         if (constraints.requiredMovementPatterns.isNotEmpty()) {
-            val covered = workout.exercises.mapNotNullTo(mutableSetOf()) { planned ->
+            val covered = workout.exercises.filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }.mapNotNullTo(mutableSetOf()) { planned ->
                 allowedById[planned.exerciseId]?.movementPattern()
             }
             // Unordered on purpose: `evaluate` sorts every violation through
@@ -306,7 +369,7 @@ class ProgramValidator(
     ): List<ProgramViolation> {
         val violations = mutableListOf<ProgramViolation>()
 
-        if (planned.exerciseId in context.userProfile.excludedExerciseIds) {
+        if (planned.exerciseId in context.userProfile.planningExclusions) {
             violations += ProgramViolation(
                 code = ProgramViolationCode.EXPLICIT_CONSTRAINT_VIOLATED,
                 exerciseId = planned.exerciseId,
@@ -318,6 +381,7 @@ class ProgramValidator(
         // An exercise that is not a legal candidate has already been reported as such.
         // Piling reviewed-metadata reasons on top of that would describe a plan nobody
         // proposed, so the remaining per-exercise rules need a resolved candidate.
+        if (planned.prescription.purpose != PrescriptionPurpose.ORDINARY) return violations
         val candidate = allowedById[planned.exerciseId] ?: return violations
         if (context.automaticEligibilityResult != null) {
             violations += reviewedViolations(index, planned, candidate, context)
@@ -350,6 +414,9 @@ class ProgramValidator(
         ) return emptyList()
         val expected = try {
             DefaultExercisePrescriptionFactory(StateBasedTrainingPolicy(defaults)).createDecision(candidate, context)
+        } catch (error: WorkoutValidationException) {
+            return listOf(violation(ProgramViolationCode.EXPLICIT_CONSTRAINT_VIOLATED,
+                "CONDITION:${error.conditionReasons.firstOrNull()?.reason ?: error.failure.name}"))
         } catch (error: TrainingPolicyResultException) {
             val exhausted = (error.result as? TrainingPolicyResult.NoGuidance)?.reason ==
                 TrainingPolicyNoGuidanceReason.WEEKLY_DIRECT_PRIMARY_ALLOWANCE_EXHAUSTED
@@ -367,10 +434,15 @@ class ProgramValidator(
             !traceable(prescription.targetAssistanceWeight, expected.referencePrescription.targetAssistanceWeight, expected.prescription.targetAssistanceWeight)
         ) violations += violation(ProgramViolationCode.UNTRACEABLE_LOAD)
         if (recorded != null) {
+            val conditionReady = context.conditionPlanning is ConditionPlanningResult.Ready
+            // Condition budget trimming follows the authorized target; the legacy repair suppresses progression.
+            val repairReference = if (conditionReady) expected.prescription else expected.referencePrescription
             val repaired = recorded.reason == ProgressionReason.HOLD_VALIDATION_REPAIR &&
-                recorded.referencePrescription == expected.referencePrescription &&
+                recorded.referencePrescription == repairReference &&
+                recorded.axis == null && (!conditionReady || recorded.sourceSessionIds.isEmpty()) &&
+                (!conditionReady || prescription.targetSets < expected.prescription.targetSets) &&
                 recorded.baseConfigurationDigest == expected.baseConfigurationDigest &&
-                recorded.prescription == expected.referencePrescription.copy(targetSets = prescription.targetSets) &&
+                recorded.prescription == repairReference.copy(targetSets = prescription.targetSets) &&
                 prescription.targetSets <= expected.prescription.targetSets
             if (recorded.prescription != prescription || (recorded != expected && !repaired)) {
                 violations += violation(ProgramViolationCode.PROGRESSION_POLICY_MISMATCH)
@@ -494,39 +566,6 @@ class ProgramValidator(
 
     // endregion
 
-    // region mobility block
-
-    private fun mobilityViolations(
-        workout: GeneratedWorkout,
-        context: WorkoutGenerationContext
-    ): List<ProgramViolation> {
-        val block = workout.mobilityBlock
-        val restrictions = context.conditionRestrictions
-        val routine = MobilityBlockPolicy.routineEntries(restrictions).mapTo(hashSetOf()) { it.exerciseId }
-        val violations = mutableListOf<ProgramViolation>()
-        if (block.size > MobilityBlockPolicy.MAX_ITEMS) {
-            violations += ProgramViolation(
-                ProgramViolationCode.MOBILITY_BLOCK_TOO_LONG,
-                detail = "${block.size}>${MobilityBlockPolicy.MAX_ITEMS}"
-            )
-        }
-        block.forEachIndexed { index, planned ->
-            if (planned.exerciseId !in routine) {
-                violations += ProgramViolation(
-                    ProgramViolationCode.MOBILITY_ENTRY_NOT_IN_ROUTINE, planned.exerciseId, index
-                )
-            }
-            if (MobilityBlockPolicy.isAvoided(restrictions, planned.exerciseId)) {
-                violations += ProgramViolation(
-                    ProgramViolationCode.MOBILITY_ENTRY_RESTRICTED, planned.exerciseId, index
-                )
-            }
-        }
-        return violations
-    }
-
-    // endregion
-
     // region duration
 
     /**
@@ -537,7 +576,7 @@ class ProgramValidator(
      * physiological.
      */
     private fun durationViolations(workout: GeneratedWorkout): List<ProgramViolation> {
-        val expected = WorkoutDurationEstimator.estimateMinutes(workout.exercises + workout.mobilityBlock)
+        val expected = WorkoutDurationEstimator.estimateMinutes(workout.exercises)
         val deviation = kotlin.math.abs(workout.estimatedDurationMinutes - expected)
         if (deviation <= WorkoutDurationEstimator.TOLERANCE_MINUTES) return emptyList()
         return listOf(
@@ -557,7 +596,7 @@ class ProgramValidator(
      *
      * Prospective targets and completed credit stay in separate fields of the result:
      * nothing here writes to the ledger, and a proposed or rejected workout never becomes
-     * completed exposure. `PRIMARY_ONLY_V1` is preserved exactly — one designated direct
+     * completed exposure. `ORDINARY_PRIMARY_ONLY_V2` is preserved exactly — one designated direct
      * primary per set, with descriptive secondary muscles credited nothing at all.
      */
     private fun accountProposedDose(
@@ -587,7 +626,7 @@ class ProgramValidator(
             ?.maxWeeklyDirectPrimarySets
         val proposedByMuscle = linkedMapOf<String, Long>()
         val attribution = linkedMapOf<String, String>()
-        workout.exercises.forEach { planned ->
+        workout.exercises.filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }.forEach { planned ->
             val muscle = allowedById[planned.exerciseId]
                 ?.acceptedMetadata()
                 ?.directPrimaryMuscle
@@ -640,7 +679,7 @@ class ProgramValidator(
                 detail = "UNSUPPORTED_TRAINING_PROGRAM_STATE_POLICY"
             )
 
-        state.weeklyLedger.policyVersion != LedgerPolicyVersion.PRIMARY_ONLY_V1 ->
+        state.weeklyLedger.policyVersion != LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2 ->
             ProgramViolation(
                 code = ProgramViolationCode.MALFORMED_WEEKLY_LEDGER,
                 detail = "UNSUPPORTED_LEDGER_POLICY"
@@ -671,7 +710,7 @@ class ProgramValidator(
      *
      * Returns null when nothing may be repaired, which the caller reports as a rejection.
      */
-    private fun repair(workout: GeneratedWorkout, evaluation: Evaluation): GeneratedWorkout? {
+    private fun repair(workout: GeneratedWorkout, evaluation: Evaluation, context: WorkoutGenerationContext): GeneratedWorkout? {
         if (evaluation.violations.isEmpty()) return null
         if (
             evaluation.violations.any {
@@ -694,13 +733,14 @@ class ProgramValidator(
                     index.takeIf { muscleOf(planned, evaluation, muscle) }
                 }
             if (affected.isEmpty()) return null
-            // Every affected exercise has to survive with at least one set, or this is not a
-            // reduction any more.
-            if (remaining < affected.size) return null
+            // Every ordinary exercise must retain its condition minimum, or at least one set.
+            val ready = context.conditionPlanning as? ConditionPlanningResult.Ready
+            val minima = affected.associateWith { index -> ready?.ordinaryRules?.get(workout.exercises[index].exerciseId)?.bounds?.minSets ?: 1 }
+            if (remaining < minima.values.sum()) return null
 
             var budget = remaining
             affected.forEachIndexed { position, index ->
-                val exercisesAfterThis = affected.size - position - 1
+                val exercisesAfterThis = affected.drop(position + 1).sumOf { minima.getValue(it) }
                 val granted = minOf(setsByIndex[index], budget - exercisesAfterThis)
                 setsByIndex[index] = granted
                 budget -= granted
@@ -712,8 +752,8 @@ class ProgramValidator(
                 planned
             } else {
                 val decision = workout.progressionDecisions.singleOrNull { it.exerciseId == planned.exerciseId }
-                planned.copy(prescription = (decision?.referencePrescription ?: planned.prescription)
-                    .copy(targetSets = setsByIndex[index]))
+                val reference = if (context.conditionPlanning is ConditionPlanningResult.Ready) planned.prescription else decision?.referencePrescription ?: planned.prescription
+                planned.copy(prescription = reference.copy(targetSets = setsByIndex[index]))
             }
         }
         if (exercises == workout.exercises) return null
@@ -727,11 +767,13 @@ class ProgramValidator(
                 if (index >= 0 && exercises[index].prescription != decision.prescription) {
                     decision.copy(
                         reason = ProgressionReason.HOLD_VALIDATION_REPAIR, axis = null,
+                        referencePrescription = if (context.conditionPlanning !is ConditionPlanningResult.Ready || decision.reason == ProgressionReason.HOLD_VALIDATION_REPAIR) decision.referencePrescription else decision.prescription,
+                        sourceSessionIds = if (context.conditionPlanning is ConditionPlanningResult.Ready) emptyList() else decision.sourceSessionIds,
                         prescription = exercises[index].prescription
                     )
                 } else decision
             },
-            estimatedDurationMinutes = WorkoutDurationEstimator.estimateMinutes(exercises + workout.mobilityBlock)
+            estimatedDurationMinutes = WorkoutDurationEstimator.estimateMinutes(exercises)
         )
     }
 
@@ -788,7 +830,8 @@ class ProgramValidator(
             acceptedDeloadSource = context.deloadPreferences?.let(DeloadOfferPolicy::accepted)?.offer?.source,
             doseAccounting = evaluation.doseAccounting,
             expectedProgramHeader = context.programHeader,
-            programSession = context.validatedProgramSession()
+            programSession = context.validatedProgramSession(),
+            conditionContext = (context.conditionPlanning as? ConditionPlanningResult.Ready)?.context
         )
     }
 

@@ -25,7 +25,7 @@ That same reviewed-only flag gates three local features together:
 - `CapabilityEvidencePolicy` and `CapabilityEvidenceSet`
 - `TrainingProgramStateProvider` + `StateBasedTrainingPolicy`
 
-The bundled catalog holds 309 exercises: the 302 pinned ones and 7 owned ones without reviewed metadata. An owner-authorized audit accepted 182 of
+The bundled catalog remains at 302 exercises. An owner-authorized audit accepted 182 of
 its 211 authored `reviewedMetadata` entries as `AI_ACCEPTED`; the remaining 29 authored
 entries stay `DRAFT`, 56 catalog entries carry no authored block at all, and 35 entries
 are outside automatic-strength scope. **Zero entries are `APPROVED`: no genuine human
@@ -105,37 +105,33 @@ earlier stages.
 | 2 | No complete reviewed equipment alternative or required fixed-anchor setup is available | `MISSING_EQUIPMENT` | `EQUIPMENT_REMOVED_ALL` |
 | 3 | Metadata is absent or not accepted | `MISSING_APPROVED_METADATA` | `NO_APPROVED_METADATA` |
 | 4 | A required capability is `AVOID` | `CAPABILITY_AVOID` | `CAPABILITIES_REMOVED_ALL` |
+| 5 | A selected joint sensitivity is not in this exercise's `clearedTrainingConstraints` | `UNMAPPED_TRAINING_CONSTRAINT` | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
 | 5 | `LOW_IMPACT_ONLY` meets `ImpactLevel.HIGH` | `HIGH_IMPACT_DISALLOWED` | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
-| 5b | The exercise's movement demands meet a selected condition's avoid demands | `CONDITION_RESTRICTED_DEMAND` | `CONDITIONS_REMOVED_ALL` |
-| 5b | A condition or joint label is selected and the exercise has no overlay entry | `CONDITION_DEMANDS_UNREVIEWED` | `CONDITIONS_REMOVED_ALL` |
-| 5b | A condition or joint label is selected and the overlay cannot be used (unreadable, or an unknown condition id) | `CONDITION_GUIDANCE_UNAVAILABLE` | `CONDITION_GUIDANCE_UNAVAILABLE` |
 | 6 | `ADVANCED` lacks the existing demonstrated-family or legal supported-regression exception, in any state | `ADVANCED_WHILE_UNCALIBRATED` or `ADVANCED_WHILE_RETURNING` | `CALIBRATION_COMPLEXITY_REMOVED_ALL` |
 
-Stage 5b replaces the old per-exercise joint clearance, and it is **per exercise**, not per
-pool. One shared predicate (`core/conditions/ConditionRestrictions.kt`) reads the bundled
-condition overlay. Avoid and modify demands are each the union across the user's selected
-conditions and joint labels; a demand in both is treated as avoid. An exercise that carries an
-avoid demand is refused. An exercise with only modify demands stays eligible and ranks after one
-without, directly after split focus, in both compound and accessory ordering; that rank is
-restricted or not, never a count. A user with no condition and no joint label is unaffected,
-including when the overlay is missing.
+Stage 5's joint decision is **per exercise**, not per pool. Each accepted record carries
+`clearedTrainingConstraints`: the joint sensitivities a reviewer explicitly cleared it for.
+A selected sensitivity that the record does not list keeps that one exercise out of the
+automatic pool; it no longer removes every candidate on the strength of the profile alone.
+`LOW_IMPACT_ONLY` is never listed there, because `impactLevel` already decides it, and both
+the importer and the Android parser reject a record that tries to list it.
 
-An overlay that cannot be read, or a condition id it does not know, is
-`CONDITION_GUIDANCE_UNAVAILABLE` for a user who selected a condition or joint label: the
-restriction is never silently dropped. `clearedTrainingConstraints` stays in the schema and is
-no longer read by planning. `UNMAPPED_TRAINING_CONSTRAINT` is retained in the enum only for
-stored reports; nothing produces it. `LOW_IMPACT_ONLY` is never a joint label and is still
-decided by `impactLevel`.
+Absence is not clearance. No clearance is inferred from an exercise's name, muscles,
+movement pattern, complexity or equipment, and there is no numeric joint-stress score. Every
+bundled record currently clears nothing, so any selected joint sensitivity still produces
+`TRAINING_CONSTRAINTS_REMOVED_ALL` — an honest typed refusal, not a blanket policy. A
+clearance is a reviewer's product judgement about a self-reported label; it is not a
+diagnosis, and reviewer agreement is not clinical validation.
 
-The supported-regression exception reads the same predicate. A regression is an alternative
-*inside* the user's restrictions: a regression the predicate refuses cannot lift the advanced
-ceiling, so a restriction can never be bypassed by substituting an easier movement.
+The supported-regression exception applies the same rule. A regression is an alternative
+*inside* the user's restrictions: an uncleared regression cannot lift the advanced ceiling,
+so a restriction can never be bypassed by substituting an easier movement.
 
 `StateBasedTrainingPolicy` re-checks both training-constraint rules before prescribing — the
-same condition predicate, and `LOW_IMPACT_ONLY` against `ImpactLevel.HIGH` — and refuses either
-with `TRAINING_CONSTRAINT_REACHED_POLICY`. That is the second boundary the `AVOID` capability
-rule already had. The condition check is one shared predicate called from both policies, so
-they cannot drift into different readings of the same overlay.
+same clearance, and `LOW_IMPACT_ONLY` against `ImpactLevel.HIGH` — and refuses either with
+`TRAINING_CONSTRAINT_REACHED_POLICY`. That is the second boundary the `AVOID` capability rule
+already had. The clearance check is one shared predicate called from both policies, so they
+cannot drift into different readings of the same reviewed field.
 
 An eligible exercise has the hard reason `APPROVED`, whose name is frozen and means
 accepted. `EligibilityPreference`
@@ -302,7 +298,7 @@ outside it, and unavailable to automatic planning until separately resolved:
 - the 35 IDs outside automatic-strength scope (stretches, distance-duration and other
   timed conditioning work).
 
-All 309 remain browseable and manually selectable. Exclusion from the cohort removes an
+All 302 remain browseable and manually selectable. Exclusion from the cohort removes an
 exercise from automatic planning only.
 
 ### Supported profiles
@@ -325,7 +321,7 @@ passes `ProgramValidator` with repair disabled or repaired, as recorded.
 | Band-only (`Resistance Band` only) | 11 | Served; no genuine `Chest` push exists, so the session is labelled by what it actually trains |
 | Inventory matching no accepted record (`Cardio` only) | 0 | `NO_APPROVED_METADATA` — the remaining 120 pending/outside-scope records are the last ones standing, not the equipment |
 | Every catalog exercise excluded by the user | 0 | `USER_EXCLUSIONS_REMOVED_ALL` |
-| Any selected joint sensitivity (until the condition overlay is bundled) | 0 | `CONDITION_GUIDANCE_UNAVAILABLE` |
+| Any selected joint sensitivity | 0 | `TRAINING_CONSTRAINTS_REMOVED_ALL` |
 
 Avoiding one capability removes exactly the accepted exercises that require it without
 stopping the plan; avoiding **every** capability still leaves a plan, because accepted
@@ -335,10 +331,11 @@ assert it as an unsupported case.
 
 ### Not supported at this rollout
 
-- **Any selected joint sensitivity or reported condition, until the condition overlay is
-  bundled.** Joint labels are now decided by the condition overlay, not by
-  `clearedTrainingConstraints`. Without the overlay a user who selects one gets the typed
-  `CONDITION_GUIDANCE_UNAVAILABLE` refusal; a user with none is unaffected. There is no legacy
+- **Any selected joint sensitivity.** The audit found no way to record a non-empty
+  `clearedTrainingConstraints` list for any of the 182 accepted records (see
+  [the exact partition](reviewed-exercise-metadata.md#ai-acceptance-audit)), so selecting
+  one still produces the typed `TRAINING_CONSTRAINTS_REMOVED_ALL` refusal above. This is
+  missing reviewed content, not a contradictory user request, and there is no legacy
   fallback.
 - **Band-only chest or push work.** No band chest exercise exists in the pinned source.
   The band-only session above is labelled by what it actually trains and reports `Chest`
@@ -365,7 +362,7 @@ tests but is no longer what `WallCrawlApplication` composes.
 
 The reviewed gate exists only on automatic context construction. The exercise
 library still reads the full catalog, and the manual template editor still reads
-all 309 exercises and displays its existing profile-equipment warnings. Missing,
+all 302 exercises and displays its existing profile-equipment warnings. Missing,
 `DRAFT`, or unaccepted reviewed metadata does not hide a browse or manual option.
 
 ## Deliberately incomplete work

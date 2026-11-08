@@ -47,6 +47,14 @@ jobs:
       - name: Run catalog importer tests
         run: python3 -m unittest discover -s tools/workout-guide -p 'test_*.py' -v
 
+      - name: Validate research, authored catalog, and shipped illustrations
+        run: |
+          python3 tools/workout-guide/validate_condition_research.py --require-complete
+          python3 tools/workout-guide/build_condition_reference.py --check
+          python3 tools/workout-guide/build_movement_review.py --check
+          python3 tools/workout-guide/validate_catalog_supplement.py
+          python3 tools/workout-guide/package_illustrations.py --check-bundled
+
       - name: Run release tooling tests
         run: python3 -m unittest discover -s tools/release -p 'test_*.py' -v
 

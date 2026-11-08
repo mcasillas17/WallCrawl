@@ -1,0 +1,502 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "whiplash-associated-disorder",
+    "label": "whiplash-associated disorder",
+    "aliases": [
+      "WAD"
+    ],
+    "distinctions": "Acute versus persistent WAD and grades I, II and III are attributes with different trial applicability; suspected fracture/instability is not routine exercise eligibility."
+  },
+  "scope": {
+    "population": "Chronic WAD grades II and III; Ages 18–65, chronic WAD grades I/II, 3 months–5 years; excluded nerve-root compromise; Ages 18–65, chronic WAD",
+    "stage": "Varies by source; acute/recent versus chronic and symptom irritability are explicitly retained. Unknown stage remains unknown.",
+    "operativeStatus": "Nonsurgical evidence predominates; no postoperative protocol approved or inferred.",
+    "exclusions": "Source-specific exclusions are applicability boundaries, not diagnosis-wide contraindications. Coexisting conditions and independently selected joint limits retain precedence.",
+    "uncertainty": "- Ordinary training: acute trauma/uncleared fracture or instability is not a generic workout state. Once assessed, recovery-stage and symptom-response modifications can allow activity; later strengthening cannot be scheduled solely from an app's elapsed time. WAD-G1 supports severe-pain avoidance in acute examples; chronic trial arms use different pain-response approaches.\n- Supportive candidates: gentle cervical ROM, low-load cervical isometrics, neck endurance/control, staged scapular/general conditioning. Exact grade, stage, neurologic status and execution matter; never substitute neck bridges or externally loaded cervical exercises for gentle isometrics.\n- No universal numeric ROM, external-load ceiling, recurrence threshold or automated dose established. Restriction-only draft while stage/clearance unknown; no fabricated “clinician approved” status."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Completed targeted spine research; PubMed/PMC, official guidelines and publishers",
+      "query": "Original exact search strings were not retained in the source report; the report records the actual scientific sources and access attempts. No reconstructed search string is presented as executed.",
+      "decision": "Faithfully serialize all 5 extracted substantive sources, including contrary/indirect evidence.",
+      "limitations": "Targeted English-access-dominated investigation; not a database-complete systematic review. Retained report: .superpowers/sdd/2026-11-01-condition-aware-workouts/spine-source-report.md"
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST exact DOI metadata lookup; targeted official/primary-source reopen",
+      "query": "Individual executed DOI queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1097/AJP.0000000000000123; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1016/S0140-6736%2814%2960457-8; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1001/jamanetworkopen.2025.26674; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.3390/muscles4040049",
+      "decision": "Retrieve missing exact title/PMID/publication metadata; compare titles and dates. Protocol reopens identified in source.access.details.",
+      "limitations": "Metadata API access does not upgrade abstract-only clinical extraction. Correction/retraction/supersession registry search not comprehensive."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST, primary MED abstracts; selected PubMed reopens",
+      "query": "Exact primary-record queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A40794407%20AND%20SRC%3AMED&format=json&resultType=core; https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A41283437%20AND%20SRC%3AMED&format=json&resultType=core",
+      "decision": "Bounded accessible-protocol audit restored explicitly reported facts for wad-p3, wad-s1. Program/contact totals are distinguished from isolated exercise schedules; no unseen protocol, new search discovery or clinical release.",
+      "limitations": "Abstract-only/partial access unchanged. Unreported mechanics, home frequency, progression or stopping criteria remain unknown; no frequency computed from total contacts/duration."
+    }
+  ],
+  "sources": [
+    {
+      "id": "wad-g1",
+      "title": "Guidelines for the management of acute whiplash-associated disorders – for health professionals. Third edition 2014.",
+      "doi": null,
+      "pmid": null,
+      "url": "https://www.sira.nsw.gov.au/resources-library/motor-accident-resources/publications/for-professionals/whiplash-resources/SIRA08104-Whiplash-Guidelines-1117-396479.pdf",
+      "publicationStatus": "Final official guideline; 2014 third edition; fourth-edition draft not adopted",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md. Primary full text reopened for exact execution during serialization."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Official source header/version inspected",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Final third-edition SIRA acute WAD guideline, 2014; official landing updated December 2024",
+      "population": "Adults in first 12 weeks after whiplash, with assessed WAD",
+      "comparator": "Management approaches from guideline synthesis",
+      "coInterventions": "Advice/reassurance/staying active",
+      "outcomes": "SIRA, final third edition 2014 acute WAD guideline. Official landing page, updated Dec 19 2024; final PDF. FT relevant sections/appendix. Adults first 12 weeks; advises activity and neck ROM/low-load isometric/postural endurance/strengthening exercise. Appendix cautions exercises should not cause severe pain and higher strengthening examples start later in recovery with treating-professional guidance. Example holds are source-specific, not generic five-second progression. Online fourth-edition document explicitly titled Draft; not adopted here as current final guidance. No diagnosis-wide lifelong lifting or movement prohibition.",
+      "followUp": "Acute first 12 weeks",
+      "uncertainty": "Fourth-edition document located as Draft, not substituted for final; later recovery strengthening needs treating-professional judgment",
+      "harms": "Appendix gives symptom warnings and advises avoiding severe pain; no universal harmlessness claim",
+      "limitations": "Fourth-edition document located as Draft, not substituted for final; later recovery strengthening needs treating-professional judgment Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Appendix examples: supported supine gentle chin nod; cervical ROM; later seated hand-resisted no-motion rotation at low effort",
+        "dose": "Chin nod example hold five seconds, up to ten repetitions; later rotation isometric five seconds, five each side, 10–20% effort. Source-specific examples only",
+        "frequency": "not reported as a single frequency for all examples",
+        "supervision": "Examples guide practitioners providing primary care; later strengthening timing by treating professional",
+        "progression": "Later recovery strengthening; no automatic elapsed-time authorization or generic five-second increment",
+        "stoppingRules": "Stop/contact doctor or therapist for dizziness/visual/fainting/disorientation symptoms, sudden shooting arm pain or arm/hand numbness/weakness, unusually severe neck pain, or consistently provoked persistent headache"
+      },
+      "locations": [
+        "Treatment > T1 Reassure and stay active and T2 Exercise, printed pp. 27–28",
+        "Appendix 3 > Examples of neck exercises, printed pp. 45–51",
+        "Appendix 3 > Exercise 1 The chin nod exercise, printed p. 45",
+        "Appendix 3 > Exercise 9 Neck strengthening exercises (isometric, no movement exercise), printed p. 49"
+      ]
+    },
+    {
+      "id": "wad-p1",
+      "title": "The effect of neck-specific exercise with, or without a behavioral approach, on pain, disability, and self-efficacy in chronic whiplash-associated disorders: a randomized clinical trial.",
+      "doi": "10.1097/AJP.0000000000000123",
+      "pmid": "24918474",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4352069/",
+      "publicationStatus": "Published journal article; indexed publication 2015-04-01; all dates precede access.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md. Europe PMC fullTextXML re-opened during serialization: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4352069/fullTextXML."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1097/AJP.0000000000000123",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Assessor-blinded three-arm RCT, 216 adults",
+      "population": "Chronic WAD grades II and III",
+      "comparator": "Neck-specific exercise, with/without behavioral approach, versus prescribed general physical activity",
+      "coInterventions": "Behavioral approach in one arm; general activity advice",
+      "outcomes": "Ludvigsson et al., 2015 RCT (online 2014). DOI 10.1097/AJP.0000000000000123, PMID 24918474, PMC4352069; FT via XML. 216 adults chronic WAD grades II/III. Twelve weeks neck-specific exercise (NSE), NSE plus behavioral approach, or prescribed general activity; two supervised visits/week plus home exercise. NSE progressed gentle isometrics to resistance/endurance, symptom/capacity tailored. NSE arms had greater disability improvement at 3/6 months; no significant difference between NSE arms. One arm avoided pain aggravation; behavioral arm deemphasized temporary increases. Adverse-event section not found. Thus no evidence for one universal zero-pain rule, mandatory grade-III exclusion, or unrestricted pain-pushing; clinician monitoring is material.",
+      "followUp": "3 and 6 months after 12-week program",
+      "uncertainty": "NSE arms improved disability more; no significant differences between NSE arms; pain-response approaches differed",
+      "harms": "Dedicated adverse-event section not identified",
+      "limitations": "NSE arms improved disability more; no significant differences between NSE arms; pain-response approaches differed Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Gentle initially unresisted cervical flexion/extension/rotation isometrics; then low resistance in supine/sitting; later weighted-pulley or guild-board endurance",
+        "dose": "Initially about 3×5 daily each; toward 3×10, later up to 3×30, individualized. These describe trial framework",
+        "frequency": "Two supervised sessions weekly plus daily home practice for 12 weeks",
+        "supervision": "Physiotherapists trained in standardized framework; individually examined patients",
+        "progression": "NSE progression within symptom tolerance, avoiding pain aggravation; behavioral arm handled temporary increases differently",
+        "stoppingRules": "not reported as universal numerical cutoff; arm-specific pain-response strategies differ"
+      },
+      "locations": [
+        "MATERIALS AND METHODS > Interventions > Physiotherapist-led Neck-specific Exercise Group (NSE)",
+        "MATERIALS AND METHODS > Interventions > Physiotherapist-guided Neck-specific Exercise Group With a Behavioral Approach (NSEB)",
+        "RESULTS > Disability"
+      ]
+    },
+    {
+      "id": "wad-p2",
+      "title": "Comprehensive physiotherapy exercise programme or advice for chronic whiplash (PROMISE): a pragmatic randomised controlled trial.",
+      "doi": "10.1016/S0140-6736(14)60457-8",
+      "pmid": "24703832",
+      "url": "https://www.lsft.fi/wp-content/uploads/2017/01/Comprehensive-physiotherapy-exercise-programme-or-advice-for-chronic-whiplash-PROMISE-a-pragmatic-randomised-controlled-trial.pdf",
+      "publicationStatus": "Published journal article; indexed publication 2014-04-04 online; July 2014 issue; all dates precede access.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md. Full publisher-layout PDF mirror reopened during serialization; Outcomes and Results adverse-effect reporting inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "PubMed exact-DOI search; PMID 24703832 and trial title/date checked; DOI lookup in Europe PMC returned no result",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Pragmatic two-arm RCT, 172 adults",
+      "population": "Ages 18–65, chronic WAD grades I/II, 3 months–5 years; excluded nerve-root compromise",
+      "comparator": "20-session comprehensive physiotherapy exercise versus one advice session plus telephone support",
+      "coInterventions": "Education/advice and therapist support differ by arm",
+      "outcomes": "Michaleff et al., 2014 PROMISE RCT. DOI 10.1016/S0140-6736(14)60457-8, full article PDF mirror. FT. 172 adults 18–65, WAD I/II, 3 months–5 years; comprehensive 20-session PT exercise versus one advice session/phone support. At 14 weeks pain difference 0.0/10 (95% CI −0.7 to 0.7); no advantage at 6/12 months. No serious adverse events recorded. Nerve-root compromise/grade III excluded, limiting scope; not proof grade III exercise is unsafe (WAD-P1 studied it). Contrary evidence prevents promising that more sessions or complexity necessarily improves outcomes.",
+      "followUp": "14 weeks, 6 and 12 months",
+      "uncertainty": "Primary pain difference zero at 14 weeks; intensive package not superior; grade III exclusion is applicability boundary",
+      "harms": "No serious adverse events. Adverse effects in five exercise and four advice patients: headache, musculoskeletal symptoms, symptom exacerbation or stiffness; no withdrawal for adverse effects. Open-ended questioning at three-month assessment.",
+      "limitations": "Primary pain difference zero at 14 weeks; intensive package not superior; grade III exclusion is applicability boundary Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Comprehensive specific motor relearning and graded activity package versus brief advice",
+        "dose": "20 physiotherapy sessions versus one advice session plus phone support",
+        "frequency": "12-week treatment package; session schedule not retained in extraction",
+        "supervision": "Physiotherapist-delivered intervention",
+        "progression": "Individualized comprehensive package; no single execution progression established here",
+        "stoppingRules": "not reported as an app-ready stopping rule; no serious adverse events recorded"
+      },
+      "locations": [
+        "Methods > Procedures, PDF pp. 2–3",
+        "Methods > Outcomes, PDF p. 3; Results, adverse-effects paragraph, PDF p. 4"
+      ]
+    },
+    {
+      "id": "wad-p3",
+      "title": "Pain Science Education, Stress Management, and Cognition-Targeted Exercise Therapy in Chronic Whiplash Disorders: A Randomized Clinical Trial.",
+      "doi": "10.1001/jamanetworkopen.2025.26674",
+      "pmid": "40794407",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40794407/",
+      "publicationStatus": "Published journal article; indexed publication 2025-08-01; all dates precede access.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 40794407); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1001/jamanetworkopen.2025.26674",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "RCT, 120 adults",
+      "population": "Ages 18–65, chronic WAD",
+      "comparator": "Pain-science/stress-management/cognition-targeted exercise versus usual physiotherapy",
+      "coInterventions": "Education and stress-management components",
+      "outcomes": "Malfliet et al., 2025 RCT. DOI 10.1001/jamanetworkopen.2025.26674, PMID 40794407, PMC12344539. Abstract and relevant results/full PDF excerpts. 120 adults 18–65 chronic WAD; pain-science/stress-management/cognition-targeted exercise versus usual physiotherapy. Prespecified six-month disability endpoint negative (difference 2.38/50; 95% CI −0.12 to 4.89); secondary immediate/12-month differences favored intervention. Other pain/QoL differences absent. Full harms/dose not extracted; cannot use this to mandate a universal pain-response progression model.",
+      "followUp": "Immediate, prespecified 6 months and 12 months",
+      "uncertainty": "Primary six-month disability difference nonsignificant; secondary endpoints favored intervention; full dose/harms not extracted",
+      "harms": "not reported in extracted abstract/results/PDF excerpts",
+      "limitations": "Primary six-month disability difference nonsignificant; secondary endpoints favored intervention; full dose/harms not extracted Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 40794407): MPNA combined pain-neuroscience education, stress management and cognition-targeted time-contingent exercise; usual care combined biomedically focused education and symptom-contingent exercise. Exact exercises and mechanics are not specified.",
+        "dose": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 40794407): participants in either group received 18 sessions during 16 weeks. This is a whole-treatment program/contact dose, not an isolated exercise dose or an inferred weekly schedule.",
+        "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
+        "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
+        "progression": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 40794407): exercise is labeled time-contingent in MPNA and symptom-contingent in usual care. No operational progression steps, numerical increments, pain cutoff or stopping algorithm are given.",
+        "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
+      },
+      "locations": [
+        "Abstract > Results",
+        "Abstract > Interventions"
+      ]
+    },
+    {
+      "id": "wad-s1",
+      "title": "The Effect of Neck-Specific Exercise with or Without a Behavioral Approach in Chronic Whiplash-Associated Disorders: A Systematic Review and Meta-Analysis.",
+      "doi": "10.3390/muscles4040049",
+      "pmid": "41283437",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41283437/",
+      "publicationStatus": "Published journal article; indexed publication 2025-10-27; all dates precede access.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. PMC browser challenge and publisher rate limit blocked full-text inspection. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 41283437); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.3390/muscles4040049",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Systematic review/meta-analysis, 13 reports, reported 2427 participants",
+      "population": "Chronic WAD adults ages 18–63 in included reports",
+      "comparator": "Neck-specific exercise with/without behavioral approach",
+      "coInterventions": "Behavioral components vary",
+      "outcomes": "Correia et al., 2025 systematic review/meta-analysis. DOI 10.3390/muscles4040049, PMID 41283437, PMC12641875. Abstract only; PMC challenge/MDPI rate-limit prevented FT. Thirteen reports, 2427 participants 18–63, neck-specific exercise ± behavioral approach; quantitative pooling found no clear between-approach pain/disability advantage at follow-up despite some individual positive reports. Need check overlapping cohorts before treating participant total as independent unique patients. Does not establish acute WAD advice or a prohibition against ordinary exercise; harms/dose unresolved.",
+      "followUp": "Varied follow-up",
+      "uncertainty": "Pooled approach differences unclear; possible overlapping cohorts need checking; FT challenge/rate limit",
+      "harms": "not reported in accessed abstract",
+      "limitations": "Pooled approach differences unclear; possible overlapping cohorts need checking; FT challenge/rate limit Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract (primary abstract, PMID 41283437): the review compares physiotherapy based on neck-specific exercises with versus without a behavioral approach. No particular movement mechanics or per-exercise schedule is given.",
+        "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
+        "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
+        "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
+        "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
+        "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
+      },
+      "locations": [
+        "Abstract > Results and Conclusions",
+        "Abstract"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "wad-g1-extraction",
+      "kind": "published-recommendation",
+      "statement": "Official landing page, updated Dec 19 2024; final PDF. FT relevant sections/appendix. Adults first 12 weeks; advises activity and neck ROM/low-load isometric/postural endurance/strengthening exercise. Appendix cautions exercises should not cause severe pain and higher strengthening examples start later in recovery with treating-professional guidance. Example holds are source-specific, not generic five-second progression. Online fourth-edition document explicitly titled Draft; not adopted here as current final guidance. No diagnosis-wide lifelong lifting or movement prohibition.",
+      "citations": [
+        {
+          "sourceId": "wad-g1",
+          "location": "Treatment > T1 Reassure and stay active and T2 Exercise, printed pp. 27–28"
+        },
+        {
+          "sourceId": "wad-g1",
+          "location": "Appendix 3 > Examples of neck exercises, printed pp. 45–51"
+        },
+        {
+          "sourceId": "wad-g1",
+          "location": "Appendix 3 > Exercise 1 The chin nod exercise, printed p. 45"
+        },
+        {
+          "sourceId": "wad-g1",
+          "location": "Appendix 3 > Exercise 9 Neck strengthening exercises (isometric, no movement exercise), printed p. 49"
+        }
+      ],
+      "applicability": "Adults in first 12 weeks after whiplash, with assessed WAD",
+      "limitations": "Fourth-edition document located as Draft, not substituted for final; later recovery strengthening needs treating-professional judgment Access: full-text."
+    },
+    {
+      "id": "wad-p1-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.1097/AJP.0000000000000123, PMID 24918474, PMC4352069; FT via XML. 216 adults chronic WAD grades II/III. Twelve weeks neck-specific exercise (NSE), NSE plus behavioral approach, or prescribed general activity; two supervised visits/week plus home exercise. NSE progressed gentle isometrics to resistance/endurance, symptom/capacity tailored. NSE arms had greater disability improvement at 3/6 months; no significant difference between NSE arms. One arm avoided pain aggravation; behavioral arm deemphasized temporary increases. Adverse-event section not found. Thus no evidence for one universal zero-pain rule, mandatory grade-III exclusion, or unrestricted pain-pushing; clinician monitoring is material.",
+      "citations": [
+        {
+          "sourceId": "wad-p1",
+          "location": "MATERIALS AND METHODS > Interventions > Physiotherapist-led Neck-specific Exercise Group (NSE)"
+        },
+        {
+          "sourceId": "wad-p1",
+          "location": "MATERIALS AND METHODS > Interventions > Physiotherapist-guided Neck-specific Exercise Group With a Behavioral Approach (NSEB)"
+        },
+        {
+          "sourceId": "wad-p1",
+          "location": "RESULTS > Disability"
+        }
+      ],
+      "applicability": "Chronic WAD grades II and III",
+      "limitations": "NSE arms improved disability more; no significant differences between NSE arms; pain-response approaches differed Access: full-text."
+    },
+    {
+      "id": "wad-p2-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.1016/S0140-6736(14)60457-8, full article PDF mirror. FT. 172 adults 18–65, WAD I/II, 3 months–5 years; comprehensive 20-session PT exercise versus one advice session/phone support. At 14 weeks pain difference 0.0/10 (95% CI −0.7 to 0.7); no advantage at 6/12 months. No serious adverse events recorded. Nerve-root compromise/grade III excluded, limiting scope; not proof grade III exercise is unsafe (WAD-P1 studied it). Contrary evidence prevents promising that more sessions or complexity necessarily improves outcomes. Targeted reopen: five exercise and four advice patients reported nonserious adverse effects; no adverse-effect withdrawals.",
+      "citations": [
+        {
+          "sourceId": "wad-p2",
+          "location": "Methods > Procedures, PDF pp. 2–3"
+        },
+        {
+          "sourceId": "wad-p2",
+          "location": "Methods > Outcomes, PDF p. 3; Results, adverse-effects paragraph, PDF p. 4"
+        }
+      ],
+      "applicability": "Ages 18–65, chronic WAD grades I/II, 3 months–5 years; excluded nerve-root compromise",
+      "limitations": "Primary pain difference zero at 14 weeks; intensive package not superior; grade III exclusion is applicability boundary Access: full-text."
+    },
+    {
+      "id": "wad-p3-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.1001/jamanetworkopen.2025.26674, PMID 40794407, PMC12344539. Abstract and relevant results/full PDF excerpts. 120 adults 18–65 chronic WAD; pain-science/stress-management/cognition-targeted exercise versus usual physiotherapy. Prespecified six-month disability endpoint negative (difference 2.38/50; 95% CI −0.12 to 4.89); secondary immediate/12-month differences favored intervention. Other pain/QoL differences absent. Full harms/dose not extracted; cannot use this to mandate a universal pain-response progression model.",
+      "citations": [
+        {
+          "sourceId": "wad-p3",
+          "location": "Abstract > Results"
+        }
+      ],
+      "applicability": "Ages 18–65, chronic WAD",
+      "limitations": "Primary six-month disability difference nonsignificant; secondary endpoints favored intervention; full dose/harms not extracted Access: abstract-only."
+    },
+    {
+      "id": "wad-s1-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.3390/muscles4040049, PMID 41283437, PMC12641875. Abstract only; PMC challenge/MDPI rate-limit prevented FT. Thirteen reports, 2427 participants 18–63, neck-specific exercise ± behavioral approach; quantitative pooling found no clear between-approach pain/disability advantage at follow-up despite some individual positive reports. Need check overlapping cohorts before treating participant total as independent unique patients. Does not establish acute WAD advice or a prohibition against ordinary exercise; harms/dose unresolved.",
+      "citations": [
+        {
+          "sourceId": "wad-s1",
+          "location": "Abstract > Results and Conclusions"
+        }
+      ],
+      "applicability": "Chronic WAD adults ages 18–63 in included reports",
+      "limitations": "Pooled approach differences unclear; possible overlapping cohorts need checking; FT challenge/rate limit Access: abstract-only."
+    },
+    {
+      "id": "ordinary-training-restriction-evidence-gap",
+      "kind": "evidence-gap",
+      "statement": "Ordinary activity is encouraged in assessed acute WAD, with stage-specific exercise examples. Severe pain/specified warning symptoms require clinical response. Chronic trial pain-response approaches differ; no lifetime lifting/ROM ban or elapsed-time-only strengthening clearance follows.",
+      "citations": [
+        {
+          "sourceId": "wad-g1",
+          "location": "Treatment > T1 Reassure and stay active and T2 Exercise, printed pp. 27–28"
+        }
+      ],
+      "applicability": "Adults in first 12 weeks after whiplash, with assessed WAD",
+      "limitations": "This is a bounded evidence gap in the retrieved corpus, not proof that all training is harmless. Trial exclusions are applicability boundaries. No runtime restriction or therapeutic release follows."
+    },
+    {
+      "id": "supine-supported-chin-nod-execution",
+      "kind": "published-recommendation",
+      "statement": "Lie supine with soft pillow under neck and knees bent. Gently nod as if saying yes; stop just before anterior neck muscles harden, then relax and return. Head remains supported; this is distinct from lifting the head.",
+      "citations": [
+        {
+          "sourceId": "wad-g1",
+          "location": "Appendix 3 > Exercise 1 The chin nod exercise, printed p. 45"
+        }
+      ],
+      "applicability": "Adults in first 12 weeks after whiplash, with assessed WAD",
+      "limitations": "Studied/described execution only. All unreported setup, ROM, dosing, eligibility and clinical approval remain unresolved."
+    },
+    {
+      "id": "seated-hand-resisted-cervical-rotation-isometric-execution",
+      "kind": "published-recommendation",
+      "statement": "Sit tall with relaxed slightly lowered chin; place hand on same-side cheek, gently attempt turning toward that shoulder against fingers while allowing no movement; repeat opposite side. SIRA labels this later-recovery strengthening.",
+      "citations": [
+        {
+          "sourceId": "wad-g1",
+          "location": "Appendix 3 > Exercise 9 Neck strengthening exercises (isometric, no movement exercise), printed p. 49"
+        }
+      ],
+      "applicability": "Adults in first 12 weeks after whiplash, with assessed WAD",
+      "limitations": "Studied/described execution only. All unreported setup, ROM, dosing, eligibility and clinical approval remain unresolved."
+    },
+    {
+      "id": "chronic-wad-gentle-cervical-isometrics-unresolved-execution",
+      "kind": "study-result",
+      "statement": "Trial began gentle unresisted flexion/extension/rotation isometrics, then low isometric resistance in supine/sitting; later pulley/guild-board endurance. Resistance interface/contact and exact initial positions not fully specified in inspected paragraph.",
+      "citations": [
+        {
+          "sourceId": "wad-p1",
+          "location": "MATERIALS AND METHODS > Interventions > Physiotherapist-led Neck-specific Exercise Group (NSE)"
+        }
+      ],
+      "applicability": "Chronic WAD grades II and III",
+      "limitations": "Studied/described execution only. All unreported setup, ROM, dosing, eligibility and clinical approval remain unresolved."
+    },
+    {
+      "id": "acute-wad-severe-pain-guidance",
+      "kind": "published-recommendation",
+      "statement": "SIRA Appendix 3 permits some discomfort but advises that examples should not cause severe pain, and that strengthening examples 9–11 start later in recovery with treating-professional guidance when timing is uncertain.",
+      "citations": [
+        {
+          "sourceId": "wad-g1",
+          "location": "Appendix 3 > Examples of neck exercises, printed pp. 45–51"
+        }
+      ],
+      "applicability": "Adults in first 12 weeks after whiplash, with assessed WAD",
+      "limitations": "Fourth-edition document located as Draft, not substituted for final; later recovery strengthening needs treating-professional judgment"
+    },
+    {
+      "id": "acute-wad-exercise-warning-guidance",
+      "kind": "published-recommendation",
+      "statement": "SIRA Appendix 3 advises stopping and contacting doctor/therapist for dizziness/visual/fainting/disorientation symptoms; sudden shooting arm pain or arm/hand numbness/weakness; unusually severe neck pain; or consistently exercise-provoked persistent headache.",
+      "citations": [
+        {
+          "sourceId": "wad-g1",
+          "location": "Appendix 3 > Examples of neck exercises, printed pp. 45–51"
+        }
+      ],
+      "applicability": "Adults in first 12 weeks after whiplash, with assessed WAD",
+      "limitations": "Fourth-edition document located as Draft, not substituted for final; later recovery strengthening needs treating-professional judgment"
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "supine-supported-chin-nod-mapping",
+      "exerciseId": null,
+      "requestId": "supine-supported-chin-nod",
+      "findingIds": [
+        "supine-supported-chin-nod-execution"
+      ],
+      "matchRationale": "Catalog metadata did not verify this supported nod execution. Do not equate neck bridges/head lifts or extrapolate a generic stretching timer/progression. SIRA five-second example is source-specific.",
+      "status": "candidate"
+    },
+    {
+      "id": "seated-hand-resisted-cervical-rotation-isometric-mapping",
+      "exerciseId": null,
+      "requestId": "seated-hand-resisted-cervical-rotation-isometric",
+      "findingIds": [
+        "seated-hand-resisted-cervical-rotation-isometric-execution"
+      ],
+      "matchRationale": "Catalog metadata did not verify this no-motion hand-resisted execution. Not equivalent to dynamic rotation, band-loaded neck training, or a neck bridge. Ten–twenty-percent effort/five-second holds are SIRA examples, not automatic app clearance or progression.",
+      "status": "candidate"
+    },
+    {
+      "id": "chronic-wad-gentle-cervical-isometrics-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "chronic-wad-gentle-cervical-isometrics-unresolved",
+      "findingIds": [
+        "chronic-wad-gentle-cervical-isometrics-unresolved-execution"
+      ],
+      "matchRationale": "No exact catalog execution verified; progression stages cannot be collapsed into one accepted exercise. Distinct from SIRA acute later-stage hand-on-cheek variant unless original protocol confirms equivalence.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "acute-wad-stage-symptom-response",
+      "kind": "symptom-response",
+      "basis": "published-recommendation",
+      "statement": "Candidate: assessed acute-WAD exercise examples require severe-pain avoidance; later strengthening timing depends on treating-professional judgment. Do not authorize higher neck loading from elapsed time alone.",
+      "findingIds": [
+        "acute-wad-severe-pain-guidance"
+      ],
+      "citations": [
+        {
+          "sourceId": "wad-g1",
+          "location": "Appendix 3 > Examples of neck exercises, printed pp. 45–51"
+        }
+      ],
+      "applicability": {
+        "population": "Adults in first 12 weeks after whiplash, with assessed WAD",
+        "stage": "Assessed acute WAD during first 12 weeks in guideline primary-care scope; later-strengthening readiness requires treating-professional judgment. No chronic-WAD-wide pain rule inferred.",
+        "rationale": "Condition-specific extracted guidance/protocol supports this draft interpretation; it does not override another condition restriction, equipment requirement or joint limit."
+      },
+      "limitations": "Acute guideline examples do not establish a universal zero-pain rule for chronic WAD or numeric pain/ROM/load ceiling. Unreviewed candidate; no runtime or clinical release.",
+      "mappingIds": [],
+      "status": "candidate"
+    },
+    {
+      "id": "acute-wad-warning-response",
+      "kind": "escalation",
+      "basis": "published-recommendation",
+      "statement": "Candidate: stop the acute guideline exercises and contact the treating doctor/therapist for the cited warning symptoms; product triage wording/routing needs separate clinical review.",
+      "findingIds": [
+        "acute-wad-exercise-warning-guidance"
+      ],
+      "citations": [
+        {
+          "sourceId": "wad-g1",
+          "location": "Appendix 3 > Examples of neck exercises, printed pp. 45–51"
+        }
+      ],
+      "applicability": {
+        "population": "Adults in first 12 weeks after whiplash, with assessed WAD",
+        "stage": "Assessed acute WAD during first 12 weeks in guideline primary-care scope; later-strengthening readiness requires treating-professional judgment. No chronic-WAD-wide pain rule inferred.",
+        "rationale": "Condition-specific extracted guidance/protocol supports this draft interpretation; it does not override another condition restriction, equipment requirement or joint limit."
+      },
+      "limitations": "Not a diagnosis of instability or emergency severity; exact app triage/urgent criteria and translation remain unresolved. Unreviewed candidate; no runtime or clinical release.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "- Ordinary training: acute trauma/uncleared fracture or instability is not a generic workout state. Once assessed, recovery-stage and symptom-response modifications can allow activity; later strengthening cannot be scheduled solely from an app's elapsed time. WAD-G1 supports severe-pain avoidance in acute examples; chronic trial arms use different pain-response approaches.\n- Supportive candidates: gentle cervical ROM, low-load cervical isometrics, neck endurance/control, staged scapular/general conditioning. Exact grade, stage, neurologic status and execution matter; never substitute neck bridges or externally loaded cervical exercises for gentle isometrics.\n- No universal numeric ROM, external-load ceiling, recurrence threshold or automated dose established. Restriction-only draft while stage/clearance unknown; no fabricated “clinician approved” status.",
+    "No exact catalog execution equivalence or numeric diagnosis-wide load/ROM/pain threshold established. All request/mapping/rule material is candidate-only, and clinical review provenance is absent."
+  ],
+  "disposition": "unresolved",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

@@ -18,7 +18,8 @@ data class ExercisePrescription(
     val effortTarget: EffortTarget? = null,
     val restClass: RestClass? = null,
     val restTargetSource: RestTargetSource? = null,
-    /** A held position per repetition; logging still records reps. Only BODYWEIGHT_REPS. */
+    val purpose: PrescriptionPurpose = PrescriptionPurpose.ORDINARY,
+    /** A hold on each bodyweight repetition. The logged performance still measures reps. */
     val holdSeconds: Int? = null
 ) {
     init {
@@ -46,11 +47,8 @@ data class ExercisePrescription(
         }
 
         holdSeconds?.let { seconds ->
-            require(exerciseType == ExerciseType.BODYWEIGHT_REPS) {
-                "A hold applies only to bodyweight repetition exercises."
-            }
-            require(seconds in MIN_DURATION_SECONDS..MAX_DURATION_SECONDS) {
-                "Hold must be between $MIN_DURATION_SECONDS and $MAX_DURATION_SECONDS seconds."
+            require(exerciseType == ExerciseType.BODYWEIGHT_REPS && seconds in MIN_DURATION_SECONDS..MAX_DURATION_SECONDS) {
+                "A hold requires bodyweight repetitions and a valid duration."
             }
         }
 
@@ -111,16 +109,13 @@ data class ExercisePrescription(
         }
     }
 
-    /**
-     * The data class text as it was before holds existed, with the hold appended only when
-     * present. The recommendation digest hashes this text, so an absent hold must not alter it.
-     */
+    // Recommendation identities include this text. Keep the pre-hold encoding for an absent hold.
     override fun toString(): String =
         "ExercisePrescription(exerciseType=$exerciseType, targetSets=$targetSets, repRange=$repRange, " +
             "targetWeight=$targetWeight, targetAssistanceWeight=$targetAssistanceWeight, " +
             "targetDurationSeconds=$targetDurationSeconds, targetDistanceMeters=$targetDistanceMeters, " +
             "restSeconds=$restSeconds, effortTarget=$effortTarget, restClass=$restClass, " +
-            "restTargetSource=$restTargetSource" + (holdSeconds?.let { ", holdSeconds=$it" } ?: "") + ")"
+            "restTargetSource=$restTargetSource, purpose=$purpose" + (holdSeconds?.let { ", holdSeconds=$it" } ?: "") + ")"
 
     fun withUserRestPreference(preference: UserRestPreference): ExercisePrescription =
         copy(

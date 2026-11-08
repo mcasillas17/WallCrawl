@@ -54,6 +54,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -80,13 +81,12 @@ import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.ui.components.*
 import wallcrawl.elopenmike.com.core.ui.components.BreakDurationSelector
 import wallcrawl.elopenmike.com.core.ui.components.LanguageChip
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.MovementCapabilityQuestion
-import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
-import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.descriptionRes
@@ -130,6 +130,9 @@ fun OnboardingScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
+    val canGoBack = !state.isFirstStep && !state.isSaving && !isRestoreInFlight
+    BackHandler(enabled = !state.isFirstStep) { if (canGoBack) viewModel.previousStep() }
+
     LaunchedEffect(state.isComplete) {
         if (state.isComplete) onCompleted()
     }
@@ -139,8 +142,6 @@ fun OnboardingScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        WebBackgroundPattern()
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -153,6 +154,7 @@ fun OnboardingScreen(
             // Wizard Header & Progress Bar
             OnboardingHeader(
                 currentStep = state.currentStep,
+                canGoBack = canGoBack,
                 onBack = { viewModel.previousStep() }
             )
 
@@ -182,7 +184,7 @@ fun OnboardingScreen(
                 ) { step ->
                     Box(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.TopStart
                     ) {
                         Column(
                             modifier = Modifier
@@ -230,7 +232,7 @@ fun OnboardingScreen(
                 Text(
                     text = stringResource(error.messageRes),
                     fontSize = 13.sp,
-                    color = CrimsonRedLight,
+                    color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
             }
@@ -239,7 +241,6 @@ fun OnboardingScreen(
             OnboardingBottomNav(
                 state = state,
                 isRestoreInFlight = isRestoreInFlight,
-                onBack = { viewModel.previousStep() },
                 onNext = { viewModel.nextStep() }
             )
 
@@ -256,6 +257,7 @@ fun OnboardingScreen(
 @Composable
 private fun OnboardingHeader(
     currentStep: OnboardingStep,
+    canGoBack: Boolean,
     onBack: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -269,6 +271,7 @@ private fun OnboardingHeader(
             if (!currentStep.isFirst()) {
                 IconButton(
                     onClick = onBack,
+                    enabled = canGoBack,
                     modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
@@ -291,7 +294,7 @@ private fun OnboardingHeader(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.5.sp,
-                color = CrimsonRedPrimary
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             // Reachable from the first screen, before anything has to be typed, so a
@@ -343,23 +346,10 @@ private fun WelcomeStep(
             cornerRadius = 16.dp,
             contentPadding = 20.dp
         ) {
-            Text(
-                text = stringResource(R.string.onboarding_codename_heading),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.8.sp,
-                color = CrimsonRedPrimary
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = stringResource(R.string.onboarding_codename_prompt),
-                fontSize = 13.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(
                 value = state.name,
                 onValueChange = viewModel::updateName,
+                label = { Text(stringResource(R.string.onboarding_codename_heading)) },
                 placeholder = {
                     Text(
                         stringResource(R.string.onboarding_codename_placeholder),
@@ -416,7 +406,7 @@ private fun GoalsStep(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
-                color = CrimsonRedLight
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -455,7 +445,7 @@ private fun ExperienceAndUnitStep(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
-                color = CrimsonRedPrimary
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
@@ -478,7 +468,7 @@ private fun ExperienceAndUnitStep(
                             .border(1.dp, if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
                             .clickable { viewModel.updateUnit(unit) }
                             .padding(vertical = 14.dp),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.TopStart
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
@@ -755,7 +745,7 @@ private fun EquipmentStep(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
-                color = CrimsonRedLight
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -818,6 +808,9 @@ private fun SafetyStep(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        if (state.conditionLoadFailed) Text(stringResource(R.string.condition_load_error), color = MaterialTheme.colorScheme.onSurface)
+        ConditionSelectionControls(state.conditionRecords, state.conditionDraft ?: state.retainedConditions,
+            viewModel::updateConditions, !state.isSaving)
         WallCrawlCard(
             cornerRadius = 16.dp,
             contentPadding = 16.dp
@@ -827,7 +820,7 @@ private fun SafetyStep(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp,
-                color = CrimsonRedLight
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
@@ -837,7 +830,7 @@ private fun SafetyStep(
             )
             Spacer(modifier = Modifier.height(14.dp))
 
-            val hasNoConstraints = state.constraints.isEmpty() && state.reportedConditions.isEmpty()
+            val hasNoConstraints = state.constraints.isEmpty()
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -919,19 +912,6 @@ private fun SafetyStep(
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            wallcrawl.elopenmike.com.feature.conditions.ConditionPicker(
-                guidance = state.conditionGuidance,
-                selected = state.reportedConditions,
-                pending = state.pendingCondition,
-                onSelect = viewModel::selectCondition,
-                onAcknowledge = viewModel::setConditionAcknowledged,
-                onConfirm = viewModel::confirmPendingCondition,
-                onCancel = viewModel::cancelPendingCondition,
-                onRemove = viewModel::removeCondition
-            )
         }
     }
 }
@@ -992,6 +972,7 @@ private fun SummaryStep(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        ConditionSelectionControls(state.conditionRecords, state.conditionDraft ?: state.retainedConditions, null)
         WallCrawlCard(
             cornerRadius = 16.dp,
             contentPadding = 20.dp
@@ -1003,7 +984,7 @@ private fun SummaryStep(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
-                color = CrimsonRedPrimary
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(14.dp))
 
@@ -1064,16 +1045,13 @@ private fun SummaryStep(
             )
             SummaryRow(
                 label = stringResource(R.string.onboarding_summary_label_sensitive),
-                value = if (state.constraints.isEmpty() && state.reportedConditions.isEmpty()) {
+                value = if (state.constraints.isEmpty()) {
                     stringResource(R.string.onboarding_summary_value_no_sensitive)
                 } else {
-                    (
-                        TrainingConstraint.entries
-                            .filter { it in state.constraints }
-                            .map { stringResource(it.labelRes) } +
-                            state.reportedConditions.sorted()
-                                .map { stringResource(wallcrawl.elopenmike.com.feature.conditions.conditionNameRes(it)) }
-                        ).joinToString(separator)
+                    TrainingConstraint.entries
+                        .filter { it in state.constraints }
+                        .map { stringResource(it.labelRes) }
+                        .joinToString(separator)
                 }
             )
             if (state.returningAfterBreakWeeks > 0) {
@@ -1090,23 +1068,7 @@ private fun SummaryStep(
             }
         }
 
-        WallCrawlCard(
-            cornerRadius = 16.dp,
-            contentPadding = 16.dp
-        ) {
-            Text(
-                text = stringResource(R.string.onboarding_ready_title),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stringResource(R.string.onboarding_ready_body),
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+
     }
 }
 
@@ -1146,7 +1108,6 @@ private fun SummaryRow(
 private fun OnboardingBottomNav(
     state: OnboardingUiState,
     isRestoreInFlight: Boolean,
-    onBack: () -> Unit,
     onNext: () -> Unit
 ) {
     Row(
@@ -1156,14 +1117,6 @@ private fun OnboardingBottomNav(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (!state.isFirstStep) {
-            WallCrawlOutlinedButton(
-                text = stringResource(R.string.action_back),
-                onClick = onBack,
-                modifier = Modifier.weight(1f)
-            )
-        }
-
         WallCrawlPrimaryButton(
             text = stringResource(
                 when {
@@ -1175,7 +1128,7 @@ private fun OnboardingBottomNav(
             ),
             onClick = onNext,
             enabled = !state.isSaving && !isRestoreInFlight,
-            modifier = Modifier.weight(if (state.isFirstStep) 1f else 2f)
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }

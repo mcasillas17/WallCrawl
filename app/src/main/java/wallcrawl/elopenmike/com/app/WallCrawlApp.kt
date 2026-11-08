@@ -1,7 +1,21 @@
 package wallcrawl.elopenmike.com.app
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material3.IconButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import wallcrawl.elopenmike.com.feature.progress.ProgressSection
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,9 +30,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.feature.program.*
-import wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent
-import wallcrawl.elopenmike.com.core.model.ProgramReadState
-import wallcrawl.elopenmike.com.core.model.ProgramStatus
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,10 +41,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import wallcrawl.elopenmike.com.core.ui.components.WallCrawlWordmark
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -42,13 +53,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import wallcrawl.elopenmike.com.AppContainer
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.feature.backup.LocalDataOutcomeEffect
 import wallcrawl.elopenmike.com.feature.backup.LocalDataSection
 import wallcrawl.elopenmike.com.feature.backup.LocalDataViewModel
 import wallcrawl.elopenmike.com.feature.backup.RestoreFromArchiveButton
 import wallcrawl.elopenmike.com.feature.credits.CreditsScreen
 import wallcrawl.elopenmike.com.feature.credits.CreditsViewModel
+import wallcrawl.elopenmike.com.feature.conditions.ConditionReferenceScreen
 import wallcrawl.elopenmike.com.feature.exercises.ExercisesScreen
 import wallcrawl.elopenmike.com.feature.exercises.ExercisesViewModel
 import wallcrawl.elopenmike.com.feature.onboarding.OnboardingScreen
@@ -137,6 +148,32 @@ private fun WallCrawlAppContent(
     // restore keeps running across a rotation instead of losing the document it opened.
     val contentResolver = LocalContext.current.applicationContext.contentResolver
 
+    var savedWorkoutId by rememberSaveable { mutableStateOf<String?>(null) }
+
+    fun openWorkout(sessionId: String) {
+        val resume = savedWorkoutId == sessionId
+        if (!resume && savedWorkoutId != null) navController.clearBackStack(AppRoutes.ACTIVE_WORKOUT)
+        navController.navigate(AppRoutes.activeWorkout(sessionId)) {
+            launchSingleTop = true
+            restoreState = resume
+        }
+        savedWorkoutId = null
+    }
+
+    fun clearSavedDestinations() {
+        (Screen.bottomNavItems + Screen.Profile).forEach { navController.clearBackStack(it.route) }
+        navController.clearBackStack(AppRoutes.ACTIVE_WORKOUT)
+        savedWorkoutId = null
+    }
+
+    fun openRoot(screen: Screen) {
+        navController.navigate(screen.route) {
+            popUpTo(AppRoutes.TODAY) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     /**
      * Returns to first-run onboarding with nothing behind it.
      *
@@ -144,7 +181,7 @@ private fun WallCrawlAppContent(
      * every local record the back stack has to be replaced rather than merely added to.
      */
     fun restartAtOnboarding() {
-        Screen.bottomNavItems.forEach { navController.clearBackStack(it.route) }
+        clearSavedDestinations()
         navController.navigate(AppRoutes.ONBOARDING) {
             popUpTo(navController.graph.id) { inclusive = true }
             launchSingleTop = true
@@ -160,35 +197,73 @@ private fun WallCrawlAppContent(
     }
 
     fun openTodayAfterRestore() {
-        Screen.bottomNavItems.forEach { navController.clearBackStack(it.route) }
+        clearSavedDestinations()
         navController.navigate(AppRoutes.TODAY) {
-            popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+            popUpTo(navController.graph.id) { inclusive = true }
             launchSingleTop = true
         }
     }
 
-    val shouldShowBottomBar = currentRoute in listOf(
-        AppRoutes.TODAY,
-        AppRoutes.PROGRESS,
-        AppRoutes.EXERCISES,
-        AppRoutes.PROFILE
+    val localDataViewModel: LocalDataViewModel = viewModel(
+        key = "wallcrawl-local-data",
+        factory = LocalDataViewModel.provideFactory(contentResolver, container.localDataBackupRepository)
     )
+    LocalDataOutcomeEffect(
+        viewModel = localDataViewModel,
+        onRestored = { completed ->
+            if (completed) openTodayAfterRestore()
+            else if (navController.currentDestination?.route != AppRoutes.ONBOARDING) restartAtOnboarding()
+        },
+        onDeleted = { restartAtOnboarding() }
+    )
+
+    val rootScreen = Screen.bottomNavItems.find { it.route == currentRoute }
+    val libraryOwner = navBackStackEntry?.takeIf { currentRoute == AppRoutes.EXERCISES }
+    val libraryTemplates = libraryOwner?.let { entry ->
+        viewModel<WorkoutTemplatesViewModel>(
+            viewModelStoreOwner = entry,
+            factory = templatesFactory(container)
+        )
+    }
+    val libraryLocked = libraryTemplates?.navigationLocked?.collectAsState()?.value == true
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
+        topBar = {
+            if (rootScreen != null) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().statusBarsPadding().padding(start = 20.dp, end = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (rootScreen == Screen.Today) {
+                        WallCrawlWordmark(fontSize = 16.sp)
+                    } else {
+                        Text(
+                            stringResource(rootScreen.titleRes),
+                            style = MaterialTheme.typography.headlineMedium,
+                            modifier = Modifier.weight(1f).semantics { heading() }
+                        )
+                    }
+                    IconButton(
+                        enabled = !libraryLocked,
+                        onClick = {
+                            if (libraryTemplates?.navigationLocked?.value != true) {
+                                navController.navigate(AppRoutes.PROFILE) { launchSingleTop = true }
+                            }
+                        }
+                    ) {
+                        Icon(Icons.Outlined.AccountCircle, stringResource(R.string.guided_profile_settings))
+                    }
+                }
+            }
+        },
         bottomBar = {
-            if (shouldShowBottomBar) {
+            if (rootScreen != null) {
                 WallCrawlBottomBar(
                     currentRoute = currentRoute,
-                    onNavigate = { screen ->
-                        navController.navigate(screen.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
+                    enabled = !libraryLocked,
+                    onNavigate = { if (libraryTemplates?.navigationLocked?.value != true) openRoot(it) }
                 )
             }
         }
@@ -207,27 +282,9 @@ private fun WallCrawlAppContent(
             composable(AppRoutes.ONBOARDING) {
                 val onboardingViewModel: OnboardingViewModel = viewModel(
                     factory = OnboardingViewModel.provideFactory(
-                        userProfileRepository = container.userProfileRepository,
-                        conditionGuidanceSource = container.conditionGuidanceSource
+                        conditionSupport = { container.conditionSupportStore.load() },
+                        userProfileRepository = container.userProfileRepository
                     )
-                )
-                val localDataViewModel: LocalDataViewModel = viewModel(
-                    key = "onboarding-local-data",
-                    factory = LocalDataViewModel.provideFactory(
-                        contentResolver = contentResolver,
-                        repository = container.localDataBackupRepository
-                    )
-                )
-                // Observed here, not inside the card: the card only exists on the first
-                // step, and a restore from a slow document can finish after the user has
-                // moved on. This stays composed for the whole wizard.
-                LocalDataOutcomeEffect(
-                    viewModel = localDataViewModel,
-                    onRestored = { onboardingCompleted ->
-                        // A restored profile that never finished onboarding stays in the
-                        // wizard; there is nothing for Today to render yet.
-                        if (onboardingCompleted) openTodayAfterRestore()
-                    }
                 )
                 val localDataState by localDataViewModel.uiState.collectAsState()
                 OnboardingScreen(
@@ -255,53 +312,46 @@ private fun WallCrawlAppContent(
                         workoutPlanner = container.workoutPlanner,
                         programValidator = container.programValidator,
                         deloadRepository = container.deloadRepository,
-                        programRepository = container.programRepository,
-                        conditionGuidanceSource = container.conditionGuidanceSource
+                        programRepository = container.programRepository
                     )
                 )
                 val programViewModel: ProgramViewModel = viewModel(factory = ProgramViewModel.provideFactory(
                     container.programRepository, container.workoutRepository.observeActiveSession()))
                 val programState = rememberProgramState(programViewModel)
-                val selectedIntent by todayViewModel.planningIntent.collectAsState()
-                val known = programState.program as? ProgramReadState.Supported
-                LaunchedEffect(known?.enrollment?.status) {
-                    if (known != null && known.enrollment.status != ProgramStatus.ACTIVE) {
-                        todayViewModel.selectPlanningIntent(WorkoutPlanningIntent.ORDINARY)
-                    }
-                }
                 TodayScreen(
+                    onOpenProfile = { navController.navigate(AppRoutes.PROFILE) },
                     viewModel = todayViewModel,
-                    onStartWorkout = { sessionId ->
-                        navController.navigate(AppRoutes.activeWorkout(sessionId))
-                    },
-                    onResumeWorkout = { sessionId ->
-                        navController.navigate(AppRoutes.activeWorkout(sessionId))
-                    },
+                    onStartWorkout = ::openWorkout,
+                    onResumeWorkout = ::openWorkout,
                     onOpenTemplates = { navController.navigate(AppRoutes.WORKOUT_TEMPLATES) },
-                    programContent = {
-                        ProgramSummary(programState, { navController.navigate(AppRoutes.PROGRAM) }, programViewModel::retry)
-                        Text(stringResource(R.string.program_disclosure), color = MaterialTheme.colorScheme.onSurface)
-                        ProgramPlanningChoice(selectedIntent, known?.enrollment?.status == ProgramStatus.ACTIVE,
-                            programState.activeSession == null, todayViewModel::selectPlanningIntent)
-                    }
+                    programState = programState,
+                    onManageProgram = { navController.navigate(AppRoutes.PROGRAM) },
+                    onRetryProgram = programViewModel::retry
                 )
             }
 
-            composable(AppRoutes.PROGRESS) {
-                val progressViewModel: ProgressViewModel = viewModel(
-                    factory = ProgressViewModel.provideFactory(
-                        progressRepository = container.progressRepository
+            listOf(
+                AppRoutes.PROGRESS to ProgressSection.OVERVIEW,
+                AppRoutes.TRENDS to ProgressSection.TRENDS,
+                AppRoutes.MUSCLES to ProgressSection.MUSCLES
+            ).forEach { (route, section) ->
+                composable(route) { entry ->
+                    val owner = remember(entry) { navController.getBackStackEntry(AppRoutes.PROGRESS) }
+                    val progressViewModel: ProgressViewModel = viewModel(
+                        viewModelStoreOwner = owner,
+                        factory = ProgressViewModel.provideFactory(container.progressRepository)
                     )
-                )
-                val programViewModel: ProgramViewModel = viewModel(factory = ProgramViewModel.provideFactory(
-                    container.programRepository, container.workoutRepository.observeActiveSession()))
-                val programState = rememberProgramState(programViewModel)
-                ProgressScreen(
-                    viewModel = progressViewModel,
-                    onOpenSession = { navController.navigate(AppRoutes.historyDetail(it)) },
-                    onOpenHistory = { navController.navigate(AppRoutes.HISTORY) },
-                    programContent = { ProgramSummary(programState, { navController.navigate(AppRoutes.PROGRAM) }, programViewModel::retry) }
-                )
+                    ProgressScreen(
+                        viewModel = progressViewModel,
+                        section = section,
+                        onBack = { navController.popBackStack() },
+                        onOpenSession = { navController.navigate(AppRoutes.historyDetail(it)) },
+                        onOpenHistory = { navController.navigate(AppRoutes.HISTORY) },
+                        onOpenTrain = { openRoot(Screen.Today) },
+                        onOpenTrends = { navController.navigate(AppRoutes.TRENDS) },
+                        onOpenMuscles = { navController.navigate(AppRoutes.MUSCLES) }
+                    )
+                }
             }
 
             composable(AppRoutes.PROGRAM) {
@@ -309,7 +359,7 @@ private fun WallCrawlAppContent(
                     container.programRepository, container.workoutRepository.observeActiveSession()))
                 ProgramScreen(programViewModel, onBack = { navController.popBackStack() },
                     onEditProfile = { navController.navigate(AppRoutes.PROFILE) },
-                    onResume = { navController.navigate(AppRoutes.activeWorkout(it)) },
+                    onResume = ::openWorkout,
                     onOpenHistory = { navController.navigate(AppRoutes.historyDetail(it)) })
             }
 
@@ -347,37 +397,36 @@ private fun WallCrawlAppContent(
                         exerciseCatalog = container.exerciseCatalog
                     )
                 )
+                val templates: WorkoutTemplatesViewModel = viewModel(factory = templatesFactory(container))
+                BackHandler {
+                    if (!templates.navigationLocked.value) navController.popBackStack()
+                }
                 ExercisesScreen(
                     viewModel = exercisesViewModel,
-                    visualProvider = container.exerciseVisualProvider
+                    visualProvider = container.exerciseVisualProvider,
+                    onOpenConditionReference = { navController.navigate(AppRoutes.CONDITION_REFERENCE) },
+                    templatesViewModel = templates,
+                    onCreateTemplate = { navController.navigate(AppRoutes.TEMPLATE_NEW) },
+                    onEditTemplate = { navController.navigate(AppRoutes.editTemplate(it)) },
+                    onWorkoutStarted = ::openWorkout
                 )
+            }
+
+            composable(AppRoutes.CONDITION_REFERENCE) {
+                ConditionReferenceScreen(container.exerciseCatalog, container.exerciseVisualProvider, onBack = { navController.popBackStack() })
             }
 
             composable(AppRoutes.PROFILE) {
                 val profileViewModel: ProfileViewModel = viewModel(
                     factory = ProfileViewModel.provideFactory(
-                        userProfileRepository = container.userProfileRepository,
-                        conditionGuidanceSource = container.conditionGuidanceSource
+                        conditionSupport = { container.conditionSupportStore.load() },
+                        workoutRepository = container.workoutRepository,
+                        userProfileRepository = container.userProfileRepository
                     )
-                )
-                val localDataViewModel: LocalDataViewModel = viewModel(
-                    key = "profile-local-data",
-                    factory = LocalDataViewModel.provideFactory(
-                        contentResolver = contentResolver,
-                        repository = container.localDataBackupRepository
-                    )
-                )
-                // Outside the profile's scrolling list, so scrolling the card out of view
-                // cannot lose the outcome of a restore or a deletion.
-                LocalDataOutcomeEffect(
-                    viewModel = localDataViewModel,
-                    onRestored = { onboardingCompleted ->
-                        if (onboardingCompleted) openTodayAfterRestore() else restartAtOnboarding()
-                    },
-                    onDeleted = { restartAtOnboarding() }
                 )
                 ProfileScreen(
                     viewModel = profileViewModel,
+                    onBack = { navController.popBackStack() },
                     onOpenCredits = { navController.navigate(AppRoutes.CREDITS) },
                     localDataSection = { LocalDataSection(viewModel = localDataViewModel) }
                 )
@@ -409,36 +458,29 @@ private fun WallCrawlAppContent(
                         exerciseCatalog = container.exerciseCatalog,
                         workoutHistoryAnalyzer = container.workoutHistoryAnalyzer,
                         programRepository = container.programRepository,
-                        userProfileRepository = container.userProfileRepository,
-                        conditionGuidanceSource = container.conditionGuidanceSource
+                        userProfileRepository = container.userProfileRepository
                     )
                 )
                 ActiveWorkoutScreen(
                     viewModel = workoutViewModel,
                     visualProvider = container.exerciseVisualProvider,
                     onNavigateBack = { navController.popBackStack() },
+                    onLeaveForLater = {
+                        if (navController.popBackStack(AppRoutes.activeWorkout(sessionId), inclusive = true, saveState = true)) {
+                            savedWorkoutId = sessionId
+                        }
+                    },
                     onOpenHistory = { navController.navigate(AppRoutes.historyDetail(it)) },
                     onWorkoutFinished = {
                         navController.popBackStack()
-                        navController.navigate(AppRoutes.PROGRESS) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                        openRoot(Screen.Progress)
                     }
                 )
             }
 
             composable(AppRoutes.WORKOUT_TEMPLATES) {
                 val templatesViewModel: WorkoutTemplatesViewModel = viewModel(
-                    factory = WorkoutTemplatesViewModel.provideFactory(
-                        templateRepository = container.workoutTemplateRepository,
-                        workoutRepository = container.workoutRepository,
-                        userProfileRepository = container.userProfileRepository,
-                        exerciseCatalog = container.exerciseCatalog
-                    )
+                    factory = templatesFactory(container)
                 )
                 WorkoutTemplatesScreen(
                     viewModel = templatesViewModel,
@@ -449,11 +491,7 @@ private fun WallCrawlAppContent(
                     // Called by the list once it holds a started session, including one that
                     // finished while the app was paused or recreated; single-top keeps any
                     // repeat to one entry.
-                    onWorkoutStarted = { sessionId ->
-                        navController.navigate(AppRoutes.activeWorkout(sessionId)) {
-                            launchSingleTop = true
-                        }
-                    }
+                    onWorkoutStarted = ::openWorkout
                 )
             }
 
@@ -466,7 +504,7 @@ private fun WallCrawlAppContent(
                         userProfileRepository = container.userProfileRepository,
                         exerciseCatalog = container.exerciseCatalog,
                         localizationSource = container.exerciseLocalizationSource,
-                        conditionGuidanceSource = container.conditionGuidanceSource
+                        conditionContext = { container.workoutGenerationContextBuilder.build() }
                     )
                 )
                 TemplateEditorScreen(
@@ -489,7 +527,7 @@ private fun WallCrawlAppContent(
                         userProfileRepository = container.userProfileRepository,
                         exerciseCatalog = container.exerciseCatalog,
                         localizationSource = container.exerciseLocalizationSource,
-                        conditionGuidanceSource = container.conditionGuidanceSource
+                        conditionContext = { container.workoutGenerationContextBuilder.build() }
                     )
                 )
                 TemplateEditorScreen(
@@ -502,46 +540,54 @@ private fun WallCrawlAppContent(
     }
 }
 
+private fun templatesFactory(container: AppContainer) = WorkoutTemplatesViewModel.provideFactory(
+    templateRepository = container.workoutTemplateRepository,
+    workoutRepository = container.workoutRepository,
+    userProfileRepository = container.userProfileRepository,
+    exerciseCatalog = container.exerciseCatalog
+)
+
 internal const val WALL_CRAWL_BOTTOM_BAR_TEST_TAG = "wall_crawl_bottom_bar"
 
 @Composable
 internal fun WallCrawlBottomBar(
     currentRoute: String?,
     onNavigate: (Screen) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surface,
         modifier = modifier
             .testTag(WALL_CRAWL_BOTTOM_BAR_TEST_TAG)
-            .border(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Screen.bottomNavItems.forEach { screen ->
             val isSelected = currentRoute == screen.route
             val title = stringResource(screen.titleRes)
             NavigationBarItem(
                 selected = isSelected,
+                enabled = enabled,
                 onClick = { onNavigate(screen) },
                 icon = {
                     Icon(
                         imageVector = screen.icon,
-                        contentDescription = title,
+                        contentDescription = null,
                         modifier = Modifier.size(22.dp)
                     )
                 },
                 label = {
                     Text(
                         text = title,
-                        fontSize = 11.sp,
+                        style = MaterialTheme.typography.labelMedium,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     selectedTextColor = MaterialTheme.colorScheme.primary,
                     unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    indicatorColor = MaterialTheme.colorScheme.primary
+                    indicatorColor = MaterialTheme.colorScheme.primaryContainer
                 )
             )
         }

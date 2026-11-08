@@ -76,6 +76,15 @@ class MuscleVocabularyTest {
     }
 
     @Test
+    fun conditionAnatomyIsRecognizedWithoutStrengthCredit() {
+        listOf("Neck", "Foot Intrinsics").forEach { name ->
+            assertThat(MuscleVocabulary.isCanonical(name)).isTrue()
+            assertThat(MuscleVocabulary.isTrainable(name)).isFalse()
+            assertThat(StandardMuscles.PRIORITY_OPTIONS).doesNotContain(name)
+        }
+    }
+
+    @Test
     fun everyTrainableGroupIsOfferedAsAMusclePriority() {
         assertThat(StandardMuscles.TRAINABLE).containsNoDuplicates()
         StandardMuscles.TRAINABLE.forEach { muscle ->

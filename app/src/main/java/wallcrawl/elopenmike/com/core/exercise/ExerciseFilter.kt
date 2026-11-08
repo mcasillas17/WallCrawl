@@ -27,7 +27,7 @@ class ExerciseFilter {
         targetMuscles: List<String>? = null
     ): List<Exercise> {
         val ownedEquipment = profile.availableEquipment.normalizedEquipmentSet()
-        val excludedIds = profile.excludedExerciseIds.toSet()
+        val excludedIds = profile.planningExclusions.toSet()
 
         return allExercises.filter { exercise ->
             // 1. Check exclusions

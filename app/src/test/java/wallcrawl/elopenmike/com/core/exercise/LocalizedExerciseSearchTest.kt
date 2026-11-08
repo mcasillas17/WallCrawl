@@ -70,6 +70,30 @@ class LocalizedExerciseSearchTest {
         localizationSource = FixedLocalization(localization)
     )
 
+    @Test fun untranslatedNeutralGuidanceKeepsTheOriginalWithTheExistingLanguageNotice() {
+        val local = lateralRaise.copy(id = "fictional-catalog-movement", programming = null,
+            reviewedMetadata = null, executionGuidance = "Fictional English guidance")
+        val vocabulary = wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary(ExerciseLocalization.EMPTY, "es")
+        assertThat(vocabulary.coachingSummary(local)).isEqualTo(local.executionGuidance)
+        assertThat(vocabulary.hasUntranslatedCoachingSummary(local)).isTrue()
+    }
+
+    @Test fun neutralGuidanceUsesExistingLocalizedSummaryWithoutStrengthProgramming() {
+        val local = lateralRaise.copy(id = "fictional-catalog-movement", programming = null,
+            reviewedMetadata = null, executionGuidance = "Fictional English guidance")
+        val overlay = ExerciseLocalization(listOf("es"), mapOf(local.id to mapOf("es" to
+            LocalizedExerciseText("Movimiento ficticio", coachingSummary = "Texto ficticio"))), emptyMap(), emptyMap())
+        val english = wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary(overlay, "en")
+        val spanish = wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary(overlay, "es")
+        assertThat(english.coachingSummary(local)).isEqualTo(local.executionGuidance)
+        assertThat(spanish.coachingSummary(local)).isEqualTo("Texto ficticio")
+        assertThat(local.programming).isNull()
+        val identity = wallcrawl.elopenmike.com.core.model.ConditionExerciseIdentity.from(local, "a".repeat(64))
+        assertThat(wallcrawl.elopenmike.com.core.model.ConditionExerciseIdentity.from(
+            local.copy(executionGuidance = "Changed fictional guidance"), "a".repeat(64)).contentSha256)
+            .isNotEqualTo(identity.contentSha256)
+    }
+
     @Test
     fun aSpanishQueryResolvesTheSameIdsAsItsEnglishCounterpart() = runTest {
         assertThat(catalog.searchExercises(query = "sentadilla").first().map { it.id })

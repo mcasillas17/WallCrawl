@@ -8,7 +8,7 @@ import wallcrawl.elopenmike.com.core.model.Exercise
  *
  * Terms are folded once, when the catalog snapshot and the translation overlay are paired,
  * rather than on every keystroke: both are fixed for the life of the process, so
- * re-normalizing roughly fifteen strings for each of 309 exercises per typed character is
+ * re-normalizing roughly fifteen strings for each of 302 exercises per typed character is
  * pure repetition. Only the query is normalized per search.
  *
  * Matching reads presentation text — including translations — but returns catalog

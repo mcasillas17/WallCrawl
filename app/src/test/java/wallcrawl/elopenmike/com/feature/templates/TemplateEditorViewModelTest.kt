@@ -61,7 +61,7 @@ class TemplateEditorViewModelTest {
         )
         val loaded = viewModel.uiState.first { !it.isLoading }
         assertThat(loaded.errorMessage).isNull()
-        assertThat(loaded.catalogExercises).hasSize(309)
+        assertThat(loaded.catalogExercises).hasSize(302)
         val pulldown = exercises.single { it.id == "banded-lat-pulldown" }
         val row = exercises.single { it.id == "banded-row" }
         assertThat(pulldown.missingEquipmentAlternatives(loaded.availableEquipment))

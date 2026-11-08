@@ -1,22 +1,12 @@
 # Room schema artifacts
 
 Room's compiler exports the current annotated `WallCrawlDatabase` to
-`app/schemas/wallcrawl.elopenmike.com.core.database.WallCrawlDatabase/<version>.json`
-(currently **17**; **16** stays tracked). This is build evidence containing table
-definitions, fields, affinities, nullability, declared SQL defaults, primary keys,
-indexes, foreign keys, and Room's identity hash. It contains no user records and is not
-a backup or restore format.
+`app/schemas/wallcrawl.elopenmike.com.core.database.WallCrawlDatabase/16.json`.
+This is build evidence containing table definitions, fields, affinities, nullability,
+declared SQL defaults, primary keys, indexes, foreign keys, and Room's identity hash.
+It contains no user records and is not a backup or restore format.
 
-Database version **17** and archive format **7** (reads **1–7**) are separate contracts.
-Enabling export changed neither. Export itself adds no migration, destructive fallback,
-runtime table/index/default change, or data rewrite.
-
-Version 17 (condition-aware planning) adds `user_profiles.reportedConditionsJson`
-(`TEXT NOT NULL DEFAULT ''`), `workout_exercises.role` (`TEXT NOT NULL DEFAULT 'MAIN'`)
-and `workout_exercises.targetHoldSeconds` (nullable `INTEGER`) through `MIGRATION_16_17`.
-Identity hash `3652490c96306064f8ca3cd0b93ece5b`. `Migration16To17Test` builds its start
-from the legacy chain rather than the exported 16 JSON; `ExportedSchemaTest` validates
-every older start against the 17 export.
+The current database uses Room schema **18**. Archive format **8** reads versions **1–8**, including the two historical v7 writers. The database upgrade recognizes both v17 layouts and retains original reported conditions, workout roles and holds. [PR 105 integration](research/conditions/movements/pr-105.md)
 
 ## Generate and check
 
@@ -71,7 +61,9 @@ as compiler output. The historical baseline remains:
 | --- | --- |
 | 1–11 | `LegacyDatabaseFixtures`' existing SQL definitions; `MigrationChainToCurrentTest` opens each through `ALL_MIGRATIONS` |
 | 12–15 | Existing suites construct schema 11, run the actual migrations to the chosen start, then open through the remaining migrations |
-| Current (16) | Authentic compiler JSON; `ExportedSchemaTest` validates it through Room and validates migrations from every older supported start against it |
+| 16 and released 17 | Authentic compiler exports. Migration fixtures exercise real workouts and reported conditions. |
+| Local preview 17 | Its historical generated SQL creates the alternative layout with frozen condition context. |
+| Current (18) | The compiler export is checked against a fresh database and upgraded databases. |
 
 `MigrationChainToCurrentTest` was previously named `MigrationChainTo12Test`. Its new
 method is `everyLegacyFixtureSchemaMigratesToCurrentVersion`; its 1–11 starting fixtures
@@ -173,7 +165,7 @@ with these isolated mutations. Every mutation was restored before subsequent val
 | --- | --- |
 | Append a newline to the repository export | Exit 1: generated schema differs |
 | Remove the tracked current export | Exit 1: tracked artifact missing |
-| Add an untracked `17.json` | Exit 1: untracked schema artifact |
+| Add an untracked `19.json` | Exit 1: untracked schema artifact |
 | Disable export while leaving the old JSON present | Gradle succeeds; guard exits 1 because no schema was generated |
 | Restore the original source and artifact | Exit 0: byte-for-byte match |
 | Normal KSP invocation reports `UP-TO-DATE`, then run guard | Guard executes KSP and passes |

@@ -4,7 +4,7 @@ package wallcrawl.elopenmike.com.core.model
  * Prospective and completed exposure for one approved direct-primary muscle.
  *
  * The two counts stay separate on purpose. [completedSets] is reconstructed from completed
- * history by `PRIMARY_ONLY_V1`; [proposedSets] is what a not-yet-performed plan would add.
+ * history by `ORDINARY_PRIMARY_ONLY_V2`; [proposedSets] is what a not-yet-performed plan would add.
  * Summing them into one stored number would let a proposal that was never performed look
  * like work the user did, which is the thing weekly accounting must never do.
  *
@@ -83,10 +83,12 @@ data class RecommendationRecord(
     val reasonCodes: List<String>,
     val doseAccounting: List<MuscleDoseAccounting>,
     val recordedAtEpochMillis: Long,
-    val programAssociationDigest: String? = null
+    val programAssociationDigest: String? = null,
+    val conditionContextDigest: String? = null
 ) {
     init {
         require(programAssociationDigest == null || programAssociationDigest.matches(Regex("[0-9a-f]{64}"))) { "Invalid program association digest." }
+        require(conditionContextDigest == null || conditionContextDigest.matches(Regex("[0-9a-f]{64}"))) { "Invalid condition context digest." }
         requireToken(sessionId, "sessionId")
         requireToken(validatorVersion, "validatorVersion")
         requireToken(durationEstimatorVersion, "durationEstimatorVersion")

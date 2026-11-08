@@ -202,7 +202,7 @@ class MultiWeekProgramProductionReplayTest {
             profile.copy(availableEquipment = listOf(StandardEquipment.CARDIO)) to
                 AutomaticEligibilityFailure.NO_APPROVED_METADATA,
             profile.copy(trainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)) to
-                AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE,
+                AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL,
             profile.copy(excludedExerciseIds = bundled.exercises.map { it.id }) to
                 AutomaticEligibilityFailure.USER_EXCLUSIONS_REMOVED_ALL
         )
@@ -309,7 +309,7 @@ class MultiWeekProgramProductionReplayTest {
                     return WeeklyDoseLedgerCalculator().calculate(
                         history.filter { it.status == SessionStatus.COMPLETED &&
                             it.completedAtTimestamp?.let { time -> week.contains(time) && time <= instant.toEpochMilli() } == true },
-                        byId, LedgerPolicyVersion.PRIMARY_ONLY_V1, week, bundled.sourceCommit, 2)
+                        byId, LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2, week, bundled.sourceCommit, 2)
                 }
                 override suspend fun currentWeeklyLedger(profileId: String, zoneId: ZoneId) =
                     weeklyLedgerAt(profileId, Instant.ofEpochMilli(now), zoneId)

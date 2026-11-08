@@ -15,7 +15,8 @@ data class Exercise(
     val type: ExerciseType,
     val isStretch: Boolean = false,
     val programming: ExerciseProgrammingMetadata? = null,
-    val reviewedMetadata: ReviewedExerciseMetadata? = null
+    val reviewedMetadata: ReviewedExerciseMetadata? = null,
+    val executionGuidance: String? = null
 ) {
     init {
         programming?.validateFor(type)
@@ -27,16 +28,7 @@ data class ExerciseSource(
     val sourceId: String,
     val sourceSlug: String,
     val attribution: ExerciseAttribution
-) {
-    companion object {
-        /** Catalog marker of the exercises WallCrawl owns beside the pinned upstream catalog. */
-        const val OWNED_CATALOG_ID = "wallcrawl-owned"
-    }
-}
-
-/** Owned exercises carry no reviewed metadata and are never chosen for a main session slot. */
-val Exercise.isOwnedByWallCrawl: Boolean
-    get() = source?.catalogId == ExerciseSource.OWNED_CATALOG_ID
+)
 
 data class ExerciseAttribution(
     val creator: String,
@@ -184,10 +176,11 @@ data class ReviewedExerciseMetadata(
     /**
      * Joint sensitivities a reviewer explicitly cleared this exercise for.
      *
-     * Kept in the schema but no longer read by planning: joint labels are now decided by the
-     * condition overlay (`core/conditions/ConditionRestrictions.kt`).
-     * [TrainingConstraint.LOW_IMPACT_ONLY] is never listed because [impactLevel] decides it;
-     * the parser and importer reject it here so the two contracts cannot disagree.
+     * Absence is not clearance: a selected [TrainingConstraint] that is not listed keeps the
+     * exercise out of automatic planning. [TrainingConstraint.LOW_IMPACT_ONLY] is never listed
+     * because [impactLevel] already decides it; the parser and importer reject it here so the
+     * two contracts cannot disagree. This is a reviewer's product judgement about a
+     * self-reported sensitivity label, not a diagnosis or clinical clearance.
      */
     val clearedTrainingConstraints: Set<TrainingConstraint>,
     /**
@@ -199,9 +192,22 @@ data class ReviewedExerciseMetadata(
 )
 
 /**
+ * True when every joint sensitivity [profile] selected was explicitly cleared for this exercise.
+ *
+ * `LOW_IMPACT_ONLY` is excluded because [ReviewedExerciseMetadata.impactLevel] already decides
+ * it. Shared so the eligibility gate and the prescription policy cannot drift into two
+ * different readings of the same reviewed field.
+ */
+internal fun ReviewedExerciseMetadata.clearsJointConstraintsOf(profile: UserProfile): Boolean =
+    profile.trainingConstraints.none { constraint ->
+        constraint != TrainingConstraint.LOW_IMPACT_ONLY &&
+            constraint !in clearedTrainingConstraints
+    }
+
+/**
  * The other half of the training-constraint contract: `LOW_IMPACT_ONLY` meeting a high-impact
- * exercise. Shared so the eligibility gate, its supported-regression exception and the
- * prescription policy read one rule.
+ * exercise. Shared for the same reason as [clearsJointConstraintsOf] — the eligibility gate,
+ * its supported-regression exception and the prescription policy must read one rule.
  */
 internal fun ReviewedExerciseMetadata.violatesImpactRestrictionOf(profile: UserProfile): Boolean =
     TrainingConstraint.LOW_IMPACT_ONLY in profile.trainingConstraints &&
@@ -280,6 +286,10 @@ object StandardEquipment {
     const val STABILITY_BALL = "Stability Ball"
     const val TOWEL = "Towel"
     const val WALL = "Wall"
+    const val PADDED_PLINTH = "Padded Plinth"
+    const val CALF_SUPPORT = "Calf Support"
+    const val PILLOW = "Pillow"
+    const val UPPER_ARM_SUPPORT_ROLL = "Upper-Arm Support Roll"
     const val BAND_ANCHOR_UPPER_BODY = "Band Anchor - Upper Body"
     const val BAND_ANCHOR_OVERHEAD = "Band Anchor - Overhead"
     const val BAND_ANCHOR_LOW = "Band Anchor - Low"
@@ -297,5 +307,15 @@ object StandardEquipment {
         BAND_KICKBACK_ATTACHMENT_SUPPORT
     )
 
-    val ALL = FULL_GYM + BAND_SETUPS
+    val SUPPORT_ASSEMBLY = listOf(PADDED_PLINTH, CALF_SUPPORT, PILLOW, UPPER_ARM_SUPPORT_ROLL)
+
+    val ALL = FULL_GYM + BAND_SETUPS + SUPPORT_ASSEMBLY
+}
+
+/** PR 105 stored this second ID for the wall-supported figure-four stretch. Keep logged IDs intact. */
+internal object WallStretchIdentity {
+    const val previous = "figure-four-stretch"
+    const val catalog = "supine-wall-supported-piriformis-stretch"
+
+    fun forLookup(id: String) = if (id == previous) catalog else id
 }

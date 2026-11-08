@@ -25,14 +25,27 @@ class ProgressionEngine {
         if (sessions.map { it.id }.distinct().size != sessions.size) {
             return hold(ProgressionReason.HOLD_DUPLICATE_OBSERVATION)
         }
-        val attempts = sessions.filter { s -> s.mainExercises.any { it.exerciseId == exerciseId } }
+        val attempts = sessions.mapNotNull { it.trainingActivity() }.filter { s -> s.exercises.any { it.exerciseId == exerciseId } &&
+            (s.exercises.any { it.exerciseId == exerciseId && it.prescription.purpose == PrescriptionPurpose.ORDINARY } ||
+                s.exercises.any { ex -> ex.sets.any { it.type != SetType.WARMUP &&
+                    (it.stopReason != null || it.stoppedAtTimestamp != null) } })
+        }
             .sortedWith(compareByDescending<WorkoutSession> { it.startedAtTimestamp }.thenBy { it.id })
             .take(2)
-        if (attempts.size < 2) return hold(ProgressionReason.HOLD_INSUFFICIENT_HISTORY)
+        if (attempts.size < 2) {
+            // Keep a newer supportive stop visible even without two ordinary observations.
+            val supportiveStop = attempts.any { s -> s.exercises.any { ex ->
+                ex.prescription.purpose == PrescriptionPurpose.SUPPORTIVE && ex.sets.any {
+                    it.type != SetType.WARMUP && (it.stopReason != null || it.stoppedAtTimestamp != null)
+                }
+            } }
+            return hold(if (supportiveStop) ProgressionReason.HOLD_INCOMPLETE_WORK
+                else ProgressionReason.HOLD_INSUFFICIENT_HISTORY)
+        }
         val instanceIds = mutableSetOf<String>()
         val setIds = mutableSetOf<String>()
         for (session in attempts) {
-            for (instance in session.mainExercises) {
+            for (instance in session.exercises) {
                 if (!instanceIds.add(instance.id) || instance.sets.any { !setIds.add(it.id) } ||
                     instance.sets.map { it.setNumber }.distinct().size != instance.sets.size
                 ) return hold(ProgressionReason.HOLD_DUPLICATE_OBSERVATION)
@@ -40,11 +53,11 @@ class ProgressionEngine {
                     instance.sets.any { !it.id.isRecordableProgressionId() || it.workoutExerciseId != instance.id }
                 ) return hold(ProgressionReason.HOLD_INVALID_OBSERVATION)
             }
-            val matches = session.mainExercises.filter { it.exerciseId == exerciseId }
+            val matches = session.exercises.filter { it.exerciseId == exerciseId }
             if (matches.size != 1) return hold(ProgressionReason.HOLD_DUPLICATE_OBSERVATION)
             val exercise = matches.single()
             if (session.status != SessionStatus.COMPLETED ||
-                session.mainExercises.flatMap { it.sets }.filter { it.type != SetType.WARMUP }
+                session.exercises.flatMap { it.sets }.filter { it.type != SetType.WARMUP }
                     .any { !it.isCompleted || it.stopReason != null || it.stoppedAtTimestamp != null }
             ) return hold(ProgressionReason.HOLD_INCOMPLETE_WORK)
             val completed = session.completedAtTimestamp
@@ -82,8 +95,8 @@ class ProgressionEngine {
                 if (!metTargets(set, exercise.prescription)) return hold(ProgressionReason.HOLD_TARGET_NOT_MET)
             }
         }
-        val latestPrescription = attempts[0].mainExercises.single { it.exerciseId == exerciseId }.prescription
-        val earlierPrescription = attempts[1].mainExercises.single { it.exerciseId == exerciseId }.prescription
+        val latestPrescription = attempts[0].exercises.single { it.exerciseId == exerciseId }.prescription
+        val earlierPrescription = attempts[1].exercises.single { it.exerciseId == exerciseId }.prescription
         if (!samePrescription(
                 latestPrescription, attempts[0].weightUnit,
                 earlierPrescription, attempts[1].weightUnit

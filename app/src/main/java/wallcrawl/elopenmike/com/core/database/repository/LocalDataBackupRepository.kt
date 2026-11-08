@@ -16,6 +16,8 @@ import wallcrawl.elopenmike.com.core.database.dao.LocalDataBackupDao
 import wallcrawl.elopenmike.com.core.database.dao.LocalDataRows
 import wallcrawl.elopenmike.com.core.database.PERSISTED_LIST_SEPARATOR
 import wallcrawl.elopenmike.com.core.database.WALLCRAWL_SCHEMA_VERSION
+import wallcrawl.elopenmike.com.core.database.entity.toModel
+import wallcrawl.elopenmike.com.core.database.entity.toEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
@@ -75,9 +77,7 @@ data class LocalDataRestoreResult(
  *
  * A recommendation record is not derived in that sense: nothing can rebuild how a past plan
  * was validated from the history it produced. Records therefore travel in the archive with
- * the sessions they belong to, and a record this build cannot read back is dropped rather
- * than restored as a half-understood one — provenance that cannot be trusted is worse than
- * provenance that is absent.
+ * the sessions they belong to, and an unreadable record causes export to fail rather than dropping its provenance.
  */
 interface LocalDataBackupRepository {
 
@@ -130,7 +130,7 @@ class OfflineLocalDataBackupRepository(
     override suspend fun isRestoreAllowed(): Boolean = backupDao.isEmptyDestination()
 
     override suspend fun exportTo(openOutput: () -> OutputStream): LocalDataExportResult {
-        // No gate. `readAll()` is itself a transaction, so the snapshot is one point in
+        // No gate. `readAllForExport()` is a transaction, so the snapshot is one point in
         // time whatever else is running, and export mutates nothing. Taking the shared gate
         // here would only make every profile and template write queue behind a full-history
         // read and then behind a document write the user's provider controls the speed of.
@@ -172,7 +172,7 @@ class OfflineLocalDataBackupRepository(
     }
 
     private suspend fun readSnapshot(): LocalDataSnapshot {
-        val rows = backupDao.readAll()
+        val rows = backupDao.readAllForExport()
         check(rows.profiles.size <= 1) {
             "The local database holds more than one profile row."
         }
@@ -210,7 +210,8 @@ class OfflineLocalDataBackupRepository(
                 .map { it.toRecommendationRecord() },
             deloadPreferences = rows.deloadPreferences.firstOrNull()?.toDeloadPreferences(),
             programEnrollment = archivedProgramValue { rows.programEnrollments.firstOrNull()?.toProgramEnrollment() },
-            programAssociations = archivedProgramValue { rows.programAssociations.map { it.toProgramAssociation() } }
+            programAssociations = archivedProgramValue { rows.programAssociations.map { it.toProgramAssociation() } },
+            pendingConditionReassessments = rows.pendingConditionReassessments.map { it.toModel() }
         )
     }
 
@@ -230,7 +231,8 @@ class OfflineLocalDataBackupRepository(
         recommendationRecords = recommendationRecords.map { it.toEntity() },
         deloadPreferences = listOfNotNull(deloadPreferences?.toEntity()),
         programEnrollments = listOfNotNull(programEnrollment?.toEntity()),
-        programAssociations = programAssociations.map { it.toEntity() }
+        programAssociations = programAssociations.map { it.toEntity() },
+        pendingConditionReassessments = pendingConditionReassessments.map { it.toEntity() }
     )
 
     private fun WorkoutTemplate.toTemplateEntity() = WorkoutTemplateEntity(
@@ -262,7 +264,8 @@ class OfflineLocalDataBackupRepository(
                 effortMinRir = prescription.effortTarget?.minRir,
                 effortMaxRir = prescription.effortTarget?.maxRir,
                 restClass = prescription.restClass,
-                restTargetSource = prescription.restTargetSource
+                restTargetSource = prescription.restTargetSource,
+                purpose = prescription.purpose.name
             )
         }
 
@@ -280,7 +283,8 @@ class OfflineLocalDataBackupRepository(
         origin = origin,
         sourceTemplateId = sourceTemplateId,
         focusMusclesJson = focusMuscles.joinToString(PERSISTED_LIST_SEPARATOR),
-        notes = notes
+        notes = notes,
+        conditionContextJson = conditionContext?.let(ConditionContextCodec::encodeSession)
     )
 
     private fun WorkoutExercise.toExerciseEntity() =
@@ -303,7 +307,8 @@ class OfflineLocalDataBackupRepository(
             effortMaxRir = prescription.effortTarget?.maxRir,
             restClass = prescription.restClass,
             restTargetSource = prescription.restTargetSource,
-            role = role,
+            purpose = prescription.purpose.name,
+            legacyRole = if (isLegacyMobility) "MOBILITY" else "MAIN",
             targetHoldSeconds = prescription.holdSeconds
         )
 

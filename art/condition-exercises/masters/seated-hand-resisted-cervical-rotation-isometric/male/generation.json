@@ -1,0 +1,6 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Medical exercise illustration, one adult man in plain shorts seated tall on a stable plain chair, both feet flat. Near-frontal full-body view, square canvas with ample margins. Head faces straight ahead aligned over sternum, chin relaxed and slightly lowered, no actual head rotation or side bend. His RIGHT hand rests on his RIGHT cheek (viewer LEFT); fingers contact cheek beside jaw/cheekbone, elbow out on that same side. This is one still hand-resisted neck-rotation isometric pose with no movement. Left hand relaxed on thigh. Natural proportions and coherent hand contact, chair/feet grounded. Clean thin WHITE single contour lines with sparse anatomical details, transparent canvas and transparent body/shorts/chair interiors. No fill/shading/glow/texture, no text/arrows/angles, no exercise equipment beyond chair.",
+  "outputSha256": "f051a6b69b54b07406f5cdde6c8ccec5dbe7a085adb6dd83abdfc72eaeec10fa",
+  "generationMode": "text-only"
+}

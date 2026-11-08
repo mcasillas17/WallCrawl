@@ -60,10 +60,13 @@ class Migration15To16Test {
         retained.values.forEach { assertEquals(1, it.size) }
         helper.close()
         val database = Room.databaseBuilder(context, WallCrawlDatabase::class.java, name)
-            .addMigrations(WallCrawlDatabase.MIGRATION_15_16, WallCrawlDatabase.MIGRATION_16_17).build()
+            .addMigrations(*WallCrawlDatabase.ALL_MIGRATIONS).build()
         try {
             assertEquals(WALLCRAWL_SCHEMA_VERSION, database.openHelper.writableDatabase.version)
             assertEquals(retained, retainedRows(database.openHelper.writableDatabase))
+            database.openHelper.writableDatabase.query("SELECT conditionContextDigest FROM workout_recommendation_records").use {
+                assertTrue(it.moveToFirst() && it.isNull(0))
+            }
             database.openHelper.writableDatabase.query("PRAGMA foreign_key_check").use {
                 assertEquals(0, it.count)
             }
@@ -93,8 +96,9 @@ class Migration15To16Test {
         listOf("deload_preferences", "program_enrollments", "program_session_associations",
             "workout_recommendation_records").associateWith { table ->
             db.query("SELECT * FROM $table ORDER BY 1").use { cursor ->
+                val historicalColumns = cursor.columnNames.indices.filter { cursor.getColumnName(it) != "conditionContextDigest" }
                 buildList {
-                    while (cursor.moveToNext()) add((0 until cursor.columnCount).map(cursor::getString))
+                    while (cursor.moveToNext()) add(historicalColumns.map(cursor::getString))
                 }
             }
         }

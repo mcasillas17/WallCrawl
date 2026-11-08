@@ -31,8 +31,6 @@ data class UserProfile(
     // Today must not generate or render a workout for an unconfirmed profile.
     val onboardingCompleted: Boolean = false,
     val trainingConstraints: Set<TrainingConstraint> = emptySet(),
-    // Condition ids from the bundled overlay. Unknown ids restored from an archive stay opaque.
-    val reportedConditions: Set<String> = emptySet(),
     val returningAfterBreakWeeks: Int = 0,
     // Never populated with a guessed or catalog default: a load only lands here once a
     // user has explicitly confirmed it (see Task 2), so this starts and stays empty.
@@ -41,8 +39,21 @@ data class UserProfile(
     val themePreference: ThemePreference = ThemePreference.SYSTEM,
     val gender: ProfileGender = ProfileGender.UNSPECIFIED,
     // Compatibility data from the first integration preview; artwork now reads gender only.
-    val illustrationPreference: IllustrationPreference = IllustrationPreference.AUTOMATIC
+    val illustrationPreference: IllustrationPreference = IllustrationPreference.AUTOMATIC,
+    val activeConditions: List<SelectedCondition> = emptyList(),
+    /** Exact legacy text whose meaning this build cannot safely use for planning. */
+    val unresolvedTrainingConstraintsRaw: String? = null,
+    /** Earlier condition reports have no reviewed answers. Keep even unrecognized IDs. */
+    val reportedConditions: Set<String> = emptySet()
 ) {
+    val planningExclusions: List<String> get() = when {
+        WallStretchIdentity.previous in excludedExerciseIds && WallStretchIdentity.catalog !in excludedExerciseIds ->
+            excludedExerciseIds + WallStretchIdentity.catalog
+        WallStretchIdentity.catalog in excludedExerciseIds && WallStretchIdentity.previous !in excludedExerciseIds ->
+            excludedExerciseIds + WallStretchIdentity.previous
+        else -> excludedExerciseIds
+    }
+    val hasConditionReports: Boolean get() = activeConditions.isNotEmpty() || reportedConditions.isNotEmpty()
     val primaryGoal: FitnessGoal get() = goals.firstOrNull() ?: FitnessGoal.BUILD_MUSCLE
 
     companion object {

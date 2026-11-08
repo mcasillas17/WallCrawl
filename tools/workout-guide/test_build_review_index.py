@@ -8,8 +8,6 @@ import subprocess
 import sys
 from unittest.mock import patch
 
-from import_catalog import upstream_entries_only
-
 from build_review_index import (
     _load,
     _validate_output_directory,
@@ -385,7 +383,7 @@ class BuildReviewIndexTest(unittest.TestCase):
         validate_artifacts(artifacts, 16 * 1024)
         ledger = json.loads(CANONICAL["ledger"].read_text())
         metadata = json.loads(CANONICAL["metadata"].read_text())
-        catalog = upstream_entries_only(json.loads(CANONICAL["catalog"].read_text()))
+        catalog = json.loads(CANONICAL["catalog"].read_text())
         upstream = json.loads(CANONICAL["manifest"].read_text())
         packages = []
         for entry in ledger["entries"]:

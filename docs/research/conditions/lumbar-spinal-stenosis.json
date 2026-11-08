@@ -1,0 +1,415 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "lumbar-spinal-stenosis",
+    "label": "lumbar spinal stenosis",
+    "aliases": [
+      "neurogenic claudication due to lumbar stenosis"
+    ],
+    "distinctions": "This evidence principally concerns symptomatic stenosis causing neurogenic claudication; imaging-only stenosis, vascular claudication and postoperative states are not interchangeable."
+  },
+  "scope": {
+    "population": "Adults at least 60, imaging-confirmed stenosis and neurogenic claudication; excluded cauda equina/prior stenosis surgery or fusion/severe competing walking conditions; Adults at least 50 with walking-limited neurogenic claudication; Lumbar spinal stenosis",
+    "stage": "Varies by source; acute/recent versus chronic and symptom irritability are explicitly retained. Unknown stage remains unknown.",
+    "operativeStatus": "Nonsurgical evidence predominates; no postoperative protocol approved or inferred.",
+    "exclusions": "Source-specific exclusions are applicability boundaries, not diagnosis-wide contraindications. Coexisting conditions and independently selected joint limits retain precedence.",
+    "uncertainty": "- Ordinary training: for documented extension/standing-provoked claudication, shorten or modify that exposure and consider symptom-relieving supported/flexion-tolerant conditioning; mark this a symptom-based clinical inference (LSS-P1), not a global extension ban. Walking is not automatically excluded; it is an outcome and intervention in these trials.\n- Supportive candidates: cycling, individually tolerable trunk/lower-limb strengthening, conditioning. Exact equipment/position and stage remain attributes. No diagnosis-wide numerical flexion angle, standing-duration cap, lifting limit or progression increment is established.\n- Neurological deterioration/cauda-equina assessment cannot be replaced by a workout. Coexisting osteoporosis, radiculopathy, balance limitations and postoperative orders retain independent precedence.\n- Currentness search found 2026 network meta-analysis PMC13145387 and a 2026 small feasibility RCT DOI 10.3390/app16104695; not fully extracted, no added rule based on them. No newer final exercise-specific guideline verified."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Completed targeted spine research; PubMed/PMC, official guidelines and publishers",
+      "query": "Original exact search strings were not retained in the source report; the report records the actual scientific sources and access attempts. No reconstructed search string is presented as executed.",
+      "decision": "Faithfully serialize all 5 extracted substantive sources, including contrary/indirect evidence.",
+      "limitations": "Targeted English-access-dominated investigation; not a database-complete systematic review. Retained report: .superpowers/sdd/2026-11-01-condition-aware-workouts/spine-source-report.md"
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST exact DOI metadata lookup; targeted official/primary-source reopen",
+      "query": "Individual executed DOI queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1016/j.jpain.2021.03.147; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1177/02692155231201048; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1001/jamanetworkopen.2018.6828; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1371/journal.pone.0072878; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1097/01.brs.0000241136.98159.8c",
+      "decision": "Retrieve missing exact title/PMID/publication metadata; compare titles and dates. Protocol reopens identified in source.access.details.",
+      "limitations": "Metadata API access does not upgrade abstract-only clinical extraction. Correction/retraction/supersession registry search not comprehensive."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST, primary MED abstracts; selected PubMed reopens",
+      "query": "Exact primary-record queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A17047542%20AND%20SRC%3AMED&format=json&resultType=core",
+      "decision": "Bounded accessible-protocol audit restored explicitly reported facts for lss-p3. Program/contact totals are distinguished from isolated exercise schedules; no unseen protocol, new search discovery or clinical release.",
+      "limitations": "Abstract-only/partial access unchanged. Unreported mechanics, home frequency, progression or stopping criteria remain unknown; no frequency computed from total contacts/duration."
+    }
+  ],
+  "sources": [
+    {
+      "id": "lss-g1",
+      "title": "Non-Surgical Interventions for Lumbar Spinal Stenosis Leading To Neurogenic Claudication: A Clinical Practice Guideline.",
+      "doi": "10.1016/j.jpain.2021.03.147",
+      "pmid": "33857615",
+      "url": "https://depot-e.uqtr.ca/id/eprint/9766/1/BUSSIERES_A_167_ED.pdf",
+      "publicationStatus": "Published journal article; indexed publication 2021-04-12; all dates precede access.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1016/j.jpain.2021.03.147",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Final multidisciplinary clinical practice guideline",
+      "population": "Adults with lumbar spinal stenosis causing neurogenic claudication",
+      "comparator": "Multimodal care versus comparators in underpinning studies",
+      "coInterventions": "Education, advice, behavioral change, exercise and manual rehabilitation",
+      "outcomes": "Bussières et al., 2021 final clinical practice guideline. DOI 10.1016/j.jpain.2021.03.147, author-institution PDF. Relevant final recommendation text inspected. Adults LSS causing neurogenic claudication. Conditional/weak recommendation for multimodal nonpharmacologic care: education/advice, behavioral change, home exercise, manual therapy/rehabilitation (moderate-quality evidence). Postoperative rehabilitation is a separate setting/timing. Does not prescribe one universal flexion dose or ban all extension/standing. NASS official completed-guideline page inspected: LSS guideline remains listed under 2011, not 2025 (the nearby 2025 header belongs to antithrombotics).",
+      "followUp": "Varied underpinning evidence",
+      "uncertainty": "Weak/conditional recommendation; postoperative rehabilitation is separate; no uniform flexion regimen",
+      "harms": "Not fully extracted across modules",
+      "limitations": "Weak/conditional recommendation; postoperative rehabilitation is separate; no uniform flexion regimen Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Multimodal education/advice, behavioral change, home exercise and manual rehabilitation",
+        "dose": "not reported as one exercise regimen",
+        "frequency": "not reported as one exercise frequency",
+        "supervision": "Rehabilitation/clinical care context",
+        "progression": "Individualized multimodal care",
+        "stoppingRules": "not reported as an execution-level stopping algorithm"
+      },
+      "locations": [
+        "Abstract > Recommendation 1, journal p. 1016"
+      ]
+    },
+    {
+      "id": "lss-s1",
+      "title": "Exercise treatments for lumbar spinal stenosis: A systematic review and intervention component analysis of randomised controlled trials.",
+      "doi": "10.1177/02692155231201048",
+      "pmid": "37715644",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10829420/",
+      "publicationStatus": "Published journal article; indexed publication 2023-09-16; all dates precede access.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md. Europe PMC fullTextXML re-opened during serialization: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10829420/fullTextXML."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1177/02692155231201048",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Systematic review/component analysis; 13 trials, 1440 participants; 23 interventions",
+      "population": "Lumbar spinal stenosis with neurogenic claudication",
+      "comparator": "Heterogeneous interventions/comparators",
+      "coInterventions": "Many packages include supervision and manual/psychological components",
+      "outcomes": "Comer et al., 2024 (online 2023) systematic review/component analysis. DOI 10.1177/02692155231201048, PMID 37715644, PMC10829420; FT via XML. Thirteen trials, 1440 participants with neurogenic claudication; 23 exercise interventions, heterogeneous comparators. Supervision/flexion common; cycling, strengthening, stretching and psychological components more frequent in successful packages. Flexion itself appeared in both successful and unsuccessful programs. Component co-occurrence is not randomized proof of independent benefit or safety; no reliable supervision/dose conclusion. Supports considering tolerable fitness/strengthening within a multimodal plan, not prohibiting all extension or inferring every stretch is beneficial.",
+      "followUp": "Varied included trial follow-up",
+      "uncertainty": "Component co-occurrence does not identify causal effect; flexion occurs in successful and unsuccessful packages",
+      "harms": "Not comprehensively established at component level",
+      "limitations": "Component co-occurrence does not identify causal effect; flexion occurs in successful and unsuccessful packages Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Common flexion/supervision; cycling, strength, stretch and psychological components co-occur in packages",
+        "dose": "Heterogeneous; component analysis does not establish optimum",
+        "frequency": "Heterogeneous",
+        "supervision": "Frequently supervised; no reliable independent supervision-effect conclusion",
+        "progression": "not reported as validated universal progression",
+        "stoppingRules": "not reported as a component-specific stopping rule"
+      },
+      "locations": [
+        "Results > Step 2: Interrogation of exercise intervention components",
+        "Discussion"
+      ]
+    },
+    {
+      "id": "lss-p1",
+      "title": "Comparative Clinical Effectiveness of Nonsurgical Treatment Methods in Patients With Lumbar Spinal Stenosis: A Randomized Clinical Trial.",
+      "doi": "10.1001/jamanetworkopen.2018.6828",
+      "pmid": "30646197",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6324321/",
+      "publicationStatus": "Published journal article; indexed publication 2019-01-04; all dates precede access.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md. Europe PMC fullTextXML re-opened during serialization: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6324321/fullTextXML."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1001/jamanetworkopen.2018.6828",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "RCT, 259 participants",
+      "population": "Adults at least 60, imaging-confirmed stenosis and neurogenic claudication; excluded cauda equina/prior stenosis surgery or fusion/severe competing walking conditions",
+      "comparator": "Medical care versus group exercise versus manual therapy/individualized exercise",
+      "coInterventions": "Medical management or individualized manual therapy according to arm",
+      "outcomes": "Schneider et al., 2019 RCT. DOI 10.1001/jamanetworkopen.2018.6828, journal FT. FT. 259 adults ≥60, imaging-confirmed LSS and neurogenic claudication; symptoms relieved by sitting/flexion among diagnostic signs. Six-week medical care, group exercise or manual therapy/individualized exercise; outcomes 2/6 months. Individualized package improved symptom/function scores more at 2 months; no between-group responder differences at 6 months. All groups improved walking. No serious treatment-related events; transient muscle soreness 54% individualized, 31% group exercise, 6% medical; all anticipated events resolved ≤48h. Excluded cauda equina, prior stenosis surgery/fusion and severe competing walking conditions; exclusions limit generalization. Symptom relief supports a tolerability-based posture adaptation, not proof extension damages tissue.",
+      "followUp": "2 and 6 months",
+      "uncertainty": "Short-term between-group benefit did not persist at six months; package effects; diagnostic relief with sitting/flexion is not tissue-harm evidence",
+      "harms": "No serious treatment-related events; transient soreness 54% individualized, 31% group exercise, 6% medical; resolved within 48 hours",
+      "limitations": "Short-term between-group benefit did not persist at six months; package effects; diagnostic relief with sitting/flexion is not tissue-harm evidence Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Stationary-bicycle warmup; assessed individualized spinal stabilization and muscle-specific home stretching/strengthening, plus manual therapy",
+        "dose": "45-minute package sessions, twice weekly for six weeks; bicycle-specific duration/load not extracted",
+        "frequency": "Twice weekly supervised package; individual home exercise",
+        "supervision": "Trained chiropractor or physical therapist; individualized assessment",
+        "progression": "Muscles/stretching/strengthening selected for each person; exact progression not reported",
+        "stoppingRules": "not reported as a universal stopping threshold"
+      },
+      "locations": [
+        "Methods > Treatment Arms",
+        "Results > Prespecified Outcome Measures",
+        "Results > Adverse Events, Falls, and Cointerventions (Exploratory Outcomes)"
+      ]
+    },
+    {
+      "id": "lss-p2",
+      "title": "A home exercise programme is no more beneficial than advice and education for people with neurogenic claudication: results from a randomised controlled trial.",
+      "doi": "10.1371/journal.pone.0072878",
+      "pmid": "24098633",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3787048/",
+      "publicationStatus": "Published journal article; indexed publication 2013-09-30; all dates precede access.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md. Europe PMC fullTextXML re-opened during serialization: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3787048/fullTextXML."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1371/journal.pone.0072878",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "RCT, six-week home program",
+      "population": "Adults at least 50 with walking-limited neurogenic claudication",
+      "comparator": "Home flexion/aerobic exercise plus advice versus advice/education",
+      "coInterventions": "Advice/education; mean three contacts",
+      "outcomes": "Comer et al., 2013 RCT. DOI 10.1371/journal.pone.0072878, PMID 24098633, journal FT. FT available text. Adults ≥50 with walking-limited neurogenic claudication; six-week home flexion/aerobic exercise plus advice versus advice/education. No significant symptom-severity benefit at 8 weeks (adjusted difference 0.06; 95% CI −0.19 to 0.31); no systematic sustained improvement; 12-month outcomes measured. No adverse events reported. Mean three contacts; post hoc severe-symptom subgroup not confirmatory. Important contrary evidence against claiming an app-delivered generic flexion program will reproduce supervised rehabilitation benefits.",
+      "followUp": "8-week primary; 12 months also measured",
+      "uncertainty": "No significant primary benefit; severe-subgroup post hoc finding not confirmatory",
+      "harms": "No adverse events reported",
+      "limitations": "No significant primary benefit; severe-subgroup post hoc finding not confirmatory Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Home flexion and aerobic exercise, individualized by physiotherapist; illustrated appendix not inspected for exact variants",
+        "dose": "Six weeks; mean three professional contacts",
+        "frequency": "Home frequency not extracted",
+        "supervision": "Initial/contact PT support, predominantly home delivery",
+        "progression": "not reported in retained extraction",
+        "stoppingRules": "not reported as numerical stopping criterion; no adverse events reported"
+      },
+      "locations": [
+        "Methods > Interventions",
+        "Results > Primary outcome",
+        "Discussion > Clinical implications"
+      ]
+    },
+    {
+      "id": "lss-p3",
+      "title": "A comparison between two physical therapy treatment programs for patients with lumbar spinal stenosis: a randomized clinical trial.",
+      "doi": "10.1097/01.brs.0000241136.98159.8c",
+      "pmid": "17047542",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/17047542/",
+      "publicationStatus": "Published journal article; indexed publication 2006-10-01; all dates precede access.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 17047542); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1097/01.brs.0000241136.98159.8c",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "RCT, 58 participants",
+      "population": "Lumbar spinal stenosis",
+      "comparator": "Manual therapy/body-weight-supported walking/exercise versus flexion/walking/subtherapeutic ultrasound",
+      "coInterventions": "Manual therapy/ultrasound differ by arm",
+      "outcomes": "Whitman et al., 2006 RCT. DOI 10.1097/01.brs.0000241136.98159.8c, PMID 17047542. Abstract; full PDF located but not fully extracted. 58 people LSS, six-week manual therapy/body-weight-supported walking/exercise versus flexion/walking/subtherapeutic ultrasound. Recovery better with manual/exercise package (NNT 2.6 at six weeks); 62% versus 41% recovered at one year. Multi-component comparison cannot identify which exercise determines benefit, dose, or contraindications. Detailed harms unresolved.",
+      "followUp": "6 weeks and one year",
+      "uncertainty": "Multicomponent contrast; no independent exercise-effect or contraindication inference",
+      "harms": "not reported in accessed abstract",
+      "limitations": "Multicomponent contrast; no independent exercise-effect or contraindication inference Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Methods (primary abstract, PMID 17047542): one package included manual physical therapy, body-weight-supported treadmill walking and exercise; the other lumbar-flexion exercises, treadmill walking and subtherapeutic ultrasound. Exact exercise mechanics, body-weight support and treadmill settings are not specified.",
+        "dose": "reported in accessible text: Abstract > Methods (primary abstract, PMID 17047542): two six-week physical-therapy programs were compared. Total visits and exercise-specific sets, repetitions and duration are not specified.",
+        "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
+        "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
+        "progression": "reported in accessible text: Abstract > Conclusions (primary abstract, PMID 17047542): the conclusion describes the body-weight-supported treadmill program as progressive; no progression steps, support reductions, speed or symptom criteria are given.",
+        "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
+      },
+      "locations": [
+        "Abstract > Methods and Results",
+        "Abstract > Methods",
+        "Abstract > Conclusions"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "lss-g1-extraction",
+      "kind": "published-recommendation",
+      "statement": "DOI 10.1016/j.jpain.2021.03.147, author-institution PDF. Relevant final recommendation text inspected. Adults LSS causing neurogenic claudication. Conditional/weak recommendation for multimodal nonpharmacologic care: education/advice, behavioral change, home exercise, manual therapy/rehabilitation (moderate-quality evidence). Postoperative rehabilitation is a separate setting/timing. Does not prescribe one universal flexion dose or ban all extension/standing. NASS official completed-guideline page inspected: LSS guideline remains listed under 2011, not 2025 (the nearby 2025 header belongs to antithrombotics).",
+      "citations": [
+        {
+          "sourceId": "lss-g1",
+          "location": "Abstract > Recommendation 1, journal p. 1016"
+        }
+      ],
+      "applicability": "Adults with lumbar spinal stenosis causing neurogenic claudication",
+      "limitations": "Weak/conditional recommendation; postoperative rehabilitation is separate; no uniform flexion regimen Access: full-text."
+    },
+    {
+      "id": "lss-s1-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.1177/02692155231201048, PMID 37715644, PMC10829420; FT via XML. Thirteen trials, 1440 participants with neurogenic claudication; 23 exercise interventions, heterogeneous comparators. Supervision/flexion common; cycling, strengthening, stretching and psychological components more frequent in successful packages. Flexion itself appeared in both successful and unsuccessful programs. Component co-occurrence is not randomized proof of independent benefit or safety; no reliable supervision/dose conclusion. Supports considering tolerable fitness/strengthening within a multimodal plan, not prohibiting all extension or inferring every stretch is beneficial.",
+      "citations": [
+        {
+          "sourceId": "lss-s1",
+          "location": "Results > Step 2: Interrogation of exercise intervention components"
+        },
+        {
+          "sourceId": "lss-s1",
+          "location": "Discussion"
+        }
+      ],
+      "applicability": "Lumbar spinal stenosis with neurogenic claudication",
+      "limitations": "Component co-occurrence does not identify causal effect; flexion occurs in successful and unsuccessful packages Access: full-text."
+    },
+    {
+      "id": "lss-p1-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.1001/jamanetworkopen.2018.6828, journal FT. FT. 259 adults ≥60, imaging-confirmed LSS and neurogenic claudication; symptoms relieved by sitting/flexion among diagnostic signs. Six-week medical care, group exercise or manual therapy/individualized exercise; outcomes 2/6 months. Individualized package improved symptom/function scores more at 2 months; no between-group responder differences at 6 months. All groups improved walking. No serious treatment-related events; transient muscle soreness 54% individualized, 31% group exercise, 6% medical; all anticipated events resolved ≤48h. Excluded cauda equina, prior stenosis surgery/fusion and severe competing walking conditions; exclusions limit generalization. Symptom relief supports a tolerability-based posture adaptation, not proof extension damages tissue.",
+      "citations": [
+        {
+          "sourceId": "lss-p1",
+          "location": "Methods > Treatment Arms"
+        },
+        {
+          "sourceId": "lss-p1",
+          "location": "Results > Prespecified Outcome Measures"
+        },
+        {
+          "sourceId": "lss-p1",
+          "location": "Results > Adverse Events, Falls, and Cointerventions (Exploratory Outcomes)"
+        }
+      ],
+      "applicability": "Adults at least 60, imaging-confirmed stenosis and neurogenic claudication; excluded cauda equina/prior stenosis surgery or fusion/severe competing walking conditions",
+      "limitations": "Short-term between-group benefit did not persist at six months; package effects; diagnostic relief with sitting/flexion is not tissue-harm evidence Access: full-text."
+    },
+    {
+      "id": "lss-p2-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.1371/journal.pone.0072878, PMID 24098633, journal FT. FT available text. Adults ≥50 with walking-limited neurogenic claudication; six-week home flexion/aerobic exercise plus advice versus advice/education. No significant symptom-severity benefit at 8 weeks (adjusted difference 0.06; 95% CI −0.19 to 0.31); no systematic sustained improvement; 12-month outcomes measured. No adverse events reported. Mean three contacts; post hoc severe-symptom subgroup not confirmatory. Important contrary evidence against claiming an app-delivered generic flexion program will reproduce supervised rehabilitation benefits.",
+      "citations": [
+        {
+          "sourceId": "lss-p2",
+          "location": "Methods > Interventions"
+        },
+        {
+          "sourceId": "lss-p2",
+          "location": "Results > Primary outcome"
+        },
+        {
+          "sourceId": "lss-p2",
+          "location": "Discussion > Clinical implications"
+        }
+      ],
+      "applicability": "Adults at least 50 with walking-limited neurogenic claudication",
+      "limitations": "No significant primary benefit; severe-subgroup post hoc finding not confirmatory Access: full-text."
+    },
+    {
+      "id": "lss-p3-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.1097/01.brs.0000241136.98159.8c, PMID 17047542. Abstract; full PDF located but not fully extracted. 58 people LSS, six-week manual therapy/body-weight-supported walking/exercise versus flexion/walking/subtherapeutic ultrasound. Recovery better with manual/exercise package (NNT 2.6 at six weeks); 62% versus 41% recovered at one year. Multi-component comparison cannot identify which exercise determines benefit, dose, or contraindications. Detailed harms unresolved.",
+      "citations": [
+        {
+          "sourceId": "lss-p3",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "applicability": "Lumbar spinal stenosis",
+      "limitations": "Multicomponent contrast; no independent exercise-effect or contraindication inference Access: abstract-only."
+    },
+    {
+      "id": "ordinary-training-restriction-evidence-gap",
+      "kind": "evidence-gap",
+      "statement": "Symptom relief with sitting/flexion supports investigation of tolerable posture and conditioning. It does not demonstrate tissue injury from extension or establish universal standing, walking, lifting or extension bans. Walking was studied as an intervention/outcome; numeric exposure limits remain unresolved.",
+      "citations": [
+        {
+          "sourceId": "lss-p1",
+          "location": "Methods > Treatment Arms"
+        }
+      ],
+      "applicability": "Adults at least 60, imaging-confirmed stenosis and neurogenic claudication; excluded cauda equina/prior stenosis surgery or fusion/severe competing walking conditions",
+      "limitations": "This is a bounded evidence gap in the retrieved corpus, not proof that all training is harmless. Trial exclusions are applicability boundaries. No runtime restriction or therapeutic release follows."
+    },
+    {
+      "id": "stationary-bicycle-warmup-lss-setup-unresolved-execution",
+      "kind": "study-result",
+      "statement": "Stationary bicycle used as warmup before individualized manual therapy/exercise. Upright versus recumbent configuration, trunk support/angle, cadence, resistance and bicycle-specific dose not reported in the inspected treatment paragraph.",
+      "citations": [
+        {
+          "sourceId": "lss-p1",
+          "location": "Methods > Treatment Arms"
+        }
+      ],
+      "applicability": "Adults at least 60, imaging-confirmed stenosis and neurogenic claudication; excluded cauda equina/prior stenosis surgery or fusion/severe competing walking conditions",
+      "limitations": "Studied/described execution only. All unreported setup, ROM, dosing, eligibility and clinical approval remain unresolved."
+    },
+    {
+      "id": "lss-posture-tolerability-inference",
+      "kind": "study-result",
+      "statement": "Schneider trial selected neurogenic claudication with flexion/sitting relief and individualized treatment; this supports studying symptom-tolerable conditioning adaptation, without showing that extension damages tissue.",
+      "citations": [
+        {
+          "sourceId": "lss-p1",
+          "location": "Methods > Treatment Arms"
+        }
+      ],
+      "applicability": "Adults at least 60, imaging-confirmed stenosis and neurogenic claudication; excluded cauda equina/prior stenosis surgery or fusion/severe competing walking conditions",
+      "limitations": "Short-term between-group benefit did not persist at six months; package effects; diagnostic relief with sitting/flexion is not tissue-harm evidence"
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "stationary-bicycle-warmup-lss-setup-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "stationary-bicycle-warmup-lss-setup-unresolved",
+      "findingIds": [
+        "stationary-bicycle-warmup-lss-setup-unresolved-execution"
+      ],
+      "matchRationale": "Catalog cycling has coarse Cardio equipment and distance_duration shape; this does not verify the study stationary configuration or whether distance is meaningful for warmup. No exact match or clinical dose established.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "lss-provoked-exposure-adaptation",
+      "kind": "symptom-response",
+      "basis": "unresolved-hypothesis",
+      "statement": "Candidate clinical inference: when assessed standing/extension exposure provokes claudication, adjust that exposure and investigate supported/symptom-relieving conditioning; do not apply a diagnosis-wide extension or walking ban.",
+      "findingIds": [
+        "lss-posture-tolerability-inference"
+      ],
+      "citations": [
+        {
+          "sourceId": "lss-p1",
+          "location": "Methods > Treatment Arms"
+        }
+      ],
+      "applicability": {
+        "population": "Adults at least 60, imaging-confirmed stenosis and neurogenic claudication; excluded cauda equina/prior stenosis surgery or fusion/severe competing walking conditions",
+        "stage": "Nonsurgical neurogenic claudication matching trial; prior stenosis surgery/fusion excluded; posture response assessed individually.",
+        "rationale": "Condition-specific extracted guidance/protocol supports this draft interpretation; it does not override another condition restriction, equipment requirement or joint limit."
+      },
+      "limitations": "Trial entry signs and multimodal benefit are indirect evidence for ordinary-training adaptation; exact duration/ROM/load threshold unresolved. Unreviewed candidate; no runtime or clinical release.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "- Ordinary training: for documented extension/standing-provoked claudication, shorten or modify that exposure and consider symptom-relieving supported/flexion-tolerant conditioning; mark this a symptom-based clinical inference (LSS-P1), not a global extension ban. Walking is not automatically excluded; it is an outcome and intervention in these trials.\n- Supportive candidates: cycling, individually tolerable trunk/lower-limb strengthening, conditioning. Exact equipment/position and stage remain attributes. No diagnosis-wide numerical flexion angle, standing-duration cap, lifting limit or progression increment is established.\n- Neurological deterioration/cauda-equina assessment cannot be replaced by a workout. Coexisting osteoporosis, radiculopathy, balance limitations and postoperative orders retain independent precedence.\n- Currentness search found 2026 network meta-analysis PMC13145387 and a 2026 small feasibility RCT DOI 10.3390/app16104695; not fully extracted, no added rule based on them. No newer final exercise-specific guideline verified.",
+    "No exact catalog execution equivalence or numeric diagnosis-wide load/ROM/pain threshold established. All request/mapping/rule material is candidate-only, and clinical review provenance is absent."
+  ],
+  "disposition": "unresolved",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

@@ -2,12 +2,15 @@ package wallcrawl.elopenmike.com.feature.program
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
@@ -65,7 +68,8 @@ internal fun ProgramScreen(state: ProgramUiState, onAction: (ProgramAction) -> U
                     read.profile?.let { profile ->
                         ProgramConfigurationText(profile.primaryGoal.name, profile.goals.map { it.name }.sorted(), profile.daysPerWeek)
                     }
-                    Button(onClick = { onAction(ProgramAction.START) }, enabled = enabled) {
+                    if (read.profile == null) Text(stringResource(R.string.program_profile_unavailable), color = MaterialTheme.colorScheme.error)
+                    Button(onClick = { onAction(ProgramAction.START) }, enabled = enabled && read.profile != null) {
                         Text(stringResource(R.string.program_start), color = MaterialTheme.colorScheme.onPrimary)
                     }
                 }
@@ -120,7 +124,7 @@ private fun ReplaceButton(enabled: Boolean, onAction: (ProgramAction) -> Unit) {
 }
 
 @Composable
-fun ProgramSummary(state: ProgramUiState, onManage: (() -> Unit)? = null, onRetry: () -> Unit = {}) {
+private fun ProgramSummary(state: ProgramUiState, onRetry: () -> Unit) {
     Card(Modifier.fillMaxWidth().testTag("program-summary")) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(R.string.program_name), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
@@ -155,7 +159,6 @@ fun ProgramSummary(state: ProgramUiState, onManage: (() -> Unit)? = null, onRetr
                 }
                 null -> Unit
             }
-            onManage?.let { TextButton(onClick = it) { Text(stringResource(R.string.program_manage), color = MaterialTheme.colorScheme.onSurface) } }
         }
     }
 }
@@ -194,19 +197,23 @@ private fun objectiveRes(objective: ProgramObjective) = when (objective) {
 }
 
 @Composable
-fun ProgramPlanningChoice(selected: WorkoutPlanningIntent, programAvailable: Boolean, enabled: Boolean,
-    onSelect: (WorkoutPlanningIntent) -> Unit) {
-    Column(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
-        Text(stringResource(R.string.program_choice), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurface)
+internal fun ProgramPlanningChoice(
+    selected: WorkoutPlanningIntent, programAvailable: Boolean, enabled: Boolean,
+    onSelect: (WorkoutPlanningIntent) -> Unit
+) {
+    Column(Modifier.fillMaxWidth().selectableGroup()) {
         WorkoutPlanningIntent.entries.forEach { intent ->
             val available = enabled && (intent == WorkoutPlanningIntent.ORDINARY || programAvailable)
-            Row(Modifier.fillMaxWidth().testTag("planning-${intent.name}")
-                .selectable(selected = selected == intent, enabled = available,
-                    role = androidx.compose.ui.semantics.Role.RadioButton, onClick = { onSelect(intent) })
-                .padding(8.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+            Row(
+                Modifier.fillMaxWidth().testTag("planning-${intent.name}")
+                    .selectable(selected = selected == intent, enabled = available, role = Role.RadioButton,
+                        onClick = { onSelect(intent) }).heightIn(min = 48.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically
+            ) {
                 RadioButton(selected = selected == intent, onClick = null, enabled = available)
-                Text(stringResource(if (intent == WorkoutPlanningIntent.PROGRAM) R.string.program_session_choice else R.string.program_ordinary_choice),
-                    Modifier.padding(start = 8.dp), color = MaterialTheme.colorScheme.onSurface)
+                Text(stringResource(if (intent == WorkoutPlanningIntent.PROGRAM) R.string.program_session_choice
+                    else R.string.guided_train_ordinary),
+                    color = if (available) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     }

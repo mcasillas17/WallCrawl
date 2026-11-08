@@ -56,7 +56,7 @@ class OnboardingRestoreEntryTest {
     @Test
     fun genderDropdownKeepsTheNameAndDraftWhenReturningToWelcome() {
         val viewModel = showWizard()
-        composeRule.onNodeWithText(text(R.string.onboarding_codename_placeholder))
+        composeRule.onNodeWithText(text(R.string.onboarding_codename_heading))
             .performTextInput("Alex")
         composeRule.onNodeWithText(text(R.string.profile_gender_title)).performClick()
         composeRule.onNodeWithText(text(R.string.gender_woman)).performClick()
@@ -90,7 +90,7 @@ class OnboardingRestoreEntryTest {
         composeRule.onNodeWithText(RESTORE_SLOT).assertIsDisplayed()
 
         // The first step will not advance without a name, so give it one.
-        composeRule.onNodeWithText(text(R.string.onboarding_codename_placeholder))
+        composeRule.onNodeWithText(text(R.string.onboarding_codename_heading))
             .performTextInput("Alex")
         composeRule.waitForIdle()
         composeRule.onNodeWithText(text(R.string.onboarding_action_continue)).performClick()
@@ -120,7 +120,7 @@ class OnboardingRestoreEntryTest {
         }
         composeRule.waitForIdle()
 
-        composeRule.onNodeWithText(text(R.string.onboarding_codename_placeholder))
+        composeRule.onNodeWithText(text(R.string.onboarding_codename_heading))
             .performTextInput("Gabriela")
         composeRule.waitForIdle()
 
@@ -193,13 +193,4 @@ private class FakeUserProfileRepository : UserProfileRepository {
     override suspend fun updateGender(gender: wallcrawl.elopenmike.com.core.model.ProfileGender) = saveProfile(getProfileOnce().copy(gender = gender))
     override suspend fun updateThemePreference(themePreference: ThemePreference) =
         error("Not used")
-    override suspend fun editReportedConditions(change: (Set<String>) -> Set<String>) {
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(reportedConditions = change(current.reportedConditions)))
-    }
-
-    override suspend fun editExcludedExercises(change: (List<String>) -> List<String>) {
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(excludedExerciseIds = change(current.excludedExerciseIds)))
-    }
 }

@@ -27,6 +27,8 @@ object StandardMuscles {
     const val CALVES = "Calves"
     const val HIPS = "Hips"
     const val CORE = "Core"
+    const val NECK = "Neck"
+    const val FOOT_INTRINSICS = "Foot Intrinsics"
 
     /** Conditioning qualities the catalog stores alongside muscles. Not trainable volume targets. */
     const val CARDIO = "Cardio"
@@ -43,7 +45,7 @@ object StandardMuscles {
     /** Non-anatomical tags that stay attached to exercises but never count as training volume. */
     val CONDITIONING = listOf(CARDIO, MOBILITY)
 
-    val ALL = TRAINABLE + CONDITIONING
+    val ALL = TRAINABLE + CONDITIONING + listOf(NECK, FOOT_INTRINSICS)
 
     /**
      * Groups offered as muscle priorities.

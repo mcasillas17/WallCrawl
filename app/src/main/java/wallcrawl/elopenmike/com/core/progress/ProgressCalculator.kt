@@ -5,14 +5,10 @@ import java.time.ZoneId
 import kotlin.math.roundToInt
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExerciseType
-import wallcrawl.elopenmike.com.core.model.WorkoutSummary
-import wallcrawl.elopenmike.com.core.model.mainExercises
-import wallcrawl.elopenmike.com.core.model.hasValidCompletedChronology
-import wallcrawl.elopenmike.com.core.model.isMobilityOnly
-import wallcrawl.elopenmike.com.core.model.isStrictlyPriorTo
 import wallcrawl.elopenmike.com.core.model.MuscleProgressStat
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.PersonalRecord
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.ProgressOverview
 import wallcrawl.elopenmike.com.core.model.RecordType
 import wallcrawl.elopenmike.com.core.model.SessionStatus
@@ -24,7 +20,11 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
+import wallcrawl.elopenmike.com.core.model.trainingActivity
+import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 import wallcrawl.elopenmike.com.core.model.convertWeight
+import wallcrawl.elopenmike.com.core.model.hasValidCompletedChronology
+import wallcrawl.elopenmike.com.core.model.isStrictlyPriorTo
 
 /** Calculates user-visible progress exclusively from persisted completed workout data. */
 class ProgressCalculator {
@@ -44,8 +44,8 @@ class ProgressCalculator {
         zoneId: ZoneId = ZoneId.systemDefault(),
         weeklySessions: List<WorkoutSession> = completedSessions,
         completedTimestamps: List<Long> = completedSessions
-            .filter { it.status == SessionStatus.COMPLETED && !it.isMobilityOnly }
-            .mapNotNull { it.completedAtTimestamp }
+            .filter { it.status == SessionStatus.COMPLETED }
+            .mapNotNull { it.trainingActivity()?.completedAtTimestamp }
     ): ProgressOverview {
         val currentWeek = TrainingWeek.containing(Instant.ofEpochMilli(nowTimestamp), zoneId)
         val previousWeek = TrainingWeek.startingOn(currentWeek.startEpochDay - 7, zoneId)
@@ -67,9 +67,8 @@ class ProgressCalculator {
         // Weekly activity is membership by completion timestamp against the calendar week,
         // never against the wall clock, so a completion recorded ahead of "now" still counts.
         val weeklyCompleted = weeklySessions
-            .filter {
-                it.status == SessionStatus.COMPLETED && it.completedAtTimestamp != null && !it.isMobilityOnly
-            }
+            .filter { it.status == SessionStatus.COMPLETED && it.completedAtTimestamp != null }
+            .mapNotNull { it.trainingActivity() }
         val thisWeek = weeklyCompleted
             .filter { currentWeek.contains(it.completedAtTimestamp!!) }
             .map { it.convertWeightsTo(profile.preferredUnit) }
@@ -83,9 +82,7 @@ class ProgressCalculator {
             totalWorkoutsLogged = completedTimestamps.size,
             totalVolumeThisWeek = thisWeek.sumOf(::weeklyExternalLoadVolume),
             totalRepsThisWeek = thisWeek.sumOf(::weeklyCompletedReps),
-            completedSetsThisWeek = thisWeek.sumOf { session ->
-                session.mainExercises.sumOf { exercise -> exercise.sets.count { it.isCompleted } }
-            },
+            completedSetsThisWeek = thisWeek.sumOf { it.completedSetsCount },
             warmupSetsThisWeek = thisWeek.sumOf(::warmupSetCount),
             recentPersonalRecords = calculateRecentRecords(
                 sessions = boundedConverted,
@@ -120,7 +117,7 @@ class ProgressCalculator {
             .asSequence()
             .filter { it.isStrictlyPriorTo(session) }
             .flatMap { prior ->
-                prior.mainExercises.mapNotNull { exercise ->
+                prior.exercises.filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }.mapNotNull { exercise ->
                     val sets = exercise.sets.filter {
                         it.exerciseType == exercise.prescription.exerciseType && it.isValidRecordSet()
                     }
@@ -144,7 +141,8 @@ class ProgressCalculator {
     ): Int {
         if (!session.hasValidCompletedChronology()) return 0
         val bestByExercise = baselines.groupBy { it.exerciseId to it.exerciseType }
-        return session.mainExercises
+        return session.exercises
+            .filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }
             .groupBy { it.exerciseId }
             .count { (exerciseId, entries) ->
                 entries.groupBy { it.prescription.exerciseType }.any { (type, typedEntries) ->
@@ -171,17 +169,19 @@ class ProgressCalculator {
         exerciseType in REP_BASED_TYPES && stopReason == null && stoppedAtTimestamp == null &&
             isValidCompletedSet()
 
-    internal fun summarize(session: WorkoutSession, baselines: List<PersonalRecordBaseline>): WorkoutSummary =
-        WorkoutSummary(
+    internal fun summarize(session: WorkoutSession, baselines: List<PersonalRecordBaseline>): WorkoutSummary {
+        val counted = session.trainingActivity()
+        return WorkoutSummary(
             sessionId = session.id,
             workoutName = session.name,
             durationMinutes = session.actualDurationMinutes,
-            totalSetsCompleted = session.mainExercises.sumOf { ex -> ex.sets.count { it.isCompleted } },
-            totalVolume = session.mainExercises.sumOf { it.totalVolume },
+            totalSetsCompleted = counted?.completedSetsCount ?: 0,
+            totalVolume = counted?.totalVolume ?: 0.0,
             prCount = countPersonalRecordsFromBaselines(session, baselines),
             unit = session.weightUnit,
             completedAtTimestamp = session.completedAtTimestamp ?: session.startedAtTimestamp
         )
+    }
 
     private fun calculateStreakWeeks(
         completedTimestamps: List<Long>,
@@ -249,7 +249,7 @@ class ProgressCalculator {
     ): Map<String, Int> {
         val counts = mutableMapOf<String, Int>()
         sessions.forEach { session ->
-            session.mainExercises.forEach { workoutExercise ->
+            session.exercises.forEach { workoutExercise ->
                 // Every completed set counts, warm-ups and timed work included; involvement
                 // describes exposure, not the loaded work sets a reviewed dose credits.
                 val completedSetCount = workoutExercise.sets.count { it.isCompleted }
@@ -359,7 +359,7 @@ class ProgressCalculator {
     ): Map<String, List<ExerciseSessionPerformance>> {
         return sessions
             .flatMap { session ->
-                session.mainExercises.mapNotNull { exercise ->
+                session.exercises.filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }.mapNotNull { exercise ->
                     val completedSets = exercise.sets.filter { it.isValidCompletedSet() }
                     if (completedSets.isEmpty()) {
                         null
@@ -380,7 +380,7 @@ class ProgressCalculator {
 
     /** External-load tonnage: completed WEIGHT_REPS sets only, warm-ups included. */
     private fun weeklyExternalLoadVolume(session: WorkoutSession): Double =
-        session.mainExercises.sumOf { exercise ->
+        session.exercises.sumOf { exercise ->
             exercise.sets.sumOf { it.externalLoadVolume(session.weightUnit, session.weightUnit) }
         }
 
@@ -389,11 +389,11 @@ class ProgressCalculator {
      * Load validity is irrelevant to a rep count, and timed work has no reps to count.
      */
     private fun weeklyCompletedReps(session: WorkoutSession): Int =
-        session.mainExercises.sumOf { exercise -> exercise.sets.sumOf { it.loggedReps() } }
+        session.exercises.sumOf { exercise -> exercise.sets.sumOf { it.loggedReps() } }
 
     /** Completed warm-up sets, so the reviewed-dose difference can be explained. */
     private fun warmupSetCount(session: WorkoutSession): Int =
-        session.mainExercises.sumOf { exercise ->
+        session.exercises.sumOf { exercise ->
             exercise.sets.count { it.isCompleted && it.type == SetType.WARMUP }
         }
 

@@ -1,5 +1,8 @@
 package wallcrawl.elopenmike.com.feature.history
 
+import android.graphics.Bitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
+import java.io.File
 import android.content.res.Configuration
 import android.os.LocaleList
 import androidx.compose.foundation.layout.Box
@@ -45,6 +48,34 @@ class WorkoutHistoryScreenTest {
     private val spanish = context.createConfigurationContext(Configuration(context.resources.configuration).apply {
         setLocales(LocaleList(Locale.forLanguageTag("es-419")))
     })
+
+    @Test fun frozenConditionInstructionsRemainVisibleWithoutCurrentProfileOrSupport() {
+        val selected = SelectedCondition("withdrawn", 4, mapOf("side" to "recorded-left", "future" to null))
+        val instruction = ConditionText("Original fictional execution instruction", "Instrucción ficticia original")
+        val frozen = SessionConditionContext(1, 2, listOf(selected), mapOf("withdrawn" to "old-v1"), listOf(
+            AppliedConditionRule(ConditionRuleReference("withdrawn", "old-v1", "case", "rule", 2),
+                ConditionExerciseIdentity("recorded-hold", "a".repeat(64), ExerciseType.DURATION, "b".repeat(64)),
+                "recorded-execution", PrescriptionPurpose.SUPPORTIVE, instruction)), emptyList(), emptyList())
+        val exercise = WorkoutExercise("instance", "recorded", "recorded-hold", 0,
+            ExercisePrescription(ExerciseType.DURATION, 1, targetDurationSeconds = 20, purpose = PrescriptionPurpose.SUPPORTIVE))
+        val stored = detail().copy(session = detail().session.copy(conditionContext = frozen, exercises = listOf(exercise)))
+        compose.setContent { WallCrawlTheme(themePreference = ThemePreference.LIGHT) {
+            WorkoutHistoryDetailScreen(WorkoutHistoryDetailUiState.Loaded(stored, null), {}, {})
+        } }
+        scrollTo(instruction.en)
+        compose.onNodeWithText(instruction.en).assertIsDisplayed()
+        compose.onNodeWithText(context.getString(R.string.condition_supportive)).assertExists()
+        scrollTo("Previous performance for the same purpose")
+        compose.onNodeWithText("Previous performance for the same purpose").assertIsDisplayed()
+        scrollTo("withdrawn · context 4 · support old-v1")
+        compose.onNodeWithText("withdrawn · context 4 · support old-v1").assertIsDisplayed()
+        val output = InstrumentationRegistry.getArguments().getString("additionalTestOutputDir")?.let(::File) ?: context.filesDir
+        output.mkdirs()
+        File(output, "history-frozen-condition-light.png").outputStream().use {
+            compose.onRoot().captureToImage().asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
+        assertThat(stored.session.conditionContext).isSameInstanceAs(frozen)
+    }
 
     @Test fun spanishAssistanceProgressionNeverClaimsAssistanceIncreased() {
         val exercise = WorkoutExercise("assisted-instance", "recorded", "assisted-pull-up", 0,
@@ -284,25 +315,6 @@ class WorkoutHistoryScreenTest {
         compose.onNode(hasText(context.getString(R.string.effort_not_recorded)) and
             hasAnySibling(hasText(context.getString(R.string.history_performed))),
             useUnmergedTree = true).assertExists()
-    }
-
-    @Test fun aMobilityExerciseHeadingCarriesTheMobilitySectionLabel() {
-        val original = detail()
-        val main = original.session.exercises.single()
-        val mobility = main.copy(id = "mobility-instance", exerciseId = "stored-mobility-id",
-            orderIndex = 1, role = ExerciseRole.MOBILITY)
-        compose.setContent {
-            WallCrawlTheme {
-                WorkoutHistoryDetailScreen(WorkoutHistoryDetailUiState.Loaded(original.copy(
-                    session = original.session.copy(exercises = listOf(main, mobility))
-                ), null), {}, {})
-            }
-        }
-        val label = context.getString(R.string.mobility_section_label)
-        scrollTo("stored-run-id")
-        compose.onNode(hasText("stored-run-id") and isHeading()).assertExists()
-        scrollTo("stored-mobility-id")
-        compose.onNode(hasText("$label · stored-mobility-id") and isHeading()).assertExists()
     }
 
     private fun scrollTo(text: String) {

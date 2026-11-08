@@ -1,403 +1,94 @@
 package wallcrawl.elopenmike.com.feature.exercises
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.material3.MaterialTheme
+import androidx.lifecycle.compose.dropUnlessResumed
 import wallcrawl.elopenmike.com.R
-import wallcrawl.elopenmike.com.core.model.Exercise
-import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
+import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.ui.components.ExerciseIllustration
-import wallcrawl.elopenmike.com.core.ui.components.StatBadge
-import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
-import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
-import wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
-import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
+import wallcrawl.elopenmike.com.feature.templates.WorkoutTemplatesScreen
+import wallcrawl.elopenmike.com.feature.templates.WorkoutTemplatesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExercisesScreen(
     viewModel: ExercisesViewModel,
     visualProvider: ExerciseVisualProvider,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onOpenConditionReference: (() -> Unit)? = null,
+    templatesViewModel: WorkoutTemplatesViewModel? = null,
+    onCreateTemplate: () -> Unit = {},
+    onEditTemplate: (String) -> Unit = {},
+    onWorkoutStarted: (String) -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        WebBackgroundPattern()
-
-        when (val state = uiState) {
-            is ExercisesUiState.Loading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = CrimsonRedPrimary)
-                }
-            }
-
-            is ExercisesUiState.Error -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(stringResource(state.messageRes), color = CrimsonRedLight)
-                }
-            }
-
-            is ExercisesUiState.Success -> {
-                ExercisesContent(
-                    state = state,
-                    onQueryChanged = { viewModel.onQueryChanged(it) },
-                    onSelectMuscle = { viewModel.selectMuscle(it) },
-                    onSelectEquipment = { viewModel.selectEquipment(it) },
-                    onOpenDetail = { viewModel.openExerciseDetail(it) }
-                )
-
-                // Exercise Detail Modal Bottom Sheet
-                if (state.selectedExerciseDetail != null) {
-                    ExerciseDetailSheet(
-                        exercise = state.selectedExerciseDetail,
-                        visualProvider = visualProvider,
-                        onDismiss = { viewModel.closeExerciseDetail() }
+    var showWorkouts by rememberSaveable { mutableStateOf(false) }
+    val tabState = rememberSaveableStateHolder()
+    Column(modifier.fillMaxSize()) {
+        if (templatesViewModel != null) {
+            val locked by templatesViewModel.navigationLocked.collectAsState()
+            PrimaryTabRow(selectedTabIndex = if (showWorkouts) 1 else 0, containerColor = MaterialTheme.colorScheme.background) {
+                listOf(R.string.guided_exercises, R.string.templates_title).forEachIndexed { index, label ->
+                    Tab(
+                        selected = showWorkouts == (index == 1), enabled = !locked,
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        onClick = dropUnlessResumed { if (!templatesViewModel.navigationLocked.value) showWorkouts = index == 1 },
+                        text = { Text(stringResource(label)) }
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun ExercisesContent(
-    state: ExercisesUiState.Success,
-    onQueryChanged: (String) -> Unit,
-    onSelectMuscle: (String?) -> Unit,
-    onSelectEquipment: (String?) -> Unit,
-    onOpenDetail: (Exercise) -> Unit
-) {
-    val locale = LocalConfiguration.current.locales[0]
-    val vocabulary = LocalExerciseVocabulary.current
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp)
-    ) {
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = stringResource(R.string.exercises_eyebrow),
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.5.sp,
-                color = CrimsonRedPrimary
-            )
-            Text(
-                text = stringResource(R.string.exercises_title),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Black,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-
-        // Search Bar
-        item {
-            OutlinedTextField(
-                value = state.query,
-                onValueChange = onQueryChanged,
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = {
-                    Text(
-                        stringResource(R.string.exercises_search_placeholder),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 14.sp
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                trailingIcon = {
-                    if (state.query.isNotEmpty()) {
-                        IconButton(onClick = { onQueryChanged("") }) {
-                            Icon(
-                                Icons.Default.Close,
-                                contentDescription = stringResource(R.string.exercises_search_clear),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+        tabState.SaveableStateProvider(showWorkouts) {
+            if (showWorkouts && templatesViewModel != null) {
+                WorkoutTemplatesScreen(templatesViewModel, onBack = null, onCreate = onCreateTemplate,
+                    onEdit = onEditTemplate, onWorkoutStarted = onWorkoutStarted)
+            } else {
+                when (val state = viewModel.uiState.collectAsState().value) {
+                    ExercisesUiState.Loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                    is ExercisesUiState.Error -> Column(Modifier.padding(16.dp)) {
+                        Text(stringResource(state.messageRes), color = MaterialTheme.colorScheme.error)
+                        TextButton(onClick = viewModel::retryLoad) { Text(stringResource(R.string.history_retry)) }
+                    }
+                    is ExercisesUiState.Success -> {
+                        ExerciseList(state, viewModel, visualProvider, onOpenConditionReference)
+                        state.selectedExerciseDetail?.let { exercise ->
+                            ExerciseDetailSheet(exercise, visualProvider, viewModel::closeExerciseDetail,
+                                onOpenConditionReference = onOpenConditionReference)
                         }
                     }
-                },
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                    focusedBorderColor = CrimsonRedPrimary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            )
-        }
-
-        // Muscle Group Filter Chips
-        item {
-            Column {
-                Text(
-                    text = stringResource(R.string.exercises_filter_muscle),
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.5.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(vocabulary.musclesByLabel(state.availableMuscles)) { muscle ->
-                        val isSelected = state.selectedMuscle.equals(muscle, ignoreCase = true)
-                        FilterChip(
-                            selected = isSelected,
-                            // The canonical English name is the filter key; the chip only
-                            // shows the reader's word for it.
-                            onClick = { onSelectMuscle(if (isSelected) null else muscle) },
-                            label = {
-                                Text(
-                                    text = vocabulary.muscle(muscle),
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurface
-                                )
-                            },
-                            colors = FilterChipDefaults.filterChipColors(
-                                containerColor = MaterialTheme.colorScheme.surface,
-                                selectedContainerColor = CrimsonRedPrimary,
-                                labelColor = MaterialTheme.colorScheme.onSurface,
-                                selectedLabelColor = TextWhite
-                            ),
-                            border = FilterChipDefaults.filterChipBorder(
-                                enabled = true,
-                                selected = isSelected,
-                                borderColor = MaterialTheme.colorScheme.outline,
-                                selectedBorderColor = CrimsonRedPrimary
-                            )
-                        )
-                    }
                 }
-            }
-        }
-
-        // Equipment Filter Chips
-        item {
-            Column {
-                Text(
-                    text = stringResource(R.string.exercises_filter_equipment),
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.5.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(vocabulary.equipmentByLabel(state.availableEquipment)) { equipment ->
-                        val isSelected = state.selectedEquipment.equals(equipment, ignoreCase = true)
-                        FilterChip(
-                            selected = isSelected,
-                            onClick = { onSelectEquipment(if (isSelected) null else equipment) },
-                            label = {
-                                Text(
-                                    text = vocabulary.equipment(equipment),
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface
-                                )
-                            },
-                            colors = FilterChipDefaults.filterChipColors(
-                                containerColor = MaterialTheme.colorScheme.surface,
-                                selectedContainerColor = MaterialTheme.colorScheme.secondary,
-                                labelColor = MaterialTheme.colorScheme.onSurface,
-                                selectedLabelColor = MaterialTheme.colorScheme.onSecondary
-                            ),
-                            border = FilterChipDefaults.filterChipBorder(
-                                enabled = true,
-                                selected = isSelected,
-                                borderColor = MaterialTheme.colorScheme.outline,
-                                selectedBorderColor = MaterialTheme.colorScheme.secondary
-                            )
-                        )
-                    }
-                }
-            }
-        }
-
-        // Exercise List Header
-        item {
-            Text(
-                text = pluralStringResource(
-                    R.plurals.count_exercises_found,
-                    state.exercises.size,
-                    LocaleFormatting.formatCount(state.exercises.size, locale)
-                ).uppercase(locale),
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.5.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-
-        if (state.exercises.isEmpty()) {
-            item {
-                Text(
-                    text = stringResource(R.string.exercises_empty),
-                    fontSize = 13.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-
-        // Exercise Items
-        items(state.exercises) { exercise ->
-            ExerciseListItem(exercise = exercise, onClick = { onOpenDetail(exercise) })
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-    }
-}
-
-@Composable
-private fun ExerciseListItem(
-    exercise: Exercise,
-    onClick: () -> Unit
-) {
-    val locale = LocalConfiguration.current.locales[0]
-    val vocabulary = LocalExerciseVocabulary.current
-    val separator = stringResource(R.string.detail_separator)
-    WallCrawlCard(
-        cornerRadius = 14.dp,
-        contentPadding = 14.dp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = vocabulary.exerciseName(exercise),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = vocabulary
-                        .muscles(exercise.primaryMuscles + exercise.secondaryMuscles)
-                        .joinToString(separator),
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-            exercise.programming?.let { programming ->
-                StatBadge(
-                    label = stringResource(programming.mechanics.labelRes),
-                    textColor = if (programming.mechanics == MechanicsType.COMPOUND) {
-                        CrimsonRedLight
-                    } else {
-                        MaterialTheme.colorScheme.secondary
-                    }
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            val listSeparator = stringResource(R.string.list_separator)
-            if (exercise.listedEquipment.isNotEmpty()) {
-                StatBadge(
-                    label = vocabulary.equipment(exercise.listedEquipment)
-                        .joinToString(listSeparator),
-                    icon = Icons.Default.FitnessCenter,
-                    textColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            exercise.programming?.recommendedRepRange?.let { repRange ->
-                StatBadge(
-                    label = pluralStringResource(
-                        R.plurals.count_reps,
-                        repRange.max,
-                        stringResource(
-                            R.string.prescription_rep_range,
-                            LocaleFormatting.formatCount(repRange.min, locale),
-                            LocaleFormatting.formatCount(repRange.max, locale)
-                        )
-                    ),
-                    textColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
         }
     }
@@ -405,150 +96,174 @@ private fun ExerciseListItem(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-private fun ExerciseDetailSheet(
-    exercise: Exercise,
+private fun ExerciseList(
+    state: ExercisesUiState.Success,
+    viewModel: ExercisesViewModel,
     visualProvider: ExerciseVisualProvider,
-    onDismiss: () -> Unit
+    onOpenConditionReference: (() -> Unit)?
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val locale = LocalConfiguration.current.locales[0]
+    var filtersOpen by rememberSaveable { mutableStateOf(false) }
     val vocabulary = LocalExerciseVocabulary.current
-    val listSeparator = stringResource(R.string.list_separator)
-
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        scrimColor = MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp)
-        ) {
-            // Illustration Component
-            ExerciseIllustration(
-                exercise = exercise,
-                visualProvider = visualProvider,
-                height = 200
+    val locale = LocalConfiguration.current.locales[0]
+    val activeFilters = listOfNotNull(state.selectedMuscle?.let(vocabulary::muscle), state.selectedEquipment?.let(vocabulary::equipment))
+    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)) {
+        item {
+            OutlinedTextField(
+                value = state.query, onValueChange = viewModel::onQueryChanged, modifier = Modifier.fillMaxWidth(),
+                singleLine = true, label = { Text(stringResource(R.string.guided_search_exercises)) },
+                leadingIcon = { Icon(Icons.Default.Search, null) },
+                trailingIcon = {
+                    if (state.query.isNotEmpty()) IconButton(onClick = { viewModel.onQueryChanged("") }) {
+                        Icon(Icons.Default.Close, stringResource(R.string.exercises_search_clear))
+                    }
+                }
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = vocabulary.exerciseName(exercise),
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Black,
-                color = MaterialTheme.colorScheme.onSurface
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                TextButton(onClick = { filtersOpen = true }, colors = ButtonDefaults.textButtonColors(
+                    contentColor = if (activeFilters.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary
+                )) {
+                    Icon(Icons.Default.FilterList, null)
+                    Spacer(Modifier.width(6.dp))
+                    Text(if (activeFilters.isEmpty()) stringResource(R.string.guided_filters) else
+                        stringResource(R.string.guided_filter_count, LocaleFormatting.formatCount(activeFilters.size, locale)))
+                }
+                if (onOpenConditionReference != null) TextButton(onClick = dropUnlessResumed { onOpenConditionReference() },
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant)) {
+                    Icon(Icons.AutoMirrored.Filled.LibraryBooks, null)
+                    Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.guided_condition_guide))
+                }
+            }
+            if (activeFilters.isNotEmpty()) Text(
+                activeFilters.joinToString(stringResource(R.string.detail_separator)),
+                style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface
             )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
             Text(
-                text = vocabulary.coachingSummary(exercise)
-                    ?: exercise.programming?.coachingSummary
-                    ?: stringResource(R.string.exercise_detail_no_programming),
-                fontSize = 14.sp,
-                lineHeight = 20.sp,
+                pluralStringResource(R.plurals.count_exercises_found, state.exercises.size,
+                    LocaleFormatting.formatCount(state.exercises.size, locale)),
+                Modifier.padding(vertical = 8.dp), style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-
-            // Said plainly rather than left for the reader to work out: this one summary
-            // has no Spanish yet, so it is shown in the language it was written in.
-            if (vocabulary.hasUntranslatedCoachingSummary(exercise)) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = stringResource(R.string.exercise_detail_original_language),
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Metadata Grid / FlowRow
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                StatBadge(
-                    label = stringResource(
-                        R.string.exercise_detail_primary,
-                        vocabulary.muscles(exercise.primaryMuscles).joinToString(listSeparator)
-                    ),
-                    textColor = CrimsonRedLight
-                )
-                if (exercise.secondaryMuscles.isNotEmpty()) {
-                    StatBadge(
-                        label = stringResource(
-                            R.string.exercise_detail_secondary,
-                            vocabulary.muscles(exercise.secondaryMuscles)
-                                .joinToString(listSeparator)
-                        ),
-                        textColor = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                if (exercise.listedEquipment.isNotEmpty()) {
-                    StatBadge(
-                        label = stringResource(
-                            R.string.exercise_detail_equipment,
-                            vocabulary.equipment(exercise.listedEquipment)
-                                .joinToString(listSeparator)
-                        ),
-                        textColor = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                exercise.programming?.let { programming ->
-                    StatBadge(
-                        label = stringResource(
-                            R.string.exercise_detail_pattern,
-                            stringResource(programming.movementPattern.labelRes)
-                        ),
-                        textColor = MaterialTheme.colorScheme.onSurface
-                    )
-                    StatBadge(
-                        label = stringResource(
-                            R.string.exercise_detail_difficulty,
-                            stringResource(programming.difficulty.labelRes)
-                        ),
-                        textColor = MaterialTheme.colorScheme.onSurface
-                    )
-                    programming.recommendedRepRange?.let { repRange ->
-                        StatBadge(
-                            label = pluralStringResource(
-                                R.plurals.count_target_reps,
-                                repRange.max,
-                                stringResource(
-                                    R.string.prescription_rep_range,
-                                    LocaleFormatting.formatCount(repRange.min, locale),
-                                    LocaleFormatting.formatCount(repRange.max, locale)
-                                )
-                            ),
-                            textColor = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                    StatBadge(
-                        label = stringResource(
-                            R.string.exercise_detail_fatigue,
-                            LocaleFormatting.formatCount(programming.fatigueScore, locale)
-                        ),
-                        textColor = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                } ?: StatBadge(
-                    label = stringResource(R.string.exercise_detail_review_pending),
-                    textColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            WallCrawlPrimaryButton(
-                text = stringResource(R.string.exercise_detail_close),
-                onClick = onDismiss
+        }
+        if (state.exercises.isEmpty()) item { Text(stringResource(R.string.exercises_empty)) }
+        items(state.exercises, key = Exercise::id) { exercise ->
+            ListItem(
+                modifier = Modifier.clickable(role = Role.Button) { viewModel.openExerciseDetail(exercise) },
+                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.background),
+                leadingContent = {
+                    ExerciseIllustration(exercise, visualProvider, Modifier.size(64.dp).clearAndSetSemantics {},
+                        height = 64, thumbnail = true)
+                },
+                headlineContent = { Text(vocabulary.exerciseName(exercise)) },
+                supportingContent = {
+                    val equipment = vocabulary.equipment(exercise.listedEquipment)
+                    Text(equipment.ifEmpty { vocabulary.muscles(exercise.primaryMuscles) }
+                        .joinToString(stringResource(R.string.list_separator)))
+                },
+                trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) }
             )
+            HorizontalDivider()
+        }
+    }
+    if (filtersOpen) {
+        ModalBottomSheet(onDismissRequest = { filtersOpen = false },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+            Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.guided_filters), Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
+                    TextButton(enabled = activeFilters.isNotEmpty(), onClick = {
+                        viewModel.selectMuscle(null)
+                        viewModel.selectEquipment(null)
+                    }) { Text(stringResource(R.string.guided_clear_filters)) }
+                }
+                Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FilterOptions(stringResource(R.string.guided_muscles), vocabulary.musclesByLabel(state.availableMuscles),
+                        state.selectedMuscle, vocabulary::muscle, viewModel::selectMuscle)
+                    FilterOptions(stringResource(R.string.guided_equipment), vocabulary.equipmentByLabel(state.availableEquipment),
+                        state.selectedEquipment, vocabulary::equipment, viewModel::selectEquipment)
+                }
+                Button(onClick = { filtersOpen = false }, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.guided_show_results))
+                }
+            }
+        }
+    }
+}
 
-            Spacer(modifier = Modifier.height(16.dp))
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun FilterOptions(
+    title: String, keys: List<String>, selected: String?, label: (String) -> String, onSelect: (String) -> Unit
+) {
+    Text(title, style = MaterialTheme.typography.titleMedium)
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        keys.forEach { key ->
+            FilterChip(selected = key == selected, onClick = { onSelect(key) }, label = { Text(label(key)) })
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun ExerciseDetailSheet(
+    exercise: Exercise,
+    visualProvider: ExerciseVisualProvider,
+    onDismiss: () -> Unit,
+    onOpenConditionReference: (() -> Unit)? = null
+) {
+    var moreDetails by rememberSaveable(exercise.id) { mutableStateOf(false) }
+    val vocabulary = LocalExerciseVocabulary.current
+    val listSeparator = stringResource(R.string.list_separator)
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text(vocabulary.exerciseName(exercise), style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.semantics { heading() })
+            ExerciseIllustration(exercise, visualProvider, height = 200)
+            vocabulary.coachingSummary(exercise)?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
+            if (vocabulary.hasUntranslatedCoachingSummary(exercise)) Text(stringResource(R.string.exercise_detail_original_language),
+                style = MaterialTheme.typography.bodySmall)
+            if (exercise.listedEquipment.isNotEmpty()) Text(stringResource(R.string.exercise_detail_equipment,
+                vocabulary.equipment(exercise.listedEquipment).joinToString(listSeparator)))
+            TextButton(onClick = { moreDetails = !moreDetails }) {
+                Text(stringResource(if (moreDetails) R.string.today_hide_details else R.string.guided_more_details))
+            }
+            if (moreDetails) {
+                val locale = LocalConfiguration.current.locales[0]
+                Text(stringResource(R.string.exercise_detail_primary, vocabulary.muscles(exercise.primaryMuscles).joinToString(listSeparator)))
+                if (exercise.secondaryMuscles.isNotEmpty()) Text(stringResource(R.string.exercise_detail_secondary,
+                    vocabulary.muscles(exercise.secondaryMuscles).joinToString(listSeparator)))
+                val programming = exercise.programming
+                if (programming != null) {
+                    Text(stringResource(programming.mechanics.labelRes))
+                    Text(stringResource(R.string.exercise_detail_pattern, stringResource(programming.movementPattern.labelRes)))
+                    Text(stringResource(R.string.exercise_detail_difficulty, stringResource(programming.difficulty.labelRes)))
+                    programming.recommendedRepRange?.let { range ->
+                        Text(pluralStringResource(R.plurals.count_target_reps, range.max, stringResource(
+                            R.string.prescription_rep_range, LocaleFormatting.formatCount(range.min, locale),
+                            LocaleFormatting.formatCount(range.max, locale))))
+                    }
+                    Text(stringResource(R.string.exercise_detail_fatigue, LocaleFormatting.formatCount(programming.fatigueScore, locale)))
+                } else Text(stringResource(R.string.exercise_detail_review_pending))
+                exercise.source?.attribution?.let { attribution ->
+                    val uriHandler = LocalUriHandler.current
+                    var failedUrl by remember { mutableStateOf<String?>(null) }
+                    val source = attribution.source
+                    val links = listOf(attribution.creator to attribution.creatorUrl, attribution.license to attribution.licenseUrl) +
+                        listOfNotNull(source?.let { it.name to it.url })
+                    links.distinct().forEach { (title, url) ->
+                        TextButton(onClick = {
+                            failedUrl = runCatching { uriHandler.openUri(url) }.exceptionOrNull()?.let { url }
+                        }) { Text(title) }
+                    }
+                    failedUrl?.let { Text(stringResource(R.string.credits_link_failed, it), color = MaterialTheme.colorScheme.error) }
+                }
+                if (onOpenConditionReference != null) TextButton(onClick = dropUnlessResumed { onOpenConditionReference() }) {
+                    Text(stringResource(R.string.guided_condition_guide))
+                }
+            }
+            WallCrawlPrimaryButton(stringResource(R.string.exercise_detail_close), onClick = onDismiss)
         }
     }
 }

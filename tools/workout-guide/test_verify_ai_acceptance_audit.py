@@ -9,7 +9,7 @@ import shutil
 import tempfile
 import unittest
 
-from import_catalog import _read_object, upstream_entries_only
+from import_catalog import _read_object
 from render_review_packet import render_packet
 
 
@@ -38,9 +38,7 @@ class VerifyAiAcceptanceAuditTest(unittest.TestCase):
         self.audit = json.loads(self.raw)
         self.ledger = _read_object(ROOT / LEDGER_PATH, "ledger")
         self.metadata = _read_object(ROOT / "tools/workout-guide/reviewed-metadata.json", "metadata")
-        self.catalog = upstream_entries_only(
-            _read_object(ROOT / "app/src/main/assets/workout-guide/catalog.json", "catalog")
-        )
+        self.catalog = _read_object(ROOT / "app/src/main/assets/workout-guide/catalog.json", "catalog")
         self.fixture = _read_object(ROOT / FIXTURE_PATH, "partition")
         self.programming = (ROOT / PROGRAMMING_PATH).read_bytes()
         self.verifier = importlib.import_module("verify_ai_acceptance_audit")

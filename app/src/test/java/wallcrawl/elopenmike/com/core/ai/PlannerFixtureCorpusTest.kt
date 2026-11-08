@@ -40,11 +40,17 @@ class PlannerFixtureCorpusTest {
             "reviewed-enabled-uncleared-joint-constraint",
             "reviewed-enabled-cleared-joint-constraints",
             "concurrent-activity",
-            "condition-piriformis",
-            "joint-label-hip",
-            "condition-removes-all"
+            "condition-released",
+            "condition-compatible",
+            "condition-incompatible",
+            "condition-missing-context",
+            "condition-withdrawn",
+            "condition-duration",
+            "condition-equipment",
+            "condition-pain-stop",
+            "condition-removed-pain-stop"
         ).inOrder()
-        assertThat(fixtures.map { it.id }.distinct()).hasSize(17)
+        assertThat(fixtures.map { it.id }.distinct()).hasSize(23)
     }
 
     @Test
@@ -53,7 +59,7 @@ class PlannerFixtureCorpusTest {
 
         val realized = fixtures.map(contextFactory::create)
 
-        assertThat(realized.map { it.catalogExercises.size }.distinct()).containsExactly(309)
+        assertThat(realized.map { it.catalogExercises.size }.distinct()).containsExactly(302)
         realized.forEach { built ->
             assertThat(built.userProfile.availableEquipment)
                 .containsExactlyElementsIn(built.fixture.profile.availableEquipment)
@@ -103,7 +109,7 @@ class PlannerFixtureCorpusTest {
         val built = contextFactory.create(withCompletedHistory)
         val ledger = checkNotNull(built.context.trainingProgramState).weeklyLedger
 
-        assertThat(ledger.policyVersion).isEqualTo(LedgerPolicyVersion.PRIMARY_ONLY_V1)
+        assertThat(ledger.policyVersion).isEqualTo(LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2)
         assertThat(ledger.weekStartEpochDay).isEqualTo(MONDAY_EPOCH_DAY)
         assertThat(ledger.timeZoneId).isEqualTo("UTC")
         assertThat(ledger.catalogVersion).isEqualTo(base.catalogVersion)
@@ -153,7 +159,7 @@ class PlannerFixtureCorpusTest {
     fun bundledCatalogProjection_distinguishesAiAcceptanceFromPendingAndHumanApproval() {
         val exercises = contextFactory.bundledCatalogProjection().exercises
 
-        assertThat(exercises).hasSize(309)
+        assertThat(exercises).hasSize(302)
         assertThat(exercises.count { it.reviewedMetadata?.reviewState == ReviewState.DRAFT })
             .isEqualTo(29)
         assertThat(exercises.count { it.reviewedMetadata?.reviewState == ReviewState.AI_ACCEPTED })
@@ -181,10 +187,10 @@ class PlannerFixtureCorpusTest {
         assertThat(built.context.trainingProgramState?.adaptationState)
             .isEqualTo(reviewedEligibility.adaptationState)
         assertThat(built.context.trainingProgramState?.weeklyLedger?.policyVersion)
-            .isEqualTo(LedgerPolicyVersion.PRIMARY_ONLY_V1)
+            .isEqualTo(LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2)
         assertThat(built.context.trainingProgramState?.weeklyLedger?.directPrimarySets)
             .isEmpty()
-        assertThat(built.catalogExercises).hasSize(309)
+        assertThat(built.catalogExercises).hasSize(302)
         assertThat(
             built.catalogExercises.filter {
                 it.reviewedMetadata?.reviewState == ReviewState.APPROVED
@@ -195,7 +201,7 @@ class PlannerFixtureCorpusTest {
                 built.catalogExercises.filter { it.id in syntheticIds }.map(Exercise::id)
             )
             .inOrder()
-        assertThat(result.decisions).hasSize(309)
+        assertThat(result.decisions).hasSize(302)
         assertThat(result.decisions.filter { it.eligible }.map { it.exerciseId })
             .containsExactlyElementsIn(result.exercises.map(Exercise::id))
             .inOrder()
@@ -221,7 +227,7 @@ class PlannerFixtureCorpusTest {
 
         assertThat(built.context.allowedExercises).isEmpty()
         assertThat(result.failure).isEqualTo(AutomaticEligibilityFailure.NO_APPROVED_METADATA)
-        assertThat(result.decisions).hasSize(309)
+        assertThat(result.decisions).hasSize(302)
         assertThat(result.decisions.all { decision ->
             !decision.eligible &&
                 decision.reasons == listOf(EligibilityReason.MISSING_APPROVED_METADATA)

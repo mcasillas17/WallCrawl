@@ -1,11 +1,7 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import wallcrawl.elopenmike.com.core.model.Exercise
-import wallcrawl.elopenmike.com.core.conditions.MobilityBlockPolicy
-import wallcrawl.elopenmike.com.core.conditions.ranksLower
-import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
-import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.GeneratedExercise
@@ -22,6 +18,15 @@ import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
 import wallcrawl.elopenmike.com.core.model.WorkoutSplit
 import wallcrawl.elopenmike.com.core.model.WorkoutTitleSpec
 import java.util.concurrent.atomic.AtomicInteger
+import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
+import wallcrawl.elopenmike.com.core.model.ConditionViolation
+import wallcrawl.elopenmike.com.core.model.ConditionRuleEffect
+import wallcrawl.elopenmike.com.core.model.ConditionPrescriptionDecision
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
+import wallcrawl.elopenmike.com.core.model.ProgressionDecision
+import wallcrawl.elopenmike.com.core.model.ProgressionReason
+import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.convertWeight
 
 /**
  * Rule-based on-device workout planner: the tier that always works.
@@ -45,16 +50,24 @@ class FakeWorkoutPlanner(
 
     override suspend fun generateWorkout(context: WorkoutGenerationContext): GeneratedWorkout {
         context.validatedProgramSession()
-        val candidates = context.allowedExercises
+        val planning = context.conditionPlanning
+        if (planning is ConditionPlanningResult.Blocked) conditionPlanningFailure(planning.reasons)
+        val ready = planning as? ConditionPlanningResult.Ready
+        fun refuse(reason: String): Nothing = conditionPlanningFailure(listOf(ConditionViolation(
+            reason, ready?.context?.selectedConditions.orEmpty().map { it.conditionId }.toSet())))
+        val supportive = ready?.let { supportiveExercises(context, it) }.orEmpty()
+        val reservedIds = supportive.map { it.exerciseId }.toSet()
+        val budgetSeconds = context.preferredWorkoutDurationMinutes.toLong() * 60L
+        val supportiveSeconds = WorkoutDurationEstimator.estimateSeconds(supportive)
+        if (ready != null && supportiveSeconds >= budgetSeconds) refuse("insufficient-duration")
+        val candidates = if (ready == null) context.allowedExercises else context.allowedExercises.filter {
+            it.id in ready.ordinaryRules && it.id !in reservedIds
+        }
+        if (ready != null && candidates.isEmpty()) refuse("insufficient-ordinary-focus")
         if (candidates.isEmpty()) {
-            // The reviewed path off with reported conditions yields an empty list that must
-            // read as the guidance failure, not as an equipment shortfall.
             val reviewedFailure =
                 (context.automaticEligibilityResult as? AutomaticEligibilityResult.NoCandidates)
                     ?.failure
-                    ?: AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE.takeIf {
-                        context.conditionRestrictions == ConditionRestrictions.Unavailable
-                    }
             throw WorkoutValidationException(
                 message = "Cannot generate workout: no allowed candidate exercises available.",
                 failure = if (reviewedFailure != null) {
@@ -67,13 +80,51 @@ class FakeWorkoutPlanner(
         }
         val generationIndex = context.regenerationIndex ?: if (context.programInput != null) 0 else generationCounter.getAndIncrement()
         require(generationIndex >= 0) { "Generation index must not be negative." }
-        val splitType = determineSplit(context, generationIndex, candidates)
+        val splitType = try {
+            determineSplit(context, generationIndex, candidates)
+        } catch (error: WorkoutValidationException) {
+            if (ready != null) refuse("insufficient-ordinary-focus") else throw error
+        }
 
-        val selection = selectExercisesForSplit(splitType, candidates, context)
-        val selectedExercises = selection.exercises
-        val prescriptionDecisions = selectedExercises.map { prescriptionFactory.createDecision(it, context) }
+        val selectionContext = if (ready == null) context else context.copy(
+            preferredWorkoutDurationMinutes = ((budgetSeconds - supportiveSeconds) / 60L).toInt())
+        val selection = selectExercisesForSplit(splitType, candidates, selectionContext)
+        val selectedExercises = selection.exercises.toMutableList()
+        if (ready != null) {
+            val constraints = context.programConstraints
+            val patterns = selectedExercises.mapNotNull { it.acceptedMetadata()?.movementPattern ?: it.programming?.movementPattern }.toSet()
+            val families = selectedExercises.mapNotNull { it.acceptedMetadata()?.progressionFamily }
+            if (!patterns.containsAll(constraints.requiredMovementPatterns) ||
+                constraints.uniqueProgressionFamilies && families.distinct().size != families.size ||
+                selectedExercises.map { it.id }.distinct().size != selectedExercises.size
+            ) refuse("insufficient-ordinary-constraints")
+        }
+        val prescriptionDecisions = selectedExercises.map { prescriptionFactory.createDecision(it, context) }.toMutableList()
+        val conditionDecisions = mutableListOf<ConditionPrescriptionDecision>()
+        if (ready != null) {
+            fitOrdinaryBudget(selectedExercises, prescriptionDecisions, ready, budgetSeconds - supportiveSeconds, splitType, context)
+            selectedExercises.zip(prescriptionDecisions).forEach { (exercise, decision) ->
+                when (val applied = ConditionPlanningPolicy().applyOrdinary(exercise, decision.prescription, ready)) {
+                    is ConditionPrescriptionResult.Blocked -> conditionPlanningFailure(applied.reasons)
+                    is ConditionPrescriptionResult.Applied -> conditionDecisions += applied.decisions
+                }
+            }
+            ready.supportive.forEach { support ->
+                val rules = ready.context.appliedRules.filter { it.exerciseIdentity.exerciseId == support.exerciseId && it.purpose == PrescriptionPurpose.SUPPORTIVE }
+                if (rules.isEmpty() || rules.map { it.reference }.toSet() != support.sourceRuleReferences ||
+                    rules.any { it.executionIdentity != support.executionIdentity || it.exerciseIdentity != rules.first().exerciseIdentity }
+                ) refuse("support-identity-mismatch")
+                conditionDecisions += ConditionPrescriptionDecision(rules.first().exerciseIdentity,
+                    PrescriptionPurpose.SUPPORTIVE, support.executionIdentity, support.sourceRuleReferences)
+            }
+        }
         val generatedExerciseList = selectedExercises.zip(prescriptionDecisions).map { (exercise, decision) ->
             GeneratedExercise(exercise.id, decision.prescription, exercise.programming?.coachingSummary.orEmpty())
+        } + supportive
+        if (ready != null) {
+            val violations = generatedExerciseList.flatMap { ConditionPlanningPolicy().validate(it, ready) }
+            if (violations.isNotEmpty()) conditionPlanningFailure(violations)
+            if (WorkoutDurationEstimator.estimateSeconds(generatedExerciseList) > budgetSeconds) refuse("insufficient-duration")
         }
 
         val breakWeeks = context.userProfile.returningAfterBreakWeeks
@@ -82,14 +133,7 @@ class FakeWorkoutPlanner(
 
         val goals = context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) }
         val focusMuscles = extractFocusMuscles(selectedExercises)
-        val mobilityBlock = MobilityBlockPolicy.select(
-            restrictions = context.conditionRestrictions,
-            exercises = context.routineExercises,
-            profile = context.userProfile,
-            mainExerciseIds = selectedExercises.mapTo(hashSetOf(), Exercise::id),
-            seed = rotationSeed(context, generationIndex)
-        )
-        val estimatedDuration = WorkoutDurationEstimator.estimateMinutes(generatedExerciseList + mobilityBlock)
+        val estimatedDuration = WorkoutDurationEstimator.estimateMinutes(generatedExerciseList)
         val breakRange = BreakDurationHelper.findMatchingRange(breakWeeks)
         // Ordered by the enum rather than by set iteration, so the same profile always
         // produces the same title and the same explanation.
@@ -101,6 +145,15 @@ class FakeWorkoutPlanner(
             else -> WorkoutRationaleSpec.GoalFocus(orderedGoals, focusMuscles)
         }
 
+        val removedIds = selection.exercises.map { it.id }.toSet() - selectedExercises.map { it.id }.toSet()
+        val rankingReasons = selection.rankingReasons.filter { reason ->
+            when (reason) {
+                is WorkoutRankingReason.SupportedRegressionPreference ->
+                    reason.preferredExerciseId !in removedIds && reason.sourceExerciseId !in removedIds
+                is WorkoutRankingReason.TrainingFrequencyRecencyPreference ->
+                    reason.preferredExerciseId !in removedIds && reason.alternativeExerciseId !in removedIds
+            }
+        }
         return GeneratedWorkout(
             title = WorkoutTitleSpec(
                 split = splitType,
@@ -111,12 +164,83 @@ class FakeWorkoutPlanner(
             estimatedDurationMinutes = estimatedDuration,
             exercises = generatedExerciseList,
             rationale = rationale,
-            rankingReasons = selection.rankingReasons,
+            rankingReasons = rankingReasons,
             progressionDecisions = prescriptionDecisions.takeIf { context.trainingProgramState != null }.orEmpty(),
             unavailableFocusMuscles = unavailableFocusMuscles(context, candidates),
             generationIndex = generationIndex,
-            mobilityBlock = mobilityBlock
+            conditionDecisions = conditionDecisions
         )
+    }
+
+    private fun supportiveExercises(
+        context: WorkoutGenerationContext,
+        ready: ConditionPlanningResult.Ready
+    ): List<GeneratedExercise> {
+        fun refuse(reason: String): Nothing = conditionPlanningFailure(listOf(ConditionViolation(
+            reason, ready.context.selectedConditions.map { it.conditionId }.toSet())))
+        if (ready.weightUnit != context.preferredUnits) refuse("weight-unit-mismatch")
+        val evidence = ready.context.consumedScheduleEvidence
+        val authored = evidence.associate { item ->
+            val reference = item.reference
+            val record = context.conditionSupport?.records?.get(reference.conditionId)
+            val case = record?.cases?.singleOrNull { it.id == reference.caseId }
+            val rule = case?.rules?.singleOrNull { it.id == reference.ruleId }
+            val selection = ready.context.selectedConditions.singleOrNull { it.conditionId == reference.conditionId }
+            if (record?.contentVersion != reference.supportVersion || record.policyVersion != reference.policyVersion ||
+                selection == null || selection.contextSchemaVersion != record.contextSchemaVersion ||
+                case == null || !case.requiredAnswers.all { (id, value) -> selection.answers[id] == value } ||
+                rule?.effect != ConditionRuleEffect.PRESCRIBE_SUPPORTIVE || rule.schedule == null
+            ) refuse("unresolved-support-schedule")
+            if (rule.schedule.sessionsPerWeek > context.trainingFrequencyDaysPerWeek) refuse("insufficient-training-frequency")
+            reference to rule
+        }
+        if (ready.supportive.map { it.exerciseId }.distinct().size != ready.supportive.size) refuse("duplicate-support")
+        return ready.supportive.map { support ->
+            if (support.sourceRuleReferences.any { reference ->
+                    val rule = authored[reference]
+                    rule == null || rule.exerciseIdentity.exerciseId != support.exerciseId ||
+                        rule.executionIdentity != support.executionIdentity || rule.schedule != support.schedule ||
+                        rule.supportivePrescription != support.prescription
+                }) refuse("support-identity-mismatch")
+            GeneratedExercise(support.exerciseId, support.prescription.copy(
+                targetWeight = support.prescription.targetWeight?.let { convertWeight(it, WeightUnit.KG, ready.weightUnit) },
+                targetAssistanceWeight = support.prescription.targetAssistanceWeight?.let { convertWeight(it, WeightUnit.KG, ready.weightUnit) }
+            ))
+        }
+    }
+
+    private fun fitOrdinaryBudget(
+        exercises: MutableList<Exercise>,
+        decisions: MutableList<ProgressionDecision>,
+        ready: ConditionPlanningResult.Ready,
+        seconds: Long,
+        split: WorkoutSplit,
+        context: WorkoutGenerationContext
+    ) {
+        fun total() = WorkoutDurationEstimator.estimateSeconds(decisions.map { GeneratedExercise(it.exerciseId, it.prescription) })
+        // Reduce surplus sets before considering removal of an optional exercise.
+        for (index in decisions.indices.reversed()) {
+            val decision = decisions[index]
+            val minimum = ready.ordinaryRules.getValue(decision.exerciseId).bounds.minSets ?: 1
+            var prescription = decision.prescription
+            while (total() > seconds && prescription.targetSets > minimum) {
+                prescription = prescription.copy(targetSets = prescription.targetSets - 1)
+                decisions[index] = decision.copy(reason = ProgressionReason.HOLD_VALIDATION_REPAIR, axis = null,
+                    referencePrescription = decision.prescription, prescription = prescription, sourceSessionIds = emptyList())
+            }
+        }
+        for (index in exercises.indices.reversed()) {
+            if (total() <= seconds) break
+            val remaining = exercises.filterIndexed { position, _ -> position != index }
+            val patterns = remaining.mapNotNull { it.acceptedMetadata()?.movementPattern ?: it.programming?.movementPattern }.toSet()
+            // Removal cannot introduce duplicate IDs/families; focus and required movements must survive.
+            if (remaining.any { split.trainsAsFocus(it) } && patterns.containsAll(context.programConstraints.requiredMovementPatterns)) {
+                exercises.removeAt(index)
+                decisions.removeAt(index)
+            }
+        }
+        if (total() > seconds) conditionPlanningFailure(listOf(ConditionViolation(
+            "insufficient-duration", ready.context.selectedConditions.map { it.conditionId }.toSet())))
     }
 
     /**
@@ -357,7 +481,6 @@ class FakeWorkoutPlanner(
             .filter { it.programming?.mechanics == MechanicsType.COMPOUND }
             .sortedWith(
                 compareByDescending<Exercise> { split.trainsAsFocus(it) }
-                    .thenBy { context.conditionRestrictions.ranksLower(it.id) }
                     .thenBy { capabilityPenalties.getValue(it.id) }
                     .thenBy { if (it.id in supportedRegressionPreferences) 0 else 1 }
                     .thenBy {
@@ -404,7 +527,6 @@ class FakeWorkoutPlanner(
         schedulingPreferences: Set<String>
     ): Comparator<Exercise> =
         compareByDescending<Exercise> { split.trainsAsFocus(it) }
-            .thenBy { context.conditionRestrictions.ranksLower(it.id) }
             .thenByDescending { it.programming?.mechanics == MechanicsType.ISOLATION }
             .thenByDescending { it.programming != null }
             .thenBy { capabilityPenalties.getValue(it.id) }

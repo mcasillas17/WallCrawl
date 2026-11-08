@@ -9,8 +9,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 
-/** The user stopped a set for pain; [exerciseId] may be left out of automatic plans if they agree. */
-data class PainExclusionOffer(val exerciseId: String)
+data class PainExclusionOffer(val exerciseId: String, val saving: Boolean, val saveFailed: Boolean)
 
 /** What finishing the workout right now would mean. */
 sealed interface FinishDecision {
@@ -59,9 +58,6 @@ sealed interface ActiveWorkoutUiState {
         val programAssociation: wallcrawl.elopenmike.com.core.model.ProgramHistoryAssociation? = null,
         @StringRes val programReadError: Int? = null,
         val programFinishUnsupported: Boolean = false,
-        /** Display only: cues for exercises with a modify demand or a routine cue. */
-        val restrictions: wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions =
-            wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.None,
         val painExclusionOffer: PainExclusionOffer? = null
     ) : ActiveWorkoutUiState {
         val currentExercise: WorkoutExercise?
@@ -75,18 +71,11 @@ sealed interface ActiveWorkoutUiState {
 
         val totalExercises: Int
             get() = session.exercises.size
-
-        /** 1-based position among rows of the current row's role, and how many such rows exist. */
-        val positionInRole: Pair<Int, Int>
-            get() {
-                val role = currentExercise?.role ?: return currentExerciseIndex + 1 to totalExercises
-                val sameRole = session.exercises.withIndex().filter { it.value.role == role }
-                return (sameRole.indexOfFirst { it.index == currentExerciseIndex } + 1) to sameRole.size
-            }
     }
 
     data class Completed(
-        val summary: WorkoutSummary
+        val summary: WorkoutSummary,
+        val advancedPartialProgram: Boolean = false
     ) : ActiveWorkoutUiState
 
     data class Error(@StringRes val messageRes: Int) : ActiveWorkoutUiState
@@ -99,8 +88,7 @@ sealed interface ActiveWorkoutUiState {
  * but it also never counts as completed work.
  */
 internal fun WorkoutSession.openSetCount(): Int =
-    // Mobility rows are optional general information; leaving them open never blocks finishing.
-    exercises.filter { it.role == wallcrawl.elopenmike.com.core.model.ExerciseRole.MAIN }.sumOf { exercise -> exercise.sets.count { !it.isResolved } }
+    exercises.sumOf { exercise -> exercise.sets.count { !it.isResolved } }
 
 internal fun WorkoutSession.finishDecision(): FinishDecision {
     val open = openSetCount()

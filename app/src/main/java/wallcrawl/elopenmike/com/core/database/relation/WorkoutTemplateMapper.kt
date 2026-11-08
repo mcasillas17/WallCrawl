@@ -4,6 +4,7 @@ import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 
 /**
@@ -52,7 +53,8 @@ internal fun WorkoutTemplateWithExercises.toWorkoutTemplate(): WorkoutTemplate =
                 restSeconds = exercise.restSeconds,
                 effortTarget = effortTarget,
                 restClass = exercise.restClass,
-                restTargetSource = exercise.restTargetSource
+                restTargetSource = exercise.restTargetSource,
+                purpose = PrescriptionPurpose.valueOf(exercise.purpose)
             ),
             notes = exercise.notes
         )

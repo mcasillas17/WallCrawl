@@ -23,7 +23,12 @@ import wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary
  */
 class BundledExerciseLocalizationTest {
 
-    private val catalog = readJson(CATALOG_FILE)
+    private val upstream = readJson(CATALOG_FILE)
+    private val supplement = readJson(File(ASSET_ROOT, "wallcrawl/catalog.json"))
+    private val catalog = JSONObject(upstream.toString()).also { merged ->
+        val local = supplement.getJSONArray("exercises")
+        for (index in 0 until local.length()) merged.getJSONArray("exercises").put(local.getJSONObject(index))
+    }
     private val overlay = readJson(OVERLAY_FILE)
 
     private val catalogIds: List<String> = catalog.getJSONArray("exercises").let { array ->
@@ -37,7 +42,8 @@ class BundledExerciseLocalizationTest {
         // Without this, every assertion below could pass vacuously.
         assertThat(CATALOG_FILE.exists()).isTrue()
         assertThat(OVERLAY_FILE.exists()).isTrue()
-        assertThat(catalogIds).hasSize(EXPECTED_EXERCISES)
+        assertThat(upstream.getJSONArray("exercises").length()).isEqualTo(EXPECTED_EXERCISES)
+        assertThat(catalogIds).hasSize(EXPECTED_EXERCISES + supplement.getJSONArray("exercises").length())
         assertThat(overlay.getInt("schemaVersion")).isEqualTo(1)
         assertThat(overlay.getJSONArray("languages").getString(0)).isEqualTo("es")
     }
@@ -66,7 +72,7 @@ class BundledExerciseLocalizationTest {
         val array = catalog.getJSONArray("exercises")
         val missing = (0 until array.length()).mapNotNull { index ->
             val exercise = array.getJSONObject(index)
-            val english = exercise.optJSONObject("programming")?.optString("coachingSummary")
+            val english = exercise.optString("executionGuidance").ifBlank { exercise.optJSONObject("programming")?.optString("coachingSummary") }
             if (english.isNullOrBlank()) return@mapNotNull null
             val spanish = overlayExercises.optJSONObject(exercise.getString("id"))
                 ?.optJSONObject("es")
@@ -82,7 +88,7 @@ class BundledExerciseLocalizationTest {
         val array = catalog.getJSONArray("exercises")
         val withEnglish = (0 until array.length())
             .map { array.getJSONObject(it) }
-            .filter { !it.optJSONObject("programming")?.optString("coachingSummary").isNullOrBlank() }
+            .filter { !it.optString("executionGuidance").isNullOrBlank() || !it.optJSONObject("programming")?.optString("coachingSummary").isNullOrBlank() }
             .map { it.getString("id") }
             .toSet()
 
@@ -208,7 +214,7 @@ class BundledExerciseLocalizationTest {
         JSONTokener(file.readText()).nextValue() as JSONObject
 
     private companion object {
-        const val EXPECTED_EXERCISES = 309
+        const val EXPECTED_EXERCISES = 302
 
         val ASSET_ROOT: File = generateSequence(File(".").absoluteFile) { it.parentFile }
             .map { File(it, "app/src/main/assets") }

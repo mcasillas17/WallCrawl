@@ -17,6 +17,7 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
  * different meaning than the one the user saved.
  */
 internal fun UserProfileEntity.toUserProfile(): UserProfile {
+    val (knownConstraints, unresolvedConstraints) = decodeTrainingConstraints(trainingConstraintsJson)
     val priorities = if (musclePrioritiesJson.isBlank()) {
         emptyMap()
     } else {
@@ -63,15 +64,16 @@ internal fun UserProfileEntity.toUserProfile(): UserProfile {
         musclePriorities = priorities,
         excludedExerciseIds = excluded,
         onboardingCompleted = onboardingCompleted,
-        trainingConstraints = decodeTrainingConstraints(trainingConstraintsJson),
+        trainingConstraints = knownConstraints,
         returningAfterBreakWeeks = returningAfterBreakWeeks,
         confirmedStartingLoads = decodeConfirmedStartingLoads(confirmedStartingLoadsJson),
         movementCapabilities = MovementCapabilitiesCodec.decode(movementCapabilitiesJson),
         themePreference = themePreference,
         gender = gender,
         illustrationPreference = illustrationPreference,
-        reportedConditions = reportedConditionsJson.split(PERSISTED_LIST_SEPARATOR)
-            .filter { it.isNotBlank() }.toSet()
+        activeConditions = ConditionContextCodec.decodeSelections(activeConditionsJson),
+        unresolvedTrainingConstraintsRaw = unresolvedConstraints,
+        reportedConditions = ConditionContextCodec.decodeReports(reportedConditionsJson)
     )
 }
 
@@ -90,7 +92,11 @@ internal fun UserProfile.toUserProfileEntity(): UserProfileEntity = UserProfileE
     },
     excludedExerciseIdsJson = excludedExerciseIds.joinToString(PERSISTED_LIST_SEPARATOR),
     onboardingCompleted = onboardingCompleted,
-    trainingConstraintsJson = trainingConstraints.joinToString(PERSISTED_LIST_SEPARATOR) { it.name },
+    trainingConstraintsJson = unresolvedTrainingConstraintsRaw?.also {
+        require(decodeTrainingConstraints(it).first == trainingConstraints) {
+            "Unresolved training constraints cannot be changed through known constraint controls."
+        }
+    } ?: trainingConstraints.joinToString(PERSISTED_LIST_SEPARATOR) { it.name },
     returningAfterBreakWeeks = returningAfterBreakWeeks,
     confirmedStartingLoadsJson = confirmedStartingLoads.entries
         .joinToString(PERSISTED_LIST_SEPARATOR) { "${it.key}$PERSISTED_PAIR_SEPARATOR${it.value}" },
@@ -99,7 +105,8 @@ internal fun UserProfile.toUserProfileEntity(): UserProfileEntity = UserProfileE
     themePreference = themePreference,
     gender = gender,
     illustrationPreference = illustrationPreference,
-    reportedConditionsJson = reportedConditions.joinToString(PERSISTED_LIST_SEPARATOR)
+    activeConditionsJson = ConditionContextCodec.encodeSelections(activeConditions),
+    reportedConditionsJson = ConditionContextCodec.encodeReports(reportedConditions)
 )
 
 private fun decodeFitnessGoals(raw: String): Set<FitnessGoal> {
@@ -116,18 +123,13 @@ private fun decodeFitnessGoals(raw: String): Set<FitnessGoal> {
         .toSet()
 }
 
-private fun decodeTrainingConstraints(raw: String): Set<TrainingConstraint> {
-    if (raw.isBlank()) return emptySet()
-    return raw.split(PERSISTED_LIST_SEPARATOR)
-        .filter { it.isNotBlank() }
-        .mapNotNull { name ->
-            try {
-                TrainingConstraint.valueOf(name)
-            } catch (error: IllegalArgumentException) {
-                null
-            }
-        }
-        .toSet()
+internal fun decodeTrainingConstraints(raw: String): Pair<Set<TrainingConstraint>, String?> {
+    if (raw.isEmpty()) return emptySet<TrainingConstraint>() to null
+    // Bound before splitting; oversized opaque text is retained intact but never planned.
+    if (raw.length > 8_192) return emptySet<TrainingConstraint>() to raw
+    val names = raw.split(PERSISTED_LIST_SEPARATOR)
+    val known = names.mapNotNull { name -> TrainingConstraint.entries.firstOrNull { it.name == name } }.toSet()
+    return known to raw.takeIf { known.size != names.size }
 }
 
 private fun decodeConfirmedStartingLoads(raw: String): Map<String, Double> {

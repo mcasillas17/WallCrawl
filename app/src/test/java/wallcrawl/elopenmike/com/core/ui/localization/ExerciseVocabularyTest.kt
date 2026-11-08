@@ -64,7 +64,7 @@ class ExerciseVocabularyTest {
         // coached exercise would carry "no Spanish description yet" on an English screen.
         val vocabulary = ExerciseVocabulary(localization, "en-US")
 
-        assertThat(vocabulary.coachingSummary(coachedExercise)).isNull()
+        assertThat(vocabulary.coachingSummary(coachedExercise)).isEqualTo("Squat with a barbell.")
         assertThat(vocabulary.hasUntranslatedCoachingSummary(coachedExercise)).isFalse()
     }
 

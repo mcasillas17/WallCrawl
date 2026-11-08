@@ -49,6 +49,40 @@ class ProgressAnalyticsCalculatorTest {
     private val catalog = listOf(bench, row, draft, pulldown).associateBy { it.id }
 
     @Test
+    fun supportiveSameIdRetainsActivityButCannotSupplyDoseOrPerformanceEvenWithComparableSetIds() {
+        val ordinary = session("ordinary", PREV_WEEK, sets = listOf(weighted(1, 40.0, 10)))
+        val supportive = session("support", THIS_WEEK, sets = listOf(weighted(1, 90.0, 10))).let { s ->
+            s.copy(exercises = s.exercises.map { ex -> ex.copy(prescription = ex.prescription.copy(
+                purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE)) })
+        }
+        val sessions = listOf(ordinary, supportive)
+        val result = calculateAll(sessions, AnalyticsScope.Exercise("bench"),
+            sessions.flatMap { it.exercises }.flatMap { it.sets }.map { it.id }.toSet())
+        assertThat(result.series.getValue(AnalyticsMetric.COMPLETED_SETS).buckets.sumOf { it.value }).isEqualTo(2.0)
+        assertThat(result.series.getValue(AnalyticsMetric.REVIEWED_PRIMARY_DOSE).buckets.sumOf { it.value }).isEqualTo(1.0)
+        assertThat(result.performance.single().observations.map { it.sessionId }).containsExactly("ordinary")
+    }
+
+    @Test fun legacyRoutineRowsContributeNoWorkoutsSetsRepsVolumeDoseOrPerformance() {
+        val ordinary = session("mixed", THIS_WEEK, sets = listOf(weighted(1, 40.0, 10)))
+        val routine = session("old-routine", PREV_WEEK, sets = listOf(weighted(1, 90.0, 30))).let { session ->
+            val ex = session.exercises.single()
+            session.copy(exercises = listOf(ex.copy(prescription = ex.prescription.copy(
+                purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE), isLegacyMobility = true)))
+        }
+        val mixed = ordinary.copy(exercises = ordinary.exercises + routine.exercises.single().copy(sessionId = ordinary.id))
+        val comparable = (mixed.exercises + routine.exercises).flatMap { it.sets }.map { it.id }.toSet()
+        val result = calculateAll(listOf(mixed, routine), AnalyticsScope.Exercise("bench"), comparable)
+        val values = result.series.mapValues { (_, series) -> series.buckets.sumOf { it.value } }
+        assertThat(values).containsExactly(AnalyticsMetric.WORKOUTS, 1.0, AnalyticsMetric.COMPLETED_SETS, 1.0,
+            AnalyticsMetric.REPS, 10.0, AnalyticsMetric.EXTERNAL_LOAD_VOLUME, 400.0, AnalyticsMetric.REVIEWED_PRIMARY_DOSE, 1.0)
+        assertThat(result.performance.single().observations.map { it.sessionId }).containsExactly(mixed.id)
+        val onlyRoutine = calculateAll(listOf(routine))
+        assertThat(onlyRoutine.hasWorkoutsInRange).isFalse()
+        assertThat(onlyRoutine.series.values.flatMap { it.buckets }.flatMap { it.contributors }).isEmpty()
+    }
+
+    @Test
     fun rangeIsCalendarWeeksEndingWithThePartialCurrentWeek() {
         val weeks = ProgressAnalyticsCalculator.rangeWeeks(AnalyticsRange.WEEKS_4, NOW, UTC)
 
@@ -193,7 +227,7 @@ class ProgressAnalyticsCalculatorTest {
         )
         val week = TrainingWeek.containing(NOW, UTC)
         val ledger = WeeklyDoseLedgerCalculator().calculate(
-            listOf(s), catalog, LedgerPolicyVersion.PRIMARY_ONLY_V1, week, CATALOG_VERSION, 1
+            listOf(s), catalog, LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2, week, CATALOG_VERSION, 1
         )
         val all = calculate(listOf(s), metric = AnalyticsMetric.REVIEWED_PRIMARY_DOSE)
         assertThat(all.buckets.last().value).isEqualTo(ledger.creditedWorkSets.toDouble())
@@ -218,7 +252,7 @@ class ProgressAnalyticsCalculatorTest {
             exercises = listOf(instance("lats", "i1", "pulldown", 0, listOf(weighted(1, 80.0, 8), weighted(2, 80.0, 8))))
         )
         val ledger = WeeklyDoseLedgerCalculator().calculate(
-            listOf(s), catalog, LedgerPolicyVersion.PRIMARY_ONLY_V1, TrainingWeek.containing(NOW, UTC), CATALOG_VERSION, 1
+            listOf(s), catalog, LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2, TrainingWeek.containing(NOW, UTC), CATALOG_VERSION, 1
         )
         val dose = calculate(listOf(s), metric = AnalyticsMetric.REVIEWED_PRIMARY_DOSE,
             scope = AnalyticsScope.Muscle(StandardMuscles.LATS))

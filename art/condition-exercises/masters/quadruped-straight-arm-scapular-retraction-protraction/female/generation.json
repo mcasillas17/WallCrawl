@@ -1,0 +1,12 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Scientific educational exercise sprite strip for a mobile exercise catalog. Wide 3:1 transparent canvas, exactly three invisible EQUAL WIDTH square cells arranged left to right. In each cell center a complete full-body portrait at identical scale, alignment and camera angle with clear empty margins on all sides. All anatomy, equipment and contact points fully inside that cell. Depict the SAME adult demonstrator, clothing, hand, dumbbell and viewpoint in all three cells. Clean moderately thin WHITE contour-only ink with transparent interiors, pure white solid strokes, transparent negative space. No solid silhouettes, gray shading, textures, glow, colored areas, floor strip, panel dividers, arrows, captions, numbers, or labels. Sparse clear line work, accurate joints and hands. No secondary/inset views. Adult female demonstrator with hair tied up clear of shoulders. Quadruped shoulder-blade retraction to protraction with fixed straight elbows. Consistent slightly elevated rear three-quarter view, person in side profile facing LEFT, wearing fitted short-sleeve shirt and shorts. Hands and knees on a level surface all three cells; hips over knees, shoulders over hands, knee/shin and hand contacts identical. No weight or band. LEFT: both elbows fully straight and vertical; shoulder blades drawn gently together, chest settles slightly between shoulders. MIDDLE: same straight elbows, shoulders transitioning to neutral, upper chest rising subtly between them. RIGHT: shoulder blades glide apart as person presses floor away, sternum rises a little and upper back broadens. Arms stay straight and vertical, no pushup, hips and lumbar spine remain still, gaze stays toward floor; avoid large spinal rounding or cat-cow. Make scapular contour change subtle but unmistakable. No arrows or ghost poses.",
+  "outputSha256": "77bfaad8b72455be857800cac324f05ac4b609125f5bed3f4e8f59a6eb68d273",
+  "layout": "three-panels",
+  "variant": "female",
+  "exerciseId": "quadruped-straight-arm-scapular-retraction-protraction",
+  "nativeStrip": {
+    "path": "masters/quadruped-straight-arm-scapular-retraction-protraction/female/native-strip.png",
+    "sha256": "77bfaad8b72455be857800cac324f05ac4b609125f5bed3f4e8f59a6eb68d273"
+  }
+}

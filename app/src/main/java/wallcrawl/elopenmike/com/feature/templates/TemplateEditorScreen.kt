@@ -58,11 +58,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.platform.testTag
-import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
-import wallcrawl.elopenmike.com.core.conditions.ManualExerciseNotice
-import wallcrawl.elopenmike.com.core.conditions.cuesFor
-import wallcrawl.elopenmike.com.core.conditions.manualNoticeFor
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -82,6 +77,11 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
+import wallcrawl.elopenmike.com.core.model.PlannedExercise
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
+import wallcrawl.elopenmike.com.core.ui.components.ConditionRefusal
+import wallcrawl.elopenmike.com.core.ui.components.localized
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 import wallcrawl.elopenmike.com.core.ui.localization.longLabelRes
@@ -92,6 +92,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.util.Locale
+import java.text.NumberFormat
 import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.Exercise
@@ -103,7 +104,6 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.MIN_TOUCH_TARGET
-import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.shortLabelRes
@@ -119,7 +119,6 @@ fun TemplateEditorScreen(
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsState()
-    val restrictions by viewModel.restrictions.collectAsState()
     val locale = LocalConfiguration.current.locales[0]
 
     // Toolbar back, system back and predictive back all take the same route, so leaving
@@ -181,8 +180,6 @@ fun TemplateEditorScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        WebBackgroundPattern()
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -211,8 +208,7 @@ fun TemplateEditorScreen(
                         }
                     ),
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Black,
+                    style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -278,6 +274,39 @@ fun TemplateEditorScreen(
                     )
                 }
 
+                when (val planning = state.conditionPlanning) {
+                    is ConditionPlanningResult.Blocked -> item { ConditionRefusal(planning.reasons) }
+                    is ConditionPlanningResult.Ready -> if (planning.supportive.isNotEmpty()) item {
+                        WallCrawlCard {
+                            Text(stringResource(R.string.editor_support_help), color = MaterialTheme.colorScheme.onSurface)
+                            planning.supportive.forEach { support ->
+                                // Read-only reviewed doses must not inherit editable-field rounding.
+                                val numbers = NumberFormat.getNumberInstance(locale).apply {
+                                    maximumFractionDigits = 340
+                                    isGroupingUsed = false
+                                }
+                                val draft = TemplateExerciseDraft.from(PlannedExercise(support.exerciseId, support.prescription), locale).copy(
+                                    load = support.prescription.targetWeight?.let(numbers::format).orEmpty(),
+                                    assistance = support.prescription.targetAssistanceWeight?.let(numbers::format).orEmpty(),
+                                    distanceMeters = support.prescription.targetDistanceMeters?.let(numbers::format).orEmpty())
+                                Text(state.exerciseFor(draft)?.let { LocalExerciseVocabulary.current.exerciseName(it) }
+                                    ?: support.exerciseId, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.condition_supportive), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(draftSummary(draft, stringResource(WeightUnit.KG.shortLabelRes)), color = MaterialTheme.colorScheme.onSurface)
+                                planning.context.appliedRules.filter { it.exerciseIdentity.exerciseId == support.exerciseId &&
+                                    it.purpose == PrescriptionPurpose.SUPPORTIVE }.map { it.explanation }.distinct().forEach {
+                                    Text(it.localized(), color = MaterialTheme.colorScheme.onSurface)
+                                }
+                            }
+                            WallCrawlOutlinedButton(text = stringResource(R.string.editor_add_support),
+                                onClick = viewModel::adoptConditionSupport,
+                                enabled = !state.isSaving && !state.isCheckingSupport && !state.hasLoadFailed && !state.isDraftIncomplete,
+                                modifier = Modifier.fillMaxWidth())
+                        }
+                    }
+                    ConditionPlanningResult.NotApplicable -> Unit
+                }
+
                 if (state.showsRoundedStoredValues) {
                     item {
                         WallCrawlCard {
@@ -311,13 +340,6 @@ fun TemplateEditorScreen(
                     ) {
                         Column {
                             Text(
-                                text = stringResource(R.string.editor_exercises_eyebrow),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 1.sp,
-                                color = CrimsonRedPrimary
-                            )
-                            Text(
                                 text = pluralStringResource(
                                     R.plurals.count_exercises_selected,
                                     state.selectedExercises.size,
@@ -346,17 +368,6 @@ fun TemplateEditorScreen(
                             )
                         }
                     }
-                }
-
-                // One general notice when the guidance could not be read, rather than a
-                // warning per exercise that would claim more than we know.
-                if (restrictions == ConditionRestrictions.Unavailable) item {
-                    Text(
-                        text = stringResource(R.string.editor_condition_unavailable),
-                        color = MaterialTheme.colorScheme.error,
-                        fontSize = 13.sp,
-                        modifier = Modifier.fillMaxWidth().testTag("editor-condition-unavailable")
-                    )
                 }
 
                 // Its copy points at Add and counts the catalog; after a failed load Add is off
@@ -398,7 +409,6 @@ fun TemplateEditorScreen(
                             isMissingFromCatalog = draft.rowId in state.unresolvedRowIds,
                             isSaving = state.isSaving,
                             availableEquipment = state.availableEquipment,
-                            restrictions = restrictions,
                             weightUnit = state.weightUnit?.let { stringResource(it.shortLabelRes) },
                             onEdit = { viewModel.editExercise(draft.rowId) },
                             onSetsDown = { viewModel.changeSetCount(draft.rowId, -1) },
@@ -569,7 +579,7 @@ private fun DiscardConfirmation(
         },
         confirmButton = {
             TextButton(onClick = onDiscard) {
-                Text(stringResource(R.string.editor_discard_confirm), color = CrimsonRedLight)
+                Text(stringResource(R.string.editor_discard_confirm), color = MaterialTheme.colorScheme.error)
             }
         },
         dismissButton = {
@@ -585,11 +595,11 @@ private fun DiscardConfirmation(
 private fun EditorErrorCard(messageRes: Int) {
     WallCrawlCard(borderColor = CrimsonRedPrimary) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.Warning, null, tint = CrimsonRedLight, modifier = Modifier.size(16.dp))
+            Icon(Icons.Default.Warning, null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(16.dp))
             Spacer(Modifier.size(8.dp))
             Text(
                 stringResource(messageRes),
-                color = CrimsonRedLight,
+                color = MaterialTheme.colorScheme.error,
                 fontSize = 13.sp,
                 // Announced: a refused save leaves the tapped button unchanged.
                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }
@@ -607,7 +617,6 @@ private fun SelectedExerciseCard(
     isMissingFromCatalog: Boolean,
     isSaving: Boolean,
     availableEquipment: Set<String>,
-    restrictions: ConditionRestrictions,
     weightUnit: String?,
     onEdit: () -> Unit,
     onSetsDown: () -> Unit,
@@ -654,6 +663,10 @@ private fun SelectedExerciseCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp
                 )
+                if (draft.purpose == PrescriptionPurpose.SUPPORTIVE) {
+                    Text(stringResource(R.string.condition_supportive),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+                }
                 if (isMissingFromCatalog) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
@@ -663,7 +676,6 @@ private fun SelectedExerciseCard(
                     )
                 }
                 exercise?.let { EquipmentWarning(it, availableEquipment) }
-                ConditionWarning(draft.exerciseId, restrictions)
             }
         }
 
@@ -920,10 +932,8 @@ internal fun PrescriptionSheetContent(
 
         Text(
             text = stringResource(R.string.editor_effort_eyebrow),
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp,
-            color = CrimsonRedPrimary
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface
         )
         Text(
             text = stringResource(R.string.editor_effort_help),
@@ -1116,13 +1126,6 @@ private fun ExercisePickerSheet(
             ) {
                 Column {
                     Text(
-                        text = stringResource(R.string.picker_eyebrow),
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                        color = CrimsonRedPrimary
-                    )
-                    Text(
                         text = stringResource(R.string.picker_title),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Black,
@@ -1237,46 +1240,13 @@ private fun ExercisePickerSheet(
                                 Icon(
                                     imageVector = Icons.Default.Add,
                                     contentDescription = stringResource(R.string.picker_add_content_description),
-                                    tint = CrimsonRedLight,
+                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
                         }
                     }
                 }
-            }
-        }
-    }
-}
-
-/**
- * A notice beside an exercise, never a reason to hide or refuse it. Silence is not a claim
- * that the exercise suits the user, so nothing positive is ever shown here.
- */
-@Composable
-private fun ConditionWarning(exerciseId: String, restrictions: ConditionRestrictions) {
-    val notice = restrictions.manualNoticeFor(exerciseId) ?: return
-    val language = LocalConfiguration.current.locales[0].language
-    Spacer(modifier = Modifier.height(4.dp))
-    Column(modifier = Modifier.testTag("editor-condition-warning")) {
-        Text(
-            text = stringResource(
-                when (notice) {
-                    ManualExerciseNotice.AVOID -> R.string.editor_condition_avoid
-                    ManualExerciseNotice.MODIFY -> R.string.editor_condition_modify
-                    ManualExerciseNotice.UNREVIEWED -> R.string.editor_condition_unreviewed
-                }
-            ),
-            color = MaterialTheme.colorScheme.error,
-            fontSize = 12.sp
-        )
-        if (notice != ManualExerciseNotice.UNREVIEWED) {
-            restrictions.cuesFor(exerciseId, language).forEach { cue ->
-                Text(
-                    text = stringResource(R.string.condition_cue, cue),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 12.sp
-                )
             }
         }
     }

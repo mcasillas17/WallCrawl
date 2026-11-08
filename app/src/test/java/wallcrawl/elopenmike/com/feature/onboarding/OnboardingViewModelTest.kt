@@ -27,6 +27,33 @@ import wallcrawl.elopenmike.com.test.MainDispatcherRule
 class OnboardingViewModelTest {
 
     @Test
+    fun untouchedRetainedConditionsAndExplicitEmptyUseOneAtomicSave() = runTest {
+        val repository = RecordingUserProfileRepository()
+        val unknown = wallcrawl.elopenmike.com.core.model.SelectedCondition("unknown", 7, (1..32).associate { "future-$it" to if (it % 2 == 0) null else "value" })
+        repository.saveUserProfile(UserProfile(activeConditions = listOf(unknown)))
+        val untouched = OnboardingViewModel(repository)
+        untouched.updateName("Crawler")
+        MovementCapabilityType.entries.forEach { untouched.updateMovementCapability(it, CapabilityLevel.UNKNOWN) }
+        untouched.complete()
+        advanceUntilIdle()
+        assertThat(repository.saved).hasSize(1)
+        assertThat(repository.saved.single().activeConditions).containsExactly(unknown)
+
+        val handle = SavedStateHandle()
+        val edited = OnboardingViewModel(repository, handle)
+        edited.updateName("Edited")
+        MovementCapabilityType.entries.forEach { edited.updateMovementCapability(it, CapabilityLevel.UNKNOWN) }
+        edited.updateConditions(listOf(unknown))
+        assertThat(OnboardingViewModel(repository, handle).uiState.value.conditionDraft).containsExactly(unknown)
+        edited.updateConditions(emptyList())
+        val restored = OnboardingViewModel(repository, handle)
+        restored.complete()
+        advanceUntilIdle()
+        assertThat(repository.saved).hasSize(2)
+        assertThat(repository.saved.last().activeConditions).isEmpty()
+    }
+
+    @Test
     fun profileGenderSurvivesDraftRecreationAndCompletion() = runTest {
         val repository = RecordingUserProfileRepository()
         val savedState = SavedStateHandle()
@@ -277,6 +304,18 @@ class OnboardingViewModelTest {
             .containsExactlyElementsIn(StandardEquipment.FULL_GYM)
         assertThat(viewModel.uiState.value.equipment.intersect(StandardEquipment.BAND_SETUPS.toSet()))
             .isEmpty()
+    }
+
+    @Test
+    fun fullGymPreservesConfirmedSupportsButDoesNotGrantThem() {
+        val viewModel = OnboardingViewModel(RecordingUserProfileRepository())
+        val supports = listOf("Padded Plinth", "Calf Support", "Pillow", "Upper-Arm Support Roll")
+        viewModel.selectFullGymEquipment()
+        assertThat(viewModel.uiState.value.equipment).containsNoneIn(supports)
+        supports.forEach(viewModel::toggleEquipment)
+        viewModel.selectFullGymEquipment()
+        assertThat(viewModel.uiState.value.equipment)
+            .containsExactlyElementsIn(StandardEquipment.FULL_GYM + supports)
     }
 
     @Test
@@ -576,13 +615,4 @@ private class RecordingUserProfileRepository : UserProfileRepository {
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) = error("Not used")
     override suspend fun updateGender(gender: wallcrawl.elopenmike.com.core.model.ProfileGender) = saveProfile(getProfileOnce().copy(gender = gender))
     override suspend fun updateThemePreference(themePreference: wallcrawl.elopenmike.com.core.model.ThemePreference) = error("Not used")
-    override suspend fun editReportedConditions(change: (Set<String>) -> Set<String>) {
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(reportedConditions = change(current.reportedConditions)))
-    }
-
-    override suspend fun editExcludedExercises(change: (List<String>) -> List<String>) {
-        val current = getProfileOnce()
-        saveUserProfile(current.copy(excludedExerciseIds = change(current.excludedExerciseIds)))
-    }
 }

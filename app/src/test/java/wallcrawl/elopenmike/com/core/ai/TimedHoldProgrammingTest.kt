@@ -7,10 +7,8 @@ import org.junit.Test
 import wallcrawl.elopenmike.com.core.model.*
 
 class TimedHoldProgrammingTest {
-    private val projection = SharedPlannerFixtureHarness.contextFactory.bundledCatalogProjection()
-
-    /** The recorded baseline covers the pinned upstream entries; owned ones are checked elsewhere. */
-    private val exercises = projection.exercises.filter { it.id !in projection.ownedExerciseIds }
+    private val exercises =
+        SharedPlannerFixtureHarness.contextFactory.bundledCatalogProjection().exercises
     private val factory = DefaultExercisePrescriptionFactory()
     private val profile = UserProfile(availableEquipment = StandardEquipment.ALL)
     private val expectedIds = setOf(
@@ -131,7 +129,11 @@ class TimedHoldProgrammingTest {
                                 ))
                                 val prescription = factory.create(exercise, context)
                                 assertThat(prescription.targetWeight).isNull()
-                                add("${exercise.id}|$goal|$breakWeeks|$unit|$prescription")
+                                assertThat(prescription.purpose).isEqualTo(PrescriptionPurpose.ORDINARY)
+                                // Keep the pre-purpose snapshot pinned to its original prescription fields.
+                                val historicalDescription = prescription.toString()
+                                    .removeSuffix(", purpose=ORDINARY)") + ")"
+                                add("${exercise.id}|$goal|$breakWeeks|$unit|$historicalDescription")
                             }
                         }
                     }

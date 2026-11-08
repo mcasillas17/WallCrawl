@@ -1,9 +1,7 @@
 # Exercise illustration variants
 
-WallCrawl bundles 906 female and 906 male SVGs, covering the same 302 exercises as
-the [pinned source catalog](../tools/workout-guide/import-config.json). The 7 WallCrawl-owned
-exercises have no variants: they use one gender-neutral original sequence, loaded as the pinned fallback.
-Each variant is a byte-for-byte copy of the selected
+The historical WallCrawl bundle has 906 female and 906 male SVGs, covering the same 302 exercises as
+the [pinned source catalog](../tools/workout-guide/import-config.json). Each is a byte-for-byte copy of the selected
 SVG selected by the ledgers in `art/pilots/female-exercises/catalog` or
 `male-catalog`, including the retained animation-correction batches.
 
@@ -108,3 +106,7 @@ preview; there is no setter in the UI or repository, and artwork selection ignor
 it. Archive format 3 round-trips those legacy values without changing their checksums.
 Formats 1 and 2 remain readable with their original canonical checksums and receive
 unspecified gender. Newer unknown archive versions are rejected.
+
+## Neutral research catalog additions
+
+The 25 WallCrawl exercises add 150 SVG slots across the two variants, bringing the app to 327 illustrated exercises and 1,962 variant SVG files. Moving exercises use three positions. Holds use one pose across all three slots. The tendon-glide sequence displays its complete numbered chart in every slot. The PNG masters, prompts and execution references are in the [artwork index](art/condition-exercises.md).

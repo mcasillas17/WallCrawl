@@ -1,0 +1,318 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "lateral-elbow-tendinopathy",
+    "label": "Lateral elbow tendinopathy",
+    "aliases": [],
+    "distinctions": "Common wrist-extensor origin condition;not medial flexor-pronator disease,radiculopathy or rupture."
+  },
+  "scope": {
+    "population": "Adults with subacute or chronic lateral elbow tendinopathy.",
+    "stage": "Subacute/chronic; acute traumatic and postoperative presentations unresolved.",
+    "operativeStatus": "Nonsurgical research unless explicitly noted; postoperative progression not established.",
+    "exclusions": "Source-specific trial exclusions are applicability limits,not universal contraindications; no automatic diagnosis-only ban.",
+    "uncertainty": "Draft research only. Side, stage, concurrent conditions, starting load and symptom response require individual clinical decisions."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Native web search with primary PubMed,publisher,PMC,and guideline retrieval",
+      "query": "lateral elbow tendinopathy clinical practice guideline 2022 exercise pdf JOSPT",
+      "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
+      "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search with primary PubMed,publisher,PMC,and guideline retrieval",
+      "query": "\"lateral elbow\" \"Peterson\" \"2014\" \"eccentric\" randomized",
+      "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
+      "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search with primary PubMed,publisher,PMC,and guideline retrieval",
+      "query": "\"Manual therapy and exercise for lateral elbow pain\" 2024 Cochrane",
+      "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
+      "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
+    }
+  ],
+  "sources": [
+    {
+      "id": "let-g1",
+      "title": "Lateral Elbow Pain and Muscle Function Impairments",
+      "doi": "10.2519/jospt.2022.0302",
+      "pmid": "36453071",
+      "url": "https://www.orthopt.org/uploads/content_files/files/lucado_et_al_2022_lateral_elbow_pain_and_muscle_function_impairments.pdf",
+      "publicationStatus": "Final JOSPT guideline, December 2022;52(12):CPG1–CPG111.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Guideline PDF](https://www.orthopt.org/uploads/content_files/files/lucado_et_al_2022_lateral_elbow_pain_and_muscle_function_impairments.pdf); [PubMed](https://pubmed.ncbi.nlm.nih.gov/36453071/). DOI 10.2519/jospt.2022.0302; PMID 36453071. Published JOSPT 52(12), CPG1–CPG111. PDF indexed full-text recommendations and exercise section inspected; direct initial fetch returned 403. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Final physical-therapy clinical practice guideline",
+      "population": "Subacute/chronic lateral elbow tendinopathy; not medial disease or acute rupture",
+      "comparator": "Guideline synthesis; varied study comparators",
+      "coInterventions": "Varied exercise/manual therapy combinations",
+      "outcomes": "Grade B resisted wrist-extensor exercise; grade F phased return to high-demand activity; synthesis suggests 3×15 for 6–12 weeks but no validated load/progression.",
+      "followUp": "Study-specific, including up to one year",
+      "uncertainty": "Partial indexed guideline recommendations/synthesis inspected; direct PDF initially 403. Exact exercise setup/optimum dose unestablished.",
+      "harms": "No consistent guideline-wide exercise harm estimate extracted.",
+      "limitations": "Population: lateral elbow pain/tendinopathy; exercise recommendation specifically subacute/chronic LET. Grade B supports resisted wrist-extensor exercise using isometric, concentric and/or eccentric contractions. Suggested synthesis dose: 3 sets of 15 repetitions over 6–12 weeks; load/progression determination is inadequately described. Phased return to demanding work/sport is expert-opinion grade F. Stretching alone lacks convincing durable advantage; combinations cannot isolate stretching effects. Guideline acknowledges limited specific return-to-function information. Candidate wrist-extensor loading can therefore be researched, but there is no validated app-wide kilogram ceiling, elbow-angle ceiling or mandatory eccentric-only sequence. Harms/progression cannot be assumed absent or standardized.",
+      "protocol": {
+        "execution": "reported in accessible text: Previously retrieved indexed Recommendations > Therapeutic Exercise: isometric, concentric and/or eccentric resisted wrist-extensor exercise for subacute/chronic LET. Exact implement, support and range are not established.",
+        "dose": "reported in accessible text: Previously retrieved indexed Therapeutic Exercise synthesis suggests three sets of fifteen repetitions over six to twelve weeks. This is guideline synthesis, not a validated universal regimen; starting resistance and load progression unreported.",
+        "frequency": "not reported — exact primary protocol not independently established at this access level.",
+        "supervision": "not reported — exact primary protocol not independently established at this access level.",
+        "progression": "not reported — exact primary protocol not independently established at this access level.",
+        "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
+      },
+      "locations": [
+        "Recommendations > Interventions: Therapeutic Exercise; evidence synthesis > Therapeutic Exercise",
+        "Therapeutic Exercise > Evidence synthesis (previously retrieved indexed passage)"
+      ]
+    },
+    {
+      "id": "let-p1",
+      "title": "A randomized controlled trial of eccentric vs. concentric graded exercise in chronic tennis elbow (lateral elbow tendinopathy)",
+      "doi": "10.1177/0269215514527595",
+      "pmid": "24634444",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24634444/",
+      "publicationStatus": "Final randomized trial, Clinical Rehabilitation 2014;28(9):862–872; online March 14, 2014.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Primary abstract](https://pubmed.ncbi.nlm.nih.gov/24634444/). DOI 10.1177/0269215514527595; PMID 24634444. Abstract inspected; publisher full text not retrieved. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Randomized controlled trial, n=120",
+      "population": "Adults with tennis elbow >3 months",
+      "comparator": "Daily eccentric versus concentric home loading, 60 per group",
+      "coInterventions": "not reported in accessible abstract",
+      "outcomes": "Approximately 10% higher pain responder rate (reported NNT 10) and strength advantage for eccentric group; no function/QOL difference.",
+      "followUp": "1, 2, 3, 6 and 12 months",
+      "uncertainty": "Abstract confirms daily exercise for 3 months with gradually increasing load, not exact sets/load increments; no harm-based ban on concentric movement.",
+      "harms": "not reported in accessible abstract",
+      "limitations": "120 adults with tennis elbow >3 months randomized 60/60 to daily home eccentric lowering versus concentric lifting with gradually increased load for 3 months. Evaluations at 1, 2, 3, 6 and 12 months. Eccentrics produced faster pain improvement (approximately 10% greater responder rate; reported NNT 10) and larger strength improvement; function and quality of life did not differ. Abstract verifies daily frequency and intervention duration, not exact set/repetition, starting weight or progression increment; those values must not be copied from a tertiary account. Harms not reported in the inspected abstract. This supports a loading candidate for chronic LET, not proof that concentric lifting is contraindicated or evidence about medial elbow disease.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Intervention: eccentric lowering or concentric lifting of a weight at home. Exact grip, support and range not reported.",
+        "dose": "reported in accessible text: Abstract > Intervention: three-month home program. Exact sets, repetitions, starting load and increments not reported.",
+        "frequency": "reported in accessible text: Abstract > Intervention: daily. Do not derive an alternative frequency from follow-up contacts.",
+        "supervision": "reported in accessible text: Abstract > Intervention: home exercise; exact supervised contacts not reported.",
+        "progression": "reported in accessible text: Abstract > Intervention: gradually increasing load. Increment size and progression/stopping criteria not reported.",
+        "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
+      },
+      "locations": [
+        "Abstract > Subjects, Intervention, Results",
+        "Abstract > Intervention"
+      ]
+    },
+    {
+      "id": "let-s1",
+      "title": "Manual therapy and exercise for lateral elbow pain",
+      "doi": "10.1002/14651858.CD013042.pub2",
+      "pmid": null,
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11129914/",
+      "publicationStatus": "Final Cochrane review, May 28, 2024;CD013042; searched through January 31, 2024.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text retrieved and relevant methods/results/limitations inspected; access details in the retained source report."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Cochrane systematic review, 23 trials/1612 participants; searched through 2024-01-31",
+      "population": "Adults with lateral elbow pain, mean trial ages 38–52",
+      "comparator": "Manual therapy, exercise or both versus minimal/no intervention, placebo and other care",
+      "coInterventions": "Heterogeneous manual treatment and sometimes injections",
+      "outcomes": "Low-certainty end-treatment pain difference −0.53/10 (95% CI −0.92 to −0.14), disability −5/100 (−9.22 to −0.77); effects not sustained.",
+      "followUp": "4 weeks–3 months primary endpoints; later follow-up up to 12 months",
+      "uncertainty": "Bias, unblinded studies and heterogeneous multimodal interventions; not a best-dose study.",
+      "harms": "Mild/transient pain/bruising and other events; uncertain RR 3.69 (0.98–13.97), no reported serious events; incomplete reporting.",
+      "limitations": "23 trials/1,612 adults; heterogeneous manual therapy, exercise or combinations. Against minimal/no intervention, low-certainty evidence at 4 weeks–3 months favored treatment by 0.53/10 pain points (95% CI 0.14–0.92) and 5/100 disability points (0.77–9.22). Benefits were not sustained; multimodal pooling cannot identify the best exercise or dose. Adverse events were uncertain, often mild/transient pain or bruising; no serious events reported in included reporting, but incomplete ascertainment prevents declaring universal safety. Compared with minimal treatment, event RR 3.69 had a wide CI (0.98–13.97). This moderates the older CPG's confidence: therapeutic loading is a candidate, with modest/uncertain incremental benefit rather than assured rehabilitation efficacy.",
+      "protocol": {
+        "execution": "Heterogeneous prescribed exercise/manual therapy programs; no single execution established.",
+        "dose": "not reported as a single regimen; study-specific doses cannot be pooled into one prescription.",
+        "frequency": "not reported as a single regimen.",
+        "supervision": "Varied across included trials; no universal supervision model.",
+        "progression": "not reported as a validated common rule.",
+        "stoppingRules": "not reported as a validated common rule."
+      },
+      "locations": [
+        "Abstract > Main results; Results > adverse events; Quality of the evidence"
+      ]
+    },
+    {
+      "id": "let-s2",
+      "title": "Position statement: nonoperative management of lateral epicondylitis in adults",
+      "doi": "10.1503/cjs.019221",
+      "pmid": "36130807",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9503571/",
+      "publicationStatus": "Final CSES position statement, September 21, 2022;Canadian Journal of Surgery 65:E625–E629.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text retrieved and relevant methods/results/limitations inspected; access details in the retained source report."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Canadian Shoulder and Elbow Society position statement/meta-analysis",
+      "population": "Adults >18 with lateral epicondylitis; 9 exercise studies/673 randomized patients",
+      "comparator": "Exercise/strengthening physiotherapy versus no active treatment",
+      "coInterventions": "Comparator exclusions differ from multimodal CPG evidence",
+      "outcomes": "Similar pain/function through one year; recommendation does not support exercise physiotherapy superiority.",
+      "followUp": "Short/medium term up to one year",
+      "uncertainty": "Different comparator/inclusion criteria explain disagreement with LET guideline; null benefit is not movement harm.",
+      "harms": "No exercise-specific harm conclusion established.",
+      "limitations": "Exercise/strengthening versus no active treatment included 9 studies/673 randomized adults. Through 1 year, pooled pain/function outcomes were similar; recommendation did not support exercise-based physiotherapy as superior. Different comparators, inclusion criteria and multimodal grouping explain why this cannot be silently merged with LET-G1 as unanimous support. No exercise-specific harm inference follows from lack of superiority. No universal exercise prohibition is justified.",
+      "protocol": {
+        "execution": "Varied exercise-based physiotherapy; not an execution manual.",
+        "dose": "not reported as a common protocol.",
+        "frequency": "not reported as a common protocol.",
+        "supervision": "not reported as a common protocol.",
+        "progression": "not reported as a validated common rule.",
+        "stoppingRules": "not reported as a validated common rule."
+      },
+      "locations": [
+        "Recommendations; Exercise-based physiotherapy compared with no active treatment"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "let-g1-finding",
+      "kind": "published-recommendation",
+      "statement": "Grade B resisted wrist-extensor exercise; grade F phased return to high-demand activity; synthesis suggests 3×15 for 6–12 weeks but no validated load/progression.",
+      "citations": [
+        {
+          "sourceId": "let-g1",
+          "location": "Recommendations > Interventions: Therapeutic Exercise; evidence synthesis > Therapeutic Exercise"
+        }
+      ],
+      "applicability": "Subacute/chronic lateral elbow tendinopathy; not medial disease or acute rupture",
+      "limitations": "Partial indexed guideline recommendations/synthesis inspected; direct PDF initially 403. Exact exercise setup/optimum dose unestablished. No consistent guideline-wide exercise harm estimate extracted."
+    },
+    {
+      "id": "let-p1-finding",
+      "kind": "study-result",
+      "statement": "Approximately 10% higher pain responder rate (reported NNT 10) and strength advantage for eccentric group; no function/QOL difference.",
+      "citations": [
+        {
+          "sourceId": "let-p1",
+          "location": "Abstract > Subjects, Intervention, Results"
+        }
+      ],
+      "applicability": "Adults with tennis elbow >3 months",
+      "limitations": "Abstract confirms daily exercise for 3 months with gradually increasing load, not exact sets/load increments; no harm-based ban on concentric movement. not reported in accessible abstract"
+    },
+    {
+      "id": "let-s1-finding",
+      "kind": "study-result",
+      "statement": "Low-certainty end-treatment pain difference −0.53/10 (95% CI −0.92 to −0.14), disability −5/100 (−9.22 to −0.77); effects not sustained.",
+      "citations": [
+        {
+          "sourceId": "let-s1",
+          "location": "Abstract > Main results; Results > adverse events; Quality of the evidence"
+        }
+      ],
+      "applicability": "Adults with lateral elbow pain, mean trial ages 38–52",
+      "limitations": "Bias, unblinded studies and heterogeneous multimodal interventions; not a best-dose study. Mild/transient pain/bruising and other events; uncertain RR 3.69 (0.98–13.97), no reported serious events; incomplete reporting."
+    },
+    {
+      "id": "let-s2-finding",
+      "kind": "study-result",
+      "statement": "Similar pain/function through one year; recommendation does not support exercise physiotherapy superiority.",
+      "citations": [
+        {
+          "sourceId": "let-s2",
+          "location": "Recommendations; Exercise-based physiotherapy compared with no active treatment"
+        }
+      ],
+      "applicability": "Adults >18 with lateral epicondylitis; 9 exercise studies/673 randomized patients",
+      "limitations": "Different comparator/inclusion criteria explain disagreement with LET guideline; null benefit is not movement harm. No exercise-specific harm conclusion established."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "wrist-extensor-loading-execution-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "wrist-extensor-loading-execution-unresolved",
+      "findingIds": [
+        "let-g1-finding"
+      ],
+      "matchRationale": "Catalog wrist-extension is Dumbbell/weight_reps with unsupported bent-over forearms and visually uncertain motion per inspected catalog/ledger. Guideline lacks exact setup. Reuse catalog if actual execution matches; dose alone is not a new identity.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "let-loading-review",
+      "kind": "supportive-prescription",
+      "basis": "published-recommendation",
+      "statement": "Consider resisted wrist-extensor loading for independent content review in subacute/chronic LET. Exact execution/dose remains unresolved; contrary controlled evidence retained.",
+      "findingIds": [
+        "let-g1-finding",
+        "let-s1-finding",
+        "let-s2-finding"
+      ],
+      "citations": [
+        {
+          "sourceId": "let-g1",
+          "location": "Recommendations > Interventions: Therapeutic Exercise; evidence synthesis > Therapeutic Exercise"
+        },
+        {
+          "sourceId": "let-s1",
+          "location": "Abstract > Main results; Results > adverse events; Quality of the evidence"
+        },
+        {
+          "sourceId": "let-s2",
+          "location": "Recommendations; Exercise-based physiotherapy compared with no active treatment"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with subacute or chronic lateral elbow tendinopathy.",
+        "stage": "Subacute/chronic; acute traumatic and postoperative presentations unresolved.",
+        "rationale": "Source-specific draft implication. Preserve indirectness and all concurrent condition, equipment and joint restrictions."
+      },
+      "limitations": "Candidate only, unreviewed, not clinically released. No invented pain/load/ROM cutoff. Benefit does not establish that alternatives are harmful; trial exclusions are applicability limits.",
+      "mappingIds": [
+        "wrist-extensor-loading-execution-unresolved-mapping"
+      ],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Guideline positive recommendation conflicts with controlled comparisons showing small/uncertain or null incremental effects.",
+    "Exact supported execution,startingload,progression,painresponse and return-to-sport criteria unresolved.",
+    "No blanket gripping/curl/row ban or isolated-stretch prescription established."
+  ],
+  "disposition": "unresolved",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

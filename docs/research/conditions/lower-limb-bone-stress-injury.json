@@ -1,0 +1,310 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "lower-limb-bone-stress-injury",
+    "label": "lower-limb bone stress injury",
+    "aliases": [],
+    "distinctions": "High-risk sites and acute fractures cannot inherit low-risk tibial return-to-run recommendations."
+  },
+  "scope": {
+    "population": "Athletes with lower-limb bone stress injury, from stress reaction to fracture; location and grade materially alter management.",
+    "stage": "Active/recent versus healed/cleared status, site risk, MRI grade and clinical limits unknown.",
+    "operativeStatus": "Nonoperative evidence unless explicitly stated otherwise; no postoperative protocol proposed.",
+    "exclusions": "High-risk sites and acute fractures cannot inherit low-risk tibial return-to-run recommendations.",
+    "uncertainty": "Draft research only; diagnosis, individual starting load, stage and clinical review remain unresolved."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "2024 tibial bone stress injury return to running scoping review criteria high risk anterior cortex",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "international consensus bone stress injuries athletes 2025 Delphi diagnosis management return sport",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "Nattiv 2013 correlation MRI grading bone stress injury return sport prospective 5 year 211 34 43 PMC",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "\"International Delphi consensus\" \"bone stress\" \"high-risk\" \"navicular\"",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "\"International Delphi consensus\" \"bone stress\" \"pain-free\" return",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "\"International Delphi consensus\" \"bone stress\" \"108616\" full text pdf",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1136/bjsports-2024-108616",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1007/s40279-024-02051-y",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1177/0363546513490645",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search, exact primary indexed passage",
+      "query": "site:bjsm.bmj.com/content/59/2/78 \"Rehabilitation protocols should\" \"pain-free\"",
+      "decision": "Bounded accessible-protocol audit: preserve explicitly reported category, program/visit/device schedule or context with the reported-in-accessible-text prefix. No unseen primary mechanics copied from secondary sources.",
+      "limitations": "Local 2026-11-01 / UTC 2026-11-02. Access status unchanged; exact missing exercise mechanics, per-exercise load/dose, and clinical applicability remain unresolved."
+    }
+  ],
+  "sources": [
+    {
+      "id": "bsi-g",
+      "title": "International Delphi consensus on bone stress injuries in athletes.",
+      "doi": "10.1136/bjsports-2024-108616",
+      "pmid": "39638438",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39638438/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2025-01-02. Version/access details below.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed abstract and selected indexed publisher discussion sections inspected. Direct publisher HTML/PDF requests returned 403 and complete recommendation tables were not retrieved; conservatively classified abstract-only. https://doi.org/10.1136/bjsports-2024-108616 Bounded protocol audit re-read indexed primary Return to sports discussion; direct publisher opening still returned 403. No full-table or full-method access upgrade."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1136/bjsports-2024-108616 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "International modified Delphi: 41 panel members, 28 final respondents; consensus on 41 of 58 statements.",
+      "population": "Athletes with bone stress injury; site, severity and sport demands affect management.",
+      "comparator": "No trial comparator.",
+      "coInterventions": "Multidisciplinary bone-health/energy-availability assessment and structured rehabilitation.",
+      "outcomes": "High-risk consensus sites included superior femoral-neck cortex, anterior tibia, navicular and fifth-metatarsal base. Management/return varies by site, severity, pain-free function and loading tests.",
+      "followUp": "No intervention follow-up.",
+      "uncertainty": "Expert consensus rather than trial evidence. Full recommendation tables not retrieved; no universal rehabilitation dose or permission to load an unassessed fracture follows.",
+      "harms": "No exercise-specific harms comparison.",
+      "limitations": "Expert consensus rather than trial evidence. Full recommendation tables not retrieved; no universal rehabilitation dose or permission to load an unassessed fracture follows. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "reported in accessible text: Indexed primary Discussion > Return to sports recommends structured physical therapy rather than one specified exercise; exact exercise mechanics/dose are not established.",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "reported in accessible text: Indexed primary Discussion > Return to sports places rehabilitation in structured physical therapy and multidisciplinary management. No fixed supervised-session schedule is reported.",
+        "progression": "reported in accessible text: Indexed primary Discussion > Return to sports describes stepwise return guided by injury site/severity, sport demands and pain-free daily/sport activity, bone-loading tests and palpation. It does not provide a universal loading increment or calendar.",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract",
+        "Discussion > Management; Return to sports (indexed sections)"
+      ]
+    },
+    {
+      "id": "bsi-s",
+      "title": "Criteria and Guidelines for Returning to Running Following a Tibial Bone Stress Injury: A Scoping Review.",
+      "doi": "10.1007/s40279-024-02051-y",
+      "pmid": "39141251",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11393297/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2024-08-14. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full Europe PMC XML retrieved and key methods, results and protocol tables inspected. Earlier PMC access was challenged where recorded in lower-leg-source-report.md. https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11393297/fullTextXML"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1007/s40279-024-02051-y rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Scoping review of 50 sources, predominantly commentaries/reviews; recommendations largely level IV evidence.",
+      "population": "Return to running after tibial BSI; low-risk posteromedial injury differs from high-risk anterior cortex.",
+      "comparator": "Heterogeneous return criteria; no single controlled comparison.",
+      "coInterventions": "Bone-health/contributing-factor assessment and symptom monitoring.",
+      "outcomes": "Consider pain-free walking, tenderness, strength/loading capacity and radiological healing for high-risk injury. Tenderness criteria conflict; the 10% progression rule is not universally supported.",
+      "followUp": "Varied; no single clearance time.",
+      "uncertainty": "Most sources are low-level evidence; tenderness criteria conflict. Later-stage resistance/plyometric suggestions often rely on other populations and do not establish acute-fracture safety.",
+      "harms": "No validated impact dose or harms rate.",
+      "limitations": "Most sources are low-level evidence; tenderness criteria conflict. Later-stage resistance/plyometric suggestions often rely on other populations and do not establish acute-fracture safety. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Individual walk/run after clinical criteria; increase distance before speed/intensity. Selected strength/plyometric work belongs to later rehabilitation.",
+        "dose": "not established as one validated impact or resistance dose.",
+        "frequency": "not established as one validated weekly frequency.",
+        "supervision": "Shared clinician/coach/athlete decisions; clinical assessment.",
+        "progression": "Individual criteria and symptom response; universal 10% increment unsupported.",
+        "stoppingRules": "Clinical healing/function criteria; do not transfer tendon or MTSS pain thresholds."
+      },
+      "locations": [
+        "Abstract > Key Points",
+        "Discussion > Return-to-Run Criteria; Evidence of Radiological Healing",
+        "Discussion > Return-to-running process"
+      ]
+    },
+    {
+      "id": "bsi-r",
+      "title": "Correlation of MRI grading of bone stress injuries with clinical risk factors and return to play: a 5-year prospective study in collegiate track and field athletes.",
+      "doi": "10.1177/0363546513490645",
+      "pmid": "23825184",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4367232/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2013-07-03. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Primary manuscript available in PMC; indexed full Results, MRI grading/return-to-sport figures and Table 7 inspected. No randomised exercise protocol is claimed."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1177/0363546513490645 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Five-year prospective prognostic cohort: 211 athletes; 34 had 61 injuries, with 43 MRI-graded return records.",
+      "population": "Collegiate track/cross-country athletes under clinical care.",
+      "comparator": "Associations between MRI grade, BMD, anatomical site and recovery.",
+      "coInterventions": "Clinical management was not randomised.",
+      "outcomes": "Grades 3–4 returned in 23.6 ± 2.4 weeks versus 13.1 ± 2.0 for grades 1–2. Higher MRI grade and lower BMD predicted longer recovery.",
+      "followUp": "Five-year cohort; individual injuries followed through return to sport.",
+      "uncertainty": "Prognostic associations and group averages under clinical care are not individual clearance dates or exercise-dose trials.",
+      "harms": "No exercise harms comparison.",
+      "limitations": "Prognostic associations and group averages under clinical care are not individual clearance dates or exercise-dose trials. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "not reported as a standardised randomised exercise intervention.",
+        "dose": "not reported as a prescribed exercise protocol.",
+        "frequency": "not reported as a prescribed exercise protocol.",
+        "supervision": "Clinical care; no standardised exercise supervision.",
+        "progression": "Prognostic observation rather than a generic exercise progression.",
+        "stoppingRules": "not reported as trial stopping rules."
+      },
+      "locations": [
+        "Results > MRI grading and return to sport; Figure6; Table7"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "bsi-g-result",
+      "kind": "study-result",
+      "statement": "High-risk consensus sites included superior femoral-neck cortex, anterior tibia, navicular and fifth-metatarsal base. Management/return varies by site, severity, pain-free function and loading tests. Harms: No exercise-specific harms comparison.",
+      "citations": [
+        {
+          "sourceId": "bsi-g",
+          "location": "Abstract"
+        },
+        {
+          "sourceId": "bsi-g",
+          "location": "Discussion > Management; Return to sports (indexed sections)"
+        }
+      ],
+      "applicability": "Athletes with bone stress injury; site, severity and sport demands affect management.",
+      "limitations": "Expert consensus rather than trial evidence. Full recommendation tables not retrieved; no universal rehabilitation dose or permission to load an unassessed fracture follows."
+    },
+    {
+      "id": "bsi-s-result",
+      "kind": "study-result",
+      "statement": "Consider pain-free walking, tenderness, strength/loading capacity and radiological healing for high-risk injury. Tenderness criteria conflict; the 10% progression rule is not universally supported. Harms: No validated impact dose or harms rate.",
+      "citations": [
+        {
+          "sourceId": "bsi-s",
+          "location": "Abstract > Key Points"
+        },
+        {
+          "sourceId": "bsi-s",
+          "location": "Discussion > Return-to-Run Criteria; Evidence of Radiological Healing"
+        },
+        {
+          "sourceId": "bsi-s",
+          "location": "Discussion > Return-to-running process"
+        }
+      ],
+      "applicability": "Return to running after tibial BSI; low-risk posteromedial injury differs from high-risk anterior cortex.",
+      "limitations": "Most sources are low-level evidence; tenderness criteria conflict. Later-stage resistance/plyometric suggestions often rely on other populations and do not establish acute-fracture safety."
+    },
+    {
+      "id": "bsi-r-result",
+      "kind": "study-result",
+      "statement": "Grades 3–4 returned in 23.6 ± 2.4 weeks versus 13.1 ± 2.0 for grades 1–2. Higher MRI grade and lower BMD predicted longer recovery. Harms: No exercise harms comparison.",
+      "citations": [
+        {
+          "sourceId": "bsi-r",
+          "location": "Results > MRI grading and return to sport; Figure6; Table7"
+        }
+      ],
+      "applicability": "Collegiate track/cross-country athletes under clinical care.",
+      "limitations": "Prognostic associations and group averages under clinical care are not individual clearance dates or exercise-dose trials."
+    }
+  ],
+  "exerciseMappings": [],
+  "proposedRules": [
+    {
+      "id": "bone-stress-injury-loading-boundary",
+      "kind": "exclusion",
+      "basis": "product-precaution",
+      "statement": "Do not auto-generate affected-limb impact/loading outside clinician-provided limits while site, risk, grade or healing/clearance is unknown. No self-directed fracture or return-to-running protocol is supplied.",
+      "findingIds": [
+        "bsi-g-result",
+        "bsi-s-result",
+        "bsi-r-result"
+      ],
+      "citations": [
+        {
+          "sourceId": "bsi-g",
+          "location": "Discussion > Management; Return to sports (indexed sections)"
+        },
+        {
+          "sourceId": "bsi-s",
+          "location": "Discussion > Return-to-Run Criteria; Evidence of Radiological Healing"
+        },
+        {
+          "sourceId": "bsi-r",
+          "location": "Results > MRI grading and return to sport; Figure6; Table7"
+        }
+      ],
+      "applicability": {
+        "population": "Athletes with lower-limb bone stress injury, from stress reaction to fracture; location and grade materially alter management.",
+        "stage": "Active/recent/suspected BSI with unknown risk, stage or clinical instructions.",
+        "rationale": "Draft interpretation of the linked condition-specific findings; evidence and product choice are separated by basis. Other conditions, equipment and independent joint limits remain controlling."
+      },
+      "limitations": "Conservative product boundary; does not claim every exercise harms every BSI or establish a safe nonimpact alternative. Candidate only; no clinical release.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Clinical content review and individual applicability are not established.",
+    "Restriction-only: no supportive exercise mapping or safe substitute established for unknown active injury.",
+    "Site/risk/grade/clinical instructions and bone-health contributors require clinical care.",
+    "Return criteria are largely low-level evidence and not universal calendar thresholds."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

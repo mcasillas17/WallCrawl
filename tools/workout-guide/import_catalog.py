@@ -12,7 +12,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import xml.etree.ElementTree as ElementTree
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -30,8 +29,6 @@ MAX_JSON_DEPTH = 12
 MAX_REVIEWED_PAYLOAD_BYTES = 1_000_000
 # v3 added the ai_accepted state and aiReviewProvenance; v2 records keep their exact meaning.
 AI_REVIEWED_SCHEMA_VERSION = 3
-MAX_OWNED_EXERCISES = 100
-MAX_OWNED_SVG_BYTES = 100_000
 SAFE_ID_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 SUPPORTED_EXERCISE_TYPES = {
     "assisted_bodyweight",
@@ -118,7 +115,6 @@ def import_catalog(
     reviewed_metadata_path: Path,
     review_schema_path: Path,
     review_report_path: Path,
-    owned_path: Path,
     check_only: bool,
 ) -> ImportSummary:
     source_root = source_root.resolve()
@@ -321,12 +317,6 @@ def import_catalog(
             if alternative_id == exercise["id"]:
                 raise CatalogImportError(f"Exercise {exercise['id']} cannot list itself as an alternative")
 
-    # Owned entries are validated against the complete upstream identity sets, then appended after
-    # the upstream entries, which are never rewritten. They get no programming or reviewed metadata.
-    owned_attribution, owned_exercises, owned_frames = _load_owned(
-        owned_path, wallcrawl_ids, source_ids, source_slugs
-    )
-
     unknown_reviewed = sorted(set(reviewed_by_id) - wallcrawl_ids)
     if unknown_reviewed:
         raise CatalogImportError(
@@ -356,8 +346,6 @@ def import_catalog(
         raise CatalogImportError("Generated frame paths are not unique")
 
     normalized_exercises.sort(key=lambda item: item["id"])
-    upstream_exercise_count = len(normalized_exercises)
-    normalized_exercises.extend(owned_exercises)
     if catalog_attribution is None or visual_width is None or visual_height is None:
         raise CatalogImportError("Pinned Workout Guide catalog is missing visual attribution or dimensions")
     catalog = {
@@ -387,15 +375,7 @@ def import_catalog(
         for license_relative in license_relatives:
             source_license = _source_file(source_root, license_relative, "license file")
             shutil.copyfile(source_license, staged_root / license_relative.name)
-        if owned_exercises:
-            attribution_file = staged_root / "ATTRIBUTION.md"
-            attribution_file.write_text(
-                attribution_file.read_text(encoding="utf-8").rstrip("\n")
-                + _render_owned_attribution(owned_attribution, owned_exercises),
-                encoding="utf-8",
-                newline="\n",
-            )
-        for source_frame, destination_relative in [*frame_sources, *owned_frames]:
+        for source_frame, destination_relative in frame_sources:
             destination = staged_root / destination_relative
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(source_frame, destination)
@@ -404,19 +384,13 @@ def import_catalog(
             "WallCrawl bundles unmodified Workout Guide SVG exercise illustrations and normalized metadata.\n\n"
             f"Source: {source_repository}\n\n"
             f"Pinned commit: `{source_commit}`\n\n"
-            f"Imported exercises: {upstream_exercise_count}\n\n"
+            f"Imported exercises: {len(normalized_exercises)}\n\n"
             f"Imported SVG frames: {len(frame_sources)}\n\n"
-            f"Owned exercises: {len(owned_exercises)}\n\n"
-            f"Owned SVG frames: {len(owned_frames)}\n\n"
-            "Owned exercises are original work by the WallCrawl project, not part of the pinned source; "
-            "they are listed in ATTRIBUTION.md.\n\n"
             "PNG counterparts are intentionally not bundled. See LICENSE, LICENSE-ASSETS, "
             "ATTRIBUTION.md, and upstream-manifest.json in this directory.\n"
         )
         (staged_root / "NOTICE.md").write_text(notice, encoding="utf-8", newline="\n")
-        _validate_generated_tree(
-            staged_root, expected_exercises + len(owned_exercises), expected_frames + len(owned_frames)
-        )
+        _validate_generated_tree(staged_root, expected_exercises, expected_frames)
 
         report_changed = not review_report_path.is_file() or review_report_path.read_text(
             encoding="utf-8"
@@ -425,7 +399,7 @@ def import_catalog(
         svg_bytes = sum(path.stat().st_size for path in staged_root.rglob("*.svg"))
         summary = ImportSummary(
             exercise_count=len(normalized_exercises),
-            frame_count=len(frame_sources) + len(owned_frames),
+            frame_count=len(frame_sources),
             svg_bytes=svg_bytes,
             changed=changed,
         )
@@ -439,112 +413,6 @@ def import_catalog(
             review_report_path.parent.mkdir(parents=True, exist_ok=True)
             _atomic_write_text(review_report_path, review_report)
         return summary
-
-
-def upstream_entries_only(catalog: dict[str, Any]) -> dict[str, Any]:
-    """The catalog without WallCrawl-owned entries, which carry their own attribution.
-
-    Every audit, ledger and review artifact covers the pinned upstream entries only, so the tools
-    that read the bundled catalog for them go through this.
-    """
-    return {**catalog, "exercises": [e for e in catalog["exercises"] if "attribution" not in e]}
-
-
-def _load_owned(
-    owned_path: Path,
-    upstream_ids: set[str],
-    upstream_source_ids: set[str],
-    upstream_slugs: set[str],
-) -> tuple[dict[str, Any], list[dict[str, Any]], list[tuple[Path, str]]]:
-    """Validate WallCrawl-owned exercises, a second source beside the pinned upstream manifest."""
-    document = _read_object(owned_path, "owned exercises")
-    _require_schema_version(document, "owned exercises")
-    attribution = _required_attribution(document, "attribution", "owned exercises")
-    if attribution.get("source") is not None:
-        raise CatalogImportError("owned exercises attribution must not name an upstream source")
-    raw_exercises = _required_array(document, "exercises", "owned exercises")
-    if len(raw_exercises) > MAX_OWNED_EXERCISES:
-        raise CatalogImportError("owned exercises exceed the entry limit")
-    exercises: list[dict[str, Any]] = []
-    frames: list[tuple[Path, str]] = []
-    seen: set[str] = set()
-    for position, raw in enumerate(raw_exercises):
-        label = f"owned exercise[{position}]"
-        entry = _expect_object(raw, label)
-        identifier = _required_string(entry, "id", label)
-        _validate_safe_id(identifier, f"{label}.id")
-        if identifier in seen:
-            raise CatalogImportError(f"Duplicate owned exercise ID at {label}")
-        if identifier in upstream_ids or identifier in upstream_slugs or f"owned-{identifier}" in upstream_source_ids:
-            raise CatalogImportError(f"{label} collides with an upstream exercise")
-        seen.add(identifier)
-        exercise_type = _required_string(entry, "exerciseType", label)
-        if exercise_type not in SUPPORTED_EXERCISE_TYPES:
-            raise CatalogImportError(f"Unsupported exercise type for {label}")
-        raw_frames = _required_string_list(entry, "frames", label, maximum=10)
-        if len(raw_frames) != 3:
-            raise CatalogImportError(f"{label} must contain exactly three frames")
-        for index, raw_frame in enumerate(raw_frames, start=1):
-            relative = _safe_relative_path(raw_frame, f"{label}.frames")
-            if relative != PurePosixPath("owned-art") / identifier / f"frame-{index}.svg":
-                raise CatalogImportError(f"Unexpected frame path for {label}")
-            source = _source_file(
-                owned_path.parent, relative, f"{label} frame {index}", reject_symlink=True
-            )
-            _validate_owned_svg(source, f"{label} frame {index}")
-            frames.append((source, f"assets/{identifier}/frame-{index}.svg"))
-        exercises.append(
-            {
-                "id": identifier,
-                "sourceId": f"owned-{identifier}",
-                "sourceSlug": identifier,
-                "name": _required_string(entry, "name", label),
-                "searchAliases": sorted(
-                    set(_required_string_list(entry, "searchAliases", label, maximum=50)), key=str.casefold
-                ),
-                "exerciseType": exercise_type,
-                "listedEquipment": [_required_string(entry, "equipment", label)],
-                "primaryMuscles": [_required_string(entry, "primaryMuscle", label)],
-                "secondaryMuscles": _required_string_list(entry, "secondaryMuscles", label, maximum=50),
-                "isStretch": _required_bool(entry, "isStretch", label),
-                "attribution": {
-                    key: attribution[key] for key in ("creator", "creatorUrl", "license", "licenseUrl")
-                },
-            }
-        )
-    return attribution, exercises, frames
-
-
-def _validate_owned_svg(path: Path, label: str) -> None:
-    """Owned frames are path-only vector art on the shared 512 x 512 canvas."""
-    if path.stat().st_size > MAX_OWNED_SVG_BYTES:
-        raise CatalogImportError(f"{label} is too large")
-    try:
-        root = ElementTree.fromstring(path.read_bytes())
-    except ElementTree.ParseError as error:
-        raise CatalogImportError(f"{label} is not well-formed SVG") from error
-    names = {element.tag.rsplit("}", 1)[-1] for element in root.iter()}
-    if root.tag.rsplit("}", 1)[-1] != "svg" or not names <= {"svg", "path", "g"} or "path" not in names:
-        raise CatalogImportError(f"{label} must contain only svg, g and path elements")
-    if (
-        root.attrib.get("viewBox") != "0 0 512 512"
-        or root.attrib.get("width") != "512"
-        or root.attrib.get("height") != "512"
-    ):
-        raise CatalogImportError(f"{label} must be a 512 x 512 canvas")
-
-
-def _render_owned_attribution(attribution: dict[str, Any], exercises: list[dict[str, Any]]) -> str:
-    lines = "".join(f"- `{item['id']}`: {item['name']}\n" for item in exercises)
-    return (
-        "\n\n## WallCrawl-owned additions\n\n"
-        "The exercises below are not part of the pinned Workout Guide source. Their artwork, names and "
-        f"metadata are original work by the {attribution['creator']}, marked as "
-        f"\"{attribution['license']}\" ({attribution['licenseUrl']}). The Everkinetic and Workout Guide "
-        "licences above do not cover them, and no part of them was copied or traced from "
-        "upstream or third-party artwork.\n\n"
-        + lines
-    )
 
 
 def _normalize_programming(
@@ -1013,7 +881,7 @@ def _canonical_catalog_muscles(catalog_exercise: dict[str, Any]) -> set[str]:
     canonical = {
         "Chest", "Shoulders", "Rear Delts", "Triceps", "Back", "Upper Back",
         "Lower Back", "Lats", "Biceps", "Forearms", "Quadriceps", "Hamstrings",
-        "Glutes", "Adductors", "Calves", "Hips", "Core", "Cardio", "Mobility",
+        "Glutes", "Adductors", "Calves", "Hips", "Core", "Cardio", "Mobility", "Neck", "Foot Intrinsics",
     }
     result: set[str] = set()
     for raw_name in catalog_exercise["primaryMuscles"] + catalog_exercise["secondaryMuscles"]:
@@ -1615,12 +1483,6 @@ def _parse_arguments() -> argparse.Namespace:
         type=Path,
         default=repository_root / "docs/reviewed-exercise-metadata-review.md",
     )
-    parser.add_argument(
-        "--owned",
-        type=Path,
-        default=tool_root / "owned-exercises.json",
-        help="WallCrawl-owned exercises added beside the pinned upstream catalog",
-    )
     parser.add_argument("--check", action="store_true", help="Verify checked-in output without changing it")
     return parser.parse_args()
 
@@ -1636,7 +1498,6 @@ def main() -> int:
             reviewed_metadata_path=arguments.reviewed_metadata,
             review_schema_path=arguments.review_schema,
             review_report_path=arguments.review_report,
-            owned_path=arguments.owned,
             check_only=arguments.check,
         )
     except (CatalogImportError, OSError, subprocess.CalledProcessError) as error:

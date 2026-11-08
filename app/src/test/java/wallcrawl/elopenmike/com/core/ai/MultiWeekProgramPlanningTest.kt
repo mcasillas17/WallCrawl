@@ -11,6 +11,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 class MultiWeekProgramPlanningTest {
+    @Test fun programPlanningRefusesUnresolvedRestrictionsFromTheCoherentProfile() = runTest {
+        val context = programContext(baseContext(), 0)
+        val input = context.programInput!!
+        val state = ProgramReadState.Supported(context.programHeader, input.enrollment,
+            ProgramProgress(0, input.position, null), input.sessions,
+            profile.copy(unresolvedTrainingConstraintsRaw = "FUTURE_CONSTRAINT"))
+        org.junit.Assert.assertThrows(IllegalStateException::class.java) {
+            kotlinx.coroutines.runBlocking { builder(ReadOnlyProgramRepository(state)).build(WorkoutPlanningIntent.PROGRAM) }
+        }
+    }
     private val exercises = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
     private val catalog = InMemoryExerciseCatalog(exercises)
     private val profile = UserProfile(onboardingCompleted = true, daysPerWeek = 4)

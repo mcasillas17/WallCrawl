@@ -11,6 +11,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import wallcrawl.elopenmike.com.core.model.*
 import wallcrawl.elopenmike.com.core.database.repository.WeeklyDoseLedgerRepository
 import wallcrawl.elopenmike.com.core.ai.RecommendationSnapshot
 import wallcrawl.elopenmike.com.core.model.AdaptationState
@@ -51,7 +52,6 @@ import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
 import wallcrawl.elopenmike.com.core.model.SupportRequirement
 import wallcrawl.elopenmike.com.core.model.UserProfile
-import wallcrawl.elopenmike.com.core.model.isOwnedByWallCrawl
 import wallcrawl.elopenmike.com.core.model.UserRestPreference
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
@@ -60,6 +60,128 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 
 class WorkoutGenerationContextBuilderTest {
+    @Test fun conditionsConsumeCoherentProfileAndFailClosedForUnknownSupport() = runTest {
+        val initial = UserProfile(activeConditions = listOf(wallcrawl.elopenmike.com.core.model.SelectedCondition("fictional", 1, emptyMap())))
+        val latest = initial.copy(revision = 7, excludedExerciseIds = listOf("changed"))
+        val history = ConditionHistory(1_800_000_000_000, ZoneId.of("UTC"), 1_799_000_000_000, true, emptyList(), emptyList())
+        val repository = StubWorkoutRepository(emptyList()).apply {
+            conditionRead = wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead(latest, null, wallcrawl.elopenmike.com.core.model.ProgramHeader.absent(latest.id), history)
+        }
+        val builder = WorkoutGenerationContextBuilder(StubUserProfileRepository(initial), repository,
+            InMemoryExerciseCatalog(emptyList()), ExerciseFilter(), WorkoutHistoryAnalyzer(),
+            nowTimestamp = { history.asOfTimestamp }, zoneId = { history.zoneId })
+        val context = builder.build()
+        assertThat(context.userProfile).isEqualTo(latest)
+        assertThat(repository.conditionReadCalls).isEqualTo(1)
+        assertThat(context.conditionPlanning).isInstanceOf(wallcrawl.elopenmike.com.core.model.ConditionPlanningResult.Blocked::class.java)
+        assertThat(context.allowedExercises).isEmpty()
+    }
+
+    @Test fun readyConditionsFilterCandidatesAndExposeConsumedSourceFacts() = runTest {
+        val text = ConditionText("FICTIONAL TEST ONLY", "SOLO PRUEBA FICTICIA")
+        val exercise = Exercise("fictional-builder", name = "FICTIONAL", primaryMuscles = listOf("Chest"), type = ExerciseType.WEIGHT_REPS,
+            reviewedMetadata = syntheticReviewedMetadata(ReviewState.APPROVED))
+        val rule = ConditionRule("rule", ConditionExerciseIdentity.from(exercise, "b".repeat(64)), ConditionRuleEffect.PERMIT_ORDINARY,
+            "fictional-execution", text, setOf("source"), ConditionPrescriptionBounds(maxSets = 2), false, null, null)
+        val record = ConditionSupportRecord("fictional", "v1", 1, 1, ConditionPopulation.ADULT_NONOPERATIVE, text, text, emptyList(),
+            listOf(ConditionApplicabilityCase("case", emptyMap(), listOf(rule))), listOf(ConditionSource("source", "https://example.invalid/fictional", "c".repeat(64))),
+            ConditionResponsePolicy(1, listOf(ConditionInputDefinition("response", text, true, mapOf("stop" to text))), mapOf("response" to "stop"), mapOf("response" to "stop"), text),
+            "a".repeat(64), ConditionReleaseReview(ConditionReviewState.RELEASED, "FICTIONAL", "FICTIONAL", 1, "FICTIONAL", "a".repeat(64), setOf("source")))
+        val support = ConditionSupportCatalog("fictional", mapOf("fictional" to record))
+        val profile = UserProfile(activeConditions = listOf(SelectedCondition("fictional", 1, emptyMap())), availableEquipment = listOf(StandardEquipment.DUMBBELL, StandardEquipment.BENCH))
+        val history = ConditionHistory(1_800_000_000_000, ZoneId.of("UTC"), 1_799_000_000_000, true, emptyList(), emptyList())
+        val repository = StubWorkoutRepository(emptyList()).apply {
+            conditionRead = wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead(profile, null, ProgramHeader.absent(profile.id), history)
+        }
+        val builder = WorkoutGenerationContextBuilder(StubUserProfileRepository(profile), repository,
+            InMemoryExerciseCatalog(listOf(exercise, exercise.copy(id = "unassessed"))), ExerciseFilter(), WorkoutHistoryAnalyzer(),
+            nowTimestamp = { history.asOfTimestamp }, zoneId = { history.zoneId }, conditionSupport = { support })
+        val context = builder.build()
+        assertThat(context.allowedExercises).containsExactly(exercise)
+        assertThat(context.conditionPlanning).isInstanceOf(ConditionPlanningResult.Ready::class.java)
+        assertThat(context.conditionHistory).isSameInstanceAs(history)
+        assertThat(context.conditionSupport).isSameInstanceAs(support)
+    }
+
+    @Test fun selectionObservedByProgramProjectionStillRequiresCoherentConditionRead() = runTest {
+        val latest = UserProfile(revision = 1, activeConditions = listOf(SelectedCondition("fictional", 1, emptyMap())))
+        val header = ProgramHeader.absent(latest.id)
+        val state = ProgramReadState.Empty(header, latest)
+        val history = ConditionHistory(1_800_000_000_000, ZoneId.of("UTC"), 1_799_000_000_000, true, emptyList(), emptyList())
+        val repository = StubWorkoutRepository(emptyList()).apply {
+            conditionRead = wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead(latest, state, header, history)
+        }
+        val programs = object : wallcrawl.elopenmike.com.core.database.repository.ProgramRepository {
+            override suspend fun getHeader(profileId: String) = header
+            override fun observeHeader(profileId: String) = flowOf(header)
+            override suspend fun get(profileId: String) = state
+            override fun observe(profileId: String) = flowOf(state)
+            override fun observeAssociation(sessionId: String) = flowOf<ProgramHistoryAssociation?>(null)
+            override suspend fun act(action: ProgramAction, expected: ProgramExpectation, confirmed: Boolean, newProgramId: String?) = error("Not used")
+        }
+        val builder = WorkoutGenerationContextBuilder(StubUserProfileRepository(UserProfile()), repository,
+            InMemoryExerciseCatalog(emptyList()), ExerciseFilter(), WorkoutHistoryAnalyzer(), programRepository = programs)
+        val failure = runCatching { builder.build(WorkoutPlanningIntent.PROGRAM) }.exceptionOrNull()
+        assertThat((failure as ProgramException).failure).isEqualTo(ProgramFailure.MISSING_OR_NOT_ACTIVE)
+        assertThat(repository.conditionReadCalls).isEqualTo(1)
+    }
+
+    @Test fun removedLastConditionWithPendingMarkerStillBuildsBlockedSnapshot() = runTest {
+        val profile = UserProfile()
+        val now = 1_800_000_000_000L
+        val marker = PendingConditionReassessment(profile.id, "removed", "fictional-exercise", "event", "a".repeat(64), 1, now - 1, null)
+        val history = ConditionHistory(now, ZoneId.of("UTC"), now - 8 * 86_400_000, true, emptyList(), listOf(marker))
+        val repository = StubWorkoutRepository(emptyList()).apply {
+            pendingPresent = true
+            conditionRead = wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead(profile, null, ProgramHeader.absent(profile.id), history)
+        }
+        val builder = WorkoutGenerationContextBuilder(StubUserProfileRepository(profile), repository,
+            InMemoryExerciseCatalog(emptyList()), ExerciseFilter(), WorkoutHistoryAnalyzer(), nowTimestamp = { now })
+        val context = builder.build()
+        assertThat(context.conditionPlanning).isInstanceOf(ConditionPlanningResult.Blocked::class.java)
+        assertThat(repository.pendingProbeCalls).isEqualTo(1)
+        assertThat(repository.conditionReadCalls).isEqualTo(1)
+        assertThat(context.conditionHistory?.pending).containsExactly(marker)
+    }
+
+    @Test fun anotherSelectionDoesNotHideRemovedConditionsPendingMarker() = runTest {
+        val profile = UserProfile(activeConditions = listOf(SelectedCondition("other", 1, emptyMap())))
+        val now = 1_800_000_000_000L
+        val marker = PendingConditionReassessment(profile.id, "removed", "fictional-exercise", "event", "a".repeat(64), 1, now - 1, null)
+        val history = ConditionHistory(now, ZoneId.of("UTC"), now - 8 * 86_400_000, true, emptyList(), listOf(marker))
+        val repository = StubWorkoutRepository(emptyList()).apply {
+            conditionRead = wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead(profile, null, ProgramHeader.absent(profile.id), history)
+        }
+        val context = WorkoutGenerationContextBuilder(StubUserProfileRepository(profile), repository,
+            InMemoryExerciseCatalog(emptyList()), ExerciseFilter(), WorkoutHistoryAnalyzer(), nowTimestamp = { now }).build()
+        val reason = (context.conditionPlanning as ConditionPlanningResult.Blocked).reasons.single()
+        assertThat(reason.reason).isEqualTo("pending-reassessment")
+        assertThat(reason.conditionIds).containsExactly("removed")
+        assertThat(reason.exerciseIds).containsExactly("fictional-exercise")
+    }
+
+    @Test fun noConditionsDoNotRequestConditionSnapshot() = runTest {
+        val repository = StubWorkoutRepository(emptyList())
+        val builder = WorkoutGenerationContextBuilder(StubUserProfileRepository(UserProfile()), repository,
+            InMemoryExerciseCatalog(emptyList()), ExerciseFilter(), WorkoutHistoryAnalyzer())
+        assertThat(builder.build().conditionPlanning).isEqualTo(wallcrawl.elopenmike.com.core.model.ConditionPlanningResult.NotApplicable)
+        assertThat(repository.conditionReadCalls).isEqualTo(0)
+        assertThat(repository.pendingProbeCalls).isEqualTo(1)
+    }
+
+    @Test fun unresolvedLegacyConstraintRefusesPlanningBeforeCandidateConstruction() = runTest {
+        val builder = WorkoutGenerationContextBuilder(
+            userProfileRepository = StubUserProfileRepository(
+                UserProfile(unresolvedTrainingConstraintsRaw = "FUTURE_SENSITIVE")),
+            workoutRepository = StubWorkoutRepository(emptyList()),
+            exerciseCatalog = InMemoryExerciseCatalog(emptyList()),
+            exerciseFilter = ExerciseFilter(),
+            historyAnalyzer = WorkoutHistoryAnalyzer()
+        )
+        org.junit.Assert.assertThrows(IllegalStateException::class.java) {
+            kotlinx.coroutines.runBlocking { builder.build() }
+        }
+    }
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     @Test
     fun observationBoundsOnlyNowEligibleRowsAndRetainsAFutureOverflowSentinel() = runTest {
@@ -153,210 +275,6 @@ class WorkoutGenerationContextBuilderTest {
         assertThat(ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog(catalog)))
             .validate(proposal, context, allowRepair = false))
             .isInstanceOf(ProgramValidationResult.Valid::class.java)
-    }
-
-    @Test
-    fun build_withTheReviewedFlagOffNoOwnedExerciseCanFillAMainSlot() = runTest {
-        val catalog = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
-        val owned = catalog.filter { it.isOwnedByWallCrawl }.map { it.id }
-        assertThat(owned).hasSize(7)
-        val context = WorkoutGenerationContextBuilder(
-            userProfileRepository = StubUserProfileRepository(
-                UserProfile(availableEquipment = StandardEquipment.ALL)
-            ),
-            workoutRepository = StubWorkoutRepository(emptyList()),
-            exerciseCatalog = InMemoryExerciseCatalog(catalog),
-            exerciseFilter = ExerciseFilter(),
-            historyAnalyzer = WorkoutHistoryAnalyzer(),
-            plannerFeatureFlags = PlannerFeatureFlags()
-        ).build()
-
-        assertThat(context.allowedExercises.map { it.id }).containsNoneIn(owned)
-        assertThat(context.allowedExercises).isNotEmpty()
-        assertThat(FakeWorkoutPlanner().generateWorkout(context).exercises.map { it.exerciseId })
-            .containsNoneIn(owned)
-    }
-
-    @Test
-    fun build_overlayLoadFailureIsTypedForAConditionUserAndInvisibleToEveryoneElse() = runTest {
-        val catalog = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
-        var reads = 0
-        val brokenOverlay = object : wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource {
-            override suspend fun guidance() = wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
-                .Unavailable.also { reads++ }
-        }
-        fun builderFor(profile: UserProfile) = WorkoutGenerationContextBuilder(
-            userProfileRepository = StubUserProfileRepository(profile),
-            workoutRepository = StubWorkoutRepository(emptyList()),
-            exerciseCatalog = InMemoryExerciseCatalog(catalog),
-            exerciseFilter = ExerciseFilter(),
-            historyAnalyzer = WorkoutHistoryAnalyzer(),
-            plannerFeatureFlags = PlannerFeatureFlags.PRODUCTION,
-            conditionGuidanceSource = brokenOverlay
-        )
-
-        val unrestricted = builderFor(UserProfile()).build()
-        assertThat(reads).isEqualTo(0)
-        assertThat(unrestricted.conditionRestrictions)
-            .isEqualTo(wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.None)
-
-        // A reported condition or a joint label, each with the overlay unreadable.
-        listOf(
-            UserProfile(reportedConditions = setOf("any-condition")),
-            UserProfile(trainingConstraints = setOf(wallcrawl.elopenmike.com.core.model.TrainingConstraint.HIP_SENSITIVE))
-        ).forEach { profile ->
-            val context = builderFor(profile).build()
-            assertThat(context.conditionRestrictions)
-                .isEqualTo(wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.Unavailable)
-            assertThat(context.allowedExercises).isEmpty()
-            assertThat((context.automaticEligibilityResult as AutomaticEligibilityResult.NoCandidates).failure)
-                .isEqualTo(wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE)
-        }
-    }
-
-    @Test
-    fun build_planForAUserWithoutConditionsIsIdenticalWhateverTheOverlaySource() = runTest {
-        val catalog = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
-        val profile = UserProfile(
-            availableEquipment = StandardEquipment.ALL,
-            movementCapabilities = wallcrawl.elopenmike.com.core.model.MovementCapabilities.from(
-                wallcrawl.elopenmike.com.core.model.MovementCapabilityType.entries.associateWith {
-                    wallcrawl.elopenmike.com.core.model.CapabilityLevel.COMFORTABLE
-                }
-            ),
-            onboardingCompleted = true
-        )
-        fun source(result: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult) =
-            object : wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource {
-                override suspend fun guidance() = result
-            }
-        suspend fun planWith(
-            overlay: wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource?
-        ): GeneratedWorkout {
-            val context = WorkoutGenerationContextBuilder(
-                userProfileRepository = StubUserProfileRepository(profile),
-                workoutRepository = StubWorkoutRepository(emptyList()),
-                exerciseCatalog = InMemoryExerciseCatalog(catalog),
-                exerciseFilter = ExerciseFilter(),
-                historyAnalyzer = WorkoutHistoryAnalyzer(),
-                plannerFeatureFlags = PlannerFeatureFlags.PRODUCTION,
-                conditionGuidanceSource = overlay
-            ).build()
-            // Fresh planner each time so the generation counter starts equal.
-            return FakeWorkoutPlanner().generateWorkout(context).copy(id = "same")
-        }
-        val loaded = wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult.Loaded(
-            wallcrawl.elopenmike.com.core.conditions.ConditionGuidance(
-                version = "test", exerciseDemands = emptyMap(), conditions = emptyMap(),
-                jointLabelDemands = emptyMap(), demandCues = emptyMap()
-            )
-        )
-
-        val withBroken = planWith(
-            source(wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult.Unavailable)
-        )
-        val withNone = planWith(null)
-        val withLoaded = planWith(source(loaded))
-
-        assertThat(withBroken.exercises).isNotEmpty()
-        assertThat(withNone).isEqualTo(withBroken)
-        assertThat(withLoaded).isEqualTo(withBroken)
-    }
-
-    @Test
-    fun build_anOverlayVersionChangeAltersTheIdentityWithNoProfileEdit() = runTest {
-        val catalog = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
-        val profile = UserProfile(availableEquipment = StandardEquipment.ALL, reportedConditions = setOf("c1"))
-        val record = wallcrawl.elopenmike.com.core.conditions.ConditionRecord(
-            id = "c1", avoidDemands = emptySet(), modifyDemands = emptySet(), routine = emptyList(),
-            exerciseCues = emptyMap(), notes = emptyMap(), redFlags = emptyMap(), evidenceGrade = "C",
-            sources = emptyList(),
-            provenance = wallcrawl.elopenmike.com.core.model.AiReviewProvenance(
-                reviewerModelId = "test", reviewedAtEpochMillis = 1L, reviewedContentId = "x",
-                reviewedContentSha256 = "0", sourceReferences = emptyList(), decisionRationale = "t",
-                limitations = "t", schemaVersion = 1, policyVersion = 1
-            )
-        )
-        suspend fun identityFor(version: String): String {
-            val overlay = object : wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceSource {
-                override suspend fun guidance() = wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult.Loaded(
-                    wallcrawl.elopenmike.com.core.conditions.ConditionGuidance(
-                        version = version, exerciseDemands = emptyMap(), conditions = mapOf("c1" to record),
-                        jointLabelDemands = emptyMap(), demandCues = emptyMap()
-                    )
-                )
-            }
-            val context = WorkoutGenerationContextBuilder(
-                userProfileRepository = StubUserProfileRepository(profile),
-                workoutRepository = StubWorkoutRepository(emptyList()),
-                exerciseCatalog = InMemoryExerciseCatalog(catalog),
-                exerciseFilter = ExerciseFilter(),
-                historyAnalyzer = WorkoutHistoryAnalyzer(),
-                plannerFeatureFlags = PlannerFeatureFlags.PRODUCTION,
-                conditionGuidanceSource = overlay
-            ).build()
-            assertThat(context.conditionRestrictions)
-                .isInstanceOf(wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.Active::class.java)
-            return RecommendationContextIdentity.of(context)
-        }
-
-        assertThat(identityFor("v1")).isEqualTo(identityFor("v1"))
-        assertThat(identityFor("v2")).isNotEqualTo(identityFor("v1"))
-    }
-
-    @Test
-    fun build_reportedConditionsFailClosedEvenWithTheReviewedPathOff() = runTest {
-        val catalog = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
-        fun builderFor(profile: UserProfile) = WorkoutGenerationContextBuilder(
-            userProfileRepository = StubUserProfileRepository(profile),
-            workoutRepository = StubWorkoutRepository(emptyList()),
-            exerciseCatalog = InMemoryExerciseCatalog(catalog),
-            exerciseFilter = ExerciseFilter(),
-            historyAnalyzer = WorkoutHistoryAnalyzer(),
-            plannerFeatureFlags = PlannerFeatureFlags()
-        )
-
-        val conditioned = builderFor(
-            UserProfile(availableEquipment = StandardEquipment.ALL, reportedConditions = setOf("c1"))
-        ).build()
-        val plain = builderFor(UserProfile(availableEquipment = StandardEquipment.ALL)).build()
-        // Joint labels were never read by the legacy filter; that is unchanged.
-        val labelled = builderFor(
-            UserProfile(
-                availableEquipment = StandardEquipment.ALL,
-                trainingConstraints = setOf(wallcrawl.elopenmike.com.core.model.TrainingConstraint.HIP_SENSITIVE)
-            )
-        ).build()
-
-        assertThat(conditioned.conditionRestrictions)
-            .isEqualTo(wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.Unavailable)
-        assertThat(conditioned.allowedExercises).isEmpty()
-        // Not an equipment shortfall: the planner reports the guidance failure, still closed.
-        val refused = org.junit.Assert.assertThrows(
-            wallcrawl.elopenmike.com.core.ai.WorkoutValidationException::class.java
-        ) { kotlinx.coroutines.runBlocking { FakeWorkoutPlanner().generateWorkout(conditioned) } }
-        assertThat(refused.failure).isEqualTo(WorkoutPlanningFailure.REVIEWED_ELIGIBILITY_NO_CANDIDATES)
-        assertThat(refused.automaticEligibilityFailure)
-            .isEqualTo(wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE)
-        assertThat(plain.allowedExercises).isNotEmpty()
-        assertThat(labelled.allowedExercises).isEqualTo(plain.allowedExercises)
-    }
-
-    @Test
-    fun build_withoutAnyOverlaySourceAConditionUserIsStillRefusedNotUnrestricted() = runTest {
-        val catalog = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
-        val context = WorkoutGenerationContextBuilder(
-            userProfileRepository = StubUserProfileRepository(UserProfile(reportedConditions = setOf("x"))),
-            workoutRepository = StubWorkoutRepository(emptyList()),
-            exerciseCatalog = InMemoryExerciseCatalog(catalog),
-            exerciseFilter = ExerciseFilter(),
-            historyAnalyzer = WorkoutHistoryAnalyzer(),
-            plannerFeatureFlags = PlannerFeatureFlags.PRODUCTION
-        ).build()
-
-        assertThat(context.allowedExercises).isEmpty()
-        assertThat(context.conditionRestrictions)
-            .isEqualTo(wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions.Unavailable)
     }
 
     @Test
@@ -1045,7 +963,7 @@ class WorkoutGenerationContextBuilderTest {
     }
 
     private val emptyLedger = WeeklyDoseLedger(
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         weekStartEpochDay = 20_696L,
         timeZoneId = "UTC",
         catalogVersion = "catalog-commit",
@@ -1245,8 +1163,6 @@ private class StubUserProfileRepository(
         constraints: Set<wallcrawl.elopenmike.com.core.model.TrainingConstraint>
     ) = Unit
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) = Unit
-    override suspend fun editReportedConditions(change: (Set<String>) -> Set<String>) = error("Not used")
-    override suspend fun editExcludedExercises(change: (List<String>) -> List<String>) = error("Not used")
     override suspend fun updateGender(gender: wallcrawl.elopenmike.com.core.model.ProfileGender) = saveProfile(getProfileOnce().copy(gender = gender))
     override suspend fun updateThemePreference(themePreference: wallcrawl.elopenmike.com.core.model.ThemePreference) = Unit
 }
@@ -1254,6 +1170,18 @@ private class StubUserProfileRepository(
 private class StubWorkoutRepository(
     private val completedSessions: List<WorkoutSession>
 ) : WorkoutRepository {
+    var pendingPresent = false
+    var pendingProbeCalls = 0
+    override suspend fun hasPendingConditionReassessment(profileId: String): Boolean { pendingProbeCalls++; return pendingPresent }
+
+    var conditionRead: wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead? = null
+    var conditionReadCalls = 0
+    override suspend fun getConditionContext(profileId: String, support: wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog,
+        asOf: Long, zone: ZoneId, programMode: Boolean): wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead {
+        conditionReadCalls++
+        return requireNotNull(conditionRead)
+    }
+
     override suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long) =
         completedSessions.filter { it.completedAtTimestamp?.let { time ->
             time >= startTimestamp && time < endTimestampExclusive

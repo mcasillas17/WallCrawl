@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.feature.exercises
 
+import androidx.lifecycle.SavedStateHandle
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -36,10 +37,33 @@ class ExercisesViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value as ExercisesUiState.Success
-        assertThat(state.exercises).hasSize(309)
+        assertThat(state.exercises).hasSize(302)
         assertThat(state.exercises.map(Exercise::id))
             .containsExactlyElementsIn(bundledExercises.map(Exercise::id))
             .inOrder()
+    }
+
+    @Test
+    fun restoredLibraryKeepsTheSearchFiltersAndOpenExercise() = runTest {
+        val catalog = InMemoryExerciseCatalog()
+        val handle = SavedStateHandle()
+        val original = ExercisesViewModel(catalog, handle)
+        val exercise = InMemoryExerciseCatalog.SAMPLE_EXERCISES.first()
+        original.onQueryChanged("press")
+        original.selectMuscle(exercise.primaryMuscles.first())
+        original.selectEquipment(exercise.listedEquipment.first())
+        original.openExerciseDetail(exercise)
+
+        val restored = ExercisesViewModel(catalog, SavedStateHandle(handle.keys().associateWith { handle.get<Any?>(it) }))
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { restored.uiState.collect {} }
+        advanceUntilIdle()
+
+        val state = restored.uiState.value as ExercisesUiState.Success
+        assertThat(state.query).isEqualTo("press")
+        assertThat(state.selectedMuscle).isEqualTo(exercise.primaryMuscles.first())
+        assertThat(state.selectedEquipment).isEqualTo(exercise.listedEquipment.first())
+        assertThat(state.exercises).contains(exercise)
+        assertThat(state.selectedExerciseDetail).isEqualTo(exercise)
     }
 
     @Test

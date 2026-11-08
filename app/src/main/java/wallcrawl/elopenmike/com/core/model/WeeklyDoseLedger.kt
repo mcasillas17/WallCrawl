@@ -3,12 +3,14 @@ package wallcrawl.elopenmike.com.core.model
 /**
  * The versioned crediting policy a [WeeklyDoseLedger] was produced under.
  *
- * `PRIMARY_ONLY_V1` credits exactly one approved direct-primary muscle per completed work
+ * `ORDINARY_PRIMARY_ONLY_V2` credits exactly one approved direct-primary muscle per completed ordinary work
  * set. Descriptive secondary muscles receive no dose credit at all; fractional secondary
  * crediting would be a different, separately versioned policy.
  */
 enum class LedgerPolicyVersion {
-    PRIMARY_ONLY_V1
+    /** Historical receipts and cache payloads remain decodable. */
+    PRIMARY_ONLY_V1,
+    ORDINARY_PRIMARY_ONLY_V2
 }
 
 /**

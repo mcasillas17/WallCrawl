@@ -7,7 +7,6 @@ import java.security.MessageDigest
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Test
-import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.EligibilityReason
@@ -24,8 +23,7 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
 /** The actual bundle, with no synthetic approvals anywhere in it. */
 class AiAcceptedCatalogTest {
     private val factory = PlannerFixtureContextFactory()
-    private val projection = factory.bundledCatalogProjection()
-    private val exercises = projection.exercises.filter { it.id !in projection.ownedExerciseIds }
+    private val exercises = factory.bundledCatalogProjection().exercises
     private val byId = exercises.associateBy(Exercise::id)
     private val partition = JSONObject(factory.readResourceText("ai-acceptance/partition-v2.json"))
     private val acceptedIds = partition.getJSONArray("aiAccepted").strings().toSet()
@@ -125,7 +123,7 @@ class AiAcceptedCatalogTest {
             .evaluate(exercises, fullInventoryProfile(), AdaptationState.BUILD,
                 demonstratedProgressionFamilies = exercises.mapNotNullTo(mutableSetOf()) {
                     it.acceptedMetadata()?.progressionFamily
-                }, restrictions = ConditionRestrictions.None).decisions
+                }).decisions
 
         assertThat(decisions.filter { it.eligible }.map { it.exerciseId })
             .containsExactlyElementsIn(acceptedIds)
@@ -135,13 +133,11 @@ class AiAcceptedCatalogTest {
         for (constraint in TrainingConstraint.entries.filterNot { it == TrainingConstraint.LOW_IMPACT_ONLY }) {
             val constrained = ExerciseEligibilityPolicy().evaluate(
                 exercises, fullInventoryProfile().copy(trainingConstraints = setOf(constraint)),
-                AdaptationState.BUILD,
-                // No overlay is supplied, so a joint label cannot be applied and fails closed.
-                restrictions = ConditionRestrictions.Unavailable
+                AdaptationState.BUILD
             ).decisions
             assertWithMessage(constraint.name).that(constrained.none { it.eligible }).isTrue()
             constrained.filter { it.exerciseId in acceptedIds }.forEach {
-                assertThat(it.reasons).contains(EligibilityReason.CONDITION_GUIDANCE_UNAVAILABLE)
+                assertThat(it.reasons).contains(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
             }
         }
     }
@@ -181,7 +177,7 @@ class AiAcceptedCatalogTest {
     @Test
     fun pendingRegressionOpensNoComplexityExceptionOrCapabilityInheritance() {
         val decisions = ExerciseEligibilityPolicy().evaluate(
-            exercises, fullInventoryProfile(), AdaptationState.UNCALIBRATED, restrictions = ConditionRestrictions.None
+            exercises, fullInventoryProfile(), AdaptationState.UNCALIBRATED
         ).decisions.associateBy { it.exerciseId }
         assertThat(byId.getValue("pistol-squat").acceptedMetadata()).isNotNull()
         assertThat(decisions.getValue("pistol-squat").reasons)

@@ -1,5 +1,7 @@
 # Condition-aware planning design
 
+Historical PR 105 record. The [integration report](../../research/conditions/movements/pr-105.md) describes the current catalog, clinical release gate and saved-data compatibility.
+
 **Status:** Approved on 2026-11-01. Amended the same day after the owner approved seven changes
 from the [research consolidation](../../research/conditions/CONSOLIDATION.md), section 8. Where an
 earlier draft differs, this text governs.

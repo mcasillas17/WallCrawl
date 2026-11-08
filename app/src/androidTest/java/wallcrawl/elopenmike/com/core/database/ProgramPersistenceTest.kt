@@ -23,6 +23,44 @@ import java.time.ZoneOffset
 
 @RunWith(AndroidJUnit4::class)
 class ProgramPersistenceTest {
+    @Test fun unresolvedRestrictionsPreserveProgramLoggingFinishCancelAndHistory() = runBlocking {
+        start()
+        val exercise = WorkoutExerciseEntity("raw-ex", "raw-finish", "plank", 0,
+            exerciseType = ExerciseType.DURATION, targetSets = 1, targetRepMin = null, targetRepMax = null,
+            targetWeight = null, targetDurationSeconds = 30, notes = "")
+        val set = WorkoutSetEntity("raw-set", "raw-ex", 1, exerciseType = ExerciseType.DURATION,
+            targetReps = null, completedReps = null, targetWeight = null, completedWeight = null,
+            targetDurationSeconds = 30, isCompleted = false, rpe = null, rir = null, type = SetType.NORMAL)
+        reserve("raw-finish", listOf(exercise), listOf(set))
+        val workouts = OfflineWorkoutRepository(db.workoutSessionDao(), db.workoutSetDao())
+        db.openHelper.writableDatabase.execSQL("UPDATE user_profiles SET trainingConstraintsJson='FUTURE_CONSTRAINT'")
+        workouts.logSetCompletion("raw-set", SetPerformanceInput(durationSeconds = 30,
+            completedAtTimestamp = 1_500, isCompleted = true))
+        assertEquals(1, workouts.completeWorkout("raw-finish", 10).totalSetsCompleted)
+        assertEquals(1, state().progress.completedSlots)
+        assertEquals(SessionStatus.COMPLETED, workouts.getSessionById("raw-finish")!!.status)
+        db.openHelper.writableDatabase.execSQL("UPDATE user_profiles SET trainingConstraintsJson=''")
+        reserve("raw-cancel")
+        db.openHelper.writableDatabase.execSQL("UPDATE user_profiles SET trainingConstraintsJson='KNEE_SENSITIVE|||'")
+        workouts.cancelWorkout("raw-cancel")
+        assertNull(workouts.getSessionById("raw-cancel"))
+        assertEquals(1, state().progress.completedSlots)
+        assertEquals("KNEE_SENSITIVE|||", db.userProfileDao().getProfile("default_user")!!.trainingConstraintsJson)
+    }
+    @Test fun pendingAfterConditionRemovalRefusesProgramReservationAtomically() = runBlocking<Unit> {
+        start()
+        val before = repository.getHeader()
+        db.conditionReassessmentDao().replace(ConditionReassessmentPendingEntity("default_user", "removed-condition",
+            "exercise", "event", "a".repeat(64), 1, 1, null))
+        val failure = runCatching { reserve("blocked") }.exceptionOrNull() as ConditionStartRefused
+        assertEquals("pending-reassessment", failure.reasons.single().reason)
+        assertEquals(before, repository.getHeader())
+        assertNull(db.workoutSessionDao().getSessionWithDetails("blocked"))
+        assertNull(db.workoutSessionDao().getRecommendationRecord("blocked"))
+        assertNull(db.programDao().getProgramAssociation("blocked"))
+        assertEquals(1, db.conditionReassessmentDao().forProfile("default_user").size)
+    }
+
     private lateinit var db: WallCrawlDatabase
     private lateinit var repository: OfflineProgramRepository
     private val run = "11111111-1111-1111-1111-111111111111"

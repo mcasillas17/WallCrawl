@@ -536,10 +536,10 @@ class ReviewedCatalogCoverageTest(private val caseId: String) {
             }
             "joint-constraint" -> {
                 assertThat(result.failure)
-                    .isEqualTo(AutomaticEligibilityFailure.CONDITIONS_REMOVED_ALL)
+                    .isEqualTo(AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL)
                 assertThat(syntheticApprovedIds).isNotEmpty()
                 result.decisions.filter { it.exerciseId in syntheticApprovedIds }.forEach {
-                    assertThat(it.reasons).contains(EligibilityReason.CONDITION_DEMANDS_UNREVIEWED)
+                    assertThat(it.reasons).contains(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
                 }
             }
             "no-equipment" -> {

@@ -101,29 +101,36 @@ class SafetyCopyTest {
         // flag in both directions.
         assertThat(PlannerFeatureFlags.PRODUCTION.reviewedCapabilityEligibility).isTrue()
 
-        // Joint labels and conditions now change what is planned, and the copy says how: the
-        // plan is chosen to work around the report, and it promises nothing about outcomes.
-        listOf(
-            "onboarding_safety_hint", "profile_safety_description"
-        ).forEach { key ->
-            assertWithMessage("$key (en) must use the app's phrase")
-                .that(english.getValue(key)).contains("chosen to work around")
-            assertWithMessage("$key (es) must use the app's phrase")
-                .that(spanish.getValue(key)).contains("se eligen para sortear")
-            assertWithMessage("$key (en) must say it cannot guarantee the outcome")
-                .that(english.getValue(key)).contains("cannot guarantee")
-            assertWithMessage("$key (es) must say it cannot guarantee the outcome")
-                .that(spanish.getValue(key)).contains("no puede garantizar")
-            assertWithMessage("$key (en) must not read as a clearance for unflagged exercises")
-                .that(english.getValue(key)).contains("is not a statement that it suits you")
-            assertWithMessage("$key (es) must not read as a clearance for unflagged exercises")
-                .that(spanish.getValue(key)).contains("no significa que te convenga")
-            // The statements the earlier cohort made are no longer true.
-            assertWithMessage("$key (en) must not say a joint choice leaves no workout")
-                .that(english.getValue(key)).doesNotContain("no automatic workout to offer")
-            assertWithMessage("$key (es) must not say a joint choice leaves no workout")
-                .that(spanish.getValue(key)).doesNotContain("no tendrá entrenamientos automáticos que ofrecer")
-        }
+        assertWithMessage("the English hint must say the selection is read")
+            .that(english.getValue("onboarding_safety_hint"))
+            .contains("Automatic workouts read your answer")
+        assertWithMessage("the Spanish hint must say the selection is read")
+            .that(spanish.getValue("onboarding_safety_hint"))
+            .contains("leen tu respuesta")
+
+        // No accepted record clears any specific joint, so choosing one leaves no automatic
+        // workout at all. Low-impact-only is the exception — it is decided by each record's
+        // impact level rather than by a clearance — and the copy has to separate the two, or
+        // it understates one option and overstates the rest.
+        assertWithMessage("the English hint must say no automatic workout is left to offer")
+            .that(english.getValue("onboarding_safety_hint"))
+            .contains("no automatic workout to offer")
+        assertWithMessage("the English hint must say low impact only is live")
+            .that(english.getValue("onboarding_safety_hint"))
+            .contains("Low impact only takes effect today")
+        assertWithMessage("the Spanish hint must say no automatic workout is left to offer")
+            .that(spanish.getValue("onboarding_safety_hint"))
+            .contains("no tendrá entrenamientos automáticos que ofrecer")
+        assertWithMessage("the Spanish hint must say low impact only is live")
+            .that(spanish.getValue("onboarding_safety_hint"))
+            .contains("«Solo bajo impacto» ya se aplica hoy")
+
+        assertWithMessage("the English Profile card must carry the same two statements")
+            .that(english.getValue("profile_safety_description"))
+            .contains("no automatic workout to offer")
+        assertWithMessage("the Spanish Profile card must carry the same two statements")
+            .that(spanish.getValue("profile_safety_description"))
+            .contains("no tendrá entrenamientos automáticos que ofrecer")
 
         // The reviewed cohort is AI-accepted under owner authorization. Neither surface may
         // describe it as human review or as clinical validation.
@@ -157,10 +164,10 @@ class SafetyCopyTest {
         // note and understates what the app does with that other input.
         assertWithMessage("the English Profile disclaimer must name what it covers")
             .that(english.getValue("profile_safety_description"))
-            .startsWith("Your joint and condition selection")
+            .startsWith("Your joint selection")
         assertWithMessage("the Spanish Profile disclaimer must name what it covers")
             .that(spanish.getValue("profile_safety_description"))
-            .startsWith("Tu selección de articulaciones y condiciones")
+            .startsWith("Tu selección de articulaciones")
     }
 
     @Test
@@ -271,70 +278,8 @@ class SafetyCopyTest {
     }
 
     @Test
-    fun conditionNamesAreAllowlistedAndClaimVocabularyStaysForbidden() {
-        // Every condition the overlay ships has a name in both languages, and the names are
-        // exactly this list: a new condition is a deliberate edit to it.
-        val allowedNames = mapOf(
-            "piriformis_syndrome" to ("Piriformis syndrome" to "Síndrome del piriforme"),
-            "gluteal_tendinopathy" to ("Gluteal tendinopathy" to "Tendinopatía glútea"),
-            "lumbar_radiculopathy" to ("Lumbar radiculopathy" to "Radiculopatía lumbar"),
-            "nonspecific_low_back_pain" to ("Nonspecific low back pain" to "Dolor lumbar inespecífico"),
-            "rotator_cuff_related_shoulder_pain" to (
-                "Rotator cuff-related shoulder pain" to "Dolor de hombro relacionado con el manguito rotador"
-                ),
-            "lateral_elbow_tendinopathy" to ("Lateral elbow tendinopathy" to "Tendinopatía lateral del codo"),
-            "carpal_tunnel_syndrome" to ("Carpal tunnel syndrome" to "Síndrome del túnel carpiano"),
-            "patellofemoral_pain" to ("Patellofemoral pain" to "Dolor patelofemoral")
-        )
-        val shippedIds = (JSONTokener(CONDITION_FILE.readText()).nextValue() as JSONObject)
-            .getJSONObject("conditions").keys().asSequence().toSet()
-        assertThat(shippedIds).isEqualTo(allowedNames.keys)
-        allowedNames.forEach { (id, names) ->
-            assertThat(english["condition_name_$id"]).isEqualTo(names.first)
-            assertThat(spanish["condition_name_$id"]).isEqualTo(names.second)
-        }
-        val nameKeys = english.keys.filter { it.startsWith("condition_name_") }.toSet()
-        assertThat(nameKeys).isEqualTo(
-            allowedNames.keys.map { "condition_name_$it" }.toSet() + "condition_name_unknown"
-        )
-        assertThat(spanish.keys.filter { it.startsWith("condition_name_") }.toSet()).isEqualTo(nameKeys)
-
-        // Everything else this feature says is held to the claim vocabulary in both languages.
-        val featureKeys = english.keys.filter { key ->
-            (key.startsWith("condition_") && !key.startsWith("condition_name_")) ||
-                key.startsWith("mobility_") || key.startsWith("pain_offer_") ||
-                key.startsWith("editor_condition_") ||
-                key.startsWith("onboarding_safety_") || key.startsWith("profile_safety_") ||
-                key.startsWith("profile_excluded_")
-        }
-        assertThat(featureKeys.size).isAtLeast(25)
-        val claims = listOf(
-            // English
-            "treat", "heal", "cure", "prevent", "safe", "protect", "rehab", "recover", "therap",
-            // Spanish
-            "trata", "curar", "sana", "previen", "prevenir", "seguro", "segura",
-            "proteg", "rehabilit", "recuper", "terapi"
-        )
-        listOf("en" to english, "es" to spanish).forEach { (language, strings) ->
-            featureKeys.forEach { key ->
-                val value = strings.getValue(key).lowercase()
-                claims.forEach { claim ->
-                    assertWithMessage("$key ($language) must not claim: $claim")
-                        .that(value).doesNotContain(claim)
-                }
-                // "cura" is a claim as a word, but only a fragment of "procura" or "curar".
-                assertWithMessage("$key ($language) must not claim: cura")
-                    .that(Regex("\\bcura\\b").containsMatchIn(value)).isFalse()
-            }
-            // A routine is general information and the pain offer promises nothing.
-            assertThat(strings.getValue("mobility_today_for").lowercase())
-                .containsMatch("(general|médico)")
-        }
-    }
-
-    @Test
     fun noTranslatedExerciseTextPromisesAMedicalOutcome() {
-        // The overlay is the other half of the shipped Spanish: 309 names and 131 coaching
+        // The overlay is the other half of the shipped Spanish: 302 names and 131 coaching
         // summaries that reach the same screens as the resource strings, and that the
         // resource-file checks above cannot see.
         assertThat(translatedExerciseText).isNotEmpty()
@@ -411,8 +356,6 @@ class SafetyCopyTest {
             "today_error_reviewed_equipment",
             "today_error_reviewed_capabilities",
             "today_error_reviewed_constraints",
-            "today_error_reviewed_conditions",
-            "today_error_condition_guidance_unavailable",
             "today_error_reviewed_calibration",
             "today_error_reviewed_none_eligible"
         )
@@ -432,10 +375,6 @@ class SafetyCopyTest {
 
         val ENGLISH_FILE = File(RESOURCE_ROOT, "values/strings.xml")
         val SPANISH_FILE = File(RESOURCE_ROOT, "values-es/strings.xml")
-        val CONDITION_FILE = File(
-            RESOURCE_ROOT.parentFile,
-            "assets/conditions/condition-guidance.json"
-        )
         val OVERLAY_FILE = File(
             RESOURCE_ROOT.parentFile,
             "assets/localization/exercise-localization.json"

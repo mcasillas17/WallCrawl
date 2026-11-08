@@ -7,37 +7,6 @@ import org.junit.Test
 class ExercisePrescriptionTest {
 
     @Test
-    fun absentHoldPrintsTheTextFromBeforeHoldsExisted() {
-        val plain = ExercisePrescription(
-            exerciseType = ExerciseType.BODYWEIGHT_REPS, targetSets = 2, repRange = RepRange(8, 12), restSeconds = 60
-        )
-        // Written out from the base commit's data class text, field by field.
-        assertThat(plain.toString()).isEqualTo(
-            "ExercisePrescription(exerciseType=BODYWEIGHT_REPS, targetSets=2, repRange=8–12, " +
-                "targetWeight=null, targetAssistanceWeight=null, targetDurationSeconds=null, " +
-                "targetDistanceMeters=null, restSeconds=60, effortTarget=null, restClass=null, " +
-                "restTargetSource=null)"
-        )
-        assertThat(plain.copy(holdSeconds = 30).toString()).endsWith("restTargetSource=null, holdSeconds=30)")
-    }
-
-    @Test
-    fun holdIsValidOnlyOnBodyweightRepetitions() {
-        val bodyweight = ExercisePrescription(
-            exerciseType = ExerciseType.BODYWEIGHT_REPS, targetSets = 2,
-            repRange = RepRange(5, 8), holdSeconds = 30
-        )
-        assertThat(bodyweight.holdSeconds).isEqualTo(30)
-        assertThrows(IllegalArgumentException::class.java) {
-            ExercisePrescription(
-                exerciseType = ExerciseType.WEIGHT_REPS, targetSets = 2,
-                repRange = RepRange(5, 8), holdSeconds = 30
-            )
-        }
-        assertThrows(IllegalArgumentException::class.java) { bodyweight.copy(holdSeconds = 0) }
-    }
-
-    @Test
     fun weightRepetitionPrescription_keepsOnlyApplicableTargets() {
         val prescription = ExercisePrescription(
             exerciseType = ExerciseType.WEIGHT_REPS,
@@ -250,5 +219,42 @@ class ExercisePrescriptionTest {
 
         assertThat(set.completedDurationSeconds).isEqualTo(50)
         assertThat(exercise.totalVolume).isEqualTo(0.0)
+    }
+
+    @Test
+    fun supportiveBodyweightStillRejectsLoadAndRestEditsKeepPurpose() {
+        val supportive = ExercisePrescription(ExerciseType.BODYWEIGHT_REPS, 2,
+            repRange = RepRange(4, 6), purpose = PrescriptionPurpose.SUPPORTIVE)
+
+        assertThat(supportive.withUserRestPreference(UserRestPreference(RestClass.SHORT, 60)).purpose)
+            .isEqualTo(PrescriptionPurpose.SUPPORTIVE)
+        assertThrows(IllegalArgumentException::class.java) { supportive.copy(targetWeight = 5.0) }
+    }
+
+    @Test
+    fun generatedConditionDecisionCarriesBoundIdentityAndFrozenRuleReferences() {
+        val identity = ConditionExerciseIdentity("fictional-exercise", "a".repeat(64),
+            ExerciseType.DURATION, "b".repeat(64))
+        val reference = ConditionRuleReference("fictional-condition", "v1", "case", "rule", 1)
+        val references = mutableSetOf(reference)
+        val decision = ConditionPrescriptionDecision(identity, PrescriptionPurpose.SUPPORTIVE,
+            "execution-v1", references)
+        val workout = GeneratedWorkout(
+            title = WorkoutTitleSpec(WorkoutSplit.FULL_BODY, WorkoutEmphasis.HYPERTROPHY),
+            focusMuscles = emptyList(), estimatedDurationMinutes = 5,
+            exercises = listOf(PlannedExercise("fictional-exercise",
+                ExercisePrescription(ExerciseType.DURATION, 1, targetDurationSeconds = 30,
+                    purpose = PrescriptionPurpose.SUPPORTIVE))),
+            rationale = WorkoutRationaleSpec.GoalFocus(emptyList(), emptyList()),
+            conditionDecisions = listOf(decision)
+        )
+        references.clear()
+
+        assertThat(workout.conditionDecisions.single().exerciseIdentity).isEqualTo(identity)
+        assertThat(workout.conditionDecisions.single().purpose).isEqualTo(PrescriptionPurpose.SUPPORTIVE)
+        assertThat(workout.conditionDecisions.single().executionIdentity).isEqualTo("execution-v1")
+        assertThat(workout.conditionDecisions.single().sourceRuleReferences).containsExactly(reference)
+        assertThat(WorkoutGenerationContext(UserProfile()).conditionPlanning)
+            .isEqualTo(ConditionPlanningResult.NotApplicable)
     }
 }

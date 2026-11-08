@@ -10,8 +10,6 @@ import re
 import unittest
 from pathlib import Path
 
-from import_catalog import upstream_entries_only
-
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CATALOG = REPO_ROOT / "app/src/main/assets/workout-guide/catalog.json"
 OVERRIDES = Path(__file__).with_name("programming-overrides.json")
@@ -33,7 +31,7 @@ MINIMUM_REVIEWED = 131
 class ProgrammingOverridesTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.catalog = upstream_entries_only(json.loads(CATALOG.read_text()))
+        cls.catalog = json.loads(CATALOG.read_text())
         cls.by_id = {e["id"]: e for e in cls.catalog["exercises"]}
         cls.overrides = json.loads(OVERRIDES.read_text())["exercises"]
 
@@ -65,9 +63,7 @@ class ProgrammingOverridesTest(unittest.TestCase):
         self.assertEqual("98a28205a15069a4c8edc32f27951c46b2134fec02ba51878ef3da777c0d3705", hashlib.sha256(encoded).hexdigest())
 
     def test_catalog_facts_frames_and_licensing_match_pinned_baseline(self) -> None:
-        full = json.loads(CATALOG.read_text())
-        owned = {e["id"] for e in full["exercises"] if "attribution" in e}
-        facts = upstream_entries_only(full)
+        facts = json.loads(CATALOG.read_text())
         for exercise in facts["exercises"]:
             exercise.pop("programming", None)
             exercise.pop("reviewedMetadata", None)
@@ -75,25 +71,13 @@ class ProgrammingOverridesTest(unittest.TestCase):
         self.assertEqual("aa70e3d32fb04f99d54b97c52e13aa2c3567f9d17591aa89b38197f1ade9e745", hashlib.sha256(encoded).hexdigest())
         self.assertEqual(302, len(facts["exercises"]))
         self.assertEqual("ba0b709cb20430361b2cb33aaadd20998164a916", facts["source"]["commit"])
-        # Owned entries are a second source: their SVGs, the notice counts and the owned section
-        # of ATTRIBUTION.md are checked by the importer, so the upstream baseline excludes them.
-        def is_upstream_file(file: Path) -> bool:
-            relative = file.relative_to(CATALOG.parent).parts
-            return file.is_file() and not (relative[0] == "assets" and relative[1] in owned)
-
-        self.assertEqual(906, len([f for f in CATALOG.parent.rglob("*.svg") if is_upstream_file(f)]))
-        self.assertEqual(21, len(owned) * 3)
+        self.assertEqual(906, len(list(CATALOG.parent.rglob("*.svg"))))
         digest = hashlib.sha256()
         for file in sorted(CATALOG.parent.rglob("*")):
-            if is_upstream_file(file) and file.name != "catalog.json":
+            if file.is_file() and file.name != "catalog.json":
                 digest.update(file.relative_to(CATALOG.parent).as_posix().encode())
                 digest.update(b"\0")
-                content = file.read_bytes()
-                if file.name == "ATTRIBUTION.md":
-                    content = content.split(b"\n\n## WallCrawl-owned additions")[0] + b"\n"
-                if file.name == "NOTICE.md":
-                    content = re.sub(rb"Owned exercises: .*?listed in ATTRIBUTION\.md\.\n\n", b"", content, flags=re.S)
-                digest.update(content)
+                digest.update(file.read_bytes())
         self.assertEqual("bfbb6bffc84e4b6dd58d83cc20c5d925439d88600719c9d60daa61e9c29a6cf8", digest.hexdigest())
 
     def test_timed_variants_include_their_required_support_equipment(self) -> None:
@@ -191,7 +175,7 @@ class ProgrammingOverridesTest(unittest.TestCase):
 class ReviewedMetadataTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.catalog = upstream_entries_only(json.loads(CATALOG.read_text()))
+        cls.catalog = json.loads(CATALOG.read_text())
         cls.by_id = {exercise["id"]: exercise for exercise in cls.catalog["exercises"]}
         cls.reviewed = json.loads(REVIEWED_METADATA.read_text())["exercises"]
 

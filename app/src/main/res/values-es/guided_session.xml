@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guided_leave_short">Salir</string>
+    <string name="guided_leave_workout">Salir del entrenamiento</string>
+    <string name="guided_keep_training">Seguir entrenando</string>
+    <string name="guided_resume_later">Salir y reanudar más tarde</string>
+    <string name="guided_discard_workout">Descartar entrenamiento…</string>
+    <string name="guided_previous_exercise">Ejercicio anterior</string>
+    <string name="guided_expand_demo">Ampliar la demostración de %1$s</string>
+    <string name="guided_rest_options">Opciones del temporizador</string>
+    <string name="guided_dismiss_timer">Cerrar temporizador</string>
+    <string name="guided_log_set">Registrar serie</string>
+    <string name="guided_save_changes">Guardar cambios</string>
+    <string name="guided_mark_unlogged">Marcar sin registrar</string>
+    <string name="guided_rest">Descanso</string>
+    <string name="guided_sets">Series</string>
+    <string name="guided_unlogged">Sin registrar</string>
+    <string name="guided_change_step">Cambiar el incremento de %1$s, actual %2$s</string>
+    <string name="guided_set_maximum">%1$s debe ser menor o igual que %2$s.</string>
+    <string name="guided_set_need_load_reps">Introduce una carga y un número de repeticiones mayores que cero.</string>
+    <string name="guided_set_need_reps">Introduce al menos una repetición.</string>
+    <string name="guided_set_need_duration">Introduce al menos un segundo.</string>
+    <string name="guided_set_need_distance_duration">Introduce una distancia o duración mayor que cero.</string>
+    <string name="guided_summary_partial">Tu programa avanzó una sesión. Solo las series registradas cuentan para el rendimiento.</string>
+    <string name="guided_view_workout">Ver entrenamiento</string>
+</resources>

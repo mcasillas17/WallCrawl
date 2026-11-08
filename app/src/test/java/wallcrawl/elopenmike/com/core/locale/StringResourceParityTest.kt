@@ -219,6 +219,8 @@ class StringResourceParityTest {
             "rest_add_thirty",
             "rest_countdown",
             "set_field_with_unit",
+            // The prompt and answer are localized separately; this is punctuation only.
+            "condition_recorded_answer",
             "summary_duration_value",
             "template_summary",
             "progress_volume_value",

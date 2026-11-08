@@ -1,0 +1,12 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Scientific educational exercise sprite strip for a mobile exercise catalog. Wide 3:1 transparent canvas, exactly three invisible EQUAL WIDTH square cells arranged left to right. In each cell center a complete full-body portrait at identical scale, alignment and camera angle with clear empty margins on all sides. All anatomy, equipment and contact points fully inside that cell. Depict the SAME adult demonstrator, clothing, hand, dumbbell and viewpoint in all three cells. Clean moderately thin WHITE contour-only ink with transparent interiors, pure white solid strokes, transparent negative space. No solid silhouettes, gray shading, textures, glow, colored areas, floor strip, panel dividers, arrows, captions, numbers, or labels. Sparse clear line work, accurate joints and hands. No secondary/inset views. Adult female demonstrator with hair tied up clear of shoulders. Bilateral standing straight-arm resistance-band shoulder extension. Fixed near-side three-quarter camera. Person facing LEFT, standing tall with planted feet, both hands holding the two ends of ONE long elastic band whose midpoint is secured to a clearly visible fixed wall eyelet at approximately shoulder height on viewer LEFT. Each cell has its OWN small eyelet and two continuous straight elastic strands from eyelet to the two hands; no strip runs between cells. Leave enough horizontal room for gentle diagonal tension from the anchor to demonstrator; same shoulder-high anchor, same stance and trunk profile, same exercise clothing. LEFT: both straight arms extend forward to hold band ends before pulling. MIDDLE: arms straight and diagonal down-forward halfway to hips. RIGHT: both straight arms down with hands beside outer hips, shoulders slightly back. Only shoulders move. Do not bend elbows, pull toward chest, squat, change eyelet height or put anchor behind person.",
+  "outputSha256": "a6ea0bbb6f02dbe813500fa6bb48ef47f672fd3871a53d315ed8e393d2716a3d",
+  "layout": "three-panels",
+  "variant": "female",
+  "exerciseId": "standing-straight-arm-band-shoulder-extension",
+  "nativeStrip": {
+    "path": "masters/standing-straight-arm-band-shoulder-extension/female/native-strip.png",
+    "sha256": "a6ea0bbb6f02dbe813500fa6bb48ef47f672fd3871a53d315ed8e393d2716a3d"
+  }
+}

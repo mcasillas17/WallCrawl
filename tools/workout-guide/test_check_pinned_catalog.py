@@ -26,9 +26,7 @@ class CheckPinnedCatalogTest(unittest.TestCase):
             shutil.copy2(path, self.tool / path.name)
         for name in ("review-schema.json", "programming-rep-range-schema.json"):
             shutil.copy2(Path(__file__).with_name(name), self.tool / name)
-        for path in (
-            self.fixture.config, self.fixture.overrides, self.fixture.reviewed_metadata, self.fixture.owned,
-        ):
+        for path in (self.fixture.config, self.fixture.overrides, self.fixture.reviewed_metadata):
             shutil.copy2(path, self.tool / path.name)
         self.config = self.tool / "import-config.json"
         self.original_config = self.config.read_bytes()

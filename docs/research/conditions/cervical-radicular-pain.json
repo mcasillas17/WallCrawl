@@ -1,0 +1,408 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "cervical-radicular-pain",
+    "label": "cervical radicular pain",
+    "aliases": [
+      "cervical radicular syndrome"
+    ],
+    "distinctions": "Cervical nerve-root-related arm/neck pain is distinct from nonspecific neck pain, cord disease, WAD and postoperative rehabilitation."
+  },
+  "scope": {
+    "population": "Cervical radiculopathy onset under one month; Confirmed cervical radiculopathy",
+    "stage": "Varies by source; acute/recent versus chronic and symptom irritability are explicitly retained. Unknown stage remains unknown.",
+    "operativeStatus": "Nonsurgical evidence predominates; no postoperative protocol approved or inferred.",
+    "exclusions": "Source-specific exclusions are applicability boundaries, not diagnosis-wide contraindications. Coexisting conditions and independently selected joint limits retain precedence.",
+    "uncertainty": "- Ordinary training: when nerve-root irritability is active, alter demand/position according to assessed symptom response and capacity; this is clinical-guidance inference (CR-G1), not proof overhead lifting or all cervical extension is intrinsically harmful. No numeric cervical ROM/load ceiling established.\n- Supportive candidates: clinician-guided low-load neck control/endurance; general physical activity can be a candidate, not automatically contraindicated. Neurodynamic tensioning/sliding are clinically distinct and cannot be generated from generic stretches.\n- Restriction-only/research draft until diagnosis, neurological status, stage and clinically reviewed thresholds are known. Progressive deficit or possible myelopathy requires assessment, not automated progression. Specific urgent criteria need a separately approved clinical pathway rather than being reverse-engineered from trial exclusions.\n- No evidence retrieved to authorize postoperative exercise; prior surgery is an attribute requiring its own orders. NASS 2010 is older; 2024 Dutch and 2025 synthesis used for currentness."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Completed targeted spine research; PubMed/PMC, official guidelines and publishers",
+      "query": "Original exact search strings were not retained in the source report; the report records the actual scientific sources and access attempts. No reconstructed search string is presented as executed.",
+      "decision": "Faithfully serialize all 5 extracted substantive sources, including contrary/indirect evidence.",
+      "limitations": "Targeted English-access-dominated investigation; not a database-complete systematic review. Retained report: .superpowers/sdd/2026-11-01-condition-aware-workouts/spine-source-report.md"
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST exact DOI metadata lookup; targeted official/primary-source reopen",
+      "query": "Individual executed DOI queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1136/bmj.b3883; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1016/j.apmr.2018.06.008; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.2340/jrm.v54.2799; https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1177/02692155251365193",
+      "decision": "Retrieve missing exact title/PMID/publication metadata; compare titles and dates. Protocol reopens identified in source.access.details.",
+      "limitations": "Metadata API access does not upgrade abstract-only clinical extraction. Correction/retraction/supersession registry search not comprehensive."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST, primary MED abstracts; selected PubMed reopens",
+      "query": "Exact primary-record queries: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A19812130%20AND%20SRC%3AMED&format=json&resultType=core; https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A30473018%20AND%20SRC%3AMED&format=json&resultType=core; https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A40776625%20AND%20SRC%3AMED&format=json&resultType=core",
+      "decision": "Bounded accessible-protocol audit restored explicitly reported facts for cr-p1, cr-p2, cr-s2. Program/contact totals are distinguished from isolated exercise schedules; no unseen protocol, new search discovery or clinical release.",
+      "limitations": "Abstract-only/partial access unchanged. Unreported mechanics, home frequency, progression or stopping criteria remain unknown; no frequency computed from total contacts/duration."
+    }
+  ],
+  "sources": [
+    {
+      "id": "cr-g1",
+      "title": "Cervicaal Radiculair Syndroom: Oefentherapie",
+      "doi": null,
+      "pmid": null,
+      "url": "https://richtlijnendatabase.nl/richtlijn/cervicaal_radiculair_syndroom/conservatieve_therapie_bij_rl_crs/fysiotherapie_bij_rl_crs/oefentherapie_bij_rl_crs.html",
+      "publicationStatus": "Final official guideline; 2024-07-24",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Official source header/version inspected",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Final Dutch NVvN guideline exercise module, published 24 July 2024",
+      "population": "Cervical radicular syndrome; assessment and stage-specific care",
+      "comparator": "Exercise versus wait-and-see/other exercise in underpinning studies",
+      "coInterventions": "Multimodal physiotherapy context",
+      "outcomes": "Dutch NVvN cervical radicular syndrome guideline, final July 24, 2024. Exercise module. FT module. Consider targeted exercise with a suitably experienced therapist; low-certainty pain/disability evidence, very-low/absent evidence for several outcomes/harms. Initial reactive phase prioritizes advice to avoid aggravation; subacute active approach respects individual capacity; later self-management. This clinical stage advice does not yield a fixed extension/rotation or lifting ban. Evidence synthesis finds little/no additional disability benefit over wait-and-see or other exercise. Unknown stage should not become an invented “approved” neck-strengthening routine.",
+      "followUp": "Varies across trials",
+      "uncertainty": "Stage and capacity advice is clinical guidance, not fixed extension/rotation/load limits",
+      "harms": "Low/very-low or absent evidence for several outcomes including harms",
+      "limitations": "Stage and capacity advice is clinical guidance, not fixed extension/rotation/load limits Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Targeted exercise considered with appropriately skilled therapist; Dedering description gentle isometrics then low-load endurance",
+        "dose": "No universally preferred dose; cited three-month trial used three sessions weekly",
+        "frequency": "Cited Dedering exercise three times weekly; general activity approximately 30 minutes three times weekly",
+        "supervision": "Experienced therapist recommended",
+        "progression": "Reactive stage avoids aggravation; subacute active approach within capacity; later self-management",
+        "stoppingRules": "not reported as a fixed symptom/angle/load threshold"
+      },
+      "locations": [
+        "Aanbeveling",
+        "Overwegingen > Waarden en voorkeuren van patiënten (en evt. hun verzorgers)",
+        "Onderbouwing > Samenvatting literatuur"
+      ]
+    },
+    {
+      "id": "cr-p1",
+      "title": "Cervical collar or physiotherapy versus wait and see policy for recent onset cervical radiculopathy: randomised trial.",
+      "doi": "10.1136/bmj.b3883",
+      "pmid": "19812130",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19812130/",
+      "publicationStatus": "Published journal article; indexed publication 2009-10-07; all dates precede access.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Substantive indexed article text was available earlier; direct BMJ opening returned 403. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 19812130); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1136/bmj.b3883",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "RCT, 205 participants",
+      "population": "Cervical radiculopathy onset under one month",
+      "comparator": "Collar/rest versus physiotherapy/home exercise versus wait-and-see",
+      "coInterventions": "Rest/collar or therapist-led graded care according to arm",
+      "outcomes": "Kuijper et al., 2009 RCT. DOI 10.1136/bmj.b3883, BMJ full article. Substantive full article text available in search result; direct open subsequently 403. 205 recent-onset (<1 month) cervical radiculopathy patients; collar/rest, PT/home exercises, or wait-and-see; six-week treatment, six-month follow-up. Hands-off graded mobilizing/stabilizing/strengthening PT twice weekly. Arm/neck pain reduction over six weeks favored collar or PT (~12–17 mm/100 difference); little/no persistent between-group difference by six months. Adverse-event outcome absent per CR-G1's synthesis. Collar/rest arm's short-term efficacy does not justify app-imposed immobilization, especially when applying a different neck-pain diagnosis or recovery stage.",
+      "followUp": "6 weeks and 6 months",
+      "uncertainty": "Direct BMJ fetch 403 after indexed substantive article text; conservative abstract-only serialization; short-term pain benefit did not establish persistent superiority",
+      "harms": "Adverse-event outcome absent per CR-G1 synthesis",
+      "limitations": "Direct BMJ fetch 403 after indexed substantive article text; conservative abstract-only serialization; short-term pain benefit did not establish persistent superiority Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 19812130): physiotherapy accompanied by home exercises was compared with semi-hard collar/rest and continuation of daily activity without specific treatment. The abstract does not identify individual exercise mechanics; the collar/rest arm is not an app exercise instruction.",
+        "dose": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 19812130): 12 physiotherapy sessions with home exercises over six weeks; collar/rest comparator for three to six weeks. These are program/contact facts, not exercise-specific repetition, hold or load doses.",
+        "frequency": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 19812130): physiotherapy visits were twice weekly. The abstract does not specify home-exercise frequency, and no frequency is derived by dividing session totals by duration.",
+        "supervision": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 19812130): the exercise arm combined physiotherapy sessions and home exercise. The abstract does not establish continuous supervision or who monitored home execution.",
+        "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
+        "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
+      },
+      "locations": [
+        "Abstract > Interventions and Results",
+        "Abstract > Interventions"
+      ]
+    },
+    {
+      "id": "cr-p2",
+      "title": "The Effects of Neck-Specific Training Versus Prescribed Physical Activity on Pain and Disability in Patients With Cervical Radiculopathy: A Randomized Controlled Trial.",
+      "doi": "10.1016/j.apmr.2018.06.008",
+      "pmid": "30473018",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30473018/",
+      "publicationStatus": "Published journal article; indexed publication 2018-07-04; all dates precede access.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 30473018); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1016/j.apmr.2018.06.008",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "RCT, 144 participants",
+      "population": "Confirmed cervical radiculopathy",
+      "comparator": "Neck-specific training versus prescribed general physical activity",
+      "coInterventions": "Behavioral approach in both arms",
+      "outcomes": "Dedering et al., 2018 RCT. DOI 10.1016/j.apmr.2018.06.008, PMID 30473018. Abstract; protocol details additionally inspected in CR-G1 and CR-S1, not primary FT. 144 confirmed CR patients; three-month neck-specific training versus prescribed general physical activity; both behavioral approach, outcomes 3/6/12/24 months. No significant group or group×time effects; both improved. Guideline describes progression from gentle isometrics to low-load endurance, response-tailored, three sessions/week; comparator aerobic/muscular activity ~30 min three times/week. Primary detailed harms unavailable. Supports several possible active pathways, not superiority of one specific execution or a blanket general-activity ban.",
+      "followUp": "3, 6, 12 and 24 months",
+      "uncertainty": "No significant overall group/group-by-time effects; secondary review contrasts should not be described as decisive superiority",
+      "harms": "not reported in accessed primary abstract",
+      "limitations": "No significant overall group/group-by-time effects; secondary review contrasts should not be described as decisive superiority Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Objective and Interventions (primary abstract, PMID 30473018): neck-specific training versus prescribed physical activity; both groups also received a cognitive-behavioral approach. Individual positions, resistance interfaces and movements are not identified.",
+        "dose": "reported in accessible text: Abstract > Interventions (primary abstract, PMID 30473018): both interventions lasted three months. Session totals and exercise-specific dose are not stated; follow-up at 3/6/12/24 months is not a frequency schedule.",
+        "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
+        "supervision": "reported in accessible text: Abstract > Setting (primary abstract, PMID 30473018): interventions occurred in primary-care outpatient physiotherapy clinics. The abstract does not establish supervision of each exercise or home practice, or therapist-contact frequency.",
+        "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
+        "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
+      },
+      "locations": [
+        "Abstract > Interventions and Results",
+        "Abstract > Objective and Interventions",
+        "Abstract > Interventions",
+        "Abstract > Setting"
+      ]
+    },
+    {
+      "id": "cr-s1",
+      "title": "Effectiveness of Multimodal Rehabilitation Interventions for Management of Cervical Radiculopathy in Adults: An Updated Systematic Review from the Ontario Protocol for Traffic Injury Management (Optima) Collaboration.",
+      "doi": "10.2340/jrm.v54.2799",
+      "pmid": "35797062",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9422871/",
+      "publicationStatus": "Published journal article; indexed publication 2022-08-22; all dates precede access.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Underlying article/guideline and relevant sections inspected in completed spine research; extraction preserved in spine-source-report.md. Europe PMC fullTextXML re-opened during serialization: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9422871/fullTextXML."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.2340/jrm.v54.2799",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Updated OPTIMa systematic review; four acceptable RCTs and one low-quality RCT",
+      "population": "Adults with recent/any-duration cervical radiculopathy",
+      "comparator": "Multimodal rehabilitation versus traction, general activity, injection or surgery-containing care",
+      "coInterventions": "Varies by trial",
+      "outcomes": "Mallard et al., 2022 updated OPTIMa review. DOI 10.2340/jrm.v54.2799, PMID 35797062, FT PMC9422871. FT relevant synthesis. Four acceptable RCTs and one low-quality RCT, adults recent/any-duration radiculopathy; multimodal rehabilitation compared with traction, general activity, injection or surgery-containing care. Benefits generally small/trivial and low certainty; safety evidence lacking. Review's short-term pairwise signal favoring multimodal rehabilitation is compatible with the original trial's nonsignificant overall group/time model; do not present as decisive superiority.",
+      "followUp": "Varies across included studies",
+      "uncertainty": "Small/trivial benefits, low certainty; heterogeneous care packages",
+      "harms": "Safety evidence lacking; Adverse events section",
+      "limitations": "Small/trivial benefits, low certainty; heterogeneous care packages Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "Multimodal rehabilitation; cited neck-specific training/general activity trials",
+        "dose": "Trial-specific packages, not a single reviewed dose",
+        "frequency": "Varies across trials",
+        "supervision": "Clinician-guided trial packages",
+        "progression": "not reported as universal progression",
+        "stoppingRules": "not reported as universal stopping rule; safety evidence lacking"
+      },
+      "locations": [
+        "RESULTS > Summary of evidence",
+        "RESULTS > Adverse events"
+      ]
+    },
+    {
+      "id": "cr-s2",
+      "title": "What components and formats of rehabilitation interventions are more effective to reduce pain in patients with cervical radiculopathy? A Systematic review and component network meta-analysis.",
+      "doi": "10.1177/02692155251365193",
+      "pmid": "40776625",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40776625/",
+      "publicationStatus": "Published journal article; indexed publication 2025-08-08; all dates precede access.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Conservative abstract-only designation; full article/protocol not comprehensively inspected. Accessible abstract/selected snippets are distinguished in findings. Accessible-protocol audit: primary abstract reopened via Europe PMC MED core (PMID 40776625); only explicitly reported categories/program or contact facts restored. Full text and unseen mechanics remain uninspected; access status unchanged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Exact DOI lookup in Europe PMC; title, PMID and publication date compared with retained scientific source. Query: https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&query=DOI%3A10.1177/02692155251365193",
+        "result": "Metadata/version check only. No comprehensive correction/retraction registry or formal supersession audit performed; no integrity clearance claimed."
+      },
+      "design": "Systematic review/component network meta-analysis, 36 RCTs, 25 interventions, eight active components",
+      "population": "Patients with cervical radiculopathy",
+      "comparator": "Rehabilitation formats/components compared in network",
+      "coInterventions": "Neurodynamic/articular/traction/strengthening combinations",
+      "outcomes": "Núñez de Arenas-Arroyo et al., 2025 component network meta-analysis. DOI 10.1177/02692155251365193, publisher abstract. Abstract. Search to July 1, 2025; 36 RCTs, 25 interventions, eight active components. Neurodynamic/articular/traction-containing combinations and strengthening appeared promising for pain, moderate confidence for selected combinations. Component network assumptions, heterogeneous packages and short-term pain focus do not establish exercise contraindications or permit self-directed traction/manipulation/dry needling. Detailed adverse-event and dose extraction unavailable.",
+      "followUp": "Short-term pain focus; search to 1 July 2025",
+      "uncertainty": "Network assumptions/heterogeneity; selected moderate-confidence combinations do not prove execution safety or contraindications",
+      "harms": "not reported in accessed abstract",
+      "limitations": "Network assumptions/heterogeneity; selected moderate-confidence combinations do not prove execution safety or contraindications Trial exclusions delimit studied applicability; they do not establish general contraindications.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Results and Conclusions (primary abstract, PMID 40776625): the component network names neurodynamic techniques, cervical traction, articular treatment, dry needling, analgesic electrotherapy and strengthening combinations. These component labels do not specify exercise mechanics or authorize self-directed procedures; no individual execution is established.",
+        "dose": "not reported from full protocol; abstract-only/partial access does not establish dose",
+        "frequency": "not reported from full protocol; abstract-only/partial access does not establish frequency",
+        "supervision": "not reported from full protocol; abstract-only/partial access does not establish supervision",
+        "progression": "not reported from full protocol; abstract-only/partial access does not establish progression",
+        "stoppingRules": "not reported from full protocol; abstract-only/partial access does not establish stoppingRules"
+      },
+      "locations": [
+        "Abstract > Methods and Results",
+        "Abstract > Results and Conclusions"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "cr-g1-extraction",
+      "kind": "published-recommendation",
+      "statement": "Exercise module. FT module. Consider targeted exercise with a suitably experienced therapist; low-certainty pain/disability evidence, very-low/absent evidence for several outcomes/harms. Initial reactive phase prioritizes advice to avoid aggravation; subacute active approach respects individual capacity; later self-management. This clinical stage advice does not yield a fixed extension/rotation or lifting ban. Evidence synthesis finds little/no additional disability benefit over wait-and-see or other exercise. Unknown stage should not become an invented “approved” neck-strengthening routine.",
+      "citations": [
+        {
+          "sourceId": "cr-g1",
+          "location": "Aanbeveling"
+        },
+        {
+          "sourceId": "cr-g1",
+          "location": "Overwegingen > Waarden en voorkeuren van patiënten (en evt. hun verzorgers)"
+        },
+        {
+          "sourceId": "cr-g1",
+          "location": "Onderbouwing > Samenvatting literatuur"
+        }
+      ],
+      "applicability": "Cervical radicular syndrome; assessment and stage-specific care",
+      "limitations": "Stage and capacity advice is clinical guidance, not fixed extension/rotation/load limits Access: full-text."
+    },
+    {
+      "id": "cr-p1-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.1136/bmj.b3883, BMJ full article. Substantive full article text available in search result; direct open subsequently 403. 205 recent-onset (<1 month) cervical radiculopathy patients; collar/rest, PT/home exercises, or wait-and-see; six-week treatment, six-month follow-up. Hands-off graded mobilizing/stabilizing/strengthening PT twice weekly. Arm/neck pain reduction over six weeks favored collar or PT (~12–17 mm/100 difference); little/no persistent between-group difference by six months. Adverse-event outcome absent per CR-G1's synthesis. Collar/rest arm's short-term efficacy does not justify app-imposed immobilization, especially when applying a different neck-pain diagnosis or recovery stage.",
+      "citations": [
+        {
+          "sourceId": "cr-p1",
+          "location": "Abstract > Interventions and Results"
+        }
+      ],
+      "applicability": "Cervical radiculopathy onset under one month",
+      "limitations": "Direct BMJ fetch 403 after indexed substantive article text; conservative abstract-only serialization; short-term pain benefit did not establish persistent superiority Access: abstract-only."
+    },
+    {
+      "id": "cr-p2-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.1016/j.apmr.2018.06.008, PMID 30473018. Abstract; protocol details additionally inspected in CR-G1 and CR-S1, not primary FT. 144 confirmed CR patients; three-month neck-specific training versus prescribed general physical activity; both behavioral approach, outcomes 3/6/12/24 months. No significant group or group×time effects; both improved. Guideline describes progression from gentle isometrics to low-load endurance, response-tailored, three sessions/week; comparator aerobic/muscular activity ~30 min three times/week. Primary detailed harms unavailable. Supports several possible active pathways, not superiority of one specific execution or a blanket general-activity ban.",
+      "citations": [
+        {
+          "sourceId": "cr-p2",
+          "location": "Abstract > Interventions and Results"
+        }
+      ],
+      "applicability": "Confirmed cervical radiculopathy",
+      "limitations": "No significant overall group/group-by-time effects; secondary review contrasts should not be described as decisive superiority Access: abstract-only."
+    },
+    {
+      "id": "cr-s1-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.2340/jrm.v54.2799, PMID 35797062, FT PMC9422871. FT relevant synthesis. Four acceptable RCTs and one low-quality RCT, adults recent/any-duration radiculopathy; multimodal rehabilitation compared with traction, general activity, injection or surgery-containing care. Benefits generally small/trivial and low certainty; safety evidence lacking. Review's short-term pairwise signal favoring multimodal rehabilitation is compatible with the original trial's nonsignificant overall group/time model; do not present as decisive superiority.",
+      "citations": [
+        {
+          "sourceId": "cr-s1",
+          "location": "RESULTS > Summary of evidence"
+        },
+        {
+          "sourceId": "cr-s1",
+          "location": "RESULTS > Adverse events"
+        }
+      ],
+      "applicability": "Adults with recent/any-duration cervical radiculopathy",
+      "limitations": "Small/trivial benefits, low certainty; heterogeneous care packages Access: full-text."
+    },
+    {
+      "id": "cr-s2-extraction",
+      "kind": "study-result",
+      "statement": "DOI 10.1177/02692155251365193, publisher abstract. Abstract. Search to July 1, 2025; 36 RCTs, 25 interventions, eight active components. Neurodynamic/articular/traction-containing combinations and strengthening appeared promising for pain, moderate confidence for selected combinations. Component network assumptions, heterogeneous packages and short-term pain focus do not establish exercise contraindications or permit self-directed traction/manipulation/dry needling. Detailed adverse-event and dose extraction unavailable.",
+      "citations": [
+        {
+          "sourceId": "cr-s2",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "applicability": "Patients with cervical radiculopathy",
+      "limitations": "Network assumptions/heterogeneity; selected moderate-confidence combinations do not prove execution safety or contraindications Access: abstract-only."
+    },
+    {
+      "id": "ordinary-training-restriction-evidence-gap",
+      "kind": "evidence-gap",
+      "statement": "Reactive-stage aggravation and later capacity are assessed clinically; no fixed overhead, cervical extension/rotation or lifting prohibition follows from the guideline. General physical activity is a studied comparator and not automatically contraindicated. Urgent neurological criteria and postoperative dosing require separate reviewed pathways.",
+      "citations": [
+        {
+          "sourceId": "cr-g1",
+          "location": "Aanbeveling"
+        }
+      ],
+      "applicability": "Cervical radicular syndrome; assessment and stage-specific care",
+      "limitations": "This is a bounded evidence gap in the retrieved corpus, not proof that all training is harmless. Trial exclusions are applicability boundaries. No runtime restriction or therapeutic release follows."
+    },
+    {
+      "id": "cervical-radicular-low-load-isometrics-unresolved-execution",
+      "kind": "published-recommendation",
+      "statement": "Guideline describes neck-specific program progressing gentle isometrics to low-load endurance tailored to response. Exact force direction, resistance interface and body position need primary protocol verification; Dedering primary article remains abstract-only.",
+      "citations": [
+        {
+          "sourceId": "cr-g1",
+          "location": "Overwegingen > Waarden en voorkeuren van patiënten (en evt. hun verzorgers)"
+        }
+      ],
+      "applicability": "Cervical radicular syndrome; assessment and stage-specific care",
+      "limitations": "Studied/described execution only. All unreported setup, ROM, dosing, eligibility and clinical approval remain unresolved."
+    },
+    {
+      "id": "cr-stage-capacity-guidance",
+      "kind": "published-recommendation",
+      "statement": "NVvN reactive-stage guidance focuses advice on avoiding symptom aggravation; subacute care becomes more active according to individual capacity, with later self-management.",
+      "citations": [
+        {
+          "sourceId": "cr-g1",
+          "location": "Overwegingen > Waarden en voorkeuren van patiënten (en evt. hun verzorgers)"
+        }
+      ],
+      "applicability": "Cervical radicular syndrome; assessment and stage-specific care",
+      "limitations": "Stage and capacity advice is clinical guidance, not fixed extension/rotation/load limits"
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "cervical-radicular-low-load-isometrics-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "cervical-radicular-low-load-isometrics-unresolved",
+      "findingIds": [
+        "cervical-radicular-low-load-isometrics-unresolved-execution"
+      ],
+      "matchRationale": "CR-G1/CR-S1 describe a clinical program, not an exact catalog match. Do not borrow acute-WAD cheek-resisted rotation or nonspecific-neck elastic resistance as verified equivalence.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "cr-stage-capacity-response",
+      "kind": "symptom-response",
+      "basis": "published-recommendation",
+      "statement": "Candidate: define activity demand from assessed nerve-root irritability/stage and capacity; unknown stage prevents automatic neck-specific progression, without inventing a fixed extension/rotation/overhead ban.",
+      "findingIds": [
+        "cr-stage-capacity-guidance"
+      ],
+      "citations": [
+        {
+          "sourceId": "cr-g1",
+          "location": "Overwegingen > Waarden en voorkeuren van patiënten (en evt. hun verzorgers)"
+        }
+      ],
+      "applicability": {
+        "population": "Cervical radicular syndrome; assessment and stage-specific care",
+        "stage": "Assessed reactive, subacute or later-recovery cervical radicular syndrome as defined by clinician; no postoperative dose or automatic stage determination inferred.",
+        "rationale": "Condition-specific extracted guidance/protocol supports this draft interpretation; it does not override another condition restriction, equipment requirement or joint limit."
+      },
+      "limitations": "Expert guideline considerations; low certainty and no fixed dose or numeric symptom threshold. Postoperative dosing and progressive deficit/myelopathy pathway not established here. Unreviewed candidate; no runtime or clinical release.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "- Ordinary training: when nerve-root irritability is active, alter demand/position according to assessed symptom response and capacity; this is clinical-guidance inference (CR-G1), not proof overhead lifting or all cervical extension is intrinsically harmful. No numeric cervical ROM/load ceiling established.\n- Supportive candidates: clinician-guided low-load neck control/endurance; general physical activity can be a candidate, not automatically contraindicated. Neurodynamic tensioning/sliding are clinically distinct and cannot be generated from generic stretches.\n- Restriction-only/research draft until diagnosis, neurological status, stage and clinically reviewed thresholds are known. Progressive deficit or possible myelopathy requires assessment, not automated progression. Specific urgent criteria need a separately approved clinical pathway rather than being reverse-engineered from trial exclusions.\n- No evidence retrieved to authorize postoperative exercise; prior surgery is an attribute requiring its own orders. NASS 2010 is older; 2024 Dutch and 2025 synthesis used for currentness.",
+    "No exact catalog execution equivalence or numeric diagnosis-wide load/ROM/pain threshold established. All request/mapping/rule material is candidate-only, and clinical review provenance is absent."
+  ],
+  "disposition": "unresolved",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

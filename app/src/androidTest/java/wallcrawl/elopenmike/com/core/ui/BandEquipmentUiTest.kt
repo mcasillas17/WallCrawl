@@ -113,6 +113,7 @@ class BandEquipmentUiTest {
         composeRule.waitUntil(10_000) {
             viewModel.uiState.value is wallcrawl.elopenmike.com.feature.profile.ProfileUiState.Success
         }
+        composeRule.onNodeWithText("Equipo").performClick()
         composeRule.onNode(hasScrollAction()).performScrollToNode(hasText("Anclaje de banda: bajo"))
         composeRule.onNodeWithText("Anclaje de banda: bajo")
             .performScrollTo().assertIsNotSelected().performClick()
@@ -149,6 +150,7 @@ class BandEquipmentUiTest {
         composeRule.waitUntil(10_000) {
             viewModel.uiState.value is wallcrawl.elopenmike.com.feature.profile.ProfileUiState.Success
         }
+        composeRule.onNodeWithText("Equipment").performClick()
         val label = StandardEquipment.BAND_ANCHOR_UPPER_BODY
         composeRule.onNode(hasScrollAction()).performScrollToNode(hasText(label))
         composeRule.onNodeWithText(label).assertIsNotSelected()

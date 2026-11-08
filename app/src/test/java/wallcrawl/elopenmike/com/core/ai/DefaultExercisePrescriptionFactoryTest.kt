@@ -1,6 +1,11 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import com.google.common.truth.Truth.assertThat
+import wallcrawl.elopenmike.com.core.model.ConditionPrescriptionBounds
+import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
+import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.SelectedCondition
+import wallcrawl.elopenmike.com.core.model.SessionConditionContext
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.model.AdaptationState
@@ -21,6 +26,147 @@ import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 
 class DefaultExercisePrescriptionFactoryTest {
+
+    @Test
+    fun supportiveRecommendationCannotReplaceOrdinaryProgressionReference() {
+        val exercise = syntheticApprovedExercise("press", "Chest")
+        val initial = WorkoutGenerationContext(userProfile = UserProfile(preferredUnit = WeightUnit.KG,
+            confirmedStartingLoads = mapOf(exercise.id to 40.0)),
+            trainingProgramState = programState(AdaptationState.UNCALIBRATED))
+        val baseline = factory.createDecision(exercise, initial)
+        val sessions = listOf(progressionSession("one", exercise.id, baseline.prescription, 10_000),
+            progressionSession("two", exercise.id, baseline.prescription, 20_000),
+            progressionSession("support", exercise.id, baseline.prescription.copy(
+                purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE), 25_000))
+        val result = factory.createDecision(exercise, initial.copy(progressionHistory = sessions,
+            historyAsOfTimestamp = 30_000, recentRecommendationRecords = mapOf("support" to
+                progressionRecord("support", listOf(baseline.copy(baseConfigurationDigest = "b".repeat(64)))))))
+        assertThat(result.reason).isEqualTo(wallcrawl.elopenmike.com.core.model.ProgressionReason.ADVANCED)
+        assertThat(result.sourceSessionIds).containsExactly("one", "two").inOrder()
+    }
+
+    @Test
+    fun supportiveRecordedLoadNeverReplacesOrdinaryWorkingLoad() {
+        val exercise = syntheticApprovedExercise("press", "Chest")
+        val initial = WorkoutGenerationContext(userProfile = UserProfile(preferredUnit = WeightUnit.KG,
+            confirmedStartingLoads = mapOf(exercise.id to 40.0)),
+            trainingProgramState = programState(AdaptationState.UNCALIBRATED))
+        val prescription = factory.create(exercise, initial)
+        val ordinary = progressionSession("ordinary", exercise.id, prescription, 10_000)
+        val supportive = progressionSession("supportive", exercise.id,
+            prescription.copy(targetWeight = 90.0, purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE), 20_000)
+        val context = initial.copy(recentWorkoutHistory = listOf(ordinary, supportive),
+            progressionHistory = listOf(ordinary, supportive), historyAsOfTimestamp = 30_000)
+        val ordinaryPurpose = supportive.copy(exercises = supportive.exercises.map { ex -> ex.copy(
+            prescription = ex.prescription.copy(purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.ORDINARY)) })
+        val allOrdinary = context.copy(recentWorkoutHistory = listOf(ordinary, ordinaryPurpose),
+            progressionHistory = listOf(ordinary, ordinaryPurpose))
+        assertThat(allOrdinary.recordedWorkLoad(exercise.id, ExerciseType.WEIGHT_REPS)).isEqualTo(90.0)
+        assertThat(RecommendationContextIdentity.of(context)).isNotEqualTo(RecommendationContextIdentity.of(allOrdinary))
+        assertThat(context.recordedWorkLoad(exercise.id, ExerciseType.WEIGHT_REPS)).isEqualTo(40.0)
+        assertThat(factory.create(exercise, context).targetWeight).isEqualTo(40.0)
+        assertThat(context.copy(recentWorkoutHistory = listOf(supportive)).recordedWorkLoad(exercise.id, ExerciseType.WEIGHT_REPS)).isNull()
+    }
+
+    @Test fun conditionOrdinaryBoundsApplyAfterGuidanceAndKeepCoherentReceipt() {
+        val context = ConditionPlannerFixtures.context(bounds = ConditionPrescriptionBounds(
+            minSets = 2, maxSets = 2, minReps = 4, maxReps = 5, minRestSeconds = 91, maxRestSeconds = 91))
+        val decision = DefaultExercisePrescriptionFactory().createDecision(ConditionPlannerFixtures.ordinary, context)
+        assertThat(decision.prescription.targetSets).isEqualTo(2)
+        assertThat(decision.prescription.repRange).isEqualTo(RepRange(5, 5))
+        assertThat(decision.prescription.restSeconds).isEqualTo(91)
+        assertThat(decision.referencePrescription).isEqualTo(decision.prescription)
+        assertThat(decision.axis).isNull()
+    }
+
+    @Test fun conditionExecutionAndPresenceChangeOrdinaryContinuity() {
+        val context = ConditionPlannerFixtures.context()
+        val factory = DefaultExercisePrescriptionFactory()
+        val original = factory.createDecision(ConditionPlannerFixtures.ordinary, context).baseConfigurationDigest
+        val changed = factory.createDecision(ConditionPlannerFixtures.ordinary, ConditionPlannerFixtures.context(execution = "changed-execution")).baseConfigurationDigest
+        assertThat(changed).isNotEqualTo(original)
+        val noConditions = factory.createDecision(ConditionPlannerFixtures.ordinary,
+            context.copy(conditionPlanning = ConditionPlanningResult.NotApplicable)).baseConfigurationDigest
+        assertThat(noConditions).isNotEqualTo(original)
+    }
+
+    @Test fun conditionMinimumLoadNeverInventsConfirmation() {
+        val exercise = syntheticApprovedExercise(id = "ordinary", directPrimaryMuscle = "Chest")
+        val context = ConditionPlannerFixtures.context(ordinaryExercises = listOf(exercise),
+            bounds = ConditionPrescriptionBounds(minLoadKg = 2.0))
+        val error = assertThrows(WorkoutValidationException::class.java) { factory.createDecision(exercise, context) }
+        assertThat(error.conditionReasons.map { it.reason }).containsExactly("unconfirmed-load")
+    }
+
+    @Test fun conditionBoundCannotOverrideExistingStateDoseCap() {
+        val context = ConditionPlannerFixtures.context(bounds = ConditionPrescriptionBounds(minSets = 4))
+            .copy(trainingProgramState = programState(AdaptationState.RETURNING))
+        val error = assertThrows(WorkoutValidationException::class.java) { factory.createDecision(ConditionPlannerFixtures.ordinary, context) }
+        assertThat(error.conditionReasons.map { it.reason }).containsExactly("incompatible-ordinary-dose")
+    }
+
+    @Test fun conditionProgressionPermissionAndBoundsApplyAfterEligibleProgression() {
+        val exercise = syntheticApprovedExercise(id = "ordinary", directPrimaryMuscle = "Chest")
+        fun context(allow: Boolean, maxKg: Double? = null) = ConditionPlannerFixtures.context(
+            ordinaryExercises = listOf(exercise), allowProgression = allow,
+            bounds = ConditionPrescriptionBounds(maxLoadKg = maxKg),
+            profile = UserProfile(preferredUnit = WeightUnit.KG, confirmedStartingLoads = mapOf(exercise.id to 10.0),
+                activeConditions = listOf(SelectedCondition("fictional-condition", 1, emptyMap())))
+        ).copy(trainingProgramState = programState(AdaptationState.UNCALIBRATED))
+        for (allow in listOf(false, true)) {
+            val initial = context(allow)
+            val base = factory.createDecision(exercise, initial)
+            val sessions = listOf(progressionSession("one", exercise.id, base.prescription, 10_000), progressionSession("two", exercise.id, base.prescription, 20_000))
+            val progressed = factory.createDecision(exercise, initial.copy(progressionHistory = sessions, historyAsOfTimestamp = 30_000))
+            assertThat(progressed.prescription.targetWeight).isEqualTo(if (allow) 12.5 else 10.0)
+            if (!allow) assertThat(progressed.axis).isNull()
+        }
+        val bounded = context(true, 11.0)
+        val base = factory.createDecision(exercise, bounded)
+        val sessions = listOf(progressionSession("one", exercise.id, base.prescription, 10_000), progressionSession("two", exercise.id, base.prescription, 20_000))
+        val result = factory.createDecision(exercise, bounded.copy(progressionHistory = sessions, historyAsOfTimestamp = 30_000))
+        assertThat(result.prescription.targetWeight).isEqualTo(11.0)
+        assertThat(result.referencePrescription).isEqualTo(result.prescription)
+        assertThat(result.axis).isNull()
+    }
+
+    @Test fun conditionCheckTimeAndNotDueStateDoNotResetOrdinaryContinuity() {
+        val context = ConditionPlannerFixtures.context()
+        val ready = context.conditionPlanning as ConditionPlanningResult.Ready
+        val frozen = ready.context
+        val later = SessionConditionContext(frozen.formatVersion, frozen.policyVersion,
+            frozen.selectedConditions, frozen.sourceSupportVersions, frozen.appliedRules,
+            frozen.consumedScheduleEvidence.map { it.copy(checkedAtTimestamp = it.checkedAtTimestamp + 1) }, frozen.consumedReassessmentEventIds)
+        val changed = context.copy(conditionPlanning = ConditionPlanningResult.Ready(ready.ordinaryRules, ready.supportive, later, ready.weightUnit))
+        val notDue = ConditionPlannerFixtures.context(exposures = listOf(ConditionExposure("manual", "supportive", ConditionPlannerFixtures.now - 1)))
+        assertThat(factory.createDecision(ConditionPlannerFixtures.ordinary, changed).baseConfigurationDigest)
+            .isEqualTo(factory.createDecision(ConditionPlannerFixtures.ordinary, context).baseConfigurationDigest)
+        assertThat(factory.createDecision(ConditionPlannerFixtures.ordinary, notDue).baseConfigurationDigest)
+            .isEqualTo(factory.createDecision(ConditionPlannerFixtures.ordinary, context).baseConfigurationDigest)
+    }
+
+    @Test fun conditionSameLabelChangedContentCannotReuseOrdinaryContinuity() {
+        val current = ConditionPlannerFixtures.context()
+        val changed = ConditionPlannerFixtures.context(supportContentSha256 = "d".repeat(64))
+        assertThat(factory.createDecision(ConditionPlannerFixtures.ordinary, changed).baseConfigurationDigest)
+            .isNotEqualTo(factory.createDecision(ConditionPlannerFixtures.ordinary, current).baseConfigurationDigest)
+    }
+
+    @Test fun conditionMinimumMatchingEngineStepStillDoesNotAuthorizeProgression() {
+        val exercise = syntheticApprovedExercise(id = "ordinary", directPrimaryMuscle = "Chest")
+        val context = ConditionPlannerFixtures.context(ordinaryExercises = listOf(exercise), allowProgression = false,
+            bounds = ConditionPrescriptionBounds(minLoadKg = 12.5),
+            profile = UserProfile(preferredUnit = WeightUnit.KG, confirmedStartingLoads = mapOf(exercise.id to 10.0),
+                activeConditions = listOf(SelectedCondition("fictional-condition", 1, emptyMap()))))
+            .copy(trainingProgramState = programState(AdaptationState.UNCALIBRATED))
+        val ordinary = factory.createDecision(exercise, context.copy(conditionPlanning = ConditionPlanningResult.NotApplicable)).prescription
+        val sessions = listOf(progressionSession("one", exercise.id, ordinary, 10_000), progressionSession("two", exercise.id, ordinary, 20_000))
+        val result = factory.createDecision(exercise, context.copy(progressionHistory = sessions, historyAsOfTimestamp = 30_000))
+        assertThat(result.prescription.targetWeight).isEqualTo(12.5)
+        assertThat(result.axis).isNull()
+        assertThat(result.reason).isEqualTo(wallcrawl.elopenmike.com.core.model.ProgressionReason.HOLD_AT_BOUND)
+        assertThat(result.referencePrescription).isEqualTo(result.prescription)
+    }
 
     private val factory = DefaultExercisePrescriptionFactory()
     private val context = WorkoutGenerationContext(
@@ -475,7 +621,7 @@ class DefaultExercisePrescriptionFactoryTest {
         policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1,
         adaptationState = adaptationState,
         weeklyLedger = WeeklyDoseLedger(
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
             weekStartEpochDay = MONDAY_EPOCH_DAY,
             timeZoneId = "UTC",
             catalogVersion = SYNTHETIC_CATALOG_VERSION,

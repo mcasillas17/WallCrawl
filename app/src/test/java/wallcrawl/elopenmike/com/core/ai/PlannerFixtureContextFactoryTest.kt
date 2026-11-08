@@ -250,7 +250,7 @@ class PlannerFixtureContextFactoryTest {
         assertThat(projection.schemaVersion).isEqualTo(1)
         assertThat(projection.sourceCommit)
             .isEqualTo("ba0b709cb20430361b2cb33aaadd20998164a916")
-        assertThat(projection.exercises).hasSize(309)
+        assertThat(projection.exercises).hasSize(302)
 
         val benchPress = projection.exercises.single { it.id == "barbell-bench-press" }
         assertThat(benchPress.name).isEqualTo("Bench Press")

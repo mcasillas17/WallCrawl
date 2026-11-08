@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.core.database
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -23,6 +24,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WeeklyDoseLedgerStateEntity
 import wallcrawl.elopenmike.com.core.database.repository.LocalDataBackupRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineLocalDataBackupRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
+import wallcrawl.elopenmike.com.core.database.repository.toUserProfileEntity
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutTemplateRepository
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
@@ -40,6 +42,11 @@ import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.hasRequiredEquipment
+import wallcrawl.elopenmike.com.core.model.SelectedCondition
+import wallcrawl.elopenmike.com.core.model.SessionConditionContext
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
+import wallcrawl.elopenmike.com.core.database.repository.ConditionContextCodec
+import wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendingEntity
 
 /**
  * Export, restore, and deletion against a real Room database.
@@ -49,6 +56,110 @@ import wallcrawl.elopenmike.com.core.model.hasRequiredEquipment
  */
 @RunWith(AndroidJUnit4::class)
 class LocalDataBackupRepositoryTest {
+    @Test fun historicalMobilityPreservesRepetitionsHoldAndOpaqueIdsAcrossRoom() = runBlocking<Unit> {
+        val assets = InstrumentationRegistry.getInstrumentation().context.assets
+        val bytes = assets.open("archives/v7-reported.json").use { it.readBytes() }
+        val expected = LocalDataArchiveCodec.read(bytes.inputStream()).snapshot
+        repository.restoreFrom(bytes.inputStream())
+        assertThat(database.completedWorkoutHistoryDao().getCompletedTimestamps()).isEmpty()
+        val output = ByteArrayOutputStream().also { repository.exportTo { it } }
+        val exported = LocalDataArchiveCodec.read(output.toByteArray().inputStream())
+        assertThat(exported.metadata.archiveVersion).isEqualTo(8)
+        assertThat(exported.snapshot).isEqualTo(expected)
+
+        // Version 8 also permits the old Room separator inside an opaque ID.
+        val ids = linkedSetOf("one|", "two|||three", " four ")
+        val updated = exported.copy(snapshot = expected.copy(profile = expected.profile!!.copy(reportedConditions = ids)))
+        val current = ByteArrayOutputStream().also { LocalDataArchiveCodec.write(updated) { it } }
+        repository.deleteAllLocalData()
+        repository.restoreFrom(current.toByteArray().inputStream())
+        val reexport = ByteArrayOutputStream().also { repository.exportTo { it } }
+        assertThat(LocalDataArchiveCodec.read(reexport.toByteArray().inputStream()).snapshot).isEqualTo(updated.snapshot)
+    }
+
+    @Test fun conditionRowsSurviveExportDeleteAndRestore() = runBlocking<Unit> {
+        seedFixtureData()
+        val context = SessionConditionContext(1, 1,
+            listOf(SelectedCondition("z-future", 2, mapOf("q" to "unknown")), SelectedCondition("a-future", 1, emptyMap())),
+            mapOf("z-future" to "v1", "a-future" to "v1"), emptyList(), emptyList(), listOf("z-event", "a-event"))
+        val db = database.openHelper.writableDatabase
+        val sessionId = database.localDataBackupDao().selectRecommendationRecords().first().sessionId
+        db.execSQL("UPDATE user_profiles SET activeConditionsJson = ?, trainingConstraintsJson = ?", arrayOf(
+            ConditionContextCodec.encodeSelections(context.selectedConditions), "KNEE_SENSITIVE|||FUTURE_SENSITIVE"))
+        db.execSQL("UPDATE workout_sessions SET conditionContextJson = ? WHERE id = ?", arrayOf(ConditionContextCodec.encodeSession(context), sessionId))
+        db.execSQL("UPDATE workout_recommendation_records SET conditionContextDigest = ? WHERE sessionId = ?", arrayOf(context.canonicalDigest, sessionId))
+        db.execSQL("UPDATE workout_exercises SET purpose = ?", arrayOf("SUPPORTIVE"))
+        db.execSQL("UPDATE workout_template_exercises SET purpose = ?", arrayOf("SUPPORTIVE"))
+        val before = database.localDataBackupDao().readAll()
+        val output = ByteArrayOutputStream()
+        repository.exportTo { output }
+        repository.deleteAllLocalData()
+        repository.restoreFrom(ByteArrayInputStream(output.toByteArray()))
+        assertThat(database.localDataBackupDao().readAll()).isEqualTo(before)
+    }
+
+    @Test fun pendingMarkerRoundTripsAndSurvivesUntilExplicitDeleteAll() = runBlocking<Unit> {
+        val marker = ConditionReassessmentPendingEntity("default_user", "future-condition", "future-exercise", "event-1",
+            "a".repeat(64), 99, 100, "deleted-set-id")
+        database.conditionReassessmentDao().upsertIfNewer(marker)
+        val output = ByteArrayOutputStream()
+        repository.exportTo { output }
+        assertThat(repository.isRestoreAllowed()).isFalse()
+        assertThrows(LocalDataRestoreRefusedException::class.java) {
+            runBlocking { repository.restoreFrom(ByteArrayInputStream(output.toByteArray())) }
+        }
+        assertThat(database.conditionReassessmentDao().forProfile("default_user")).containsExactly(marker)
+        repository.deleteAllLocalData()
+        assertThat(database.conditionReassessmentDao().forProfile("default_user")).isEmpty()
+        repository.restoreFrom(ByteArrayInputStream(output.toByteArray()))
+        assertThat(database.conditionReassessmentDao().forProfile("default_user")).containsExactly(marker)
+    }
+
+    @Test fun directArchiveWriterRefusesEveryConditionCarrier() {
+        val original = LocalDataArchiveFixtures.snapshot()
+        val context = SessionConditionContext(1, 1, emptyList(), emptyMap(), emptyList(), emptyList(), emptyList())
+        val session = original.sessions.first()
+        val template = original.templates.first()
+        val snapshots = listOf(
+            original.copy(profile = original.profile!!.copy(activeConditions = listOf(SelectedCondition("future", 1, emptyMap())))),
+            original.copy(sessions = listOf(session.copy(conditionContext = context))),
+            original.copy(recommendationRecords = listOf(original.recommendationRecords.first().copy(conditionContextDigest = context.canonicalDigest))),
+            original.copy(sessions = listOf(session.copy(exercises = session.exercises.map {
+                it.copy(prescription = it.prescription.copy(purpose = PrescriptionPurpose.SUPPORTIVE))
+            }))),
+            original.copy(templates = listOf(template.copy(exercises = template.exercises.map {
+                it.copy(prescription = it.prescription.copy(purpose = PrescriptionPurpose.SUPPORTIVE))
+            })))
+        )
+        snapshots.forEach { snapshot ->
+            var opened = false
+            val failure = assertThrows(IllegalArgumentException::class.java) {
+                LocalDataArchiveCodec.write(LocalDataArchiveFixtures.archive(snapshot = snapshot).let { it.copy(metadata = it.metadata.copy(archiveVersion = 6)) }) {
+                    opened = true; ByteArrayOutputStream()
+                }
+            }
+            assertThat(failure).hasMessageThat().contains("Condition-aware data")
+            assertThat(opened).isFalse()
+        }
+    }
+
+    @Test fun unresolvedLegacyConstraintsRefuseExportBeforeDestinationOpens() = runBlocking {
+        val profile = LocalDataArchiveFixtures.profile().copy(
+            unresolvedTrainingConstraintsRaw = "KNEE_SENSITIVE|||FUTURE_SENSITIVE")
+        database.userProfileDao().insertOrUpdate(profile.toUserProfileEntity())
+        val archive = LocalDataArchiveFixtures.archive(
+            snapshot = LocalDataArchiveFixtures.snapshot(profile = profile)).let { it.copy(metadata = it.metadata.copy(archiveVersion = 6)) }
+        var opened = false
+        assertThrows(IllegalArgumentException::class.java) {
+            LocalDataArchiveCodec.write(archive) {
+                opened = true
+                ByteArrayOutputStream()
+            }
+        }
+        assertThat(opened).isFalse()
+        assertThat(database.userProfileDao().getProfile(profile.id)?.trainingConstraintsJson)
+            .isEqualTo("KNEE_SENSITIVE|||FUTURE_SENSITIVE")
+    }
 
     private lateinit var database: WallCrawlDatabase
     private lateinit var repository: LocalDataBackupRepository

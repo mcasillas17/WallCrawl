@@ -1,0 +1,306 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Research inventory, not a prevalence ranking or the app supported-condition list. Complete means extraction recorded, including explicit insufficient evidence; never clinical approval.",
+  "conditions": [
+    {
+      "id": "chronic-primary-low-back-pain",
+      "label": "Chronic primary low-back pain",
+      "region": "Spine (7)",
+      "status": "complete"
+    },
+    {
+      "id": "lumbar-radicular-pain",
+      "label": "lumbar radicular pain",
+      "region": "Spine (7)",
+      "status": "complete"
+    },
+    {
+      "id": "lumbar-spinal-stenosis",
+      "label": "lumbar spinal stenosis",
+      "region": "Spine (7)",
+      "status": "complete"
+    },
+    {
+      "id": "nonspecific-neck-pain",
+      "label": "nonspecific neck pain",
+      "region": "Spine (7)",
+      "status": "complete"
+    },
+    {
+      "id": "cervical-radicular-pain",
+      "label": "cervical radicular pain",
+      "region": "Spine (7)",
+      "status": "complete"
+    },
+    {
+      "id": "whiplash-associated-disorder",
+      "label": "whiplash-associated disorder",
+      "region": "Spine (7)",
+      "status": "complete"
+    },
+    {
+      "id": "adult-degenerative-scoliosis",
+      "label": "adult degenerative scoliosis",
+      "region": "Spine (7)",
+      "status": "complete"
+    },
+    {
+      "id": "rotator-cuff-tendinopathy",
+      "label": "Rotator cuff tendinopathy",
+      "region": "Shoulder (6)",
+      "status": "complete"
+    },
+    {
+      "id": "full-thickness-rotator-cuff-tear",
+      "label": "full-thickness rotator cuff tear",
+      "region": "Shoulder (6)",
+      "status": "complete"
+    },
+    {
+      "id": "adhesive-capsulitis",
+      "label": "adhesive capsulitis",
+      "region": "Shoulder (6)",
+      "status": "complete"
+    },
+    {
+      "id": "glenohumeral-osteoarthritis",
+      "label": "glenohumeral osteoarthritis",
+      "region": "Shoulder (6)",
+      "status": "complete"
+    },
+    {
+      "id": "shoulder-instability",
+      "label": "shoulder instability",
+      "region": "Shoulder (6)",
+      "status": "complete"
+    },
+    {
+      "id": "acromioclavicular-osteoarthritis",
+      "label": "acromioclavicular osteoarthritis",
+      "region": "Shoulder (6)",
+      "status": "complete"
+    },
+    {
+      "id": "lateral-elbow-tendinopathy",
+      "label": "Lateral elbow tendinopathy",
+      "region": "Elbow, wrist, hand (8)",
+      "status": "complete"
+    },
+    {
+      "id": "medial-elbow-tendinopathy",
+      "label": "medial elbow tendinopathy",
+      "region": "Elbow, wrist, hand (8)",
+      "status": "complete"
+    },
+    {
+      "id": "distal-biceps-tendinopathy",
+      "label": "distal biceps tendinopathy",
+      "region": "Elbow, wrist, hand (8)",
+      "status": "complete"
+    },
+    {
+      "id": "carpal-tunnel-syndrome",
+      "label": "carpal tunnel syndrome",
+      "region": "Elbow, wrist, hand (8)",
+      "status": "complete"
+    },
+    {
+      "id": "ulnar-neuropathy-at-the-elbow",
+      "label": "ulnar neuropathy at the elbow",
+      "region": "Elbow, wrist, hand (8)",
+      "status": "complete"
+    },
+    {
+      "id": "de-quervain-tenosynovitis",
+      "label": "de Quervain tenosynovitis",
+      "region": "Elbow, wrist, hand (8)",
+      "status": "complete"
+    },
+    {
+      "id": "thumb-carpometacarpal-osteoarthritis",
+      "label": "thumb carpometacarpal osteoarthritis",
+      "region": "Elbow, wrist, hand (8)",
+      "status": "complete"
+    },
+    {
+      "id": "finger-interphalangeal-osteoarthritis",
+      "label": "finger interphalangeal osteoarthritis",
+      "region": "Elbow, wrist, hand (8)",
+      "status": "complete"
+    },
+    {
+      "id": "hip-osteoarthritis",
+      "label": "Hip osteoarthritis",
+      "region": "Hip, groin, gluteal (7)",
+      "status": "complete"
+    },
+    {
+      "id": "gluteal-tendinopathy",
+      "label": "gluteal tendinopathy",
+      "region": "Hip, groin, gluteal (7)",
+      "status": "complete"
+    },
+    {
+      "id": "femoroacetabular-impingement-syndrome",
+      "label": "femoroacetabular impingement syndrome",
+      "region": "Hip, groin, gluteal (7)",
+      "status": "complete"
+    },
+    {
+      "id": "adductor-related-groin-pain",
+      "label": "adductor-related groin pain",
+      "region": "Hip, groin, gluteal (7)",
+      "status": "complete"
+    },
+    {
+      "id": "proximal-hamstring-tendinopathy",
+      "label": "proximal hamstring tendinopathy",
+      "region": "Hip, groin, gluteal (7)",
+      "status": "complete"
+    },
+    {
+      "id": "iliopsoas-related-groin-pain",
+      "label": "iliopsoas-related groin pain",
+      "region": "Hip, groin, gluteal (7)",
+      "status": "complete"
+    },
+    {
+      "id": "piriformis-syndrome",
+      "label": "piriformis syndrome",
+      "region": "Hip, groin, gluteal (7)",
+      "status": "complete"
+    },
+    {
+      "id": "knee-osteoarthritis",
+      "label": "Knee osteoarthritis",
+      "region": "Knee (7)",
+      "status": "complete"
+    },
+    {
+      "id": "patellofemoral-pain",
+      "label": "patellofemoral pain",
+      "region": "Knee (7)",
+      "status": "complete"
+    },
+    {
+      "id": "patellar-tendinopathy",
+      "label": "patellar tendinopathy",
+      "region": "Knee (7)",
+      "status": "complete"
+    },
+    {
+      "id": "iliotibial-band-related-lateral-knee-pain",
+      "label": "iliotibial-band-related lateral knee pain",
+      "region": "Knee (7)",
+      "status": "complete"
+    },
+    {
+      "id": "degenerative-meniscal-lesion",
+      "label": "degenerative meniscal lesion",
+      "region": "Knee (7)",
+      "status": "complete"
+    },
+    {
+      "id": "anterior-cruciate-ligament-injury",
+      "label": "anterior cruciate ligament injury",
+      "region": "Knee (7)",
+      "status": "complete"
+    },
+    {
+      "id": "medial-collateral-ligament-sprain",
+      "label": "medial collateral ligament sprain",
+      "region": "Knee (7)",
+      "status": "complete"
+    },
+    {
+      "id": "midportion-achilles-tendinopathy",
+      "label": "Midportion Achilles tendinopathy",
+      "region": "Lower leg, ankle, foot (10)",
+      "status": "complete"
+    },
+    {
+      "id": "insertional-achilles-tendinopathy",
+      "label": "insertional Achilles tendinopathy",
+      "region": "Lower leg, ankle, foot (10)",
+      "status": "complete"
+    },
+    {
+      "id": "plantar-heel-pain-compatible-with-plantar-fasciitis",
+      "label": "plantar heel pain compatible with plantar fasciitis",
+      "region": "Lower leg, ankle, foot (10)",
+      "status": "complete"
+    },
+    {
+      "id": "lateral-ankle-sprain",
+      "label": "lateral ankle sprain",
+      "region": "Lower leg, ankle, foot (10)",
+      "status": "complete"
+    },
+    {
+      "id": "chronic-ankle-instability",
+      "label": "chronic ankle instability",
+      "region": "Lower leg, ankle, foot (10)",
+      "status": "complete"
+    },
+    {
+      "id": "posterior-tibial-tendinopathy",
+      "label": "posterior tibial tendinopathy",
+      "region": "Lower leg, ankle, foot (10)",
+      "status": "complete"
+    },
+    {
+      "id": "peroneal-tendinopathy",
+      "label": "peroneal tendinopathy",
+      "region": "Lower leg, ankle, foot (10)",
+      "status": "complete"
+    },
+    {
+      "id": "medial-tibial-stress-syndrome",
+      "label": "medial tibial stress syndrome",
+      "region": "Lower leg, ankle, foot (10)",
+      "status": "complete"
+    },
+    {
+      "id": "lower-limb-bone-stress-injury",
+      "label": "lower-limb bone stress injury",
+      "region": "Lower leg, ankle, foot (10)",
+      "status": "complete"
+    },
+    {
+      "id": "first-metatarsophalangeal-osteoarthritis",
+      "label": "first metatarsophalangeal osteoarthritis",
+      "region": "Lower leg, ankle, foot (10)",
+      "status": "complete"
+    },
+    {
+      "id": "osteoporosis",
+      "label": "Osteoporosis",
+      "region": "Systemic or multiple regions (5)",
+      "status": "complete"
+    },
+    {
+      "id": "rheumatoid-arthritis",
+      "label": "rheumatoid arthritis",
+      "region": "Systemic or multiple regions (5)",
+      "status": "complete"
+    },
+    {
+      "id": "axial-spondyloarthritis",
+      "label": "axial spondyloarthritis",
+      "region": "Systemic or multiple regions (5)",
+      "status": "complete"
+    },
+    {
+      "id": "fibromyalgia",
+      "label": "fibromyalgia",
+      "region": "Systemic or multiple regions (5)",
+      "status": "complete"
+    },
+    {
+      "id": "hypermobility-spectrum-disorder",
+      "label": "hypermobility spectrum disorder",
+      "region": "Systemic or multiple regions (5)",
+      "status": "complete"
+    }
+  ]
+}

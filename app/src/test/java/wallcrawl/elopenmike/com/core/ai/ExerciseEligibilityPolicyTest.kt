@@ -1,10 +1,7 @@
 package wallcrawl.elopenmike.com.core.ai
 
-import wallcrawl.elopenmike.com.core.conditions.ConditionRestrictions
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
-import wallcrawl.elopenmike.com.core.conditions.ConditionGuidanceResult
-import wallcrawl.elopenmike.com.core.conditions.restrictionsFor
 import wallcrawl.elopenmike.com.core.model.AdaptationState
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityFailure
 import wallcrawl.elopenmike.com.core.model.AutomaticEligibilityResult
@@ -47,7 +44,7 @@ class ExerciseEligibilityPolicyTest {
             val result = policy.evaluate(
                 listOf(advanced),
                 UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT)),
-                state, restrictions = ConditionRestrictions.None
+                state
             )
             assertThat(result).isInstanceOf(AutomaticEligibilityResult.NoCandidates::class.java)
         }
@@ -60,7 +57,7 @@ class ExerciseEligibilityPolicyTest {
         val result = policy.evaluate(
             exercises = listOf(exercise),
             profile = UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT)),
-            adaptationState = AdaptationState.UNCALIBRATED, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.UNCALIBRATED
         )
 
         assertThat(result).isEqualTo(
@@ -86,7 +83,7 @@ class ExerciseEligibilityPolicyTest {
         val result = policy.evaluate(
             exercises = listOf(exercise),
             profile = UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT)),
-            adaptationState = AdaptationState.UNCALIBRATED, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.UNCALIBRATED
         )
 
         assertThat(result).isEqualTo(
@@ -118,12 +115,12 @@ class ExerciseEligibilityPolicyTest {
         val incompleteAlternative = policy.evaluate(
             exercises = listOf(exercise),
             profile = UserProfile(availableEquipment = listOf(StandardEquipment.DUMBBELL)),
-            adaptationState = AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.BUILD
         )
         val completeAlternative = policy.evaluate(
             exercises = listOf(exercise),
             profile = UserProfile(availableEquipment = listOf(StandardEquipment.KETTLEBELL)),
-            adaptationState = AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.BUILD
         )
 
         assertThat(incompleteAlternative).isEqualTo(
@@ -164,7 +161,7 @@ class ExerciseEligibilityPolicyTest {
                 availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
                 excludedExerciseIds = listOf(exercise.id)
             ),
-            adaptationState = AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.BUILD
         )
 
         assertThat(result).isEqualTo(
@@ -202,7 +199,7 @@ class ExerciseEligibilityPolicyTest {
         val result = policy.evaluate(
             exercises = listOf(required, unrelated),
             profile = profile,
-            adaptationState = AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.BUILD
         )
 
         assertThat(result).isEqualTo(
@@ -245,7 +242,7 @@ class ExerciseEligibilityPolicyTest {
         val result = policy.evaluate(
             exercises = listOf(exercise),
             profile = profile,
-            adaptationState = AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.BUILD
         )
 
         assertThat(result).isEqualTo(
@@ -295,7 +292,7 @@ class ExerciseEligibilityPolicyTest {
         val result = policy.evaluate(
             exercises = listOf(softPreference, hardAvoid),
             profile = profile,
-            adaptationState = AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.BUILD
         )
 
         assertThat(result).isEqualTo(
@@ -343,7 +340,7 @@ class ExerciseEligibilityPolicyTest {
                 availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
                 trainingConstraints = setOf(TrainingConstraint.LOW_IMPACT_ONLY)
             ),
-            adaptationState = AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.BUILD
         )
 
         assertThat(result).isEqualTo(
@@ -366,30 +363,120 @@ class ExerciseEligibilityPolicyTest {
     }
 
     @Test
-    fun evaluate_jointLabelWithoutAnOverlayFailsClosed() {
-        val exercise = exercise(id = "approved-with-no-overlay").copy(
+    fun evaluate_jointSensitiveConstraintFailsClosedWithoutReviewedMapping() {
+        val exercise = exercise(id = "approved-with-unmapped-constraint").copy(
             reviewedMetadata = reviewedMetadata(reviewState = ReviewState.APPROVED)
-        )
-        val profile = UserProfile(
-            availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
-            trainingConstraints = setOf(TrainingConstraint.SHOULDER_SENSITIVE)
         )
 
         val result = policy.evaluate(
             exercises = listOf(exercise),
-            profile = profile,
-            adaptationState = AdaptationState.BUILD,
-            restrictions = restrictionsFor(profile, ConditionGuidanceResult.Unavailable)
+            profile = UserProfile(
+                availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
+                trainingConstraints = setOf(TrainingConstraint.SHOULDER_SENSITIVE)
+            ),
+            adaptationState = AdaptationState.BUILD
         )
 
         assertThat(result).isEqualTo(
             AutomaticEligibilityResult.NoCandidates(
-                failure = AutomaticEligibilityFailure.CONDITION_GUIDANCE_UNAVAILABLE,
+                failure = AutomaticEligibilityFailure.TRAINING_CONSTRAINTS_REMOVED_ALL,
                 decisions = listOf(
                     EligibilityDecision(
                         exerciseId = exercise.id,
                         eligible = false,
-                        reasons = listOf(EligibilityReason.CONDITION_GUIDANCE_UNAVAILABLE)
+                        reasons = listOf(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun evaluate_jointSensitiveConstraintIsDecidedPerExerciseNotAcrossThePool() {
+        val cleared = exercise(id = "reviewed-and-cleared").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                clearedTrainingConstraints = setOf(TrainingConstraint.SHOULDER_SENSITIVE)
+            )
+        )
+        val otherJointCleared = exercise(id = "cleared-for-a-different-joint").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                clearedTrainingConstraints = setOf(TrainingConstraint.KNEE_SENSITIVE)
+            )
+        )
+
+        val result = policy.evaluate(
+            exercises = listOf(cleared, otherJointCleared),
+            profile = UserProfile(
+                availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
+                trainingConstraints = setOf(TrainingConstraint.SHOULDER_SENSITIVE)
+            ),
+            adaptationState = AdaptationState.BUILD
+        )
+
+        assertThat(result).isEqualTo(
+            AutomaticEligibilityResult.Candidates(
+                exercises = listOf(cleared),
+                decisions = listOf(
+                    EligibilityDecision(
+                        exerciseId = cleared.id,
+                        eligible = true,
+                        reasons = listOf(EligibilityReason.APPROVED)
+                    ),
+                    EligibilityDecision(
+                        exerciseId = otherJointCleared.id,
+                        eligible = false,
+                        reasons = listOf(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun evaluate_combinedJointConstraintsRequireEveryOneToBeCleared() {
+        val partiallyCleared = exercise(id = "cleared-for-one-of-two").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                clearedTrainingConstraints = setOf(TrainingConstraint.WRIST_SENSITIVE)
+            )
+        )
+        val fullyCleared = exercise(id = "cleared-for-both").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                clearedTrainingConstraints = setOf(
+                    TrainingConstraint.WRIST_SENSITIVE,
+                    TrainingConstraint.ELBOW_SENSITIVE
+                )
+            )
+        )
+
+        val result = policy.evaluate(
+            exercises = listOf(partiallyCleared, fullyCleared),
+            profile = UserProfile(
+                availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
+                trainingConstraints = setOf(
+                    TrainingConstraint.WRIST_SENSITIVE,
+                    TrainingConstraint.ELBOW_SENSITIVE
+                )
+            ),
+            adaptationState = AdaptationState.BUILD
+        )
+
+        assertThat(result).isEqualTo(
+            AutomaticEligibilityResult.Candidates(
+                exercises = listOf(fullyCleared),
+                decisions = listOf(
+                    EligibilityDecision(
+                        exerciseId = partiallyCleared.id,
+                        eligible = false,
+                        reasons = listOf(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
+                    ),
+                    EligibilityDecision(
+                        exerciseId = fullyCleared.id,
+                        eligible = true,
+                        reasons = listOf(EligibilityReason.APPROVED)
                     )
                 )
             )
@@ -411,7 +498,7 @@ class ExerciseEligibilityPolicyTest {
                 availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
                 trainingConstraints = setOf(TrainingConstraint.LOW_IMPACT_ONLY)
             ),
-            adaptationState = AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.BUILD
         )
 
         assertThat(result).isEqualTo(
@@ -422,6 +509,54 @@ class ExerciseEligibilityPolicyTest {
                         exerciseId = lowImpact.id,
                         eligible = true,
                         reasons = listOf(EligibilityReason.APPROVED)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun evaluate_supportedRegressionCannotBypassAnUnclearedJointConstraint() {
+        val regression = exercise(id = "uncleared-regression").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                complexity = ComplexityTier.FOUNDATIONAL,
+                supportRequirement = SupportRequirement.SUPPORTED
+            )
+        )
+        val advanced = exercise(id = "advanced-cleared").copy(
+            reviewedMetadata = reviewedMetadata(
+                reviewState = ReviewState.APPROVED,
+                complexity = ComplexityTier.ADVANCED,
+                approvedRegressions = listOf(ReviewedExerciseLink(exerciseId = regression.id)),
+                clearedTrainingConstraints = setOf(TrainingConstraint.HIP_SENSITIVE)
+            )
+        )
+
+        val result = policy.evaluate(
+            exercises = listOf(advanced, regression),
+            profile = UserProfile(
+                availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
+                trainingConstraints = setOf(TrainingConstraint.HIP_SENSITIVE)
+            ),
+            adaptationState = AdaptationState.UNCALIBRATED
+        )
+
+        assertThat(result).isEqualTo(
+            AutomaticEligibilityResult.NoCandidates(
+                // The uncleared regression is removed first, so the surviving advanced entry
+                // decides the aggregate cause. Neither exercise reaches the candidate pool.
+                failure = AutomaticEligibilityFailure.CALIBRATION_COMPLEXITY_REMOVED_ALL,
+                decisions = listOf(
+                    EligibilityDecision(
+                        exerciseId = advanced.id,
+                        eligible = false,
+                        reasons = listOf(EligibilityReason.ADVANCED_WHILE_UNCALIBRATED)
+                    ),
+                    EligibilityDecision(
+                        exerciseId = regression.id,
+                        eligible = false,
+                        reasons = listOf(EligibilityReason.UNMAPPED_TRAINING_CONSTRAINT)
                     )
                 )
             )
@@ -453,7 +588,7 @@ class ExerciseEligibilityPolicyTest {
                 availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
                 trainingConstraints = setOf(TrainingConstraint.LOW_IMPACT_ONLY)
             ),
-            adaptationState = AdaptationState.UNCALIBRATED, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.UNCALIBRATED
         )
 
         assertThat(result).isEqualTo(
@@ -490,17 +625,17 @@ class ExerciseEligibilityPolicyTest {
         val uncalibrated = policy.evaluate(
             exercises = listOf(exercise),
             profile = profile,
-            adaptationState = AdaptationState.UNCALIBRATED, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.UNCALIBRATED
         )
         val returning = policy.evaluate(
             exercises = listOf(exercise),
             profile = profile,
-            adaptationState = AdaptationState.RETURNING, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.RETURNING
         )
         val build = policy.evaluate(
             exercises = listOf(exercise),
             profile = profile,
-            adaptationState = AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.BUILD
         )
 
         assertThat(uncalibrated).isEqualTo(
@@ -544,7 +679,7 @@ class ExerciseEligibilityPolicyTest {
             exercises = listOf(exercise),
             profile = UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT)),
             adaptationState = AdaptationState.RETURNING,
-            demonstratedProgressionFamilies = setOf("demonstrated-family"), restrictions = ConditionRestrictions.None
+            demonstratedProgressionFamilies = setOf("demonstrated-family")
         )
 
         assertThat(result).isEqualTo(
@@ -580,7 +715,7 @@ class ExerciseEligibilityPolicyTest {
         val result = policy.evaluate(
             exercises = listOf(advanced, regression),
             profile = UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT)),
-            adaptationState = AdaptationState.UNCALIBRATED, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.UNCALIBRATED
         )
 
         assertThat(result).isEqualTo(
@@ -619,7 +754,7 @@ class ExerciseEligibilityPolicyTest {
                     mapOf(MovementCapabilityType.UNSUPPORTED_SQUAT to CapabilityLevel.AVOID)
                 )
             ),
-            adaptationState = AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.BUILD
         )
 
         assertThat(result).isEqualTo(
@@ -658,7 +793,7 @@ class ExerciseEligibilityPolicyTest {
                     mapOf(MovementCapabilityType.IMPACT to CapabilityLevel.AVOID)
                 )
             ),
-            adaptationState = AdaptationState.UNCALIBRATED, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.UNCALIBRATED
         )
 
         assertThat(result).isEqualTo(
@@ -695,8 +830,8 @@ class ExerciseEligibilityPolicyTest {
         val exercises = listOf(first, draft, last)
         val profile = UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT))
 
-        val firstResult = policy.evaluate(exercises, profile, AdaptationState.BUILD, restrictions = ConditionRestrictions.None)
-        val secondResult = policy.evaluate(exercises, profile, AdaptationState.BUILD, restrictions = ConditionRestrictions.None)
+        val firstResult = policy.evaluate(exercises, profile, AdaptationState.BUILD)
+        val secondResult = policy.evaluate(exercises, profile, AdaptationState.BUILD)
 
         assertThat(secondResult).isEqualTo(firstResult)
         val candidates = firstResult as AutomaticEligibilityResult.Candidates
@@ -726,7 +861,7 @@ class ExerciseEligibilityPolicyTest {
                 availableEquipment = listOf(StandardEquipment.BODYWEIGHT),
                 excludedExerciseIds = listOf(excluded.id)
             ),
-            adaptationState = AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.BUILD
         )
 
         assertThat((result as AutomaticEligibilityResult.NoCandidates).failure)
@@ -754,12 +889,12 @@ class ExerciseEligibilityPolicyTest {
         val beginnerResult = policy.evaluate(
             listOf(exercise),
             beginner,
-            AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            AdaptationState.BUILD
         )
         val advancedResult = policy.evaluate(
             listOf(exercise),
             advancedWithLoad,
-            AdaptationState.BUILD, restrictions = ConditionRestrictions.None
+            AdaptationState.BUILD
         )
 
         assertThat(advancedResult).isEqualTo(beginnerResult)
@@ -786,7 +921,7 @@ class ExerciseEligibilityPolicyTest {
         val result = policy.evaluate(
             exercises = listOf(advanced, regression),
             profile = UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT)),
-            adaptationState = AdaptationState.UNCALIBRATED, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.UNCALIBRATED
         ) as AutomaticEligibilityResult.NoCandidates
 
         assertThat(result.failure)
@@ -817,7 +952,7 @@ class ExerciseEligibilityPolicyTest {
         val result = policy.evaluate(
             exercises = listOf(advanced, regression),
             profile = UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT)),
-            adaptationState = AdaptationState.UNCALIBRATED, restrictions = ConditionRestrictions.None
+            adaptationState = AdaptationState.UNCALIBRATED
         )
 
         assertThat(result).isEqualTo(
@@ -862,7 +997,7 @@ class ExerciseEligibilityPolicyTest {
             exercises = listOf(advanced, regression),
             profile = UserProfile(availableEquipment = listOf(StandardEquipment.BODYWEIGHT)),
             adaptationState = AdaptationState.RETURNING,
-            demonstratedProgressionFamilies = setOf("demonstrated-regression-family"), restrictions = ConditionRestrictions.None
+            demonstratedProgressionFamilies = setOf("demonstrated-regression-family")
         )
 
         assertThat(result).isEqualTo(

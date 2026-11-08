@@ -1,5 +1,7 @@
 # Condition-Aware Planning Implementation Plan
 
+Historical PR 105 record. The [integration report](../../research/conditions/movements/pr-105.md) describes the current catalog, clinical release gate and saved-data compatibility.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Let a user report a condition so automatic workouts leave out restricted movements and add an optional mobility block, and so a joint label produces a modified plan instead of a refusal.

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 fun WallCrawlCard(
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    borderColor: Color = MaterialTheme.colorScheme.outline,
+    borderColor: Color = Color.Unspecified,
     cornerRadius: Dp = 16.dp,
     contentPadding: Dp = 16.dp,
     content: @Composable ColumnScope.() -> Unit
@@ -27,7 +27,7 @@ fun WallCrawlCard(
         modifier = modifier,
         shape = RoundedCornerShape(cornerRadius),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
-        border = BorderStroke(1.dp, borderColor)
+        border = if (borderColor == Color.Unspecified) null else BorderStroke(1.dp, borderColor)
     ) {
         Column(
             modifier = Modifier.padding(contentPadding)

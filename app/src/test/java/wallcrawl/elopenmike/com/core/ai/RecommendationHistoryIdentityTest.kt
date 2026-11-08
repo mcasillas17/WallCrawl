@@ -27,6 +27,11 @@ class RecommendationHistoryIdentityTest {
         val original = context.copy(progressionHistory = listOf(session), historyAsOfTimestamp = 30_000)
         val instance = session.exercises.single()
         val set = instance.sets.first()
+        val supportive = instance.copy(prescription = prescription.copy(
+            purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE))
+        fun identityFor(legacyMobility: Boolean) = RecommendationContextIdentity.of(original.copy(
+            progressionHistory = listOf(session.copy(exercises = listOf(supportive.copy(isLegacyMobility = legacyMobility))))))
+        assertThat(identityFor(true)).isNotEqualTo(identityFor(false))
         val changed = listOf(
             original.copy(progressionHistory = listOf(session.copy(status = wallcrawl.elopenmike.com.core.model.SessionStatus.CANCELLED))),
             original.copy(progressionHistory = listOf(session.copy(exercises = listOf(instance.copy(

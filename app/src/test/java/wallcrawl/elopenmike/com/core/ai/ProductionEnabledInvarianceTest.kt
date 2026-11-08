@@ -203,7 +203,7 @@ class ProductionEnabledInvarianceTest {
             ledgerFingerprint = LedgerSourceFingerprint.of(
                 sessions = emptyList(),
                 exercisesById = bundledExercises.associateBy(Exercise::id),
-                policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+                policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
                 week = WEEK,
                 catalogVersion = bundledCatalog.sourceCommit,
                 reviewPolicyVersion = REVIEW_POLICY_VERSION

@@ -1,0 +1,341 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "proximal-hamstring-tendinopathy",
+    "label": "proximal hamstring tendinopathy",
+    "aliases": [],
+    "distinctions": "Focal chronic proximal hamstring tendon pain; distinguish lumbar/sciatic referral, acute rupture/avulsion and postoperative repair."
+  },
+  "scope": {
+    "population": "Clinically assessed chronic PHT adults 18–65.",
+    "stage": "Chronic nonoperative, gradual onset.",
+    "operativeStatus": "Nonoperative rehabilitation only; postoperative pathways require separate assessment.",
+    "exclusions": "Acute traumatic tear/avulsion, prior hamstring surgery and major competing pain not covered.",
+    "uncertainty": "Source eligibility limits applicability; it does not establish contraindications."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "\"proximal hamstring\" \"Rich\" physiotherapy shockwave 2025 trial protocol compression",
+      "decision": "Retrieved final RCT, 2023 protocol and 2025 commentary.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "\"10.1177/03635465251391134\" correction retraction",
+      "decision": "Found January 2026 Table 2 correction; used corrected publisher PDF.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "proximal hamstring tendinopathy systematic review interventions 2021 Nasser",
+      "decision": "Older insufficient-evidence review supplies context; final RCT used for primary comparison.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    }
+  ],
+  "sources": [
+    {
+      "id": "rich-2025-rct",
+      "title": "Physiotherapy Compared With Shockwave Therapy for the Treatment of Proximal Hamstring Tendinopathy: A Randomized Controlled Trial",
+      "doi": "10.1177/03635465251391134",
+      "pmid": "41243328",
+      "url": "https://journals.sagepub.com/doi/pdf/10.1177/03635465251391134?download=true",
+      "publicationStatus": "Final 2025 journal publication; January 2026 correction integrated.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete corrected 12-page publisher PDF and Europe PMC XML inspected. Publisher takes precedence for baseline labels."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "DOI correction/retraction query, publisher PDF and archived XML comparison.",
+        "result": "January 2026 correction swaps original Table 2 column headings; archived XML differed. Avoided arm-specific baseline extraction."
+      },
+      "design": "Assessor-blinded RCT; 100 at 10 practices.",
+      "population": "Age 18–65, gradual focal lower-buttock pain≥ 3 months, ≥ 3 positive loading/compression tests; no previous hamstring surgery.",
+      "comparator": "Shockwave; time/contact matched.",
+      "coInterventions": "Education/pain-monitoring both; medication permitted.",
+      "outcomes": "No primary VISA-H/GROC difference; 52 week VISA-H MD−0.6(−8.1 to 6.9).",
+      "followUp": "4, 12, 26, 52 weeks.",
+      "uncertainty": "No untreated control/equivalence design; baseline correction; institutional grants disclosed.",
+      "harms": "No events reported; monitored during clinical care.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "Individualized progressive strengthening and compression reintroduction.",
+        "dose": "Six contacts; no single universal exercise dose.",
+        "frequency": "Weeks 0, 1, 2, 3, 6, 12.",
+        "supervision": "Physiotherapist plus home work.",
+        "progression": "Stage-based.",
+        "stoppingRules": "Activity≤ 4/10; no> 2/10 increase 12–24 h after."
+      },
+      "locations": [
+        "Methods > Interventions; Results > Table 3",
+        "Publisher PDF p.1 correction; Table 2"
+      ]
+    },
+    {
+      "id": "rich-2023-protocol",
+      "title": "A pilot randomised trial comparing individualised physiotherapy versus shockwave therapy for proximal hamstring tendinopathy: a protocol",
+      "doi": "10.1186/s40634-023-00615-x",
+      "pmid": "37227516",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10212870/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Primary full text inspected at linked archive/publisher; Europe PMC XML used where PMC HTML challenged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "Prospective protocol; no outcomes.",
+      "population": "Chronic PHT trial eligibility.",
+      "comparator": "Shockwave.",
+      "coInterventions": "Education both groups.",
+      "outcomes": "Defines five-stage individualized program.",
+      "followUp": "Planned through 52 weeks.",
+      "uncertainty": "Mechanistic/expert rationale; outcomes supplied by final RCT.",
+      "harms": "Adverse events monitored through trial follow-up.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "Isometric→isotonic hamstring, kinetic chain, graded compression, high-speed work if required.",
+        "dose": "Individualized; details elaborated in 2025 commentary.",
+        "frequency": "Six clinical contacts/12 weeks plus home work.",
+        "supervision": "Trained physiotherapists and treatment algorithms.",
+        "progression": "Stage/response based.",
+        "stoppingRules": "Pain monitoring; avoid significant latent aggravation."
+      },
+      "locations": [
+        "Methods/design > Treatment protocols > PHYSIOTHERAPY intervention; Participant education and other co-interventions",
+        "Methods/design > Adverse events"
+      ]
+    },
+    {
+      "id": "rich-2025-commentary",
+      "title": "Treatment of Proximal Hamstring Tendinopathy with Individualized Physiotherapy: A Clinical Commentary",
+      "doi": "10.26603/001c.138308",
+      "pmid": "40469642",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12129629/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Primary full text inspected at linked archive/publisher; Europe PMC XML used where PMC HTML challenged. Fresh figure inspection 2026-11-02 UTC: original author and independent factual-art reviewer inspected primary publisher Figure 3(a–d) and Figure 8(a–b). Retained Figure 3 PNG SHA-256 2a8daa660e6ef5e231fed61e3f7d39ee33aa20d3a10d7990c7014fd5338ceb69; Figure 8 PNG SHA-256 2546ba3529295a5ab7e5bc8c67c3527119a915250477c0c1e747517fc45fbcdc. Figure 3(a,b) specifically shows calf-on-box single-leg setup/hold; (c,d) reduces leg support. Figure 8(a) shows one single-leg barbell example, not all program alternatives or individualized target range. Original access.date retained; scoped changed-content re-review and clinical review remain outstanding."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "Clinical commentary/protocol; not another efficacy trial.",
+      "population": "PHT individualized rehabilitation; postoperative/acute avulsion extrapolation unsupported.",
+      "comparator": "None.",
+      "coInterventions": "Kinetic-chain work/education; return-to-running.",
+      "outcomes": "Provides execution and progression framework, not causal component effects.",
+      "followUp": "No independent outcome follow-up.",
+      "uncertainty": "Authors report no conflicts; recommendations partly extrapolated from other tendons.",
+      "harms": "No independent adverse-event dataset.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "Supine hamstring bridge, double/single leg; modify support/load. Later modified deadlift/lunge with graded hip flexion. Figure 3(a,b) visually distinguishes a calf-on-box single-leg isometric bridge from reduced-support (c,d). The broad double/single-leg/support program and individualized compression ranges are not settled by this fixed child.",
+        "dose": "Isometric 5×30–45 s; 90 seconds rest. Compression 2×4–6→3×6–8, 2 minutes rest.",
+        "frequency": "Isometric as-needed up to 4/day; compression 3/week/every second day.",
+        "supervision": "Therapist assesses contraction/pelvic control.",
+        "progression": "Quality 45-second holds; compression angle to sport/work demands.",
+        "stoppingRules": "Stage 1 pain≤ 4/10 by second rep; reduce load if latent> 2/10 increase persists> 24 h."
+      },
+      "locations": [
+        "Stage 1—Isometric; Table 1; Figure 3",
+        "Stage 4—Compressive loading; Table 1; Figure 8; Pain monitoring",
+        "Stage 1—Isometric > Figure 3(a,b), calf-supported single-leg setup and held position"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "physio-v-shockwave",
+      "kind": "study-result",
+      "statement": "No primary VISA-H/GROC difference; 52 week VISA-H MD−0.6(−8.1 to 6.9).",
+      "citations": [
+        {
+          "sourceId": "rich-2025-rct",
+          "location": "Methods > Interventions; Results > Table 3"
+        }
+      ],
+      "applicability": "Age 18–65, gradual focal lower-buttock pain≥ 3 months, ≥ 3 positive loading/compression tests; no previous hamstring surgery.",
+      "limitations": "No untreated control/equivalence design; baseline correction; institutional grants disclosed."
+    },
+    {
+      "id": "staged-loading-protocol",
+      "kind": "published-recommendation",
+      "statement": "Protocol initially manages compression and later reintroduces it; high-speed stage only when demanded.",
+      "citations": [
+        {
+          "sourceId": "rich-2023-protocol",
+          "location": "Methods/design > Treatment protocols > PHYSIOTHERAPY intervention; Participant education and other co-interventions"
+        }
+      ],
+      "applicability": "Chronic PHT trial eligibility.",
+      "limitations": "Mechanistic/expert rationale; outcomes supplied by final RCT."
+    },
+    {
+      "id": "hamstring-bridge-execution",
+      "kind": "published-recommendation",
+      "statement": "Commentary describes hamstring bridge and progressive compressive deadlift/lunge, with symptom monitoring. Freshly inspected Figure 3(a,b) shows a fixed calf-on-box single-leg bridge hold; Figure 3(c,d) changes support. Figure 8(a) depicts one single-leg barbell example, not all double/single-leg options or individualized target range.",
+      "citations": [
+        {
+          "sourceId": "rich-2025-commentary",
+          "location": "Stage 1—Isometric; Table 1; Figure 3"
+        },
+        {
+          "sourceId": "rich-2025-commentary",
+          "location": "Stage 4—Compressive loading; Table 1; Figure 8; Pain monitoring"
+        }
+      ],
+      "applicability": "PHT individualized rehabilitation; postoperative/acute avulsion extrapolation unsupported.",
+      "limitations": "Authors report no conflicts; recommendations partly extrapolated from other tendons. Photographic mechanics do not establish isolated efficacy or transferable dose. The broad program requests retain unresolved variant/range scope."
+    },
+    {
+      "id": "calf-supported-single-leg-hold-execution",
+      "kind": "published-recommendation",
+      "statement": "Figure 3(a,b) shows supine setup then a held single-leg hamstring bridge: one calf supported on a box, other hip/knee flexed and elevated, arms crossed, head and shoulders supported. The fixed candidate covers the raised isometric pose in (b); it excludes the reduced-support (c,d) progression and the double-leg alternative. No numeric joint angles or individualized dose are inferred.",
+      "citations": [
+        {
+          "sourceId": "rich-2025-commentary",
+          "location": "Stage 1—Isometric > Figure 3(a,b), calf-supported single-leg setup and held position"
+        }
+      ],
+      "applicability": "One source-described execution within individualized chronic PHT rehabilitation; postoperative/acute avulsion extrapolation remains unsupported.",
+      "limitations": "Commentary/expert execution, not independently established isolated analgesia or superiority. Source dose and symptom-monitoring rules remain contextual research extractions, not an app prescription."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "pht-isometric-hamstring-bridge-mapping",
+      "exerciseId": null,
+      "requestId": "pht-isometric-hamstring-bridge",
+      "findingIds": [
+        "hamstring-bridge-execution"
+      ],
+      "matchRationale": "Preserve the broad candidate and source chain; fixed Figure 3(a,b) calf-supported child does not settle double-leg or reduced-support progression. No generic catalog glute bridge or duration default can supply missing variant mechanics.",
+      "status": "candidate"
+    },
+    {
+      "id": "pht-graded-compression-deadlift-mapping",
+      "exerciseId": null,
+      "requestId": "pht-graded-compression-deadlift",
+      "findingIds": [
+        "hamstring-bridge-execution"
+      ],
+      "matchRationale": "Figure 8(a) has now been visually inspected and shows one single-leg barbell example. The broad double/single-leg choices, individualized setup/load and target hip-flexion range remain unresolved; no generic Romanian-deadlift equivalence or universal progression is established.",
+      "status": "candidate"
+    },
+    {
+      "id": "pht-single-leg-calf-supported-isometric-hamstring-bridge-mapping",
+      "exerciseId": null,
+      "requestId": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "findingIds": [
+        "calf-supported-single-leg-hold-execution"
+      ],
+      "matchRationale": "Narrow source-bound child of unresolved pht-isometric-hamstring-bridge. Support contact, unilateral lever and duration measurement distinguish this execution from catalog glute/single-leg bridges; dose alone does not. Broad double/single-leg/support progression remains unresolved and no isolated component efficacy is claimed.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "pht-loading-candidates",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain staged hamstring bridge/compression candidates for content review, not automatic exercise prescriptions.",
+      "findingIds": [
+        "hamstring-bridge-execution",
+        "physio-v-shockwave"
+      ],
+      "citations": [
+        {
+          "sourceId": "rich-2025-commentary",
+          "location": "Stage 1—Isometric; Table 1; Figure 3"
+        }
+      ],
+      "applicability": {
+        "population": "Clinically assessed chronic PHT adults 18–65.",
+        "stage": "Chronic nonoperative, gradual onset.",
+        "rationale": "Draft inference constrained to the linked population and intervention; no individual clearance."
+      },
+      "limitations": "Components not separately tested; exact artwork, dosage and progression review required.",
+      "mappingIds": [
+        "pht-isometric-hamstring-bridge-mapping",
+        "pht-graded-compression-deadlift-mapping"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "pht-provocative-compression",
+      "kind": "range-limit",
+      "basis": "published-recommendation",
+      "statement": "Consider temporary modification of provocative compression with later graded reintroduction; do not impose a permanent flexion ban.",
+      "findingIds": [
+        "staged-loading-protocol"
+      ],
+      "citations": [
+        {
+          "sourceId": "rich-2023-protocol",
+          "location": "Methods/design > Treatment protocols > PHYSIOTHERAPY intervention; Participant education and other co-interventions"
+        }
+      ],
+      "applicability": {
+        "population": "Clinically assessed chronic PHT adults 18–65.",
+        "stage": "Chronic nonoperative, gradual onset.",
+        "rationale": "Draft inference constrained to the linked population and intervention; no individual clearance."
+      },
+      "limitations": "No universal safe angle; stage/response clinician assessed.",
+      "mappingIds": [],
+      "status": "candidate"
+    },
+    {
+      "id": "pht-response-review",
+      "kind": "symptom-response",
+      "basis": "published-recommendation",
+      "statement": "Candidate review may use the studied pain-response framework only within its assessed population and stages.",
+      "findingIds": [
+        "hamstring-bridge-execution"
+      ],
+      "citations": [
+        {
+          "sourceId": "rich-2025-commentary",
+          "location": "Stage 4—Compressive loading; Table 1; Figure 8; Pain monitoring"
+        }
+      ],
+      "applicability": {
+        "population": "Clinically assessed chronic PHT adults 18–65.",
+        "stage": "Chronic nonoperative, gradual onset.",
+        "rationale": "Draft inference constrained to the linked population and intervention; no individual clearance."
+      },
+      "limitations": "Source thresholds are research protocol details, not personal clearance.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "All material is draft and clinically unreviewed; no runtime mapping, supported-condition claim, default dose or escalation clearance follows.",
+    "No universal numeric load/range cap or hard exercise contraindication was established; benefit from alternatives and trial exclusions do not prove harm.",
+    "Concurrent condition restrictions, equipment requirements and independent joint limits remain controlling; stretching never earns strength-set credit or generic five-second progression.",
+    "No untreated comparison or equivalence conclusion; isometric analgesia remains a rationale rather than proven isolated PHT effect.",
+    "No permanent ban on hip flexion, squatting, deadlifting or hamstring stretching follows; compression was deliberately reintroduced.",
+    "Corrected Table 2 publisher headings conflict with archived XML; baseline arm labels intentionally not copied.",
+    "Fixed Figure 3(a,b) calf-supported single-leg hold is separately requested; broad bridge support/limb progressions and individualized compression/deadlift target range remain unresolved. Fresh figure observations await changed-content source re-review and do not establish clinical approval or original artwork provenance."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

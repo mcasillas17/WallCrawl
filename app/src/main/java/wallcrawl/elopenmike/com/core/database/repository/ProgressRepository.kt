@@ -113,8 +113,8 @@ class OfflineProgressRepository(
                     val previousLedger = ledgerRepository.weeklyLedgerAt(
                         profile.id, Instant.ofEpochMilli(previousWeek.startEpochMillis), zoneId
                     )
-                    check(currentLedger.catalogVersion == catalog.catalogAttribution.commit &&
-                        previousLedger.catalogVersion == catalog.catalogAttribution.commit) {
+                    check(currentLedger.catalogVersion == catalog.catalogVersion &&
+                        previousLedger.catalogVersion == catalog.catalogVersion) {
                         "The Progress catalog changed during accounting."
                     }
                     ProgressSnapshot(
@@ -197,7 +197,7 @@ class OfflineProgressRepository(
                             sessions = sessions,
                             comparableSetIds = comparable,
                             exercisesById = exercisesById,
-                            catalogVersion = catalog.catalogAttribution.commit,
+                            catalogVersion = catalog.catalogVersion,
                             reviewPolicyVersion = catalog.exercises.acceptedReviewPolicyVersion(),
                             preferredUnit = profile.preferredUnit,
                             now = instant,

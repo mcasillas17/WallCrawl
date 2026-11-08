@@ -64,6 +64,9 @@ class OfflineWorkoutTemplateRepository(
         require(!template.requiresUnitConfirmation) {
             "A template that carries a load must record its weight unit."
         }
+        require(template.exercises.none { it.prescription.holdSeconds != null }) {
+            "Template prescriptions cannot store a per-repetition hold."
+        }
         // Catalog validation may load the bundled catalog, so it happens before the gate is
         // taken rather than blocking a deletion behind asset I/O.
         validateCatalogReferences(template)
@@ -106,7 +109,8 @@ class OfflineWorkoutTemplateRepository(
                     effortMinRir = prescription.effortTarget?.minRir,
                     effortMaxRir = prescription.effortTarget?.maxRir,
                     restClass = prescription.restClass,
-                    restTargetSource = prescription.restTargetSource
+                    restTargetSource = prescription.restTargetSource,
+                    purpose = prescription.purpose.name
                 )
             }
         )

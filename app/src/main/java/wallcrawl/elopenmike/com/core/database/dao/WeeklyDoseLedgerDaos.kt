@@ -9,6 +9,13 @@ import wallcrawl.elopenmike.com.core.database.relation.WorkoutSessionWithExercis
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import kotlinx.coroutines.flow.Flow
 
+// Legacy mobility-only sessions retain activity and set history but earned no training-day credit.
+internal const val COUNTS_AS_TRAINING_SESSION = """
+    (NOT EXISTS (SELECT 1 FROM workout_exercises e WHERE e.sessionId = workout_sessions.id)
+        OR EXISTS (SELECT 1 FROM workout_exercises e
+            WHERE e.sessionId = workout_sessions.id AND e.role = 'MAIN'))
+"""
+
 /**
  * Reads the completed history a weekly ledger is reconstructed from.
  *
@@ -36,17 +43,11 @@ interface CompletedWorkoutHistoryDao {
         limit: Int
     ): Flow<List<WorkoutSessionWithExercisesAndSets>>
 
-    /**
-     * Lightweight, uncapped history for calendar streaks and the all-time workout count.
-     * A session holding only mobility work is not a training session, so it is left out.
-     */
+    /** Lightweight, uncapped history for calendar streaks and the all-time workout count. */
     @Query(
         """
         SELECT completedAtTimestamp FROM workout_sessions
-        WHERE status = :status AND completedAtTimestamp IS NOT NULL
-          AND (NOT EXISTS (SELECT 1 FROM workout_exercises e WHERE e.sessionId = workout_sessions.id)
-            OR EXISTS (SELECT 1 FROM workout_exercises e
-                WHERE e.sessionId = workout_sessions.id AND e.role = 'MAIN'))
+        WHERE status = :status AND completedAtTimestamp IS NOT NULL AND $COUNTS_AS_TRAINING_SESSION
         """
     )
     suspend fun getCompletedTimestamps(
