@@ -7,7 +7,7 @@ Room persistence, history, and progress pipeline as a planner-generated workout.
 
 ## User flow
 
-1. Open **Today** and select **My Workouts**.
+1. Open **Library → My workouts**, or use the **My workouts** shortcut on Train.
 2. Create a workout, then add a name and optional notes.
 3. Search the bundled catalog and add exercises.
 4. Use the move controls to set exercise order and adjust each set count.
@@ -25,7 +25,7 @@ add control is disabled and says so beside itself.
 ## Templates alongside an optional program
 
 Templates remain independent of optional four-week program enrollment. Only an explicit
-**Program session** start on Today creates program membership; starting or finishing a
+**Program session** start on Train creates program membership; starting or finishing a
 manual template never reserves/advances a slot, changes captured configuration or consumes
 an accepted one-workout deload. Templates require no program-header read, so program
 configuration/policy failures do not hide this workflow. Ordinary automatic recommendations
@@ -261,8 +261,8 @@ exercises, every note filled to its length limit with characters that take two U
 units (such as an emoji), every number field, remembered pre-switch value and original
 rest at the most characters a field keeps (one more than a valid number can have), an
 exercise id longer than the catalog allows, and a recorded rest choice on every row. It
-came to 152 112 bytes, under a sixth of the 1 MiB Android allows a whole task's saved
-state. An instrumented test prints the measurement on every run, fails if it grows past
+came to 153 132 bytes with SUPPORTIVE purpose on every row (API 37), under a sixth
+of the 1 MiB Android allows a whole task's saved state. An instrumented test prints the measurement on every run, fails if it grows past
 that figure, and keeps it under a quarter.
 
 Back from an open exercise picker or an untouched edit sheet closes it first. Once you

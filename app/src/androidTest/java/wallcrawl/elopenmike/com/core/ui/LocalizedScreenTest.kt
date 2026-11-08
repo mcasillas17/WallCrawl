@@ -164,22 +164,16 @@ class LocalizedScreenTest {
                     set = weightSet(),
                     weightUnit = "kg",
                     previousSet = null,
-                    onValuesChanged = {},
                     onCompletionChanged = { _, _ -> },
-                    onSkipSet = {},
+                    onSkipSet = { _, _ -> },
                     onRecordEffort = { _, _ -> },
                     onRecordFeltManageable = {}
                 )
             }
         }
 
-        composeRule.onNodeWithText(spanish.getString(R.string.set_complete)).assertIsDisplayed()
+        composeRule.onNodeWithText(spanish.getString(R.string.guided_log_set)).assertIsDisplayed()
         composeRule.onNodeWithText(spanish.getString(R.string.set_skip_or_stop))
-            .assertIsDisplayed()
-        composeRule
-            .onNodeWithContentDescription(
-                spanish.getString(R.string.set_complete_accessibility, "1")
-            )
             .assertIsDisplayed()
         composeRule
             .onNodeWithContentDescription(
@@ -193,9 +187,7 @@ class LocalizedScreenTest {
     }
 
     @Test
-    fun aLoadFieldRendersAndReadsBackADecimalCommaWithoutChangingItsValue() {
-        // The prescribed 42.5 kg must render as "42,5" under a decimal-comma locale and
-        // come back as 42.5, never as 425.
+    fun fineAdjustmentsDisplayAndLogTheDecimalCommaLoad() {
         val recorded = mutableListOf<SetValuesDraft>()
         composeRule.setContent {
             InSpanish(EUROPEAN_SPANISH) {
@@ -203,9 +195,8 @@ class LocalizedScreenTest {
                     set = weightSet(targetWeight = 42.5),
                     weightUnit = "kg",
                     previousSet = null,
-                    onValuesChanged = { recorded += it },
                     onCompletionChanged = { values, _ -> recorded += values },
-                    onSkipSet = {},
+                    onSkipSet = { _, _ -> },
                     onRecordEffort = { _, _ -> },
                     onRecordFeltManageable = {}
                 )
@@ -213,12 +204,21 @@ class LocalizedScreenTest {
         }
 
         composeRule.onNodeWithText("42,5").assertIsDisplayed()
+        val load = decimalCommaSpanish.getString(R.string.set_field_load)
+        val withUnit = decimalCommaSpanish.getString(R.string.set_field_with_unit, load, "kg")
+        listOf("2,5", "1", "0,1").forEach { step ->
+            composeRule.onNodeWithContentDescription(decimalCommaSpanish.getString(R.string.guided_change_step, withUnit, step))
+                .performClick()
+        }
+        composeRule.onNodeWithContentDescription(decimalCommaSpanish.getString(R.string.set_field_increase_accessibility, load, "1"))
+            .performClick()
+        composeRule.onNodeWithText("42,51").assertIsDisplayed()
         composeRule
-            .onNodeWithText(decimalCommaSpanish.getString(R.string.set_complete))
+            .onNodeWithText(decimalCommaSpanish.getString(R.string.guided_log_set))
             .performClick()
 
         assertThat(recorded).isNotEmpty()
-        assertThat(recorded.last().weight).isEqualTo(42.5)
+        assertThat(recorded.last().weight).isEqualTo(42.51)
     }
 
     @Composable

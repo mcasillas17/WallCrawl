@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "id": "wallcrawl",
+    "version": 1,
+    "repository": "https://example.invalid/fictional-catalog",
+    "assetLicense": "Fictional test fixture; not released content",
+    "attribution": {
+      "creator": "FICTIONAL fixture author; no clinical approval",
+      "creatorUrl": "https://example.invalid/fictional-author",
+      "license": "Fictional test fixture",
+      "licenseUrl": "https://example.invalid/fictional-license"
+    }
+  },
+  "visuals": {
+    "frameCount": 3,
+    "widthPx": 320,
+    "heightPx": 320,
+    "format": "svg",
+    "assetPathPrefix": "exercise-illustrations/male/"
+  },
+  "exercises": [
+    {
+      "id": "fictional-catalog-movement",
+      "sourceId": "fictional-catalog-movement",
+      "sourceSlug": "fictional-catalog-movement",
+      "name": "FICTIONAL catalog movement; not exercise instruction",
+      "searchAliases": [
+        "Fictional fixture"
+      ],
+      "primaryMuscles": [
+        "Chest"
+      ],
+      "secondaryMuscles": [],
+      "listedEquipment": [
+        "Bodyweight"
+      ],
+      "exerciseType": "duration",
+      "isStretch": true,
+      "executionGuidance": "Fictional fixture only; no exercise or clinical instruction."
+    }
+  ]
+}

@@ -4,6 +4,19 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+class RoomSchemaArgProvider(
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val schemaDir: File
+) : CommandLineArgumentProvider {
+    override fun asArguments() = listOf("room.schemaLocation=${schemaDir.path}")
+}
+
+ksp {
+    // CI redirects output to an empty directory so a stale export cannot pass the drift check.
+    arg(RoomSchemaArgProvider(file(providers.gradleProperty("wallcrawl.roomSchemaDirectory").orElse("schemas").get())))
+}
+
 val wallcrawlVersionCode = providers.gradleProperty("wallcrawl.versionCode")
     .orElse("1")
     .map { it.toInt() }
@@ -71,6 +84,9 @@ android {
         }
     }
     sourceSets {
+        getByName("androidTest") {
+            assets.directories.add("schemas")
+        }
         getByName("test") {
             resources.srcDir("src/main/assets")
             resources.srcDir("src/androidTest/assets")
@@ -86,6 +102,21 @@ dependencies {
         }
         add("androidLintTool", libs.build.httpclient) {
             because("GHSA-7r82-7xv7-xcpj; match the patched version already selected by AGP")
+        }
+        listOf("androidLintTool", "ksp").forEach {
+            add(it, libs.build.guava) {
+                because("GHSA-xxph-c9ww-hj94 in lint and Room's compiler; preserve the JRE variant")
+            }
+        }
+        listOf("testImplementation", "androidTestImplementation").forEach {
+            add(it, libs.test.guava) {
+                because("GHSA-xxph-c9ww-hj94 in Truth; preserve the Android variant")
+            }
+        }
+        listOf(libs.build.bcprov, libs.build.bcpkix, libs.build.bcutil).forEach {
+            add("androidLintTool", it) {
+                because("Align BC with the qualified AGP classpath; see docs/dependency-health.md")
+            }
         }
     }
 

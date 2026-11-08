@@ -1,50 +1,57 @@
 package wallcrawl.elopenmike.com.feature.workout
 
-import androidx.compose.ui.test.performScrollToNode
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.hasScrollToIndexAction
-import androidx.compose.ui.test.getBoundsInRoot
-import androidx.compose.ui.test.hasContentDescription
-import androidx.compose.ui.test.SemanticsNodeInteraction
-import androidx.compose.ui.platform.LocalConfiguration
+import android.graphics.Bitmap
 import android.content.res.Configuration
-import androidx.compose.ui.test.performSemanticsAction
-import androidx.compose.ui.semantics.SemanticsActions
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.test.assertWidthIsAtLeast
-import androidx.compose.ui.test.assertHasClickAction
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.Modifier
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.Box
-import wallcrawl.elopenmike.com.test.hasLiveRegion
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
+import wallcrawl.elopenmike.com.WallCrawlApplication
+import wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary
+import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
+import java.util.Locale
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.onRoot
+import java.io.File
+import wallcrawl.elopenmike.com.core.model.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertWidthIsAtLeast
+import androidx.compose.ui.test.getBoundsInRoot
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
+import wallcrawl.elopenmike.com.test.hasLiveRegion
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsFocused
-import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeLeft
+import androidx.compose.ui.test.swipeRight
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow
@@ -76,8 +83,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
-import wallcrawl.elopenmike.com.core.ui.theme.AccentTextOnDark
-import wallcrawl.elopenmike.com.core.ui.theme.AccentTextOnLight
+import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
 
 /**
@@ -97,24 +103,49 @@ class ActiveWorkoutScreenTest {
     private fun text(id: Int): String =
         InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
 
+    private val app = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as WallCrawlApplication
+    private var destructive = Color.Unspecified
     private val clock = TestClock()
     private val repository = ScreenTestRepository(session())
     private val viewModel = ActiveWorkoutViewModel(
         sessionId = SESSION_ID,
         workoutRepository = repository,
-        exerciseCatalog = InMemoryExerciseCatalog(),
+        exerciseCatalog = app.container.exerciseCatalog,
         workoutHistoryAnalyzer = WorkoutHistoryAnalyzer(),
         nowMillis = { WALL_CLOCK },
         elapsedRealtimeClock = clock
     )
 
+    @Test fun supportiveLoggingShowsFrozenExecutionAndKeepsFinishReachable() {
+        val selected = SelectedCondition("withdrawn", 1, mapOf("side" to "recorded-left"))
+        val instruction = ConditionText("Original fictional logging instruction", "Instrucción ficticia de registro original")
+        val frozen = SessionConditionContext(1, 1, listOf(selected), mapOf("withdrawn" to "old-v1"), listOf(
+            AppliedConditionRule(ConditionRuleReference("withdrawn", "old-v1", "case", "rule", 1),
+                ConditionExerciseIdentity("incline-dumbbell-press", "a".repeat(64), ExerciseType.WEIGHT_REPS, "b".repeat(64)),
+                "original-execution", PrescriptionPurpose.SUPPORTIVE, instruction)), emptyList(), emptyList())
+        val initial = session()
+        val supportive = initial.copy(conditionContext = frozen, exercises = initial.exercises.map {
+            it.copy(prescription = it.prescription.copy(purpose = PrescriptionPurpose.SUPPORTIVE)) })
+        val vm = ActiveWorkoutViewModel(SESSION_ID, ScreenTestRepository(supportive), InMemoryExerciseCatalog(), WorkoutHistoryAnalyzer())
+        composeRule.setContent { WallCrawlTheme(themePreference = ThemePreference.DARK) { ActiveWorkoutScreen(vm, NoVisualProvider, {}, {}) } }
+        composeRule.onNodeWithText(instruction.en).performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText(text(R.string.condition_supportive)).assertIsDisplayed()
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val output = InstrumentationRegistry.getArguments().getString("additionalTestOutputDir")?.let(::File) ?: context.filesDir
+        output.mkdirs()
+        File(output, "active-frozen-supportive-dark.png").outputStream().use {
+            composeRule.onRoot().captureToImage().asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
+        composeRule.onNodeWithText("Finish").performClick()
+        composeRule.onNodeWithText("Finish anyway").assertIsDisplayed()
+    }
+
     @Test
-    fun persistedSetUpdateKeepsFocusedPartialInputAndFeedbackOpen() {
+    fun adjustedLoadSurvivesSwitchingSetsAndAnUnrelatedPersistedUpdate() {
         showScreen()
-        composeRule.onAllNodesWithText(text(R.string.set_feedback_show))[0].performScrollTo().performClick()
-        val load = composeRule.onNodeWithContentDescription("Load (lb) for set 1")
-        load.performScrollTo().performClick().performTextReplacement("47.")
-        load.assertIsFocused()
+        composeRule.onNodeWithContentDescription("Increase Load for set 1").performScrollTo().performClick()
+        composeRule.onNodeWithText("42.5").assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("Set 2").performScrollTo().performClick()
         repository.historyReady.value = false
         try {
             composeRule.runOnIdle {
@@ -124,9 +155,12 @@ class ActiveWorkoutScreenTest {
                     ))
                 }
             }
+            composeRule.onNodeWithContentDescription("Set 1").performScrollTo().performClick()
+            composeRule.onNodeWithText("42.5").performScrollTo().assertIsDisplayed()
+            composeRule.onNodeWithText("Log set").performScrollTo().performClick()
             composeRule.waitForIdle()
-            load.assertTextContains("47.").assertIsFocused()
-            composeRule.onNodeWithText(text(R.string.set_feedback_hide)).assertExists()
+            assertThat(runBlocking { repository.getActiveSessionOnce() }!!.exercises.first()
+                .sets.first().completedWeight).isEqualTo(42.5)
             assertThat(repository.historySubscriptions).isEqualTo(1)
         } finally {
             repository.historyReady.value = true
@@ -137,7 +171,7 @@ class ActiveWorkoutScreenTest {
     fun completingASet_showsTheRestCountdownWithItsExplicitControls() {
         showScreen()
 
-        composeRule.onNodeWithContentDescription("Set 1 complete").performScrollTo().assertIsDisplayed().performClick()
+        composeRule.onNodeWithText("Log set").performScrollTo().assertIsDisplayed().performClick()
         composeRule.waitForIdle()
 
         composeRule.onNodeWithContentDescription("Rest remaining 2:00").assertIsDisplayed()
@@ -153,15 +187,113 @@ class ActiveWorkoutScreenTest {
         composeRule.onNodeWithContentDescription("Rest finished").assertIsDisplayed()
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Polite))
 
-        composeRule.onNodeWithText("Dismiss").performClick()
+        composeRule.onNodeWithContentDescription("Rest timer options").performClick()
+        composeRule.onNodeWithText("Dismiss timer").performClick()
         composeRule.waitForIdle()
         composeRule.onAllNodes(hasTextStartingWith("Rest")).assertCountEquals(0)
     }
 
     @Test
+    fun spanishFineStepsWithRestKeepLogReachable() {
+        val locale = Locale.forLanguageTag("es-ES")
+        val localized = app.createConfigurationContext(Configuration(app.resources.configuration).apply { setLocale(locale) })
+        val vocabulary = ExerciseVocabulary(runBlocking { app.container.exerciseLocalizationSource.localization() }, locale.toLanguageTag())
+        composeRule.setContent {
+            CompositionLocalProvider(LocalConfiguration provides localized.resources.configuration,
+                LocalContext provides localized, LocalResources provides localized.resources,
+                LocalExerciseVocabulary provides vocabulary) {
+                WallCrawlTheme(themePreference = ThemePreference.LIGHT) {
+                    ActiveWorkoutScreen(viewModel, app.container.exerciseVisualProvider, {}, {})
+                }
+            }
+        }
+        val log = localized.getString(R.string.guided_log_set)
+        composeRule.onNodeWithText(log).performScrollTo().performClick()
+        composeRule.waitUntil(10_000) {
+            (viewModel.uiState.value as? ActiveWorkoutUiState.Active)?.restTimer?.isRunning == true
+        }
+        val load = localized.getString(R.string.set_field_load)
+        val withUnit = localized.getString(R.string.set_field_with_unit, load, "lb")
+        val increase = localized.getString(R.string.set_field_increase_accessibility, load, "2")
+        listOf("2,5", "1").forEach { step ->
+            composeRule.onNodeWithContentDescription(localized.getString(R.string.guided_change_step, withUnit, step))
+                .performScrollTo().performClick()
+        }
+        composeRule.onNodeWithContentDescription(increase).performScrollTo().performClick()
+        composeRule.onNodeWithText("40,1").assertIsDisplayed()
+        composeRule.onAllNodes(hasSetTextAction()).assertCountEquals(0)
+        composeRule.onNodeWithText(log).performScrollTo().assertIsDisplayed()
+        capture("guided-steps-es-light")
+        composeRule.onNodeWithText(log).performClick()
+        composeRule.waitUntil(10_000) {
+            runBlocking { repository.getActiveSessionOnce() }!!.exercises.first().sets[1].completedWeight == 40.1
+        }
+    }
+
+    @Test
+    fun rejectedWriteLeavesTheEditorAndCanBeRetried() {
+        showScreen()
+        capture("guided-active-en")
+        repository.rejectWrites = true
+        composeRule.onNodeWithContentDescription("Increase Load for set 1").performClick()
+        composeRule.onNodeWithText("Log set").performClick()
+        composeRule.onNodeWithText(text(R.string.workout_set_update_error)).performScrollTo().assertIsDisplayed()
+        capture("guided-save-error-en")
+        composeRule.onNodeWithText("42.5").assertExists()
+        repository.rejectWrites = false
+        composeRule.onNodeWithText("Log set").performScrollTo().performClick()
+        composeRule.onNodeWithContentDescription("Rest remaining 2:00").performScrollTo().assertIsDisplayed()
+        capture("guided-rest-en")
+        composeRule.onNodeWithText("Finish").performClick()
+        composeRule.onNodeWithText("Finish anyway").performClick()
+        composeRule.onNodeWithText("Done").assertIsDisplayed()
+        capture("guided-summary-en")
+    }
+
+    @Test
+    fun swipingArtworkChangesExercisesAndTappingOpensGuidance() {
+        val original = session()
+        val first = original.exercises.single()
+        val second = first.copy(id = "second", exerciseId = "lat-pulldown", orderIndex = 1,
+            sets = first.sets.map { it.copy(id = "second-${it.id}", workoutExerciseId = "second") })
+        val vm = ActiveWorkoutViewModel(SESSION_ID, ScreenTestRepository(original.copy(exercises = listOf(first, second))),
+            InMemoryExerciseCatalog(), WorkoutHistoryAnalyzer(), elapsedRealtimeClock = clock)
+        composeRule.setContent { WallCrawlTheme { ActiveWorkoutScreen(vm, NoVisualProvider, {}, {}) } }
+        val art = composeRule.onNodeWithContentDescription("Expand ", substring = true)
+        art.performTouchInput { swipeRight() }
+        assertThat((vm.uiState.value as ActiveWorkoutUiState.Active).currentExerciseIndex).isEqualTo(0)
+        composeRule.onNodeWithText("Log set").performClick()
+        composeRule.waitUntil(10_000) { (vm.uiState.value as? ActiveWorkoutUiState.Active)?.restTimer?.isRunning == true }
+        composeRule.onNodeWithContentDescription("Rest remaining 2:00").assertIsDisplayed()
+        val deadline = RestTimerState.Running("set-1", 120_000L)
+        composeRule.onNodeWithContentDescription("Decrease Load for set 2").performScrollTo().performClick()
+        art.performScrollTo().performTouchInput { swipeLeft() }
+        composeRule.onNodeWithText("Previous exercise").assertExists()
+        assertThat((vm.uiState.value as ActiveWorkoutUiState.Active).currentExerciseIndex).isEqualTo(1)
+        art.performTouchInput { swipeLeft() }
+        composeRule.onNodeWithText("Close").assertDoesNotExist()
+        art.performClick()
+        composeRule.onNodeWithText("Close").assertIsDisplayed().performClick()
+        art.performTouchInput { swipeRight() }
+        composeRule.onNodeWithText("Next exercise").assertExists()
+        composeRule.onNodeWithText("37.5").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Log set").assertIsEnabled()
+        assertThat((vm.uiState.value as ActiveWorkoutUiState.Active).restTimer.state).isEqualTo(deadline)
+    }
+
+    private fun capture(name: String) {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val output = InstrumentationRegistry.getArguments().getString("additionalTestOutputDir")?.let(::File) ?: context.filesDir
+        output.mkdirs()
+        File(output, "$name.png").outputStream().use {
+            composeRule.onRoot().captureToImage().asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
+    }
+
+    @Test
     fun timeSpentInTheBackground_isReflectedWhenTheCountdownIsRefreshed() {
         showScreen()
-        composeRule.onNodeWithContentDescription("Set 1 complete").performScrollTo().assertIsDisplayed().performClick()
+        composeRule.onNodeWithText("Log set").performScrollTo().assertIsDisplayed().performClick()
         composeRule.waitForIdle()
 
         // The app was away for ninety seconds and ticked nothing while it was gone.
@@ -188,7 +320,7 @@ class ActiveWorkoutScreenTest {
             }
         }
 
-        composeRule.onNodeWithContentDescription("Set 1 complete").performScrollTo().assertIsDisplayed().performClick()
+        composeRule.onNodeWithText("Log set").performScrollTo().assertIsDisplayed().performClick()
         composeRule.waitForIdle()
         composeRule.onNodeWithContentDescription("Rest remaining 2:00").assertIsDisplayed()
 
@@ -224,9 +356,8 @@ class ActiveWorkoutScreenTest {
     fun closingTheWorkout_requiresAnExplicitDiscardConfirmation() {
         showScreen()
 
-        composeRule.onNodeWithContentDescription(
-            text(R.string.workout_close_content_description)
-        ).performClick()
+        composeRule.onNodeWithText(text(R.string.guided_leave_workout)).performClick()
+        composeRule.onNodeWithText(text(R.string.guided_discard_workout)).performClick()
         composeRule.waitForIdle()
 
         composeRule.onNodeWithText("Discard this workout?").assertIsDisplayed()
@@ -234,9 +365,8 @@ class ActiveWorkoutScreenTest {
         composeRule.waitForIdle()
         assertThat(repository.cancelCalls).isEqualTo(0)
 
-        composeRule.onNodeWithContentDescription(
-            text(R.string.workout_close_content_description)
-        ).performClick()
+        composeRule.onNodeWithText(text(R.string.guided_leave_workout)).performClick()
+        composeRule.onNodeWithText(text(R.string.guided_discard_workout)).performClick()
         composeRule.waitForIdle()
         composeRule.onNodeWithText("Discard").performClick()
         composeRule.waitForIdle()
@@ -254,43 +384,29 @@ class ActiveWorkoutScreenTest {
         composeRule.onNodeWithText("Keep going").assertDoesNotContainColor(destructive)
         composeRule.onNodeWithText("Keep going").performClick()
 
-        composeRule.onNodeWithContentDescription(
-            text(R.string.workout_close_content_description)
-        ).performClick()
+        composeRule.onNodeWithText(text(R.string.guided_leave_workout)).performClick()
+        composeRule.onNodeWithText(text(R.string.guided_discard_workout)).performClick()
         composeRule.waitForIdle()
         composeRule.onNodeWithText("Discard").assertContainsColor(destructive)
         composeRule.onNodeWithText("Keep workout").assertDoesNotContainColor(destructive)
     }
 
-    /** At 320 dp and 1.8x nothing on a completed set or the rest bar is squeezed away. */
+    /** At 320 dp and 1.8x nothing on a logged set or the rest bar is squeezed away. */
     @Test
-    fun aCompletedSetAndTheRestBarKeepEveryControlAtLargeText() {
+    fun aLoggedSetAndTheRestBarKeepEveryControlAtLargeText() {
         showScreen(fontScale = 1.8f, narrow = true)
-        activateFromList("Set 1 complete")
-        composeRule.waitForIdle()
-        listOf("+30 s", "Skip rest", "Dismiss").forEach {
-            composeRule.onNodeWithText(it).assertIsDisplayed().assertWidthIsAtLeast(48.dp).assertHasClickAction()
+        composeRule.onNodeWithText("Log set").performScrollTo().performClick()
+        composeRule.waitUntil(10_000) { (viewModel.uiState.value as? ActiveWorkoutUiState.Active)?.restTimer?.isRunning == true }
+        listOf(text(R.string.rest_add_thirty), "Skip rest").forEach {
+            composeRule.onNodeWithText(it).performScrollTo().assertIsDisplayed().assertWidthIsAtLeast(48.dp).assertHasClickAction()
         }
-        scrollListTo("Set 1 felt manageable, Yes").assertIsDisplayed().assertWidthIsAtLeast(48.dp)
-            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, androidx.compose.ui.semantics.Role.RadioButton))
-        scrollListTo("Set 1 felt manageable, No").assertIsDisplayed().assertWidthIsAtLeast(48.dp)
-    }
-
-    /** On CI's 320x640 dp screen at 1.8x, a refusal and a running rest still leave the actions on screen. */
-    @Test
-    fun aRefusalAndTheRestBarLeaveTheBottomActionsOnScreenAtLargeText() {
-        showScreen(fontScale = 1.8f, narrow = true)
-        activateFromList("Set 1 complete")
-        composeRule.waitForIdle()
-        repository.failSetWrites = true
-        activateFromList("Set 2 complete")
-        composeRule.waitForIdle()
-        composeRule.waitUntil(5_000) { composeRule.onAllNodesWithText(text(R.string.workout_set_update_error)).fetchSemanticsNodes().isNotEmpty() }
-        composeRule.onNodeWithText(text(R.string.workout_set_update_error)).assertIsDisplayed()
-        composeRule.onNodeWithText("Skip rest").assertIsDisplayed()
-
-        assertFinishIsWhollyInsideTheScreen()
-        composeRule.onNodeWithText(text(R.string.workout_action_finish_workout)).assertHasClickAction()
+        composeRule.onNodeWithContentDescription("Rest timer options").assertWidthIsAtLeast(48.dp).assertHasClickAction()
+        composeRule.onNodeWithContentDescription("Set 1").performScrollTo().performClick()
+        composeRule.onNodeWithText(text(R.string.set_feedback_show)).performScrollTo().performClick()
+        listOf("Yes", "No").forEach {
+            composeRule.onNodeWithContentDescription("Set 1 felt manageable, $it").performScrollTo().assertIsDisplayed()
+                .assertWidthIsAtLeast(48.dp).assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton))
+        }
     }
 
     /** Returning to a bar that has already finished does not announce it a second time. */
@@ -299,20 +415,12 @@ class ActiveWorkoutScreenTest {
         var shown by mutableStateOf(true)
         composeRule.setContent {
             WallCrawlTheme {
-                if (shown) {
-                    ActiveWorkoutScreen(
-                        viewModel = viewModel,
-                        visualProvider = NoVisualProvider,
-                        onNavigateBack = {},
-                        onWorkoutFinished = {}
-                    )
-                }
+                if (shown) ActiveWorkoutScreen(viewModel, NoVisualProvider, {}, {})
             }
         }
-        composeRule.waitForIdle()
-        activateFromList("Set 1 complete")
-        composeRule.waitForIdle()
-        composeRule.onNodeWithText("Skip rest").performClick()
+        composeRule.onNodeWithText("Log set").performScrollTo().performClick()
+        composeRule.waitUntil(10_000) { (viewModel.uiState.value as? ActiveWorkoutUiState.Active)?.restTimer?.isRunning == true }
+        composeRule.onNodeWithText("Skip rest").performScrollTo().performClick()
         composeRule.waitForIdle()
         composeRule.onNodeWithContentDescription("Rest finished").assert(hasLiveRegion())
         shown = false
@@ -323,9 +431,9 @@ class ActiveWorkoutScreenTest {
             .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.LiveRegion))
     }
 
-    /** A template name can be 120 characters: at large text it scrolls away and leaves the list its height. */
+    /** A template name can be 120 characters: at large text it must still leave Log set and Finish reachable. */
     @Test
-    fun theLongestSessionNameLeavesTheListAndActionsAtLargeText() {
+    fun theLongestSessionNameLeavesLogSetAndFinishReachableAtLargeText() {
         val name = "Routine ".repeat(15).take(WorkoutTemplate.MAX_NAME_LENGTH)
         val longNamed = ActiveWorkoutViewModel(
             sessionId = SESSION_ID,
@@ -337,58 +445,30 @@ class ActiveWorkoutScreenTest {
         )
         showScreen(fontScale = 1.8f, narrow = true, screenViewModel = longNamed)
         composeRule.onNodeWithText(name).assertExists()
-        val list = composeRule.onNode(hasScrollToIndexAction()).getBoundsInRoot()
-        assertThat(list.bottom - list.top).isAtLeast(350.dp)
-        scrollListTo("Set 1 complete").assertIsDisplayed()
-        assertFinishIsWhollyInsideTheScreen()
-    }
-
-    /** assertIsDisplayed also passes for a partly clipped control, so this compares the edges. */
-    private fun assertFinishIsWhollyInsideTheScreen() {
+        composeRule.onNodeWithText("Log set").performScrollTo().assertIsDisplayed()
+        // assertIsDisplayed also passes for a partly clipped control, so this compares the edges.
         val host = composeRule.onNodeWithTag(HOST_TAG).getBoundsInRoot()
-        val finish = composeRule.onNodeWithText(text(R.string.workout_action_finish_workout)).getBoundsInRoot()
+        val finish = composeRule.onNodeWithText(text(R.string.workout_action_finish)).getBoundsInRoot()
         assertThat(finish.bottom).isAtMost(host.bottom)
         assertThat(finish.top).isAtLeast(host.top)
     }
 
-    /** A lazy list composes only what it shows, and on a short screen a row can start off it. */
-    private fun scrollListTo(description: String): SemanticsNodeInteraction {
-        composeRule.onNode(hasScrollToIndexAction()).performScrollToNode(hasContentDescription(description))
-        return composeRule.onNodeWithContentDescription(description)
-    }
-
-    /** The action, as TalkBack activates it: in a short list the row's centre can sit under the actions. */
-    private fun activateFromList(description: String) {
-        scrollListTo(description).performSemanticsAction(SemanticsActions.OnClick)
-    }
-
-    /** The refusal sits above the list, so it is seen and announced wherever the reader had scrolled to. */
+    /** A refused write is announced, and the same refusal again is a new announcement. */
     @Test
-    fun aRefusedSetWriteIsAnnouncedAboveTheList() {
-        repository.failSetWrites = true
+    fun aRefusedSetWriteIsAnnouncedEachTime() {
         showScreen()
-        activateFromList("Set 1 complete")
-        composeRule.waitForIdle()
-        composeRule.onNodeWithText(text(R.string.workout_set_update_error))
-            .assertIsDisplayed().assert(hasLiveRegion())
-        val banner = composeRule.onNodeWithText(text(R.string.workout_set_update_error)).getBoundsInRoot()
-        val list = composeRule.onNode(hasScrollToIndexAction()).getBoundsInRoot()
-        assertThat(banner.bottom).isAtMost(list.top)
-
-        // The same refusal again has to be a new announcement, so it has to be a new live-region node.
+        repository.rejectWrites = true
+        composeRule.onNodeWithText("Log set").performScrollTo().performClick()
+        composeRule.waitUntil(5_000) {
+            composeRule.onAllNodesWithText(text(R.string.workout_set_update_error)).fetchSemanticsNodes().isNotEmpty()
+        }
         val message = composeRule.onNodeWithText(text(R.string.workout_set_update_error), useUnmergedTree = true)
+        message.assertIsDisplayed().assert(hasLiveRegion())
         val first = message.fetchSemanticsNode().id
-        // As TalkBack does: on a short screen the banner has pushed the row out from under a finger.
-        activateFromList("Set 1 complete")
+        composeRule.onNodeWithText("Log set").performScrollTo().performClick()
         composeRule.waitForIdle()
         assertThat(message.fetchSemanticsNode().id).isNotEqualTo(first)
     }
-
-    /** The theme's readable red; [showScreen] follows the device's light or dark setting. */
-    private val destructive
-        get() = if (ApplicationProvider.getApplicationContext<android.content.Context>().resources.configuration.uiMode and
-            android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_YES
-        ) AccentTextOnDark else AccentTextOnLight
 
     private fun showScreen(
         fontScale: Float = 1f,
@@ -404,14 +484,16 @@ class ActiveWorkoutScreenTest {
                 LocalConfiguration provides configuration
             ) {
                 Box(if (narrow) Modifier.requiredSize(320.dp, 640.dp).testTag(HOST_TAG) else Modifier) {
-            WallCrawlTheme {
-                ActiveWorkoutScreen(
-                    viewModel = screenViewModel,
-                    visualProvider = NoVisualProvider,
-                    onNavigateBack = {},
-                    onWorkoutFinished = {}
-                )
-            }
+                    WallCrawlTheme {
+                        destructive = MaterialTheme.colorScheme.error
+                        ActiveWorkoutScreen(
+                            viewModel = screenViewModel,
+                            visualProvider = app.container.exerciseVisualProvider,
+                            onNavigateBack = {},
+                            onWorkoutFinished = {},
+                            onOpenHistory = {}
+                        )
+                    }
                 }
             }
         }
@@ -509,11 +591,13 @@ private object NoVisualProvider : ExerciseVisualProvider {
 }
 
 private class ScreenTestRepository(initial: WorkoutSession) : WorkoutRepository {
+    override suspend fun hasPendingConditionReassessment(profileId: String) = false
+
     override suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long): List<WorkoutSession> = emptyList()
     private val session = MutableStateFlow<WorkoutSession?>(initial)
+    var rejectWrites: Boolean = false
     var completeCalls: Int = 0
         private set
-    var failSetWrites = false
     var cancelCalls: Int = 0
         private set
     val historyReady = MutableStateFlow(true)
@@ -551,7 +635,7 @@ private class ScreenTestRepository(initial: WorkoutSession) : WorkoutRepository 
     ): WorkoutSession = error("Not used")
 
     override suspend fun logSetCompletion(setId: String, performance: SetPerformanceInput) {
-        if (failSetWrites) error("refused")
+        check(!rejectWrites)
         SetOutcomeRules.requireValidOutcome(performance)
         val current = session.value ?: return
         session.value = current.copy(

@@ -20,6 +20,8 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
  * transitions the app does -- including the same rejections.
  */
 internal class FakeRepository(initialSession: WorkoutSession?) : WorkoutRepository {
+    override suspend fun hasPendingConditionReassessment(profileId: String) = false
+
     private val session = MutableStateFlow<WorkoutSession?>(initialSession)
     var failSummaryReads = false
 

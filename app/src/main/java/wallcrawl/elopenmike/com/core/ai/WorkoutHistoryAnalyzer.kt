@@ -1,6 +1,8 @@
 package wallcrawl.elopenmike.com.core.ai
 
+import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
@@ -23,7 +25,7 @@ class WorkoutHistoryAnalyzer {
 
         val performancesByExerciseId = completedSessions
             .flatMap { session ->
-                session.exercises.map { exercise ->
+                session.exercises.filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }.map { exercise ->
                     ExercisePerformance(
                         exerciseId = exercise.exerciseId,
                         completedAtTimestamp = session.completedAtTimestamp ?: Long.MIN_VALUE,
@@ -63,7 +65,8 @@ class WorkoutHistoryAnalyzer {
     fun recentlyTrainedMuscles(
         sessions: List<WorkoutSession>,
         nowTimestamp: Long,
-        lookbackHours: Int = DEFAULT_HISTORY_LOOKBACK_HOURS
+        lookbackHours: Int = DEFAULT_HISTORY_LOOKBACK_HOURS,
+        exercisesById: Map<String, Exercise> = emptyMap()
     ): List<String> {
         require(lookbackHours >= 0) { "lookbackHours must not be negative." }
         val earliestTimestamp = nowTimestamp - (lookbackHours * HOUR_MILLIS)
@@ -77,7 +80,16 @@ class WorkoutHistoryAnalyzer {
                     completedAt in earliestTimestamp..nowTimestamp
             }
             .sortedByDescending { it.completedAtTimestamp }
-            .flatMap { it.focusMuscles.asSequence() }
+            .flatMap { session ->
+                if (session.exercises.none { it.prescription.purpose == PrescriptionPurpose.SUPPORTIVE }) {
+                    session.focusMuscles.asSequence()
+                } else {
+                    val ordinaryMuscles = session.exercises
+                        .filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }
+                        .flatMap { exercisesById[it.exerciseId]?.primaryMuscles.orEmpty() }.toSet()
+                    session.focusMuscles.asSequence().filter { it in ordinaryMuscles }
+                }
+            }
             .filter { it.isNotBlank() }
             .distinct()
             .toList()
@@ -85,7 +97,9 @@ class WorkoutHistoryAnalyzer {
 
     fun latestCompletedExercisePerformance(
         sessions: List<WorkoutSession>,
-        exerciseId: String
+        exerciseId: String,
+        purpose: PrescriptionPurpose = PrescriptionPurpose.ORDINARY,
+        isLegacyMobility: Boolean = false
     ): CompletedExercisePerformance? {
         require(exerciseId.isNotBlank()) { "exerciseId must not be blank." }
 
@@ -95,7 +109,7 @@ class WorkoutHistoryAnalyzer {
             .sortedByDescending { it.completedAtTimestamp }
             .mapNotNull { session ->
                 val completedSets = session.exercises
-                    .firstOrNull { it.exerciseId == exerciseId }
+                    .firstOrNull { it.exerciseId == exerciseId && it.prescription.purpose == purpose && it.isLegacyMobility == isLegacyMobility }
                     ?.sets
                     ?.completedPerformanceSets()
                     ?.sortedBy { it.setNumber }

@@ -1,6 +1,15 @@
 package wallcrawl.elopenmike.com.core.database.repository
 
+import wallcrawl.elopenmike.com.core.database.PERSISTED_LIST_SEPARATOR
 import wallcrawl.elopenmike.com.core.database.dao.UserProfileDao
+import wallcrawl.elopenmike.com.core.database.dao.ConditionReassessmentDao
+import wallcrawl.elopenmike.com.core.database.entity.toModel
+import wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog
+import wallcrawl.elopenmike.com.core.model.ConditionViolation
+import wallcrawl.elopenmike.com.core.model.ConditionReassessmentRefused
+import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.CancellationException
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
@@ -10,6 +19,7 @@ import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.ProfileGender
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.SelectedCondition
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.convertWeight
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +47,20 @@ interface UserProfileRepository {
     suspend fun updateUnit(unit: WeightUnit)
     suspend fun updateMusclePriorities(priorities: Map<String, PriorityLevel>)
     suspend fun updateExcludedExercises(excludedIds: List<String>)
+    /** Adds or removes one ID without replacing exclusions edited by another screen. */
+    suspend fun setExerciseExcluded(exerciseId: String, excluded: Boolean) {
+        throw UnsupportedOperationException("Individual exercise exclusions are unavailable.")
+    }
     suspend fun updateTrainingConstraints(constraints: Set<TrainingConstraint>)
+    suspend fun removeReportedCondition(conditionId: String) {
+        error("Reported condition removal is unavailable.")
+    }
+    suspend fun updateActiveConditions(conditions: List<SelectedCondition>) {
+        throw UnsupportedOperationException("Condition selection is unavailable in this repository.")
+    }
+    suspend fun reassessCondition(conditionId: String, exerciseId: String, expectedEventId: String, answers: Map<String, String?>) {
+        throw ConditionReassessmentRefused(ConditionViolation("reassessment-unavailable", setOf(conditionId), setOf(exerciseId)), expectedEventId)
+    }
     suspend fun updateReturningAfterBreakWeeks(weeks: Int)
     suspend fun updateThemePreference(theme: ThemePreference)
     suspend fun updateGender(gender: ProfileGender)
@@ -53,7 +76,10 @@ interface UserProfileRepository {
  */
 class OfflineUserProfileRepository(
     private val userProfileDao: UserProfileDao,
-    private val localDataWriteGate: Mutex = Mutex()
+    private val localDataWriteGate: Mutex = Mutex(),
+    private val conditionReassessmentDao: ConditionReassessmentDao? = null,
+    private val conditionSupport: (suspend () -> ConditionSupportCatalog)? = null,
+    private val exerciseCatalog: ExerciseCatalog? = null
 ) : UserProfileRepository {
 
     override fun getUserProfile(): Flow<UserProfile> {
@@ -148,8 +174,94 @@ class OfflineUserProfileRepository(
         mutateProfile { current -> current.copy(excludedExerciseIds = excludedIds) }
     }
 
+    override suspend fun setExerciseExcluded(exerciseId: String, excluded: Boolean) {
+        mutateProfile { current ->
+            val ids = current.excludedExerciseIds
+            if ((exerciseId in ids) == excluded) return@mutateProfile null
+            val updated = if (excluded) ids + exerciseId else ids.filterNot { it == exerciseId }
+            // Imported session IDs may contain the separator used by the profile column.
+            require(updated.none { it.isBlank() } &&
+                (updated.isEmpty() || updated.joinToString(PERSISTED_LIST_SEPARATOR).split(PERSISTED_LIST_SEPARATOR) == updated))
+            current.copy(excludedExerciseIds = updated)
+        }
+    }
+
     override suspend fun updateTrainingConstraints(constraints: Set<TrainingConstraint>) {
-        mutateProfile { current -> current.copy(trainingConstraints = constraints) }
+        mutateProfile { current ->
+            check(current.unresolvedTrainingConstraintsRaw == null) { "Training constraints require review before editing." }
+            current.copy(trainingConstraints = constraints)
+        }
+    }
+
+    override suspend fun removeReportedCondition(conditionId: String) {
+        mutateProfile { current ->
+            if (conditionId in current.reportedConditions) current.copy(reportedConditions = current.reportedConditions - conditionId) else null
+        }
+    }
+
+    override suspend fun updateActiveConditions(conditions: List<SelectedCondition>) {
+        mutateProfile { current -> current.copy(activeConditions = conditions) }
+    }
+
+    override suspend fun reassessCondition(conditionId: String, exerciseId: String, expectedEventId: String, answers: Map<String, String?>) {
+        fun refused(reason: String): Nothing = throw ConditionReassessmentRefused(
+            ConditionViolation(reason, setOf(conditionId), setOf(exerciseId)), expectedEventId)
+        val submittedAnswers = answers.toMap()
+        val dao = conditionReassessmentDao ?: refused("reassessment-unavailable")
+        val captured = localDataWriteGate.withLock {
+            dao.readReassessment(UserProfile.DEFAULT_PROFILE_ID, conditionId, exerciseId)
+        }
+        val profile = captured.profile ?: refused("missing-profile")
+        val event = captured.event ?: refused("stale-event")
+        if (event.eventId != expectedEventId) refused("stale-event")
+        val load = conditionSupport ?: refused("missing-support")
+        val catalog = exerciseCatalog ?: refused("missing-exercise")
+        suspend fun loadSupport(): ConditionSupportCatalog = try { load()
+        } catch (error: CancellationException) { throw error
+        } catch (error: Exception) { refused("support-unavailable") }
+        val support = loadSupport()
+        val record = support.records[conditionId] ?: refused("unsupported-condition")
+        fun validatedSelections(currentRecord: wallcrawl.elopenmike.com.core.model.ConditionSupportRecord,
+            exercises: Map<String, wallcrawl.elopenmike.com.core.model.Exercise>): List<SelectedCondition> {
+            try { event.toModel() } catch (error: IllegalArgumentException) { refused("unsupported-policy-or-context") }
+            if (event.responsePolicyVersion != 1 || currentRecord.policyVersion != 1 || currentRecord.responsePolicy.version != 1)
+                refused("unsupported-policy-or-context")
+            val current = try { profile.toUserProfile() } catch (error: IllegalArgumentException) { refused("unsupported-policy-or-context") }
+            val previous = current.activeConditions.singleOrNull { it.conditionId == conditionId }
+            if (previous != null && previous.contextSchemaVersion != currentRecord.contextSchemaVersion) refused("unsupported-policy-or-context")
+            val definitions = (currentRecord.inputs + currentRecord.responsePolicy.inputs).groupBy { it.id }
+            if (definitions.values.any { it.distinct().size != 1 }) refused("conflicting-input-definitions")
+            val merged = previous?.answers.orEmpty() + submittedAnswers
+            if (merged.any { (key, value) -> definitions[key] == null || value != null && value !in definitions.getValue(key).first().choices }) refused("unknown-answer")
+            if (currentRecord.responsePolicy.inputs.any { it.required && submittedAnswers[it.id] == null } ||
+                currentRecord.inputs.any { it.required && merged[it.id] == null }) refused("missing-context")
+            if ((currentRecord.responsePolicy.stopWhenAnswers.entries + currentRecord.responsePolicy.reassessmentRequiredAnswers.entries)
+                    .any { (key, value) -> merged[key] == value }) refused("response-requires-reassessment")
+            val case = currentRecord.cases.singleOrNull { it.requiredAnswers.all { (key, value) -> merged[key] == value } }
+                ?: refused("unresolved-case")
+            if (currentRecord.cases.none { it.rules.any { rule -> rule.exerciseIdentity.exerciseId == exerciseId } }) refused("unassessed-exercise")
+            for (rule in case.rules) {
+                val exercise = exercises[rule.exerciseIdentity.exerciseId] ?: refused("missing-exercise")
+                if (exercise.type != rule.exerciseIdentity.exerciseType ||
+                    wallcrawl.elopenmike.com.core.model.ConditionExerciseIdentity.contentSha256(exercise) != rule.exerciseIdentity.contentSha256)
+                    refused("changed-exercise")
+            }
+            if (previous == null && current.activeConditions.size >= 32) refused("planning-bound-exceeded")
+            val selection = SelectedCondition(conditionId, currentRecord.contextSchemaVersion, merged)
+            return if (previous == null) current.activeConditions + selection else current.activeConditions.map {
+                if (it.conditionId == conditionId) selection else it
+            }
+        }
+        val selections = validatedSelections(record, catalog.getAllExercises().first().associateBy { it.id })
+        val encoded = ConditionContextCodec.encodeSelections(selections)
+        localDataWriteGate.withLock {
+            dao.applyReassessment(profile.id, profile.revision, conditionId, exerciseId, expectedEventId, encoded) {
+                if (dao.get(profile.id, conditionId, exerciseId) != event) refused("stale-event")
+                val current = loadSupport().records[conditionId] ?: refused("unsupported-condition")
+                if (current != record) refused("changed-condition-facts")
+                validatedSelections(current, catalog.getAllExercises().first().associateBy { it.id })
+            }
+        }
     }
 
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) {

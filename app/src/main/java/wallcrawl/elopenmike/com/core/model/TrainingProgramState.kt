@@ -16,7 +16,7 @@ enum class TrainingProgramStatePolicyVersion {
  *
  * [wallcrawl.elopenmike.com.core.ai.StateBasedTrainingPolicy] reads the ledger only on the
  * reviewed-enabled path to cap future automatic sets by remaining direct-primary allowance.
- * The current production catalog attributes its accepted cohort under PRIMARY_ONLY_V1.
+ * The current production catalog attributes its accepted cohort under ORDINARY_PRIMARY_ONLY_V2.
  */
 data class TrainingProgramState(
     val policyVersion: TrainingProgramStatePolicyVersion,

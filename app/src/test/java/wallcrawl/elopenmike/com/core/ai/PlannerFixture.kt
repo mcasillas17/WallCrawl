@@ -1,5 +1,11 @@
 package wallcrawl.elopenmike.com.core.ai
 
+import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.EffortTarget
+import wallcrawl.elopenmike.com.core.model.ConditionViolation
+import wallcrawl.elopenmike.com.core.model.SelectedCondition
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.nio.ByteBuffer
@@ -46,7 +52,16 @@ internal data class PlannerFixture(
      * which is the planner's per-exercise load view and credits nothing.
      */
     val completedSessions: List<PlannerFixtureCompletedSession> = emptyList(),
+    val conditions: PlannerFixtureConditions? = null,
     val expected: PlannerFixtureExpected
+)
+
+/** Bounded FICTIONAL software variants; no real clinical records or approvals. */
+internal enum class FixtureSupportVariant { STANDARD, CONFLICT, LONG, REQUIRES_EQUIPMENT, WITHDRAWN }
+internal data class PlannerFixtureConditions(
+    val supportVariant: FixtureSupportVariant,
+    val selections: List<SelectedCondition>,
+    val pending: Boolean
 )
 
 /** One completed session inside the fixture's accounting week. */
@@ -121,7 +136,10 @@ internal data class PlannerFixtureExpected(
      */
     val wholeProgramOutcome: RecommendationOutcome = RecommendationOutcome.VALID,
     /** The violation codes a `REPAIRED` proposal is expected to have been repaired from. */
-    val wholeProgramRepairReasonCodes: List<ProgramViolationCode> = emptyList()
+    val wholeProgramRepairReasonCodes: List<ProgramViolationCode> = emptyList(),
+    val conditionReasons: List<ConditionViolation> = emptyList(),
+    val prescriptions: Map<String, ExercisePrescription> = emptyMap(),
+    val ordinaryDose: ExercisePrescription? = null
 )
 
 internal enum class PlannerFixtureOutcome {
@@ -129,7 +147,8 @@ internal enum class PlannerFixtureOutcome {
     NO_CANDIDATES,
     NO_STRENGTH_CANDIDATES,
     NO_CANDIDATES_FOR_ANY_SPLIT,
-    REVIEWED_ELIGIBILITY_NO_CANDIDATES
+    REVIEWED_ELIGIBILITY_NO_CANDIDATES,
+    CONDITION_REQUIREMENTS_UNSATISFIED
 }
 
 internal class PlannerFixtureFormatException(
@@ -208,6 +227,11 @@ internal class PlannerFixtureLoader(
             emptyList()
         }
         val expected = parseExpected(requireObject(root, "expected", "root.expected"))
+        if (root.has("conditions") && reviewedEligibility == null)
+            throw PlannerFixtureFormatException("root.conditions requires reviewedEligibility.")
+        if (root.has("conditions") && expected.outcome == PlannerFixtureOutcome.SUCCESS &&
+            (expected.ordinaryDose == null || expected.prescriptions.isEmpty()))
+            throw PlannerFixtureFormatException("Successful condition fixture requires exact ordinary and supportive doses.")
         // Production composes a weekly ledger only behind the reviewed gate, and aggregate
         // dose accounting — the only repairable violation there is — runs on that same gate.
         // A legacy fixture asking for either would describe a context the app never builds.
@@ -251,8 +275,61 @@ internal class PlannerFixtureLoader(
             },
             reviewedEligibility = reviewedEligibility,
             completedSessions = completedSessions,
+            conditions = if (root.has("conditions")) parseConditions(requireObject(root, "conditions", "root.conditions")) else null,
             expected = expected
         )
+    }
+
+    private fun parseConditions(value: JSONObject): PlannerFixtureConditions {
+        val path = "root.conditions"
+        requireExactFields(value, path, setOf("supportVariant", "selections", "pending"))
+        val selections = requireArray(value, "selections", "$path.selections")
+        requireArrayBounds(selections, "$path.selections", 2)
+        val parsed = List(selections.length()) { index ->
+            val itemPath = "$path.selections[$index]"
+            val item = requireArrayObject(selections, index, itemPath)
+            requireExactFields(item, itemPath, setOf("conditionId", "contextSchemaVersion", "answers"))
+            val id = requireSafeId(item, "conditionId", "$itemPath.conditionId")
+            if (id !in setOf("fictional-condition", "fictional-second"))
+                throw PlannerFixtureFormatException("$itemPath.conditionId must be fictional.")
+            val answers = requireObject(item, "answers", "$itemPath.answers")
+            requireExactFields(answers, "$itemPath.answers", emptySet(), setOf("stage"))
+            val parsedAnswers = if (!answers.has("stage")) emptyMap() else mapOf("stage" to
+                if (answers.isNull("stage")) null else requireSafeId(answers, "stage", "$itemPath.answers.stage"))
+            SelectedCondition(id, requireExactInt(item, "contextSchemaVersion", "$itemPath.contextSchemaVersion", 1..1), parsedAnswers)
+        }
+        if (parsed.map { it.conditionId }.distinct().size != parsed.size)
+            throw PlannerFixtureFormatException("Duplicate condition selection at $path.selections.")
+        return PlannerFixtureConditions(parseEnum(value.get("supportVariant"), "$path.supportVariant"), parsed,
+            requireBoolean(value, "pending", "$path.pending"))
+    }
+
+    private fun parseConditionReasons(values: JSONArray): List<ConditionViolation> {
+        requireArrayBounds(values, "expected.conditionReasons", 2)
+        return List(values.length()) { index ->
+            val path = "expected.conditionReasons[$index]"
+            val item = requireArrayObject(values, index, path)
+            requireExactFields(item, path, setOf("reason", "conditionIds", "exerciseIds"))
+            ConditionViolation(requireSafeId(item, "reason", "$path.reason"),
+                parseSafeIdSet(requireArray(item, "conditionIds", "$path.conditionIds"), "$path.conditionIds"),
+                parseSafeIdSet(requireArray(item, "exerciseIds", "$path.exerciseIds"), "$path.exerciseIds"))
+        }
+    }
+
+    private fun parsePrescriptions(values: JSONObject): Map<String, ExercisePrescription> {
+        if (values.length() > 8) throw PlannerFixtureFormatException("expected.prescriptions exceeds 8 entries.")
+        return values.keys().asSequence().associateWith { id ->
+            if (!SAFE_ID_PATTERN.matches(id) || id.length > MAX_ID_LENGTH)
+                throw PlannerFixtureFormatException("Invalid expected.prescriptions exercise ID.")
+            val path = "expected.prescriptions.$id"
+            val item = requireObject(values, id, path)
+            requireExactFields(item, path, setOf("purpose", "sets", "seconds", "rest"))
+            ExercisePrescription(ExerciseType.DURATION,
+                requireExactInt(item, "sets", "$path.sets", 1..ExercisePrescription.MAX_TARGET_SETS),
+                targetDurationSeconds = requireExactInt(item, "seconds", "$path.seconds", 1..ExercisePrescription.MAX_DURATION_SECONDS),
+                restSeconds = requireExactInt(item, "rest", "$path.rest", 0..ExercisePrescription.MAX_REST_SECONDS),
+                purpose = parseEnum<PrescriptionPurpose>(item.get("purpose"), "$path.purpose"))
+        }
     }
 
     private fun parseReviewedEligibility(
@@ -492,7 +569,28 @@ internal class PlannerFixtureLoader(
 
     private fun parseExpected(expected: JSONObject): PlannerFixtureExpected {
         requireExactFields(expected, "root.expected", EXPECTED_REQUIRED_FIELDS, EXPECTED_OPTIONAL_FIELDS)
+        val ordinaryDose = if (expected.has("ordinaryDose")) {
+            val item = requireObject(expected, "ordinaryDose", "expected.ordinaryDose")
+            requireExactFields(item, "expected.ordinaryDose", setOf("sets", "reps", "rest", "minRir", "maxRir", "purpose"))
+            fun number(key: String, range: IntRange) = requireExactInt(item, key, "expected.ordinaryDose.$key", range)
+            val reps = number("reps", 1..ExercisePrescription.MAX_TARGET_REPS)
+            val minRir = number("minRir", EffortTarget.MIN_RIR..EffortTarget.MAX_RIR)
+            ExercisePrescription(ExerciseType.BODYWEIGHT_REPS, number("sets", 1..ExercisePrescription.MAX_TARGET_SETS),
+                RepRange(reps, reps), restSeconds = number("rest", 0..ExercisePrescription.MAX_REST_SECONDS),
+                effortTarget = EffortTarget(minRir, number("maxRir", minRir..EffortTarget.MAX_RIR)),
+                purpose = parseEnum<PrescriptionPurpose>(item.get("purpose"), "expected.ordinaryDose.purpose")).also {
+                if (it.purpose != PrescriptionPurpose.ORDINARY) throw PlannerFixtureFormatException("ordinaryDose must be ORDINARY.")
+            }
+        } else null
+        val conditionReasons = if (expected.has("conditionReasons"))
+            parseConditionReasons(requireArray(expected, "conditionReasons", "expected.conditionReasons")) else emptyList()
+        val prescriptions = if (expected.has("prescriptions"))
+            parsePrescriptions(requireObject(expected, "prescriptions", "expected.prescriptions")) else emptyMap()
         val outcome = parseEnum<PlannerFixtureOutcome>(expected.get("outcome"), "expected.outcome")
+        if ((outcome == PlannerFixtureOutcome.CONDITION_REQUIREMENTS_UNSATISFIED) != conditionReasons.isNotEmpty())
+            throw PlannerFixtureFormatException("Condition failure requires exact conditionReasons; other outcomes cannot carry them.")
+        if (outcome != PlannerFixtureOutcome.SUCCESS && (prescriptions.isNotEmpty() || ordinaryDose != null))
+            throw PlannerFixtureFormatException("Failure cannot prescribe a dose.")
         val requiredExerciseIds = parseSafeIdSet(
             requireArray(expected, "requiredExerciseIds", "expected.requiredExerciseIds"),
             "expected.requiredExerciseIds"
@@ -633,6 +731,9 @@ internal class PlannerFixtureLoader(
         }
         return PlannerFixtureExpected(
             outcome = outcome,
+            conditionReasons = conditionReasons,
+            prescriptions = prescriptions,
+            ordinaryDose = ordinaryDose,
             requiredExerciseIds = requiredExerciseIds,
             forbiddenExerciseIds = forbiddenExerciseIds,
             requiredAnyExerciseIdGroups = requiredAnyExerciseIdGroups,
@@ -1076,6 +1177,7 @@ internal class PlannerFixtureLoader(
             "expected"
         )
         private val OPTIONAL_ROOT_FIELDS = setOf(
+            "conditions",
             "allowedExerciseIds",
             "reviewedEligibility",
             "completedSessions"
@@ -1122,6 +1224,7 @@ internal class PlannerFixtureLoader(
             "forbiddenExerciseIds"
         )
         private val EXPECTED_OPTIONAL_FIELDS = setOf(
+            "conditionReasons", "prescriptions", "ordinaryDose",
             "requiredAnyExerciseIdGroups",
             "expectedTargetWeights",
             "titleIdentityContains",

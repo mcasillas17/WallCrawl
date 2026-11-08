@@ -21,7 +21,9 @@
       "Hips": { "es": "Caderas" },
       "Core": { "es": "Core" },
       "Cardio": { "es": "Cardio" },
-      "Mobility": { "es": "Movilidad" }
+      "Mobility": { "es": "Movilidad" },
+      "Neck": { "es": "Cuello" },
+      "Foot Intrinsics": { "es": "Músculos intrínsecos del pie" }
     },
     "equipment": {
       "Barbell": { "es": "Barra" },
@@ -46,10 +48,87 @@
       "Band Anchor - Upper Body": { "es": "Anclaje de banda: tren superior" },
       "Band Anchor - Overhead": { "es": "Anclaje de banda: sobre la cabeza" },
       "Band Anchor - Low": { "es": "Anclaje de banda: bajo" },
-      "Band Kickback Attachment and Support": { "es": "Sujeción y apoyo para patada con banda" }
+      "Band Kickback Attachment and Support": { "es": "Sujeción y apoyo para patada con banda" },
+      "Padded Plinth": { "es": "Camilla acolchada" },
+      "Calf Support": { "es": "Apoyo para la pantorrilla" },
+      "Pillow": { "es": "Almohada" },
+      "Upper-Arm Support Roll": { "es": "Rodillo de apoyo para el brazo" }
     }
   },
   "exercises": {
+    "tendon-gliding-sequence": {
+      "es": {
+        "name": "Secuencia de deslizamiento de los dedos en cinco posiciones",
+        "aliases": [],
+        "coachingSummary": "Mantén recta la muñeca. Empieza con los dedos extendidos. Para formar el gancho, dobla las articulaciones medias y las de las puntas sin doblar los nudillos de la base. Para cerrar el puño, dobla todas las articulaciones. Para formar la mesa, dobla solo los nudillos de la base y deja rectos los dedos. Para el puño largo, dobla los nudillos de la base y las articulaciones medias, manteniendo rectas las puntas. Extiende por completo los dedos entre cada posición."
+      }
+    },
+    "wrist-extensor-stretch": {
+      "es": {
+        "name": "Estiramiento de los extensores de la muñeca",
+        "aliases": [],
+        "coachingSummary": "Extiende un brazo hacia delante con la palma hacia abajo. Flexiona la muñeca para que los dedos apunten al suelo. Con la otra mano, acerca suavemente el dorso de la mano hacia ti hasta sentir un estiramiento en la parte externa del antebrazo. Mantén la posición y luego suelta."
+      }
+    },
+    "straight-leg-raise": {
+      "es": {
+        "name": "Elevación de pierna recta en el suelo",
+        "aliases": [],
+        "coachingSummary": "Túmbate boca arriba con una rodilla flexionada y ese pie apoyado en el suelo. Contrae el muslo de la pierna estirada y eleva el talón unos 30 cm. Mantén la pelvis quieta y la rodilla extendida mientras bajas la pierna."
+      }
+    },
+    "side-lying-isometric-hip-abduction-hold": {
+      "es": {
+        "name": "Abducción isométrica de cadera de lado",
+        "aliases": [],
+        "coachingSummary": "Túmbate de lado con la pierna que vas a trabajar arriba. Flexiona la rodilla inferior y coloca una o dos almohadas entre las rodillas. Mantén una cadera sobre la otra. Con la rodilla estirada, eleva la pierna superior de lado unos 30 grados sin adelantarla. Mantén la posición y vuelve a bajar la pierna hasta el apoyo."
+      }
+    },
+    "standing-isometric-gluteal-contraction": {
+      "es": {
+        "name": "Contracción de glúteos de pie con elevación de la pierna contraria",
+        "aliases": [],
+        "coachingSummary": "Apóyate sobre una pierna y sujeta una silla estable con la mano contraria. Mantén firme la cadera de la pierna de apoyo y la pelvis nivelada. Separa la pierna libre hacia el lado y vuelve a acercarla sin que el pie toque el suelo."
+      }
+    },
+    "lying-piriformis-stretch": {
+      "es": {
+        "name": "Estiramiento acostado con la rodilla hacia el hombro opuesto",
+        "aliases": [],
+        "coachingSummary": "Acuéstate boca arriba con una pierna estirada. Flexiona la otra rodilla y sujétala por fuera con la mano contraria. Acércala suavemente al hombro opuesto sin levantar la cabeza ni los hombros. Suelta antes de cambiar de lado."
+      }
+    },
+    "supine-supported-chin-nod": {
+      "es": {
+        "name": "Asentimiento tumbado con apoyo de almohada",
+        "aliases": [],
+        "coachingSummary": "Túmbate boca arriba con las rodillas flexionadas y la cabeza y el cuello sobre una almohada blanda. Haz un pequeño gesto de asentimiento sin despegar la cabeza. Relaja el cuello y vuelve a la posición inicial."
+      }
+    },
+    "hsd-supine-dumbbell-scapular-protraction": {
+      "es": {
+        "name": "Alcance vertical tumbado con mancuerna y brazo recto",
+        "aliases": [],
+        "coachingSummary": "Túmbate boca arriba sobre una camilla estable con las piernas extendidas y la mano libre sobre el abdomen. Con el codo recto, sujeta la mancuerna justo encima del hombro. Alcanza hacia arriba elevando la escápula y vuelve a apoyar el hombro. Mantén la cabeza y la espalda apoyadas."
+      }
+    },
+    "leap-offset-bridge": {"es": {"name": "Puente en el suelo con pies escalonados", "aliases": [], "coachingSummary": "Túmbate boca arriba con las rodillas flexionadas y un pie más cerca de las caderas que el otro. Mantén ambas plantas y los hombros apoyados mientras elevas las caderas y vuelves a bajarlas."}},
+    "standing-dumbbell-scaption": {"es": {"name": "Elevación de mancuerna de pie en el plano escapular", "aliases": [], "coachingSummary": "De pie, sujeta una mancuerna al costado con la palma ligeramente orientada hacia delante. Eleva el brazo en diagonal, a medio camino entre el frente y el costado, hasta la altura del hombro. Bájalo por el mismo recorrido."}},
+    "insertional-chair-seated-neutral-heel-raise": {"es": {"name": "Elevación de talones en silla desde el suelo", "aliases": [], "coachingSummary": "Siéntate en una silla con las caderas y las rodillas en ángulo recto. Apoya las manos en las rodillas e inclínate un poco hacia delante. Eleva ambos talones mientras mantienes los antepiés apoyados y vuelve a bajar los talones al suelo."}},
+    "insertional-neutral-band-plantarflexion-straight-knee": {"es": {"name": "Flexión plantar con banda y rodilla extendida", "aliases": [], "coachingSummary": "Siéntate con la pierna extendida y rodea el antepié con una banda elástica. Sujeta los extremos. Desde una posición neutra del tobillo, empuja el antepié hacia delante contra la banda y vuelve a la posición neutra con la rodilla extendida."}},
+    "hsd-prone-horizontal-abduction-er": {"es": {"name": "Elevación lateral boca abajo con mancuerna y rotación externa", "aliases": [], "coachingSummary": "Túmbate boca abajo sobre una camilla estable con la cabeza apoyada. Deja que el brazo con la mancuerna cuelgue recto hacia el suelo. Elévalo hacia el costado hasta la horizontal mientras giras el brazo hacia fuera. Completa el giro en esa posición e invierte el movimiento al bajar."}},
+    "hsd-seated-dumbbell-scaption": {"es": {"name": "Elevación diagonal sentada con contacto en la escápula", "aliases": [], "coachingSummary": "Siéntate con el tronco erguido en un asiento estable sin respaldo y los pies al ancho de las caderas. Sujeta la mancuerna al costado con el pulgar ligeramente hacia fuera. Apoya el índice y el dedo medio de la otra mano en la parte inferior de la escápula del lado que trabaja. Eleva el brazo en diagonal hacia delante y por encima de la cabeza y bájalo con control."}},
+    "hsd-prone-er-shoulder-elbow-90": {"es": {"name": "Rotación externa boca abajo con mancuerna y apoyo del brazo", "aliases": [], "coachingSummary": "Túmbate boca abajo sobre una camilla estable con la cabeza en el antebrazo opuesto. Apoya el brazo que trabaja en un rodillo, abierto al costado a la altura del hombro. Flexiona el codo en ángulo recto y deja que la mancuerna cuelgue debajo. Gira el antebrazo hacia arriba y vuelve a bajarlo manteniendo el brazo apoyado."}},
+    "standing-straight-arm-band-shoulder-extension": {"es": {"name": "Extensión de hombros con banda y brazos rectos", "aliases": [], "coachingSummary": "De pie, mira hacia una banda fijada delante de ti a la altura de los hombros. Sujeta un extremo en cada mano. Mantén los codos rectos y lleva las manos hacia abajo y atrás hasta los lados de las caderas. Vuelve con control manteniendo tensión en la banda."}},
+    "quadruped-straight-arm-scapular-retraction-protraction": {"es": {"name": "Deslizamiento de escápulas en cuadrupedia", "aliases": [], "coachingSummary": "Apóyate sobre las manos y las rodillas con los codos rectos. Deja que las escápulas se acerquen y, a continuación, empuja el suelo con las manos para separarlas sin doblar los codos."}},
+    "phoenix-chair-sit-to-stand": {"es": {"name": "Sentarse y levantarse de una silla", "aliases": [], "coachingSummary": "Siéntate en una silla estable con los pies separados aproximadamente al ancho de los hombros. Mantén ambos pies apoyados mientras te levantas por completo y vuelves a sentarte de forma controlada."}},
+    "insertional-neutral-band-plantarflexion-bent-knee": {"es": {"name": "Flexión plantar con banda y rodilla flexionada sobre una toalla", "aliases": [], "coachingSummary": "Siéntate con la rodilla ligeramente flexionada sobre una toalla enrollada. Rodea el antepié con la banda y sujeta los extremos. Desde la posición neutra, empuja el antepié hacia delante y vuelve a la posición neutra sin perder el apoyo de la rodilla."}},
+    "seated-hand-assisted-plantar-fascia-stretch": {"es": {"name": "Estiramiento sentado de la fascia plantar con las manos", "aliases": [], "coachingSummary": "Siéntate y cruza el tobillo del pie que vas a estirar sobre la otra pierna. Con la mano del mismo lado que ese pie, acerca los dedos hacia la espinilla. Con la otra mano, palpa la banda de tejido a lo largo del arco."}},
+    "hsd-side-lying-dumbbell-er-pillow": {"es": {"name": "Rotación externa de lado con mancuerna y almohada", "aliases": [], "coachingSummary": "Túmbate de lado sobre una camilla estable con las rodillas flexionadas y la cabeza apoyada. Coloca una almohada entre el brazo superior y el costado. Con el codo en ángulo recto y la mancuerna cerca del abdomen, gira el antebrazo hacia arriba y vuelve a bajarlo sin girar el tronco ni perder el apoyo."}},
+    "supine-wall-supported-piriformis-stretch": {"es": {"name": "Estiramiento piriforme tumbado con apoyo en pared", "aliases": ["estiramiento en cuatro con pared"], "coachingSummary": "Túmbate boca arriba con las plantas de ambos pies contra una pared. Cruza un tobillo sobre la otra rodilla y deja que la rodilla cruzada se abra mientras la espalda permanece apoyada. El dibujo muestra un lado como ejemplo."}},
+    "pht-single-leg-calf-supported-isometric-hamstring-bridge": {"es": {"name": "Puente isométrico de isquiotibiales con una pantorrilla apoyada", "aliases": ["puente de isquiotibiales con apoyo de pantorrilla"], "coachingSummary": "Túmbate en una camilla acolchada con la cabeza y los hombros apoyados. Apoya una pantorrilla ampliamente sobre un soporte estable colocado en la misma camilla, flexiona la cadera y la rodilla libres, cruza los brazos y eleva la pelvis hasta quedar inmóvil en puente. El dibujo muestra un lado como ejemplo."}},
+    "seated-hand-resisted-cervical-rotation-isometric": {"es": {"name": "Rotación cervical isométrica sentado con resistencia de la mano", "aliases": ["isométrico de cuello sentado"], "coachingSummary": "Siéntate erguido con los pies en el suelo. Coloca la mano del mismo lado contra la mejilla e intenta girar suavemente la cabeza contra ella mientras mantienes la mirada al frente. El dibujo muestra un lado como ejemplo; el esfuerzo no se ve."}},
+    "seated-short-foot-arch-hold-no-toe-flexion": {"es": {"name": "Sostén del arco del pie sentado sin flexionar los dedos", "aliases": ["ejercicio de pie corto sentado"], "coachingSummary": "Siéntate con ambos pies en el suelo. Acerca las cabezas de los metatarsianos a los talones para elevar los arcos internos mientras talones y antepiés permanecen apoyados y los dedos se mantienen extendidos, sin curvarse. El dibujo muestra una posición sentada e inmóvil."}},
     "ab-wheel": {
       "es": {
         "name": "Rueda abdominal",

@@ -148,7 +148,7 @@ internal class PlannerFixtureContextFactory(
                     )
                 )
             }
-        return PlannerFixtureContext(
+        val built = PlannerFixtureContext(
             fixture = fixture,
             userProfile = profile,
             catalogExercises = catalogExercises,
@@ -176,6 +176,10 @@ internal class PlannerFixtureContextFactory(
                 reviewPolicyVersion = reviewPolicyVersion
             )
         )
+        val conditionContext = fixture.conditions?.let {
+            ConditionPlannerFixtures.corpusContext(built.context, it, catalogExercises, CORPUS_NOW.toEpochMilli())
+        } ?: built.context
+        return built.copy(userProfile = conditionContext.userProfile, context = conditionContext)
     }
 
     /**
@@ -198,7 +202,7 @@ internal class PlannerFixtureContextFactory(
     ): WeeklyDoseLedger = ledgerCalculator.calculate(
         sessions = sessions,
         exercisesById = catalogExercises.associateBy(Exercise::id),
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         week = CORPUS_WEEK,
         catalogVersion = fixture.catalogVersion,
         reviewPolicyVersion = reviewPolicyVersion
@@ -425,6 +429,12 @@ internal class PlannerFixtureContextFactory(
                             ".exerciseId" to exercise.exerciseId
                     )
                 }
+            }
+            fixture.expected.prescriptions.keys.forEach { exerciseId ->
+                add("root.expected.prescriptions.$exerciseId" to exerciseId)
+            }
+            fixture.expected.conditionReasons.forEachIndexed { index, reason ->
+                reason.exerciseIds.forEach { add("root.expected.conditionReasons[$index].exerciseIds" to it) }
             }
             fixture.expected.requiredExerciseIds.toList().forEachIndexed { index, exerciseId ->
                 add("root.expected.requiredExerciseIds[$index]" to exerciseId)

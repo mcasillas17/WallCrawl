@@ -7,11 +7,14 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import wallcrawl.elopenmike.com.core.database.repository.ConditionContextCodec
 import wallcrawl.elopenmike.com.core.database.converter.RoomTypeConverters
 import wallcrawl.elopenmike.com.core.database.dao.ProgramDao
 import wallcrawl.elopenmike.com.core.database.entity.ProgramEnrollmentEntity
 import wallcrawl.elopenmike.com.core.database.entity.ProgramSessionAssociationEntity
 import wallcrawl.elopenmike.com.core.database.dao.CompletedWorkoutHistoryDao
+import wallcrawl.elopenmike.com.core.database.dao.ConditionReassessmentDao
+import wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendingEntity
 import wallcrawl.elopenmike.com.core.database.dao.DeloadPreferencesDao
 import wallcrawl.elopenmike.com.core.database.entity.DeloadPreferencesEntity
 import wallcrawl.elopenmike.com.core.database.dao.LocalDataBackupDao
@@ -36,7 +39,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
  * Exposed as a constant so provenance recorded in an export names the same number the
  * database is actually built with, rather than a copy that can drift after a migration.
  */
-const val WALLCRAWL_SCHEMA_VERSION = 16
+const val WALLCRAWL_SCHEMA_VERSION = 18
 
 @Database(
     entities = [
@@ -50,10 +53,11 @@ const val WALLCRAWL_SCHEMA_VERSION = 16
         WorkoutRecommendationRecordEntity::class,
         DeloadPreferencesEntity::class,
         ProgramEnrollmentEntity::class,
-        ProgramSessionAssociationEntity::class
+        ProgramSessionAssociationEntity::class,
+        ConditionReassessmentPendingEntity::class
     ],
     version = WALLCRAWL_SCHEMA_VERSION,
-    exportSchema = false
+    exportSchema = true
 )
 @TypeConverters(RoomTypeConverters::class)
 abstract class WallCrawlDatabase : RoomDatabase() {
@@ -68,6 +72,7 @@ abstract class WallCrawlDatabase : RoomDatabase() {
     abstract fun weeklyDoseLedgerStateDao(): WeeklyDoseLedgerStateDao
     abstract fun localDataBackupDao(): LocalDataBackupDao
     abstract fun deloadPreferencesDao(): DeloadPreferencesDao
+    abstract fun conditionReassessmentDao(): ConditionReassessmentDao
 
     companion object {
         private const val DATABASE_NAME = "wallcrawl.db"
@@ -472,6 +477,58 @@ abstract class WallCrawlDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_16_17 = object : Migration(16, 17) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE user_profiles ADD COLUMN reportedConditionsJson TEXT NOT NULL DEFAULT ''")
+                db.execSQL("ALTER TABLE workout_exercises ADD COLUMN role TEXT NOT NULL DEFAULT 'MAIN'")
+                db.execSQL("ALTER TABLE workout_exercises ADD COLUMN targetHoldSeconds INTEGER")
+            }
+        }
+
+        val MIGRATION_17_18 = object : Migration(17, 18) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // The released v17 and the condition-evidence preview used the same version number.
+                val columns = db.query("PRAGMA table_info(workout_exercises)").use { rows ->
+                    val name = rows.getColumnIndexOrThrow("name")
+                    buildSet { while (rows.moveToNext()) add(rows.getString(name)) }
+                }
+                when {
+                    "role" in columns && "purpose" !in columns -> {
+                        addPreviewConditionTablesAndColumns(db)
+                        db.execSQL("ALTER TABLE workout_exercises ADD COLUMN purpose TEXT NOT NULL DEFAULT 'ORDINARY'")
+                        // An unknown role fails the NOT NULL check instead of quietly earning strength credit.
+                        db.execSQL("""UPDATE workout_exercises SET purpose = CASE role WHEN 'MOBILITY' THEN 'SUPPORTIVE' END
+                            WHERE role != 'MAIN'""")
+                        db.query("SELECT id, reportedConditionsJson FROM user_profiles WHERE reportedConditionsJson != ''").use { rows ->
+                            while (rows.moveToNext()) {
+                                val reports = rows.getString(1).split(PERSISTED_LIST_SEPARATOR).filter { it.isNotBlank() }.toSet()
+                                db.execSQL("UPDATE user_profiles SET reportedConditionsJson=? WHERE id=?",
+                                    arrayOf(ConditionContextCodec.encodeReports(reports), rows.getString(0)))
+                            }
+                        }
+                    }
+                    "purpose" in columns && "role" !in columns -> {
+                        db.execSQL("ALTER TABLE user_profiles ADD COLUMN reportedConditionsJson TEXT NOT NULL DEFAULT ''")
+                        db.execSQL("ALTER TABLE workout_exercises ADD COLUMN role TEXT NOT NULL DEFAULT 'MAIN'")
+                        db.execSQL("ALTER TABLE workout_exercises ADD COLUMN targetHoldSeconds INTEGER")
+                    }
+                    else -> error("Unrecognized Room v17 exercise layout.")
+                }
+            }
+        }
+
+        private fun addPreviewConditionTablesAndColumns(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE user_profiles ADD COLUMN activeConditionsJson TEXT NOT NULL DEFAULT '[]'")
+            db.execSQL("ALTER TABLE workout_sessions ADD COLUMN conditionContextJson TEXT")
+            db.execSQL("ALTER TABLE workout_template_exercises ADD COLUMN purpose TEXT NOT NULL DEFAULT 'ORDINARY'")
+            db.execSQL("ALTER TABLE workout_recommendation_records ADD COLUMN conditionContextDigest TEXT")
+            db.execSQL("""CREATE TABLE IF NOT EXISTS condition_reassessment_pending (
+                profileId TEXT NOT NULL, conditionId TEXT NOT NULL, exerciseId TEXT NOT NULL,
+                eventId TEXT NOT NULL, stoppedContextIdentity TEXT NOT NULL,
+                responsePolicyVersion INTEGER NOT NULL, stoppedAtTimestamp INTEGER NOT NULL,
+                sourceSetId TEXT, PRIMARY KEY(profileId, conditionId, exerciseId))""")
+        }
+
         val ALL_MIGRATIONS: Array<Migration>
             get() = arrayOf(
                 MIGRATION_1_2,
@@ -488,7 +545,9 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                 MIGRATION_12_13,
                 MIGRATION_13_14,
                 MIGRATION_14_15,
-                MIGRATION_15_16
+                MIGRATION_15_16,
+                MIGRATION_16_17,
+                MIGRATION_17_18
             )
     }
 }

@@ -221,7 +221,7 @@ class RecommendationContextIdentityTest {
                 policyVersion = TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1,
                 adaptationState = adaptationState,
                 weeklyLedger = WeeklyDoseLedger(
-                    policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+                    policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
                     weekStartEpochDay = weekStartEpochDay,
                     timeZoneId = timeZoneId,
                     catalogVersion = "catalog-commit",

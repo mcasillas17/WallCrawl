@@ -1,0 +1,344 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "full-thickness-rotator-cuff-tear",
+    "label": "full-thickness rotator cuff tear",
+    "aliases": [],
+    "distinctions": "Separate full from partial thickness; acute traumatic, chronic atraumatic, repaired, massive/unrepairable and cuff arthropathy require distinct applicability."
+  },
+  "scope": {
+    "population": "Adults with confirmed symptomatic full-thickness tears.",
+    "stage": "Tear size, chronicity and functional loss must be known.",
+    "operativeStatus": "Nonoperative studies separate from repairs; no generic postoperative regimen.",
+    "exclusions": "No universal shoulder-strengthening ban established.",
+    "uncertainty": "Symptom improvement does not show tendon healing; long-term structural progression may coexist."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "AAOS management rotator cuff injuries 2025 guideline full thickness physical therapy",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "Kuhn 2024 ten year outcomes MOON shoulder atraumatic full thickness physical therapy cohort",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "Moosmayer 2024 fifteen year tendon repair physiotherapy full thickness rotator cuff tears randomized PMC",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Crossref official REST API",
+      "query": "Exact DOI metadata GET /works/{URL-encoded DOI}: 10.1016/j.jse.2013.01.026, 10.2106/JBJS.23.00978, 10.2106/JBJS.24.00065",
+      "decision": "Metadata returned for kuhn-2013, kuhn-2024, moosmayer-2024. PubMed/publisher records remain source of access/extraction.",
+      "limitations": "Only record metadata/relations inspected; not a registry-wide retraction/correction search."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
+    }
+  ],
+  "sources": [
+    {
+      "id": "aaos-2025",
+      "title": "Management of Rotator Cuff Injuries: Evidence-Based Clinical Practice Guideline",
+      "doi": null,
+      "pmid": null,
+      "url": "https://www.aaos.org/rccpg2025",
+      "publicationStatus": "Published final article; exact version described in access details.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-02",
+        "details": "Final society guideline PDF inspected; adopted Aug 18 2025."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations."
+      },
+      "design": "Evidence-based guideline with systematic evidence synthesis",
+      "population": "Small/medium symptomatic full-thickness tears; separate large/massive/unrepairable and postoperative topics.",
+      "comparator": "Physical therapy versus repair and postoperative management comparisons.",
+      "coInterventions": "Varied across trials.",
+      "outcomes": "Both PT and repair improve patient outcomes; nonoperative tear size/atrophy/fatty infiltration may progress over 5–10 years.",
+      "followUp": "Short to 5–10-year underlying evidence.",
+      "uncertainty": "No generic safe workout dose/ROM cap; subgroup heterogeneity.",
+      "harms": "Structural progression and repair integrity discussed; not an injury incidence for each exercise.",
+      "limitations": "Early/delayed repair mobilization evidence is not unrestricted resistance clearance.",
+      "protocol": {
+        "execution": "Guideline supports selected nonoperative physical therapy; exact individual exercise not standardized.",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "Postoperative and tear-size pathways separate; no universal ordinary-training progression.",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Summary recommendations > Management of Small to Medium Tears; Long Term Non-Operative Management (PDF p. 7)",
+        "Recommendations > Management of Small to Medium Tears; Long Term Non-Operative Management (PDF pp. 28–31)"
+      ]
+    },
+    {
+      "id": "kuhn-2013",
+      "title": "Effectiveness of physical therapy in treating atraumatic full-thickness rotator cuff tears: a multicenter prospective cohort study",
+      "doi": "10.1016/j.jse.2013.01.026",
+      "pmid": "23540577",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3748251/",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2013-10 (online date preferred where supplied).",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-02",
+        "details": "Full accepted manuscript inspected; final Oct 2013 publication identified. Linked exercise-booklet PDF attempt returned PMC challenge; not reviewed."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1016%2Fj.jse.2013.01.026.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Prospective multicenter cohort; 452 enrolled, follow-up report includes 422",
+      "population": "Symptomatic MRI-confirmed atraumatic full-thickness tears, age 18–100; injury-related presentation/prior surgery/GHOA/capsulitis excluded.",
+      "comparator": "No randomized control; surgery election defined failure.",
+      "coInterventions": "Manual mobilization as needed; heat/cold recommended; education/home materials.",
+      "outcomes": "Approximately 75% avoided surgery at two years; patient outcomes improved.",
+      "followUp": "6 and 12 weeks, 1 and 2 years.",
+      "uncertainty": "Preferences/selection influence surgery; no untreated comparator or proof of healing.",
+      "harms": "Exercise-specific adverse-event surveillance not clearly reported.",
+      "limitations": "Not acute traumatic tears, repairs or combined-pathology clearance.",
+      "protocol": {
+        "execution": "Daily postural/assisted/active ROM and scapular motion; anterior/posterior shoulder stretches; cuff/scapular strengthening. Exact anterior-stretch setup absent without linked booklet.",
+        "dose": "not reported for exact exercise repetitions/hold times in inspected main manuscript.",
+        "frequency": "ROM/flexibility daily; strength 3/week.",
+        "supervision": "Therapist instruction/books/DVD; transition home when ready.",
+        "progression": "Clinical reassessment at six weeks; improve/continue, cured, or no better/surgical discussion.",
+        "stoppingRules": "not reported as a numeric exercise-specific stopping rule."
+      },
+      "locations": [
+        "Materials and Methods > Inclusion and Exclusion Criteria; Physical Therapy Program",
+        "Results; Conclusions; Supplementary Material > NIHMS462903-supplement-01.pdf"
+      ]
+    },
+    {
+      "id": "kuhn-2024",
+      "title": "The Predictors of Surgery for Symptomatic, Atraumatic Full-Thickness Rotator Cuff Tears Change Over Time: Ten-Year Outcomes of the MOON Shoulder Prospective Cohort",
+      "doi": "10.2106/JBJS.23.00978",
+      "pmid": "38980920",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38980920/",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2024-07-09 (online date preferred where supplied).",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-02",
+        "details": "Published 2024 final citation/abstract-level author-institution record inspected; full report not retrieved. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.2106%2FJBJS.23.00978.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Ten-year prospective cohort follow-up; same MOON cohort",
+      "population": "Symptomatic atraumatic full-thickness tears.",
+      "comparator": "Within-cohort nonoperative course and surgery election.",
+      "coInterventions": "Physical therapy; details not extracted from inaccessible full report.",
+      "outcomes": "Nonoperated patient-reported outcomes improved and remained stable; surgery predictors changed over time.",
+      "followUp": "10 years.",
+      "uncertainty": "Not independent replication; survivor/selection and preference effects.",
+      "harms": "not reported in inspected abstract-level material.",
+      "limitations": "Cannot establish structural healing or exercise-specific safety.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Methods: standard physical-therapy protocol for atraumatic full-thickness cuff tears; individual exercise variants are not specified in this abstract.",
+        "dose": "reported in accessible text: Abstract > Methods: standard physical-therapy program lasted six to twelve weeks. Program duration only; not an isolated anterior-shoulder stretch dose.",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Results and Conclusions",
+        "Abstract > Methods"
+      ]
+    },
+    {
+      "id": "moosmayer-2024",
+      "title": "Fifteen-Year Results of a Comparative Analysis of Tendon Repair Versus Physiotherapy for Small-to-Medium-Sized Rotator Cuff Tears: A Concise Follow-up of Previous Reports",
+      "doi": "10.2106/JBJS.24.00065",
+      "pmid": "39197154",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11594065/",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2024-08-23 (online date preferred where supplied).",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-02",
+        "details": "Final full-text XML inspected through Europe PMC; published Aug 23 / Oct 2 issue 2024."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.2106%2FJBJS.24.00065.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Randomized trial fifteen-year follow-up; 103 randomized, 83 assessed",
+      "population": "Full-thickness tears ≤3 cm; gradual-onset and minor-trauma acute-on-chronic presentations.",
+      "comparator": "Primary repair versus tailored physiotherapy with optional secondary repair.",
+      "coInterventions": "Surgical group acromioplasty and sometimes biceps tenodesis.",
+      "outcomes": "Repair favored Constant by 11.8 and ASES by 13.9 points; 15/51 PT crossed to surgery. In 26 unrepaired tears AP size increased 16.2→31.6 mm.",
+      "followUp": "15 years.",
+      "uncertainty": "Small trial, crossover and attrition; not every acute traumatic or massive tear.",
+      "harms": "Retears after surgery and additional treatments reported; no evidence a particular gym exercise caused enlargement.",
+      "limitations": "Long-term functional conflict with nonoperative cohort must remain; no universal load cap.",
+      "protocol": {
+        "execution": "Individually adapted outpatient physiotherapy, not a single isolated exercise; postoperative repair protocol separate.",
+        "dose": "PT 40-min sessions twice weekly first 12 weeks, decreasing following 6–12 weeks.",
+        "frequency": "Twice weekly initially.",
+        "supervision": "Experienced shoulder physiotherapists.",
+        "progression": "Insufficient progress after ≥15 sessions could prompt reassessment/secondary surgery. Repair arm passive ROM immediately, active at six weeks, strength after twelve weeks: trial only.",
+        "stoppingRules": "Persistent clinical findings prompted review; no exercise-specific numeric stop threshold."
+      },
+      "locations": [
+        "Methods > Treatment; Tables I–II",
+        "Results > Clinical Outcomes; Tear-Size Increase; Table III adverse events"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "nonoperative-option",
+      "kind": "published-recommendation",
+      "statement": "AAOS supports selected PT or surgery for small/medium tears while retaining long-term tear progression risk.",
+      "citations": [
+        {
+          "sourceId": "aaos-2025",
+          "location": "Summary recommendations > Management of Small to Medium Tears; Long Term Non-Operative Management (PDF p. 7)"
+        },
+        {
+          "sourceId": "aaos-2025",
+          "location": "Recommendations > Management of Small to Medium Tears; Long Term Non-Operative Management (PDF pp. 28–31)"
+        }
+      ],
+      "applicability": "Symptomatic small/medium full-thickness tears.",
+      "limitations": "Not a safe-load threshold or clearance for repaired/acute traumatic tears."
+    },
+    {
+      "id": "moon-physical-therapy",
+      "kind": "study-result",
+      "statement": "Selected atraumatic tears improved with bundled PT; avoiding surgery at two years was common. Daily anterior/posterior stretches were part of the package.",
+      "citations": [
+        {
+          "sourceId": "kuhn-2013",
+          "location": "Materials and Methods > Inclusion and Exclusion Criteria; Physical Therapy Program"
+        },
+        {
+          "sourceId": "kuhn-2013",
+          "location": "Results; Conclusions; Supplementary Material > NIHMS462903-supplement-01.pdf"
+        }
+      ],
+      "applicability": "Symptomatic MRI-confirmed atraumatic full-thickness tears, age 18–100; injury-related presentation/prior surgery/GHOA/capsulitis excluded.",
+      "limitations": "No isolated stretch effect; linked exact booklet inaccessible."
+    },
+    {
+      "id": "long-term-conflict",
+      "kind": "study-result",
+      "statement": "MOON abstract describes durable nonoperative outcomes; randomized follow-up favors repair at 15 years with unrepaired tear enlargement.",
+      "citations": [
+        {
+          "sourceId": "kuhn-2024",
+          "location": "Abstract > Results and Conclusions"
+        },
+        {
+          "sourceId": "moosmayer-2024",
+          "location": "Results > Clinical Outcomes; Tear-Size Increase; Table III adverse events"
+        }
+      ],
+      "applicability": "Different selected cohorts; do not pool blindly.",
+      "limitations": "No causal attribution to a specific exercise or universal surgery recommendation."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "moon-anterior-stretch-unresolved",
+      "exerciseId": null,
+      "requestId": "moon-anterior-shoulder-stretch-setup-unresolved",
+      "findingIds": [
+        "moon-physical-therapy"
+      ],
+      "matchRationale": "Named candidate preserves actual main-text stretch class; no exact catalog equivalence or setup claimed.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "retain-nonoperative-stretch-candidate",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain the named anterior-stretch candidate for protocol retrieval/content review only; not default training or a repair regimen.",
+      "findingIds": [
+        "moon-physical-therapy"
+      ],
+      "citations": [
+        {
+          "sourceId": "kuhn-2013",
+          "location": "Materials and Methods > Inclusion and Exclusion Criteria; Physical Therapy Program"
+        }
+      ],
+      "applicability": {
+        "population": "Clinically assessed atraumatic nonoperated full-thickness tears resembling MOON.",
+        "stage": "Not acute trauma, repair, GHOA or adhesive capsulitis.",
+        "rationale": "Study used this component within supervised/home care."
+      },
+      "limitations": "Exact execution and isolated benefit unresolved.",
+      "mappingIds": [
+        "moon-anterior-stretch-unresolved"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "context-before-progression",
+      "kind": "escalation",
+      "basis": "product-precaution",
+      "statement": "Candidate app safeguard: require clinical tear/operative context before general shoulder progression; persistent or deteriorating function warrants the clinical reassessment pathway, not exercise substitution to fill a workout.",
+      "findingIds": [
+        "nonoperative-option",
+        "long-term-conflict"
+      ],
+      "citations": [
+        {
+          "sourceId": "aaos-2025",
+          "location": "Summary recommendations > Management of Small to Medium Tears; Long Term Non-Operative Management (PDF p. 7)"
+        },
+        {
+          "sourceId": "moosmayer-2024",
+          "location": "Results > Clinical Outcomes; Tear-Size Increase; Table III adverse events"
+        }
+      ],
+      "applicability": {
+        "population": "Confirmed full-thickness tears.",
+        "stage": "Differentiate acute traumatic, chronic small/medium, massive and repaired.",
+        "rationale": "Evidence supports selected rehabilitation but also structural progression; clinical context changes applicability."
+      },
+      "limitations": "Product precaution, not a trial-proven universal exercise contraindication.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Acute traumatic/surgical/massive tear protocol unresolved.",
+    "No autonomous numeric weight/ROM/return-to-training cutoff.",
+    "MOON supplement exact exercise execution inaccessible; candidate cannot be released."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

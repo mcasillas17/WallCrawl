@@ -41,7 +41,7 @@ fun decodeHistoryReasons(record: RecommendationRecord): HistoryReasons {
         check(record.outcome, if (validatorSupported) setOf("VALID", "REPAIRED") else emptySet())
         check(record.durationEstimatorVersion, setOf("DURATION_ESTIMATOR_V1"))
         check(record.trainingPolicyVersion, setOf("STATE_BASED_DOSE_EFFORT_REST_V1", "STATE_BASED_DOSE_EFFORT_REST_V2"))
-        check(record.ledgerPolicyVersion, setOf("PRIMARY_ONLY_V1"))
+        check(record.ledgerPolicyVersion, setOf("PRIMARY_ONLY_V1", "ORDINARY_PRIMARY_ONLY_V2"))
         check(record.programStatePolicyVersion, setOf("PROGRAM_STATE_V1", "PROGRAM_STATE_V2"))
         check(record.adaptationState, setOf(
             "NEEDS_ONBOARDING", "UNCALIBRATED", "INITIATE", "BUILD", "DEVELOP",

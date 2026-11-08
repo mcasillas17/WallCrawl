@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.core.exercise
 
 import java.util.Locale
+import wallcrawl.elopenmike.com.core.model.WallStretchIdentity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -28,10 +29,12 @@ class BundledExerciseCatalog(
         emit(source.snapshot().exercises)
     }
 
-    override suspend fun getExerciseById(id: String): Exercise? =
-        source.snapshot().exercises.firstOrNull { exercise ->
-            exercise.id.equals(id.trim(), ignoreCase = true)
-        }
+    override suspend fun getExerciseById(id: String): Exercise? {
+        val requested = id.trim().lowercase(Locale.ROOT)
+        val canonical = WallStretchIdentity.forLookup(requested)
+        val result = source.snapshot().exercises.firstOrNull { it.id.equals(canonical, ignoreCase = true) } ?: return null
+        return if (requested != canonical) result.copy(id = requested) else result
+    }
 
     /**
      * Searches across every shipped language at once.

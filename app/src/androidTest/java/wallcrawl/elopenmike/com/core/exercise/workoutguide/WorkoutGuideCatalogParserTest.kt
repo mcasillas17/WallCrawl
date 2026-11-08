@@ -23,6 +23,118 @@ class WorkoutGuideCatalogParserTest {
     private val testAssets = InstrumentationRegistry.getInstrumentation().context.assets
     private val parser = WorkoutGuideCatalogParser()
 
+    private fun upstream() = assets.open("workout-guide/catalog.json").bufferedReader().use(parser::parse)
+
+    private fun fictionalSupplement() = JSONObject(testAssets.open("wallcrawl/fictional-catalog.json").bufferedReader().use { it.readText() })
+
+    private fun supplementParser() = WorkoutGuideCatalogParser { path ->
+        try { testAssets.open(path).use { it.read() != -1 } } catch (_: java.io.IOException) { false }
+    }
+
+    @Test fun supplement_emptyPreservesLegacyIdentityAndAttribution() {
+        val upstream = upstream()
+        val empty = fictionalSupplement().put("exercises", org.json.JSONArray())
+        val merged = parser.parseSupplement(StringReader(empty.toString()), upstream)
+        assertThat(merged).isEqualTo(upstream)
+        assertThat(merged.catalogVersion).isEqualTo(upstream.catalogAttribution.commit)
+    }
+
+    @Test fun supplement_mergesSourceGuidanceFramesAndSeparateAttribution() {
+        val upstream = upstream()
+        val merged = supplementParser().parseSupplement(StringReader(fictionalSupplement().toString()), upstream)
+        assertThat(merged.exercises).hasSize(303)
+        assertThat(merged.catalogAttribution).isEqualTo(upstream.catalogAttribution)
+        assertThat(merged.supplementAttribution?.exerciseCount).isEqualTo(1)
+        assertThat(merged.supplementAttribution?.catalogId).isEqualTo("wallcrawl")
+        assertThat(merged.supplementAttribution?.version).isEqualTo(1)
+        val local = merged.exercises.last()
+        assertThat(local.source?.catalogId).isEqualTo("wallcrawl")
+        assertThat(local.executionGuidance).isEqualTo("Fictional fixture only; no exercise or clinical instruction.")
+        assertThat(local.programming).isNull()
+        assertThat(local.reviewedMetadata).isNull()
+        assertThat(merged.framesByExerciseId.getValue(local.id).map { it.assetPath })
+            .containsExactlyElementsIn((1..3).map { "exercise-illustrations/male/${local.id}/frame-$it.svg" }).inOrder()
+        assertThat(merged.catalogVersion).startsWith(upstream.catalogVersion + "+wallcrawl:")
+    }
+
+    @Test fun supplement_contentChangesInvalidateIdentityButFormattingDoesNot() {
+        val upstream = upstream()
+        val original = fictionalSupplement()
+        val first = supplementParser().parseSupplement(StringReader(original.toString()), upstream)
+        val formatted = supplementParser().parseSupplement(StringReader(original.toString(4)), upstream)
+        assertThat(formatted.catalogVersion).isEqualTo(first.catalogVersion)
+        original.getJSONArray("exercises").getJSONObject(0).put("executionGuidance", "Changed fictional fixture text.")
+        assertThat(supplementParser().parseSupplement(StringReader(original.toString()), upstream).catalogVersion)
+            .isNotEqualTo(first.catalogVersion)
+    }
+
+    @Test fun supplement_hashBindsSourceVisualsAndAliases() {
+        val upstream = upstream()
+        val original = supplementParser().parseSupplement(StringReader(fictionalSupplement().toString()), upstream)
+        val mutations: List<(JSONObject) -> Unit> = listOf(
+            { it.getJSONObject("source").put("repository", "https://example.invalid/changed-source") },
+            { it.getJSONObject("source").getJSONObject("attribution").put("creator", "Changed fictional author") },
+            { it.getJSONObject("visuals").put("widthPx", 640) },
+            { it.getJSONArray("exercises").getJSONObject(0).put("searchAliases", org.json.JSONArray(listOf("Changed fictional alias"))) }
+        )
+        mutations.forEach { mutate ->
+            val changed = fictionalSupplement().also(mutate)
+            assertThat(supplementParser().parseSupplement(StringReader(changed.toString()), upstream).catalogVersion)
+                .isNotEqualTo(original.catalogVersion)
+        }
+    }
+
+    @Test fun supplement_packagedStoreRetainsLegacyIdentityAndShipsLocalNotices() = kotlinx.coroutines.runBlocking {
+        val snapshot = WorkoutGuideCatalogStore(assets).snapshot()
+        assertThat(snapshot.exercises).hasSize(327)
+        assertThat(snapshot.framesByExerciseId.values.flatten()).hasSize(981)
+        assertThat(snapshot.catalogVersion).startsWith(snapshot.catalogAttribution.commit + "+wallcrawl:")
+        assertThat(snapshot.exercises.filter { it.source?.catalogId == "wallcrawl" }).hasSize(25)
+        assertThat(snapshot.exercises.filter { it.source?.catalogId == "wallcrawl" }
+            .all { it.programming == null && it.reviewedMetadata == null && it.executionGuidance != null })
+            .isTrue()
+        assertThat(snapshot.exercises.filter { it.source?.catalogId == "wallcrawl" }
+            .flatMap { snapshot.framesByExerciseId.getValue(it.id) }
+            .all { it.widthPx == 512 && it.heightPx == 512 })
+            .isTrue()
+        val notices = AssetAttributionNoticeReader(assets).notices()
+        assertThat(notices.any { it.titleRes == wallcrawl.elopenmike.com.R.string.credits_notice_supplement &&
+            it.body.contains("WallCrawl contributors authored the neutral exercise descriptions") }).isTrue()
+        assertThat(notices.any { it.titleRes == wallcrawl.elopenmike.com.R.string.credits_notice_supplement_license &&
+            it.body.contains("MIT License") }).isTrue()
+    }
+
+    @Test fun supplement_rejectsMissingCanonicalArtworkIncludingUnboundValidator() {
+        val json = fictionalSupplement().toString()
+        org.junit.Assert.assertThrows(WorkoutGuideCatalogFormatException::class.java) {
+            parser.parseSupplement(StringReader(json), upstream())
+        }
+        org.junit.Assert.assertThrows(WorkoutGuideCatalogFormatException::class.java) {
+            WorkoutGuideCatalogParser { !it.endsWith("frame-3.svg") }.parseSupplement(StringReader(json), upstream())
+        }
+    }
+
+    @Test fun supplement_rejectsSourceVersionCollisionsTraversalAndUnknownVocabulary() {
+        val upstream = upstream()
+        val mutations: List<(JSONObject) -> Unit> = listOf(
+            { it.getJSONObject("source").put("id", "workout-guide") },
+            { it.getJSONObject("source").put("version", 2) },
+            { it.getJSONObject("visuals").put("assetPathPrefix", "workout-guide/assets/") },
+            { it.getJSONArray("exercises").getJSONObject(0).put("id", upstream.exercises.first().id) },
+            { it.getJSONArray("exercises").getJSONObject(0).put("sourceId", upstream.exercises.first().source!!.sourceId) },
+            { it.getJSONArray("exercises").getJSONObject(0).put("sourceSlug", "../elsewhere") },
+            { it.getJSONArray("exercises").getJSONObject(0).put("primaryMuscles", org.json.JSONArray(listOf("Unknown muscle"))) },
+            { it.getJSONArray("exercises").getJSONObject(0).put("secondaryMuscles", org.json.JSONArray(listOf("Unknown muscle"))) },
+            { it.getJSONArray("exercises").getJSONObject(0).put("listedEquipment", org.json.JSONArray(listOf("Unknown equipment"))) }
+        )
+        mutations.forEachIndexed { index, mutate ->
+            val json = fictionalSupplement().also(mutate)
+            org.junit.Assert.assertThrows("mutation $index", WorkoutGuideCatalogFormatException::class.java) {
+                supplementParser().parseSupplement(StringReader(json.toString()), upstream)
+            }
+        }
+    }
+
     @Test
     fun parse_packagedCatalogLoadsEveryExerciseAndFrame() {
         val snapshot = assets.open("workout-guide/catalog.json").bufferedReader().use(parser::parse)

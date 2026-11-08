@@ -133,7 +133,11 @@ class TodayProductionLifecycleTest {
         val current = vm.uiState.value as TodayUiState.Success
         assertThat(current.planningIntent).isEqualTo(wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.PROGRAM)
         assertThat(current.programSession?.position?.slotOrdinal).isEqualTo(0)
-        vm.startWorkout("Program session", "Test fixture") {}
+        // A tap from the last ordinary composition cannot attach its name to the newly published program.
+        vm.startWorkout("Ordinary", "Ordinary", ordinary.suggestedWorkout) { error("stale display") }
+        advanceUntilIdle()
+        assertThat(workouts.startRequests).isEmpty()
+        vm.startWorkout("Program session", "Test fixture", current.suggestedWorkout) {}
         advanceUntilIdle()
         assertThat(workouts.startRequests.single().recommendation?.programSession?.position?.slotOrdinal).isEqualTo(0)
     }
@@ -1491,6 +1495,37 @@ class TodayProductionLifecycleTest {
             .isEqualTo(TodayError.REVIEWED_CONSTRAINTS_REMOVED_ALL)
     }
 
+    @Test fun unreadableStoredRestrictionsExplainTheGenerationBlock() = runTest {
+        val profile = freshlyOnboardedProfile().copy(unresolvedTrainingConstraintsRaw = "future policy")
+        val viewModel = todayViewModel(LifecycleProfileRepository(profile), LifecycleWorkoutRepository())
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Error).error)
+            .isEqualTo(TodayError.UNREADABLE_RESTRICTIONS)
+    }
+
+    @Test fun pendingConditionAfterSelectionRemovalIsStillActionableAtStart() = runTest {
+        val profile = freshlyOnboardedProfile()
+        val workouts = LifecycleWorkoutRepository()
+        val viewModel = todayViewModel(LifecycleProfileRepository(profile), workouts)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value).isInstanceOf(TodayUiState.Success::class.java)
+        workouts.conditionProfile = profile
+        workouts.pendingConditions = listOf(wallcrawl.elopenmike.com.core.model.PendingConditionReassessment(
+            profile.id, "removed-condition", "stopped-exercise", "event", "a".repeat(64), 1, NOW - 1))
+        viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
+        advanceUntilIdle()
+        val error = viewModel.uiState.value as TodayUiState.Error
+        assertThat(error.conditionRefusal!!.reasons.single().reason).isEqualTo("pending-reassessment")
+        assertThat(error.conditionRefusal.reasons.single().conditionIds).containsExactly("removed-condition")
+        assertThat(workouts.startRequests).isEmpty()
+        viewModel.refreshRecommendation()
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Error).conditionRefusal!!.reasons.single().reason)
+            .isEqualTo("pending-reassessment")
+    }
+
     // region harness
 
     private fun todayViewModel(
@@ -1707,6 +1742,14 @@ private class LifecycleWorkoutRepository(
     private val observeHistoryChanges: Boolean = false,
     private val manualNotifications: Boolean = false
 ) : WorkoutRepository {
+    var conditionProfile = UserProfile()
+    var pendingConditions = emptyList<wallcrawl.elopenmike.com.core.model.PendingConditionReassessment>()
+    override suspend fun hasPendingConditionReassessment(profileId: String) = pendingConditions.any { it.profileId == profileId }
+    override suspend fun getConditionContext(profileId: String, support: wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog,
+        asOf: Long, zone: ZoneId, programMode: Boolean) = wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead(
+            conditionProfile, null, wallcrawl.elopenmike.com.core.model.ProgramHeader.absent(profileId),
+            wallcrawl.elopenmike.com.core.ai.ConditionHistory(asOf, zone, asOf - 8 * 86_400_000L, true, emptyList(), pendingConditions))
+
     val startRequests = mutableListOf<LifecycleStartRequest>()
     val originalSessions: List<WorkoutSession> = initialCompleted
 
@@ -1908,7 +1951,7 @@ private class LifecycleLedgerRepository(
                 it.completedAtTimestamp?.let(week::contains) == true
             },
             exercisesById = exercises.associateBy(Exercise::id),
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
             week = week,
             catalogVersion = catalogVersion,
             reviewPolicyVersion = exercises

@@ -14,8 +14,11 @@ class IllustrationCatalogTest {
         val catalog = IllustrationCatalog { source!!.bufferedReader().use { it.readText() } }
         val exercises = org.json.JSONObject(loader.getResource("workout-guide/catalog.json")!!.readText())
             .getJSONArray("exercises")
-        for (i in 0 until exercises.length()) {
-            val id = exercises.getJSONObject(i).getString("id")
+        val supplement = org.json.JSONObject(loader.getResource("wallcrawl/catalog.json")!!.readText())
+            .getJSONArray("exercises")
+        val ids = (0 until exercises.length()).map { exercises.getJSONObject(it).getString("id") } +
+            (0 until supplement.length()).map { supplement.getJSONObject(it).getString("id") }
+        for (id in ids) {
             for (variant in IllustrationVariant.entries) {
                 val paths = catalog.framesFor(id, variant)
                 assertThat(paths).hasSize(3)

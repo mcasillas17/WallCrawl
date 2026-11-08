@@ -7,12 +7,16 @@ import android.os.LocaleList
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHeightIsAtLeast
@@ -41,7 +45,6 @@ import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.ui.test.getBoundsInRoot
-import wallcrawl.elopenmike.com.core.ui.components.STACK_WEEKLY_CARDS_BELOW_DP
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import java.io.File
@@ -64,15 +67,6 @@ import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.SessionStatus
-import wallcrawl.elopenmike.com.core.model.UserProfile
-import wallcrawl.elopenmike.com.core.model.FitnessGoal
-import wallcrawl.elopenmike.com.core.model.ProgramEnrollment
-import wallcrawl.elopenmike.com.core.model.ProgramHeader
-import wallcrawl.elopenmike.com.core.model.ProgramReadState
-import wallcrawl.elopenmike.com.core.model.ProgramStatus
-import wallcrawl.elopenmike.com.core.ai.MultiWeekProgramPolicy
-import wallcrawl.elopenmike.com.feature.program.ProgramSummary
-import wallcrawl.elopenmike.com.feature.program.ProgramUiState
 import wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
@@ -100,22 +94,24 @@ class ProgressScreenTest {
     private val english: Context = context.localized(Locale.ENGLISH)
     private val spanish: Context = context.localized(LATIN_AMERICAN_SPANISH)
 
-    /** Six-digit tonnage in Spanish breaks only between words: stacked at 320 dp, side by side at 360 and 412 dp. */
-    @Test fun aLargeWeeklyTonnageBreaksOnlyBetweenWordsStackedAt320Dp() = assertTonnageBreaksOnlyBetweenWords(320)
-    @Test fun aLargeWeeklyTonnageBreaksOnlyBetweenWordsSideBySideAt360Dp() = assertTonnageBreaksOnlyBetweenWords(360)
-    @Test fun aLargeWeeklyTonnageBreaksOnlyBetweenWordsSideBySideAt412Dp() = assertTonnageBreaksOnlyBetweenWords(412)
+    /** Six-digit tonnage in Spanish breaks only between words; the weekly cards stack at every width. */
+    @Test fun aLargeWeeklyTonnageBreaksOnlyBetweenWordsAt320Dp() = assertTonnageBreaksOnlyBetweenWords(320)
+    @Test fun aLargeWeeklyTonnageBreaksOnlyBetweenWordsAt360Dp() = assertTonnageBreaksOnlyBetweenWords(360)
+    @Test fun aLargeWeeklyTonnageBreaksOnlyBetweenWordsAt412Dp() = assertTonnageBreaksOnlyBetweenWords(412)
 
     private fun assertTonnageBreaksOnlyBetweenWords(widthDp: Int) {
         val locale = Locale.forLanguageTag("es-MX")
+        val localized = context.localized(locale, 1f)
         render(success(overview = emptyOverview().copy(workoutsThisWeek = 1, totalWorkoutsLogged = 1, completedSetsThisWeek = 10, totalVolumeThisWeek = 123456.0, totalRepsThisWeek = 1200)), locale, ThemePreference.LIGHT, widthDp = widthDp)
+        // The weekly cards sit inside the activity details.
+        composeRule.onNodeWithText(localized.getString(R.string.progress_activity_details)).performClick()
         val tonnage = LocaleFormatting.formatVolume(123456.0, locale)
         val layouts = mutableListOf<androidx.compose.ui.text.TextLayoutResult>()
         composeRule.onAllNodesWithText(tonnage, substring = true, useUnmergedTree = true)[0]
             .performSemanticsAction(androidx.compose.ui.semantics.SemanticsActions.GetTextLayoutResult) { it(layouts) }
-        val sets = composeRule.onNodeWithText(context.localized(locale, 1f).getString(R.string.progress_completed_sets), ignoreCase = true, useUnmergedTree = true).getBoundsInRoot()
-        val volume = composeRule.onNodeWithText(context.localized(locale, 1f).getString(R.string.progress_weekly_volume), ignoreCase = true, useUnmergedTree = true).getBoundsInRoot()
-        if (widthDp < STACK_WEEKLY_CARDS_BELOW_DP) assertWithMessage("stacked").that(volume.top).isGreaterThan(sets.top)
-        else assertWithMessage("side by side").that(volume.top).isEqualTo(sets.top)
+        val sets = composeRule.onNodeWithText(localized.getString(R.string.progress_completed_sets), ignoreCase = true, useUnmergedTree = true).getBoundsInRoot()
+        val volume = composeRule.onNodeWithText(localized.getString(R.string.progress_weekly_volume), ignoreCase = true, useUnmergedTree = true).getBoundsInRoot()
+        assertWithMessage("stacked").that(volume.top).isGreaterThan(sets.top)
         val layout = layouts.single()
         val text = layout.layoutInput.text.text
         (0 until layout.lineCount - 1).forEach { line ->
@@ -172,6 +168,7 @@ class ProgressScreenTest {
 
         composeRule.onNodeWithText(english.getString(R.string.progress_activity_heading))
             .assertIsDisplayed()
+        openMuscles(english)
         scrollTo(english.getString(R.string.progress_dose_heading))
         composeRule.onNodeWithText(english.getString(R.string.progress_dose_heading))
             .assertIsDisplayed()
@@ -194,6 +191,7 @@ class ProgressScreenTest {
 
         // Expand the reviewed-dose disclosure and confirm the credited muscle reads in Spanish
         // from the bundled overlay, not English falling through.
+        openMuscles(spanish)
         scrollTo(spanish.getString(R.string.progress_dose_details))
         composeRule.onNodeWithText(spanish.getString(R.string.progress_dose_details)).performClick()
         val reviewedMuscle = hasText(SPANISH_CHEST) and
@@ -209,6 +207,7 @@ class ProgressScreenTest {
 
         composeRule.onNodeWithText(english.getString(R.string.progress_activity_heading))
             .assertIsDisplayed()
+        openMuscles(english)
         scrollTo(english.getString(R.string.progress_dose_heading))
         composeRule.onNodeWithText(english.getString(R.string.progress_dose_heading))
             .assertIsDisplayed()
@@ -221,6 +220,7 @@ class ProgressScreenTest {
 
         composeRule.onNodeWithText(spanish.getString(R.string.progress_activity_heading))
             .assertIsDisplayed()
+        openMuscles(spanish)
         scrollTo(spanish.getString(R.string.progress_involvement_heading))
         composeRule.onNodeWithText(spanish.getString(R.string.progress_involvement_heading))
             .assertIsDisplayed()
@@ -254,6 +254,7 @@ class ProgressScreenTest {
     @Test
     fun reviewedDoseComparisonUsesThePreviousReviewedLedger() {
         render(success(), Locale.ENGLISH, ThemePreference.DARK)
+        openMuscles(english)
         val label = english.getString(R.string.progress_dose_details)
         scrollTo(label)
         composeRule.onNodeWithText(label).performClick()
@@ -289,6 +290,7 @@ class ProgressScreenTest {
             ),
             Locale.ENGLISH, ThemePreference.LIGHT
         )
+        openMuscles(english)
         val message = english.getString(R.string.progress_involvement_empty)
         scrollTo(message)
         composeRule.onNodeWithText(message).assertIsDisplayed()
@@ -303,6 +305,7 @@ class ProgressScreenTest {
     private fun assertPriorDoseVisible(overview: ProgressOverview, locale: Locale) {
         val localized = context.localized(locale)
         render(success(overview = overview, ledger = noneLedger()), locale, ThemePreference.LIGHT)
+        openMuscles(localized)
         val noWork = localized.getString(R.string.progress_dose_none)
         scrollTo(noWork)
         composeRule.onNodeWithText(noWork).assertIsDisplayed()
@@ -342,6 +345,7 @@ class ProgressScreenTest {
             locale, theme, fontScale
         )
         maybeCaptureScreenshot("progress-activity-$name")
+        openMuscles(localized)
         val label = localized.getString(R.string.progress_dose_details)
         scrollTo(label)
         composeRule.onNodeWithText(label).assertHeightIsAtLeast(48.dp).performClick()
@@ -355,6 +359,7 @@ class ProgressScreenTest {
     fun disclosureTogglesAreLargeEnoughAndOperable() {
         render(success(), Locale.ENGLISH, ThemePreference.DARK)
 
+        openMuscles(english)
         val doseDetails = english.getString(R.string.progress_dose_details)
         scrollTo(doseDetails)
         composeRule.onNodeWithText(doseDetails)
@@ -374,6 +379,7 @@ class ProgressScreenTest {
             Locale.ENGLISH, ThemePreference.DARK
         )
 
+        openMuscles(english)
         scrollTo(english.getString(R.string.progress_dose_unattributed))
         composeRule.onNodeWithText(english.getString(R.string.progress_dose_unattributed))
             .assertIsDisplayed()
@@ -393,16 +399,21 @@ class ProgressScreenTest {
 
     @Test
     fun emptyWeekShowsAnHonestNoActivityState() {
+        var trainOpened = false
         render(
             success(
                 overview = emptyOverview(), ledger = noneLedger(),
                 previous = noneLedger().copy(weekStartEpochDay = WEEK.startEpochDay - 7)
             ),
             Locale.ENGLISH,
-            ThemePreference.DARK
+            ThemePreference.DARK, onOpenTrain = { trainOpened = true }
         )
-
-        composeRule.onNodeWithText(english.getString(R.string.progress_activity_empty))
+        maybeCaptureScreenshot("progress-empty-en-dark")
+        scrollTo(english.getString(R.string.guided_progress_train))
+        composeRule.onNodeWithText(english.getString(R.string.guided_progress_train)).performClick()
+        assertThat(trainOpened).isTrue()
+        scrollTo(english.getString(R.string.progress_history_empty))
+        composeRule.onNodeWithText(english.getString(R.string.progress_history_empty))
             .assertIsDisplayed()
     }
 
@@ -425,38 +436,28 @@ class ProgressScreenTest {
         assertThat(retries).isEqualTo(1)
     }
 
-    @Test fun programManagementAndProgressRetryRemainReachableAt320DpWithLargeText() =
-        assertProgramErrorActionsReachable(Locale.ENGLISH)
+    @Test fun progressRetryRemainsReachableAt320DpWithLargeText() =
+        assertErrorActionReachable(Locale.ENGLISH)
 
-    @Test fun spanishProgramManagementAndProgressRetryRemainReachableAt320DpWithLargeText() =
-        assertProgramErrorActionsReachable(LATIN_AMERICAN_SPANISH)
+    @Test fun spanishProgressRetryRemainsReachableAt320DpWithLargeText() =
+        assertErrorActionReachable(LATIN_AMERICAN_SPANISH)
 
-    private fun assertProgramErrorActionsReachable(locale: Locale) {
-        val profile = UserProfile(onboardingCompleted = true,
-            goals = linkedSetOf(FitnessGoal.GENERAL_FITNESS, FitnessGoal.ATHLETIC_PERFORMANCE, FitnessGoal.BUILD_MUSCLE))
-        val enrollment = ProgramEnrollment(profile.id, "11111111-1111-1111-1111-111111111111", 1,
-            MultiWeekProgramPolicy.configurationFromProfile(profile), ProgramStatus.ACTIVE, 0, 0)
-        val program = ProgramUiState(loading = false, program = ProgramReadState.Supported(
-            ProgramHeader(profile.id, enrollment.programId, 1, "a".repeat(64)), enrollment,
-            MultiWeekProgramPolicy.reconstruct(enrollment, emptyList()), emptyList(), profile))
+    private fun assertErrorActionReachable(locale: Locale) {
         val localized = context.localized(locale, 1.8f)
-        var manages = 0
         var retries = 0
         composeRule.setContent {
             val density = LocalDensity.current.density
-            CompositionLocalProvider(LocalContext provides localized,
+            CompositionLocalProvider(LocalContext provides localized, LocalResources provides localized.resources,
                 LocalConfiguration provides localized.resources.configuration,
                 LocalDensity provides Density(density, 1.8f)) {
                 WallCrawlTheme {
                     Box(Modifier.width(320.dp).height(640.dp)) {
-                        ProgressScreen(ProgressUiState.Error(), onRetry = { retries++ }, programContent = {
-                            ProgramSummary(program, onManage = { manages++ })
-                        })
+                        ProgressScreen(ProgressUiState.Error(), onRetry = { retries++ })
                     }
                 }
             }
         }
-        listOf(R.string.program_manage, R.string.progress_error, R.string.action_try_again).forEach { res ->
+        listOf(R.string.progress_error, R.string.action_try_again).forEach { res ->
             val label = localized.getString(res)
             val node = composeRule.onNodeWithText(label)
             if (composeRule.onAllNodes(hasScrollAction()).fetchSemanticsNodes().isNotEmpty()) node.performScrollTo()
@@ -474,8 +475,13 @@ class ProgressScreenTest {
             }
             if (res != R.string.progress_error) node.assertIsEnabled().assertHasClickAction().performClick()
         }
-        assertThat(manages).isEqualTo(1)
         assertThat(retries).isEqualTo(1)
+    }
+
+    private fun openMuscles(localized: Context) {
+        val label = localized.getString(R.string.guided_progress_muscles)
+        scrollTo(label)
+        composeRule.onNodeWithText(label).performClick()
     }
 
     private fun scrollTo(textValue: String) {
@@ -489,6 +495,7 @@ class ProgressScreenTest {
         fontScale: Float = 1.0f,
         onRetry: () -> Unit = {},
         onOpenSession: (String) -> Unit = {},
+        onOpenTrain: () -> Unit = {},
         widthDp: Int? = null
     ) {
         composeRule.setContent {
@@ -499,7 +506,7 @@ class ProgressScreenTest {
                 languageTag = locale.toLanguageTag()
             )
             CompositionLocalProvider(
-                LocalContext provides localized,
+                LocalContext provides localized, LocalResources provides localized.resources,
                 LocalConfiguration provides android.content.res.Configuration(localized.resources.configuration).apply {
                     if (widthDp != null) screenWidthDp = widthDp
                 },
@@ -508,10 +515,16 @@ class ProgressScreenTest {
                 LocalExerciseVocabulary provides vocabulary
             ) {
                 WallCrawlTheme(themePreference = theme) {
+                    val destination = remember { mutableStateOf(ProgressSection.OVERVIEW) }
                     androidx.compose.foundation.layout.Box(
                         if (widthDp != null) Modifier.requiredWidth(widthDp.dp) else Modifier
                     ) {
-                        ProgressScreen(uiState = state, onRetry = onRetry, onOpenSession = onOpenSession)
+                        key(destination.value) {
+                            ProgressScreen(uiState = state, onRetry = onRetry, onOpenSession = onOpenSession, onOpenTrain = onOpenTrain,
+                                onOpenMuscles = { destination.value = ProgressSection.MUSCLES },
+                                onOpenTrends = { destination.value = ProgressSection.TRENDS },
+                                section = destination.value, onBack = { destination.value = ProgressSection.OVERVIEW })
+                        }
                     }
                 }
             }
@@ -590,7 +603,7 @@ class ProgressScreenTest {
 
     /** Credited 11 + omitted 1 == 12 work sets (14 completed − 2 warm-ups). */
     private fun approvedLedger() = WeeklyDoseLedger(
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         weekStartEpochDay = WEEK.startEpochDay,
         timeZoneId = WEEK.zoneId.id,
         catalogVersion = "test",
@@ -602,7 +615,7 @@ class ProgressScreenTest {
 
     /** A distinct prior-week ledger, keyed to the previous week rather than the current one. */
     private fun previousLedger() = WeeklyDoseLedger(
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         weekStartEpochDay = WEEK.startEpochDay - 7,
         timeZoneId = WEEK.zoneId.id,
         catalogVersion = "test",
@@ -613,7 +626,7 @@ class ProgressScreenTest {
     )
 
     private fun noneLedger() = WeeklyDoseLedger(
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         weekStartEpochDay = WEEK.startEpochDay,
         timeZoneId = WEEK.zoneId.id,
         catalogVersion = "test",
@@ -625,7 +638,7 @@ class ProgressScreenTest {
 
     /** The bundled metadata is entirely DRAFT, so no reviewed primary work is credited. */
     private fun productionLedger() = WeeklyDoseLedger(
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         weekStartEpochDay = WEEK.startEpochDay,
         timeZoneId = WEEK.zoneId.id,
         catalogVersion = "test",

@@ -19,6 +19,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.ai.ConditionPlanningPolicy
+import wallcrawl.elopenmike.com.core.ai.RecommendationContextIdentity
+import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
+import wallcrawl.elopenmike.com.core.model.ConditionViolation
+import wallcrawl.elopenmike.com.core.model.convertWeight
 import wallcrawl.elopenmike.com.core.ai.DefaultExercisePrescriptionFactory
 import wallcrawl.elopenmike.com.core.database.repository.MissingTemplateException
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
@@ -40,6 +45,8 @@ import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 
 data class TemplateEditorUiState(
     val isLoading: Boolean = true,
+    val conditionPlanning: ConditionPlanningResult = ConditionPlanningResult.NotApplicable,
+    val isCheckingSupport: Boolean = false,
     val templateId: String? = null,
     val name: String = "",
     val notes: String = "",
@@ -163,7 +170,8 @@ class TemplateEditorViewModel(
         DefaultExercisePrescriptionFactory(),
     private val nowTimestamp: () -> Long = System::currentTimeMillis,
     private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
-    private val locale: () -> Locale = Locale::getDefault
+    private val locale: () -> Locale = Locale::getDefault,
+    private val conditionContext: (suspend () -> WorkoutGenerationContext)? = null
 ) : ViewModel() {
     // Restored before the load starts, so the asynchronous load can see that a draft is
     // already on screen and fill in only the reference data around it.
@@ -208,6 +216,7 @@ class TemplateEditorViewModel(
     private var originalTemplate: WorkoutTemplate? = null
 
     private var profile: UserProfile? = null
+    private var supportContext: WorkoutGenerationContext? = null
 
     init {
         viewModelScope.launch {
@@ -306,6 +315,7 @@ class TemplateEditorViewModel(
                     isDirty = isDirty(loaded),
                     unresolvedRowIds = loaded.unresolvedRows(catalogById)
                 )
+                if (loadedProfile.hasConditionReports) refreshSupport()
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
@@ -359,6 +369,68 @@ class TemplateEditorViewModel(
                 query = "",
                 errorMessage = null
             )
+        }
+    }
+
+    private suspend fun refreshSupport(): WorkoutGenerationContext? {
+        val context = try {
+            conditionContext?.invoke()
+        } catch (error: CancellationException) { throw error
+        } catch (_: Exception) { null }
+        supportContext = context
+        settle { it.copy(conditionPlanning = context?.conditionPlanning ?: ConditionPlanningResult.Blocked(
+            listOf(ConditionViolation("condition-context-unavailable", emptySet())))) }
+        return context
+    }
+
+    /** Only this explicit action replaces matching rows; loading and saving never adopt support. */
+    fun adoptConditionSupport() {
+        val state = mutableState.value
+        val shown = supportContext ?: return
+        val ready = shown.conditionPlanning as? ConditionPlanningResult.Ready ?: return
+        if (ready.supportive.isEmpty() || state.isLoading || state.isSaving || state.isCheckingSupport ||
+            state.hasLoadFailed || state.isDraftIncomplete || state.editorDraft != null) return
+        settle { it.copy(isCheckingSupport = true) }
+        viewModelScope.launch {
+            try {
+                val current = refreshSupport()
+                if (current == null || RecommendationContextIdentity.of(current) != RecommendationContextIdentity.of(shown)) {
+                    settle { it.copy(errorMessage = R.string.editor_support_changed) }
+                    return@launch
+                }
+                val latest = mutableState.value
+                if (latest.isSaving || latest.selectedExercises != state.selectedExercises ||
+                    latest.weightUnit != state.weightUnit || latest.editorDraft != null) return@launch
+                val unit = state.weightUnit
+                if (unit == null) {
+                    settle { it.copy(errorMessage = R.string.editor_error_unit_unconfirmed) }
+                    return@launch
+                }
+                val rows = ready.supportive.map { support ->
+                    val prescription = support.prescription.copy(
+                        targetWeight = support.prescription.targetWeight?.let { convertWeight(it, WeightUnit.KG, unit) },
+                        targetAssistanceWeight = support.prescription.targetAssistanceWeight?.let { convertWeight(it, WeightUnit.KG, unit) })
+                    TemplateExerciseDraft.from(PlannedExercise(support.exerciseId, prescription), locale())
+                }
+                val ids = rows.map { it.exerciseId }.toSet()
+                val retained = state.selectedExercises.filterNot { it.exerciseId in ids }
+                if (retained.size + rows.size > WorkoutTemplate.MAX_EXERCISES) {
+                    settle { it.copy(errorMessage = R.string.editor_error_exercise_limit) }
+                    return@launch
+                }
+                val parsed = rows.map { it.validate(unit) }
+                val exact = parsed.all { it is DraftValidation.Valid } &&
+                    WorkoutTemplate(name = "support", weightUnit = unit,
+                        exercises = parsed.map { (it as DraftValidation.Valid).exercise })
+                        .exercisesIn(current.preferredUnits).all { ConditionPlanningPolicy().validate(it, ready).isEmpty() }
+                if (!exact) {
+                    settle { it.copy(errorMessage = R.string.editor_support_precision) }
+                    return@launch
+                }
+                edit { it.copy(selectedExercises = retained + rows, errorMessage = null) }
+            } finally {
+                settle { it.copy(isCheckingSupport = false) }
+            }
         }
     }
 
@@ -939,7 +1011,8 @@ class TemplateEditorViewModel(
             templateRepository: WorkoutTemplateRepository,
             userProfileRepository: UserProfileRepository,
             exerciseCatalog: ExerciseCatalog,
-            localizationSource: ExerciseLocalizationSource? = null
+            localizationSource: ExerciseLocalizationSource? = null,
+            conditionContext: (suspend () -> WorkoutGenerationContext)? = null
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 TemplateEditorViewModel(
@@ -948,7 +1021,8 @@ class TemplateEditorViewModel(
                     userProfileRepository = userProfileRepository,
                     exerciseCatalog = exerciseCatalog,
                     localizationSource = localizationSource,
-                    savedStateHandle = createSavedStateHandle()
+                    savedStateHandle = createSavedStateHandle(),
+                    conditionContext = conditionContext
                 )
             }
         }

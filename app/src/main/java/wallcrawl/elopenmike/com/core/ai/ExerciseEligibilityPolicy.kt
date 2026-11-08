@@ -34,7 +34,7 @@ class ExerciseEligibilityPolicy {
         demonstratedProgressionFamilies: Set<String> = emptySet()
     ): AutomaticEligibilityResult {
         val ownedEquipment = profile.availableEquipment.normalizedEquipmentSet()
-        val excludedExerciseIds = profile.excludedExerciseIds.toSet()
+        val excludedExerciseIds = profile.planningExclusions.toSet()
         val exercisesById = exercises.associateBy(Exercise::id)
         val decisions = exercises.map { exercise ->
             val acceptedMetadata = exercise.acceptedMetadata()

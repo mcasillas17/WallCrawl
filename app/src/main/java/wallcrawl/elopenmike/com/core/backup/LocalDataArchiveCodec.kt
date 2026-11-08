@@ -33,6 +33,11 @@ import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits.MAX_TOTAL_SET
 import wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits.MAX_WEIGHT
 import wallcrawl.elopenmike.com.core.database.PERSISTED_LIST_SEPARATOR
 import wallcrawl.elopenmike.com.core.database.PERSISTED_PAIR_SEPARATOR
+import wallcrawl.elopenmike.com.core.database.repository.ConditionContextCodec
+import wallcrawl.elopenmike.com.core.database.repository.decodeTrainingConstraints
+import wallcrawl.elopenmike.com.core.model.PendingConditionReassessment
+import wallcrawl.elopenmike.com.core.model.SessionConditionContext
+import wallcrawl.elopenmike.com.core.model.SelectedCondition
 import wallcrawl.elopenmike.com.core.database.repository.RecommendationDoseAccountingPayload
 import wallcrawl.elopenmike.com.core.io.BoundedCharacterReader
 import wallcrawl.elopenmike.com.core.model.ProgramAssociation
@@ -58,6 +63,7 @@ import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.model.MuscleDoseAccounting
 import wallcrawl.elopenmike.com.core.model.MuscleVocabulary
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
 import wallcrawl.elopenmike.com.core.model.ProgressionReasonCode
 import wallcrawl.elopenmike.com.core.model.RecommendationRecord
@@ -134,6 +140,24 @@ object LocalDataArchiveCodec {
      * been flushed and closed without error.
      */
     fun write(archive: LocalDataArchive, openOutput: () -> OutputStream) {
+        val format = ArchiveFields(archive.metadata.archiveVersion, archive.version7Layout)
+        val snapshot = archive.snapshot
+        require(format.supportsContext || (snapshot.profile?.unresolvedTrainingConstraintsRaw == null &&
+            snapshot.profile?.activeConditions.isNullOrEmpty() && snapshot.pendingConditionReassessments.isEmpty() &&
+            snapshot.sessions.all { it.conditionContext == null } &&
+            snapshot.templates.all { template -> template.exercises.all { it.prescription.purpose == PrescriptionPurpose.ORDINARY } } &&
+            snapshot.recommendationRecords.all { it.conditionContextDigest == null })) {
+            "Condition-aware data cannot be represented by this archive."
+        }
+        require(format.supportsReportsAndHolds || (snapshot.profile?.reportedConditions.isNullOrEmpty() &&
+            snapshot.sessions.all { session ->
+                session.exercises.all { !it.isLegacyMobility && it.prescription.holdSeconds == null }
+            })) {
+            "Reported conditions and holds cannot be represented by this archive."
+        }
+        require(format.supportsContext || snapshot.sessions.all { session ->
+            session.exercises.all { it.isLegacyMobility || it.prescription.purpose == PrescriptionPurpose.ORDINARY }
+        }) { "Condition-aware data cannot be represented by this archive." }
         // The codec writes any format it can read, which is what makes the older format's
         // round trip testable at all. Production always exports [ARCHIVE_VERSION]: the
         // repository names the version, not this function.
@@ -168,7 +192,7 @@ object LocalDataArchiveCodec {
         // writing truncates it: the user may have picked their previous export, and a
         // refusal that can never succeed must not destroy the archive they already had.
         validateMetadata(archive.metadata)
-        validateSnapshot(archive.snapshot)
+        validateSnapshot(archive.snapshot, format)
 
         // The archive is serialised twice: once here into the digest, and once below into
         // the document. That is deliberate. Computing the checksum first is what lets an
@@ -177,7 +201,7 @@ object LocalDataArchiveCodec {
         // middle of the write, and buffering the whole document to keep one pass would hold
         // up to the entire character ceiling in memory on a phone. The extra pass is CPU
         // over an already in-memory snapshot.
-        val checksum = canonicalChecksum(archive)
+        val checksum = canonicalChecksum(archive, format)
 
         openOutput().use { output ->
             val writer = JsonWriter(OutputStreamWriter(output, Charsets.UTF_8))
@@ -185,7 +209,7 @@ object LocalDataArchiveCodec {
             writer.name(FIELD_METADATA)
             writer.writeMetadata(archive.metadata)
             writer.name(FIELD_DATA)
-            writer.writeSnapshot(archive.snapshot, archive.metadata.archiveVersion)
+            writer.writeSnapshot(archive.snapshot, format)
             writer.name(FIELD_CHECKSUM)
             writer.beginObject()
             writer.name("algorithm").value(CHECKSUM_ALGORITHM)
@@ -217,6 +241,7 @@ object LocalDataArchiveCodec {
         var metadata: LocalDataArchiveMetadata? = null
         var snapshot: LocalDataSnapshot? = null
         var checksum: String? = null
+        var fields: ArchiveFields? = null
 
         try {
             reader.beginObject()
@@ -230,7 +255,9 @@ object LocalDataArchiveCodec {
                         if (metadata == null) {
                             malformed("The archive must declare '$FIELD_METADATA' first.")
                         }
-                        snapshot = reader.readSnapshot(metadata.archiveVersion)
+                        val format = ArchiveFields(metadata.archiveVersion)
+                        snapshot = reader.readSnapshot(format)
+                        fields = format
                     }
 
                     FIELD_CHECKSUM -> checksum = reader.readChecksum()
@@ -272,10 +299,13 @@ object LocalDataArchiveCodec {
         // a generic "damaged file". Both checks precede every database statement, so either
         // one refuses the import with nothing written.
         validateMetadata(readMetadata)
-        validateSnapshot(readSnapshot)
+        val format = checkNotNull(fields)
+        validateSnapshot(readSnapshot, format)
 
-        val archive = LocalDataArchive(readMetadata, readSnapshot)
-        if (!canonicalChecksum(archive).equals(readChecksum, ignoreCase = true)) {
+        val archive = LocalDataArchive(
+            readMetadata, readSnapshot, format.version7Layout ?: ArchiveV7Layout.CONDITION_CONTEXT
+        )
+        if (!canonicalChecksum(archive, format).equals(readChecksum, ignoreCase = true)) {
             malformed(
                 "The archive checksum does not match its contents; it is damaged or was edited.",
                 ArchiveRejection.CHECKSUM_MISMATCH
@@ -290,7 +320,7 @@ object LocalDataArchiveCodec {
      * Exported and imported archives run through the identical writer, so an unmodified
      * document always reproduces the value it carries.
      */
-    private fun canonicalChecksum(archive: LocalDataArchive): String {
+    private fun canonicalChecksum(archive: LocalDataArchive, format: ArchiveFields): String {
         val digest = MessageDigest.getInstance(CHECKSUM_ALGORITHM)
         val sink = CountingSink()
         // OutputStreamWriter keeps the UTF-8 encoder's state across writes, so a character
@@ -298,7 +328,7 @@ object LocalDataArchiveCodec {
         val writer = JsonWriter(
             OutputStreamWriter(DigestOutputStream(sink, digest), Charsets.UTF_8)
         )
-        writer.writeCanonicalBody(archive)
+        writer.writeCanonicalBody(archive, format)
         writer.flush()
         // This pass runs on both sides, and on export it runs before a byte reaches the
         // document, so the size ceiling the reader enforces is applied to an export too
@@ -314,13 +344,33 @@ object LocalDataArchiveCodec {
         return digest.digest().joinToString("") { byte -> "%02x".format(byte) }
     }
 
-    private fun JsonWriter.writeCanonicalBody(archive: LocalDataArchive) {
+    private fun JsonWriter.writeCanonicalBody(archive: LocalDataArchive, format: ArchiveFields) {
         beginObject()
         name(FIELD_METADATA)
         writeMetadata(archive.metadata)
         name(FIELD_DATA)
-        writeSnapshot(archive.snapshot, archive.metadata.archiveVersion)
+        writeSnapshot(archive.snapshot, format)
         endObject()
+    }
+
+    private class ArchiveFields(val version: Int, layout: ArchiveV7Layout? = null) {
+        var version7Layout: ArchiveV7Layout? = layout
+            private set
+
+        val supportsContext get() =
+            version >= 8 || (version == 7 && version7Layout != ArchiveV7Layout.REPORTED_CONDITIONS)
+        val supportsReportsAndHolds get() =
+            version >= 8 || (version == 7 && version7Layout == ArchiveV7Layout.REPORTED_CONDITIONS)
+
+        fun observe(layout: ArchiveV7Layout) {
+            if (version < 7) malformed("Condition fields require archive version 7.")
+            if (version == 7) {
+                if (version7Layout != null && version7Layout != layout) {
+                    malformed("The archive mixes incompatible version 7 condition formats.")
+                }
+                version7Layout = layout
+            }
+        }
     }
 
     // ---------------------------------------------------------------- writing
@@ -336,26 +386,26 @@ object LocalDataArchiveCodec {
         endObject()
     }
 
-    private fun JsonWriter.writeSnapshot(snapshot: LocalDataSnapshot, archiveVersion: Int) {
+    private fun JsonWriter.writeSnapshot(snapshot: LocalDataSnapshot, format: ArchiveFields) {
         beginObject()
         snapshot.profile?.let { profile ->
             name("profile")
-            writeProfile(profile, archiveVersion)
+            writeProfile(profile, format)
         }
         name("templates")
         beginArray()
-        snapshot.templates.forEach { template -> writeTemplate(template) }
+        snapshot.templates.forEach { template -> writeTemplate(template, format) }
         endArray()
         name("sessions")
         beginArray()
-        snapshot.sessions.forEach { session -> writeSession(session) }
+        snapshot.sessions.forEach { session -> writeSession(session, format) }
         endArray()
         // Omitted entirely when there is none, like every other absent value here, so a
         // version 1 document re-serializes byte for byte and keeps its original checksum.
         if (snapshot.recommendationRecords.isNotEmpty()) {
             name("recommendations")
             beginArray()
-            snapshot.recommendationRecords.forEach { record -> writeRecommendation(record, archiveVersion) }
+            snapshot.recommendationRecords.forEach { record -> writeRecommendation(record, format.version) }
             endArray()
         }
         snapshot.deloadPreferences?.let {
@@ -369,6 +419,22 @@ object LocalDataArchiveCodec {
         if (snapshot.programAssociations.isNotEmpty()) {
             name("programAssociations").beginArray()
             snapshot.programAssociations.forEach { writeProgramAssociation(it) }
+            endArray()
+        }
+        if (format.supportsContext && snapshot.pendingConditionReassessments.isNotEmpty()) {
+            name("pendingConditionReassessments").beginArray()
+            snapshot.pendingConditionReassessments.forEach { marker ->
+                beginObject()
+                name("profileId").value(marker.profileId)
+                name("conditionId").value(marker.conditionId)
+                name("exerciseId").value(marker.exerciseId)
+                name("eventId").value(marker.eventId)
+                name("stoppedContextIdentity").value(marker.stoppedContextIdentity)
+                name("responsePolicyVersion").value(marker.responsePolicyVersion.toLong())
+                name("stoppedAtTimestamp").value(marker.stoppedAtTimestamp)
+                marker.sourceSetId?.let { name("sourceSetId").value(it) }
+                endObject()
+            }
             endArray()
         }
         endObject()
@@ -577,10 +643,11 @@ object LocalDataArchiveCodec {
             .value(RecommendationDoseAccountingPayload.encode(record.doseAccounting))
         name("recordedAtEpochMillis").value(record.recordedAtEpochMillis)
         if (archiveVersion >= 5) record.programAssociationDigest?.let { name("programAssociationDigest").value(it) }
+        if (archiveVersion >= 7) record.conditionContextDigest?.let { name("conditionContextDigest").value(it) }
         endObject()
     }
 
-    private fun JsonWriter.writeProfile(profile: UserProfile, archiveVersion: Int) {
+    private fun JsonWriter.writeProfile(profile: UserProfile, format: ArchiveFields) {
         beginObject()
         name("id").value(profile.id)
         name("revision").value(profile.revision)
@@ -610,6 +677,9 @@ object LocalDataArchiveCodec {
             profile.trainingConstraints.map(TrainingConstraint::name)
         )
         name("returningAfterBreakWeeks").value(profile.returningAfterBreakWeeks.toLong())
+        if (format.supportsReportsAndHolds) {
+            name("reportedConditions").writeStringArray(profile.reportedConditions.toList())
+        }
         name("confirmedStartingLoads")
         beginObject()
         profile.confirmedStartingLoads.forEach { (exerciseId, load) ->
@@ -625,14 +695,18 @@ object LocalDataArchiveCodec {
         endObject()
         name("themePreference").value(profile.themePreference.name)
         // Keep the canonical bytes and checksums of versions 1 and 2 unchanged.
-        if (archiveVersion >= 3) {
+        if (format.version >= 3) {
             name("gender").value(profile.gender.name)
             name("illustrationPreference").value(profile.illustrationPreference.name)
+        }
+        if (format.supportsContext) {
+            name("activeConditions").value(ConditionContextCodec.encodeSelections(profile.activeConditions))
+            profile.unresolvedTrainingConstraintsRaw?.let { name("unresolvedTrainingConstraintsRaw").value(it) }
         }
         endObject()
     }
 
-    private fun JsonWriter.writeTemplate(template: WorkoutTemplate) {
+    private fun JsonWriter.writeTemplate(template: WorkoutTemplate, format: ArchiveFields) {
         beginObject()
         name("id").value(template.id)
         name("name").value(template.name)
@@ -650,14 +724,14 @@ object LocalDataArchiveCodec {
             name("exerciseId").value(exercise.exerciseId)
             name("notes").value(exercise.notes)
             name("prescription")
-            writePrescription(exercise.prescription)
+            writePrescription(exercise.prescription, format)
             endObject()
         }
         endArray()
         endObject()
     }
 
-    private fun JsonWriter.writeSession(session: WorkoutSession) {
+    private fun JsonWriter.writeSession(session: WorkoutSession, format: ArchiveFields) {
         beginObject()
         name("id").value(session.id)
         name("name").value(session.name)
@@ -671,22 +745,26 @@ object LocalDataArchiveCodec {
         session.sourceTemplateId?.let { name("sourceTemplateId").value(it) }
         name("focusMuscles").writeStringArray(session.focusMuscles)
         name("notes").value(session.notes)
+        if (format.supportsContext) session.conditionContext?.let { name("conditionContext").value(ConditionContextCodec.encodeSession(it)) }
         name("exercises")
         beginArray()
-        session.exercises.forEach { exercise -> writeSessionExercise(exercise) }
+        session.exercises.forEach { exercise -> writeSessionExercise(exercise, format) }
         endArray()
         endObject()
     }
 
-    private fun JsonWriter.writeSessionExercise(exercise: WorkoutExercise) {
+    private fun JsonWriter.writeSessionExercise(exercise: WorkoutExercise, format: ArchiveFields) {
         beginObject()
         name("id").value(exercise.id)
         name("sessionId").value(exercise.sessionId)
         name("exerciseId").value(exercise.exerciseId)
         name("orderIndex").value(exercise.orderIndex.toLong())
         name("notes").value(exercise.notes)
+        if (exercise.isLegacyMobility) {
+            if (format.version == 7) name("role").value("MOBILITY") else name("legacyMobility").value(true)
+        }
         name("prescription")
-        writePrescription(exercise.prescription)
+        writePrescription(exercise.prescription, format)
         name("sets")
         beginArray()
         exercise.sets.forEach { set -> writeSet(set) }
@@ -694,7 +772,7 @@ object LocalDataArchiveCodec {
         endObject()
     }
 
-    private fun JsonWriter.writePrescription(prescription: ExercisePrescription) {
+    private fun JsonWriter.writePrescription(prescription: ExercisePrescription, format: ArchiveFields) {
         beginObject()
         name("exerciseType").value(prescription.exerciseType.name)
         name("targetSets").value(prescription.targetSets.toLong())
@@ -715,6 +793,8 @@ object LocalDataArchiveCodec {
         }
         prescription.restClass?.let { name("restClass").value(it.name) }
         prescription.restTargetSource?.let { name("restTargetSource").value(it.name) }
+        if (format.supportsReportsAndHolds) prescription.holdSeconds?.let { name("holdSeconds").value(it.toLong()) }
+        if (format.supportsContext) name("purpose").value(prescription.purpose.name)
         endObject()
     }
 
@@ -834,7 +914,7 @@ object LocalDataArchiveCodec {
      * The declared version gates which fields are legal, so a document claiming version 1
      * while carrying version 2 content is refused rather than quietly upgraded.
      */
-    private fun JsonReader.readSnapshot(archiveVersion: Int): LocalDataSnapshot {
+    private fun JsonReader.readSnapshot(format: ArchiveFields): LocalDataSnapshot {
         var profile: UserProfile? = null
         var templates: List<WorkoutTemplate>? = null
         var sessions: List<WorkoutSession>? = null
@@ -842,34 +922,39 @@ object LocalDataArchiveCodec {
         var deloadPreferences: DeloadPreferences? = null
         var programEnrollment: ProgramEnrollment? = null
         var programAssociations: List<ProgramAssociation> = emptyList()
+        var pending: List<PendingConditionReassessment> = emptyList()
 
         readObject("archive data") { field ->
             when (field) {
-                "profile" -> profile = readProfile(archiveVersion)
+                "profile" -> profile = readProfile(format)
                 "templates" -> templates =
-                    readArray("templates", MAX_TEMPLATES) { readTemplate(archiveVersion) }
-                "sessions" -> sessions = readArray("sessions", MAX_SESSIONS) { readSession() }
+                    readArray("templates", MAX_TEMPLATES) { readTemplate(format) }
+                "sessions" -> sessions = readArray("sessions", MAX_SESSIONS) { readSession(format) }
                 "recommendations" -> {
-                    if (archiveVersion < RECOMMENDATION_RECORDS_ARCHIVE_VERSION) {
+                    if (format.version < RECOMMENDATION_RECORDS_ARCHIVE_VERSION) {
                         malformed(
-                            "A version $archiveVersion archive cannot carry recommendation records."
+                            "A version ${format.version} archive cannot carry recommendation records."
                         )
                     }
                     recommendations = readArray(
                         "recommendations",
                         MAX_RECOMMENDATION_RECORDS
-                    ) { readRecommendation(archiveVersion) }
+                    ) { readRecommendation(format) }
                 }
                 "programEnrollment" -> {
-                    if (archiveVersion < 5) malformed("Program enrollment requires archive version 5.")
+                    if (format.version < 5) malformed("Program enrollment requires archive version 5.")
                     programEnrollment = readProgramEnrollment()
                 }
                 "programAssociations" -> {
-                    if (archiveVersion < 5) malformed("Program associations require archive version 5.")
+                    if (format.version < 5) malformed("Program associations require archive version 5.")
                     programAssociations = readArray("programAssociations", MAX_SESSIONS) { readProgramAssociation() }
                 }
+                "pendingConditionReassessments" -> {
+                    format.observe(ArchiveV7Layout.CONDITION_CONTEXT)
+                    pending = readArray("pendingConditionReassessments", MAX_COLLECTION_ITEMS) { readPendingConditionReassessment() }
+                }
                 "deloadPreferences" -> {
-                    if (archiveVersion < 4) malformed("Deload preferences require archive version 4.")
+                    if (format.version < 4) malformed("Deload preferences require archive version 4.")
                     deloadPreferences = readDeloadPreferences()
                 }
 
@@ -884,8 +969,32 @@ object LocalDataArchiveCodec {
             recommendationRecords = recommendations.orEmpty(),
             deloadPreferences = deloadPreferences,
             programEnrollment = programEnrollment,
-            programAssociations = programAssociations
+            programAssociations = programAssociations,
+            pendingConditionReassessments = pending
         )
+    }
+
+    private fun JsonReader.readPendingConditionReassessment(): PendingConditionReassessment {
+        var profileId: String? = null; var conditionId: String? = null; var exerciseId: String? = null
+        var eventId: String? = null; var identity: String? = null; var policy: Int? = null
+        var timestamp: Long? = null; var sourceSetId: String? = null
+        readObject("pending condition reassessment") { field ->
+            when (field) {
+                "profileId" -> profileId = nextBoundedString(field, MAX_ID_LENGTH)
+                "conditionId" -> conditionId = nextBoundedString(field, MAX_ID_LENGTH)
+                "exerciseId" -> exerciseId = nextBoundedString(field, MAX_ID_LENGTH)
+                "eventId" -> eventId = nextBoundedString(field, MAX_ID_LENGTH)
+                "stoppedContextIdentity" -> identity = nextBoundedString(field, 64)
+                "responsePolicyVersion" -> policy = nextBoundedInt(field, 1, Int.MAX_VALUE)
+                "stoppedAtTimestamp" -> timestamp = nextTimestamp(field)
+                "sourceSetId" -> sourceSetId = nextBoundedString(field, MAX_ID_LENGTH)
+                else -> malformed("A pending reassessment has an unsupported field.")
+            }
+        }
+        return PendingConditionReassessment(profileId ?: malformed("Missing profileId."),
+            conditionId ?: malformed("Missing conditionId."), exerciseId ?: malformed("Missing exerciseId."),
+            eventId ?: malformed("Missing eventId."), identity ?: malformed("Missing stoppedContextIdentity."),
+            policy ?: malformed("Missing responsePolicyVersion."), timestamp ?: malformed("Missing stoppedAtTimestamp."), sourceSetId)
     }
 
     private fun JsonReader.readDeloadPreferences(): DeloadPreferences {
@@ -966,7 +1075,7 @@ object LocalDataArchiveCodec {
         return nextBoundedLong(label, 0, maximum)
     }
 
-    private fun JsonReader.readRecommendation(archiveVersion: Int): RecommendationRecord {
+    private fun JsonReader.readRecommendation(format: ArchiveFields): RecommendationRecord {
         var sessionId: String? = null
         var validatorVersion: String? = null
         var durationEstimatorVersion: String? = null
@@ -986,6 +1095,7 @@ object LocalDataArchiveCodec {
         var doseAccounting: List<MuscleDoseAccounting>? = null
         var recordedAtEpochMillis: Long? = null
         var programAssociationDigest: String? = null
+        var conditionContextDigest: String? = null
 
         readObject("recommendation") { field ->
             when (field) {
@@ -1057,8 +1167,12 @@ object LocalDataArchiveCodec {
                     )
 
                 "programAssociationDigest" -> {
-                    if (archiveVersion < 5) malformed("Program membership requires archive version 5.")
+                    if (format.version < 5) malformed("Program membership requires archive version 5.")
                     programAssociationDigest = nextProgramString("programAssociationDigest", 64)
+                }
+                "conditionContextDigest" -> {
+                    format.observe(ArchiveV7Layout.CONDITION_CONTEXT)
+                    conditionContextDigest = nextBoundedString(field, 64)
                 }
                 "recordedAtEpochMillis" ->
                     recordedAtEpochMillis = nextTimestamp("recommendation.recordedAtEpochMillis")
@@ -1101,7 +1215,8 @@ object LocalDataArchiveCodec {
                     ?: malformed("The archived recommendation is missing 'doseAccounting'."),
                 recordedAtEpochMillis = recordedAtEpochMillis
                     ?: malformed("The archived recommendation is missing 'recordedAtEpochMillis'."),
-                programAssociationDigest = programAssociationDigest
+                programAssociationDigest = programAssociationDigest,
+                conditionContextDigest = conditionContextDigest
             )
         } catch (error: LocalDataArchiveException) {
             throw error
@@ -1112,7 +1227,7 @@ object LocalDataArchiveCodec {
         }
     }
 
-    private fun JsonReader.readProfile(archiveVersion: Int): UserProfile {
+    private fun JsonReader.readProfile(format: ArchiveFields): UserProfile {
         var id: String? = null
         var revision: Long? = null
         var name: String? = null
@@ -1132,6 +1247,9 @@ object LocalDataArchiveCodec {
         var themePreference: ThemePreference? = null
         var gender: ProfileGender? = null
         var illustrationPreference: IllustrationPreference? = null
+        var activeConditions: List<SelectedCondition> = emptyList()
+        var reportedConditions: List<String> = emptyList()
+        var unresolvedRaw: String? = null
 
         readObject("profile") { field ->
             when (field) {
@@ -1218,14 +1336,29 @@ object LocalDataArchiveCodec {
                     movementCapabilities = MovementCapabilities.from(answers)
                 }
 
+                "reportedConditions" -> {
+                    format.observe(ArchiveV7Layout.REPORTED_CONDITIONS)
+                    reportedConditions = readArray("profile.reportedConditions", MAX_COLLECTION_ITEMS) {
+                        nextBoundedString("profile.reportedConditions", MAX_ID_LENGTH)
+                    }
+                    requireNoDuplicates(reportedConditions, "profile.reportedConditions")
+                }
+                "activeConditions" -> {
+                    format.observe(ArchiveV7Layout.CONDITION_CONTEXT)
+                    activeConditions = ConditionContextCodec.decodeSelections(nextBoundedString(field, 1_048_576))
+                }
+                "unresolvedTrainingConstraintsRaw" -> {
+                    format.observe(ArchiveV7Layout.CONDITION_CONTEXT)
+                    unresolvedRaw = nextBoundedString(field, 8_192)
+                }
                 "themePreference" ->
                     themePreference = nextEnum<ThemePreference>("profile.themePreference")
                 "gender" -> {
-                    if (archiveVersion < 3) malformed("Gender requires archive version 3.")
+                    if (format.version < 3) malformed("Gender requires archive version 3.")
                     gender = nextEnum<ProfileGender>("profile.gender")
                 }
                 "illustrationPreference" -> {
-                    if (archiveVersion < 3) malformed("Illustration preferences require archive version 3.")
+                    if (format.version < 3) malformed("Illustration preferences require archive version 3.")
                     illustrationPreference = nextEnum<IllustrationPreference>("profile.illustrationPreference")
                 }
                 else -> malformed("The archived profile has an unsupported field.")
@@ -1275,14 +1408,17 @@ object LocalDataArchiveCodec {
                 ?: malformed("The archived profile is missing 'movementCapabilities'."),
             themePreference = themePreference
                 ?: malformed("The archived profile is missing 'themePreference'."),
-            gender = gender ?: if (archiveVersion < 3) ProfileGender.UNSPECIFIED
+            gender = gender ?: if (format.version < 3) ProfileGender.UNSPECIFIED
                 else malformed("The archived profile is missing 'gender'."),
-            illustrationPreference = illustrationPreference ?: if (archiveVersion < 3) IllustrationPreference.AUTOMATIC
-                else malformed("The archived profile is missing 'illustrationPreference'.")
+            illustrationPreference = illustrationPreference ?: if (format.version < 3) IllustrationPreference.AUTOMATIC
+                else malformed("The archived profile is missing 'illustrationPreference'."),
+            reportedConditions = reportedConditions.toSet(),
+            activeConditions = activeConditions,
+            unresolvedTrainingConstraintsRaw = unresolvedRaw
         )
     }
 
-    private fun JsonReader.readTemplate(archiveVersion: Int): WorkoutTemplate {
+    private fun JsonReader.readTemplate(format: ArchiveFields): WorkoutTemplate {
         var weightUnit: WeightUnit? = null
         var id: String? = null
         var name: String? = null
@@ -1299,7 +1435,7 @@ object LocalDataArchiveCodec {
                 "createdAtTimestamp" -> createdAt = nextTimestamp("template.createdAtTimestamp")
                 "updatedAtTimestamp" -> updatedAt = nextTimestamp("template.updatedAtTimestamp")
                 "weightUnit" -> {
-                    if (archiveVersion < TEMPLATE_UNIT_ARCHIVE_VERSION) {
+                    if (format.version < TEMPLATE_UNIT_ARCHIVE_VERSION) {
                         malformed(
                             "Template weight units require archive version " +
                                 "$TEMPLATE_UNIT_ARCHIVE_VERSION."
@@ -1309,7 +1445,7 @@ object LocalDataArchiveCodec {
                 }
                 "exercises" -> exercises =
                     readArray("template.exercises", MAX_EXERCISES_PER_SESSION) {
-                        readPlannedExercise("template.exercises")
+                        readPlannedExercise("template.exercises", format)
                     }
 
                 else -> malformed("An archived template has an unsupported field.")
@@ -1331,7 +1467,7 @@ object LocalDataArchiveCodec {
         )
     }
 
-    private fun JsonReader.readPlannedExercise(label: String): PlannedExercise {
+    private fun JsonReader.readPlannedExercise(label: String, format: ArchiveFields): PlannedExercise {
         var exerciseId: String? = null
         var notes: String? = null
         var prescription: ExercisePrescription? = null
@@ -1340,7 +1476,7 @@ object LocalDataArchiveCodec {
             when (field) {
                 "exerciseId" -> exerciseId = nextBoundedString("$label.exerciseId", MAX_ID_LENGTH)
                 "notes" -> notes = nextBoundedString("$label.notes", MAX_NOTES_LENGTH)
-                "prescription" -> prescription = readPrescription("$label.prescription")
+                "prescription" -> prescription = readPrescription("$label.prescription", format)
                 else -> malformed("An archived template exercise has an unsupported field.")
             }
         }
@@ -1353,7 +1489,7 @@ object LocalDataArchiveCodec {
         )
     }
 
-    private fun JsonReader.readSession(): WorkoutSession {
+    private fun JsonReader.readSession(format: ArchiveFields): WorkoutSession {
         var id: String? = null
         var name: String? = null
         var startedAt: Long? = null
@@ -1367,6 +1503,7 @@ object LocalDataArchiveCodec {
         var focusMuscles: List<String>? = null
         var notes: String? = null
         var exercises: List<WorkoutExercise>? = null
+        var conditionContext: SessionConditionContext? = null
 
         readObject("session") { field ->
             when (field) {
@@ -1395,10 +1532,14 @@ object LocalDataArchiveCodec {
                         nextBoundedString("session.focusMuscles", MAX_SHORT_TEXT_LENGTH)
                     }
 
+                "conditionContext" -> {
+                    format.observe(ArchiveV7Layout.CONDITION_CONTEXT)
+                    conditionContext = ConditionContextCodec.decodeSession(nextBoundedString(field, 1_048_576))
+                }
                 "notes" -> notes = nextBoundedString("session.notes", MAX_NOTES_LENGTH)
                 "exercises" -> exercises =
                     readArray("session.exercises", MAX_EXERCISES_PER_SESSION) {
-                        readSessionExercise()
+                        readSessionExercise(format)
                     }
 
                 else -> malformed("An archived session has an unsupported field.")
@@ -1424,11 +1565,12 @@ object LocalDataArchiveCodec {
             focusMuscles = focusMuscles
                 ?: malformed("An archived session is missing 'focusMuscles'."),
             exercises = exercises ?: malformed("An archived session is missing 'exercises'."),
-            notes = notes ?: malformed("An archived session is missing 'notes'.")
+            notes = notes ?: malformed("An archived session is missing 'notes'."),
+            conditionContext = conditionContext
         )
     }
 
-    private fun JsonReader.readSessionExercise(): WorkoutExercise {
+    private fun JsonReader.readSessionExercise(format: ArchiveFields): WorkoutExercise {
         var id: String? = null
         var sessionId: String? = null
         var exerciseId: String? = null
@@ -1436,6 +1578,7 @@ object LocalDataArchiveCodec {
         var notes: String? = null
         var prescription: ExercisePrescription? = null
         var sets: List<WorkoutSet>? = null
+        var legacyMobility = false
 
         readObject("session exercise") { field ->
             when (field) {
@@ -1450,7 +1593,20 @@ object LocalDataArchiveCodec {
                     orderIndex = nextBoundedInt("session exercise.orderIndex", 0, MAX_ORDER_INDEX)
 
                 "notes" -> notes = nextBoundedString("session exercise.notes", MAX_NOTES_LENGTH)
-                "prescription" -> prescription = readPrescription("session exercise.prescription")
+                "role" -> {
+                    if (format.version != 7) malformed("An exercise role belongs only to the reported-conditions version 7 format.")
+                    format.observe(ArchiveV7Layout.REPORTED_CONDITIONS)
+                    legacyMobility = when (nextBoundedString(field, MAX_SHORT_TEXT_LENGTH)) {
+                        "MAIN" -> false
+                        "MOBILITY" -> true
+                        else -> invalidValue("Unknown archived session exercise role.")
+                    }
+                }
+                "legacyMobility" -> {
+                    if (format.version < 8) malformed("Legacy mobility provenance requires archive version 8.")
+                    legacyMobility = nextBoolean()
+                }
+                "prescription" -> prescription = readPrescription("session exercise.prescription", format, allowHold = true)
                 "sets" -> sets = readArray("session exercise.sets", MAX_SETS_PER_EXERCISE) {
                     readSet()
                 }
@@ -1459,6 +1615,7 @@ object LocalDataArchiveCodec {
             }
         }
 
+        val dose = prescription ?: malformed("An archived session exercise is missing 'prescription'.")
         return WorkoutExercise(
             id = id ?: malformed("An archived session exercise is missing 'id'."),
             sessionId = sessionId
@@ -1467,14 +1624,14 @@ object LocalDataArchiveCodec {
                 ?: malformed("An archived session exercise is missing 'exerciseId'."),
             orderIndex = orderIndex
                 ?: malformed("An archived session exercise is missing 'orderIndex'."),
-            prescription = prescription
-                ?: malformed("An archived session exercise is missing 'prescription'."),
+            prescription = if (format.version == 7 && legacyMobility) dose.copy(purpose = PrescriptionPurpose.SUPPORTIVE) else dose,
+            isLegacyMobility = legacyMobility,
             notes = notes ?: malformed("An archived session exercise is missing 'notes'."),
             sets = sets ?: malformed("An archived session exercise is missing 'sets'.")
         )
     }
 
-    private fun JsonReader.readPrescription(label: String): ExercisePrescription {
+    private fun JsonReader.readPrescription(label: String, format: ArchiveFields, allowHold: Boolean = false): ExercisePrescription {
         var exerciseType: ExerciseType? = null
         var targetSets: Int? = null
         var repMin: Int? = null
@@ -1488,6 +1645,8 @@ object LocalDataArchiveCodec {
         var effortMaxRir: Int? = null
         var restClass: RestClass? = null
         var restTargetSource: RestTargetSource? = null
+        var purpose: PrescriptionPurpose = PrescriptionPurpose.ORDINARY
+        var holdSeconds: Int? = null
 
         readObject(label) { field ->
             when (field) {
@@ -1514,6 +1673,15 @@ object LocalDataArchiveCodec {
                 "effortMinRir" -> effortMinRir = nextBoundedInt("$label.effortMinRir", 0, 1_000)
                 "effortMaxRir" -> effortMaxRir = nextBoundedInt("$label.effortMaxRir", 0, 1_000)
                 "restClass" -> restClass = nextEnum<RestClass>("$label.restClass")
+                "holdSeconds" -> {
+                    if (!allowHold) malformed("A template prescription cannot carry a hold.")
+                    format.observe(ArchiveV7Layout.REPORTED_CONDITIONS)
+                    holdSeconds = nextBoundedInt("$label.holdSeconds", 1, MAX_DURATION_SECONDS)
+                }
+                "purpose" -> {
+                    format.observe(ArchiveV7Layout.CONDITION_CONTEXT)
+                    purpose = nextEnum<PrescriptionPurpose>("$label.purpose")
+                }
                 "restTargetSource" ->
                     restTargetSource = nextEnum<RestTargetSource>("$label.restTargetSource")
                 else -> malformed("An archived prescription has an unsupported field.")
@@ -1546,7 +1714,9 @@ object LocalDataArchiveCodec {
                 EffortTarget(minRir = min, maxRir = effortMaxRir!!)
             },
             restClass = restClass,
-            restTargetSource = restTargetSource
+            restTargetSource = restTargetSource,
+            purpose = purpose,
+            holdSeconds = holdSeconds
         )
     }
 
@@ -1672,7 +1842,7 @@ object LocalDataArchiveCodec {
      * These run on both sides. On export they stop an unreadable document from being
      * written; on import they run before any transaction opens.
      */
-    private fun validateSnapshot(snapshot: LocalDataSnapshot) {
+    private fun validateSnapshot(snapshot: LocalDataSnapshot, format: ArchiveFields) {
         if (snapshot.sessions.size > MAX_SESSIONS) {
             tooLarge("The archive contains more than $MAX_SESSIONS sessions.")
         }
@@ -1689,7 +1859,7 @@ object LocalDataArchiveCodec {
         ) {
             inconsistent("The archive holds workouts or templates but no profile.")
         }
-        snapshot.profile?.let(::validateProfile)
+        snapshot.profile?.let { validateProfile(it, format) }
         snapshot.templates.forEach(::validateTemplate)
 
         requireUniqueIds(snapshot.templates.map(WorkoutTemplate::id), "template")
@@ -1745,6 +1915,24 @@ object LocalDataArchiveCodec {
             inconsistent("The archive uses the same identifier for an exercise and a set.")
         }
 
+        snapshot.profile?.let { profile ->
+            ConditionContextCodec.decodeSelections(ConditionContextCodec.encodeSelections(profile.activeConditions))
+            profile.unresolvedTrainingConstraintsRaw?.let { raw ->
+                if (raw.length > 8_192 || decodeTrainingConstraints(raw).let { it.second == null || it.first != profile.trainingConstraints })
+                    invalidValue("Unresolved training restrictions cannot be represented losslessly.")
+            }
+        }
+        snapshot.sessions.forEach { session ->
+            session.conditionContext?.let { ConditionContextCodec.decodeSession(ConditionContextCodec.encodeSession(it)) }
+        }
+        if (snapshot.pendingConditionReassessments.size > MAX_COLLECTION_ITEMS) tooLarge("Too many condition reassessments.")
+        val pendingKeys = mutableSetOf<Triple<String, String, String>>()
+        snapshot.pendingConditionReassessments.forEach { marker ->
+            requireIdentifier(marker.profileId, "pending.profileId")
+            marker.sourceSetId?.let { requireIdentifier(it, "pending.sourceSetId") }
+            requireInRange(marker.stoppedAtTimestamp, "pending.stoppedAtTimestamp", 1L, MAX_TIMESTAMP_MILLIS)
+            if (!pendingKeys.add(Triple(marker.profileId, marker.conditionId, marker.exerciseId))) inconsistent("Duplicate pending reassessment.")
+        }
         validateRecommendations(snapshot)
         validateDeloadPreferences(snapshot)
         validateArchivedPrograms(snapshot)
@@ -1788,6 +1976,9 @@ object LocalDataArchiveCodec {
             requireIdentifier(record.sessionId, "recommendation.sessionId")
             val session = sessionsById[record.sessionId]
                 ?: inconsistent("An archived recommendation references an unknown session.")
+            if (record.conditionContextDigest != session.conditionContext?.canonicalDigest) {
+                inconsistent("Condition context and recommendation digest do not match.")
+            }
             if (!seen.add(record.sessionId)) {
                 inconsistent("The archive holds more than one recommendation for a session.")
             }
@@ -1839,7 +2030,7 @@ object LocalDataArchiveCodec {
         }
     }
 
-    private fun validateProfile(profile: UserProfile) {
+    private fun validateProfile(profile: UserProfile, format: ArchiveFields) {
         if (profile.id != UserProfile.DEFAULT_PROFILE_ID) {
             inconsistent("The archived profile does not use the identifier this app reads.")
         }
@@ -1864,6 +2055,14 @@ object LocalDataArchiveCodec {
             UserProfile.MAX_PERSISTED_BREAK_WEEKS
         )
 
+        requireCollection(profile.reportedConditions, "profile.reportedConditions")
+        profile.reportedConditions.forEach { id ->
+            if (format.version == 7) {
+                requireJoinableText(id, "profile.reportedConditions", MAX_ID_LENGTH)
+            } else {
+                requireIdentifier(id, "profile.reportedConditions")
+            }
+        }
         requireCollection(profile.availableEquipment, "profile.availableEquipment")
         profile.availableEquipment.forEach { equipment ->
             requireJoinableText(equipment, "profile.availableEquipment", MAX_SHORT_TEXT_LENGTH)
@@ -1910,6 +2109,7 @@ object LocalDataArchiveCodec {
         }
         template.exercises.forEach { exercise ->
             requireIdentifier(exercise.exerciseId, "template.exercises.exerciseId")
+            if (exercise.prescription.holdSeconds != null) invalidValue("A template prescription cannot carry a hold.")
         }
     }
 

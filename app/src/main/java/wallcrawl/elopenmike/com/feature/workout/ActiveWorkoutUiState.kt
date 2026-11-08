@@ -9,6 +9,8 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.WorkoutSummary
 import wallcrawl.elopenmike.com.core.ui.state.Refusal
 
+data class PainExclusionOffer(val exerciseId: String, val saving: Boolean, val saveFailed: Boolean)
+
 /** What finishing the workout right now would mean. */
 sealed interface FinishDecision {
     /** Every planned set is resolved: finishing needs no further confirmation. */
@@ -55,7 +57,8 @@ sealed interface ActiveWorkoutUiState {
         val isConfirmingDiscard: Boolean = false,
         val programAssociation: wallcrawl.elopenmike.com.core.model.ProgramHistoryAssociation? = null,
         @StringRes val programReadError: Int? = null,
-        val programFinishUnsupported: Boolean = false
+        val programFinishUnsupported: Boolean = false,
+        val painExclusionOffer: PainExclusionOffer? = null
     ) : ActiveWorkoutUiState {
         val currentExercise: WorkoutExercise?
             get() = session.exercises.getOrNull(currentExerciseIndex)
@@ -71,7 +74,8 @@ sealed interface ActiveWorkoutUiState {
     }
 
     data class Completed(
-        val summary: WorkoutSummary
+        val summary: WorkoutSummary,
+        val advancedPartialProgram: Boolean = false
     ) : ActiveWorkoutUiState
 
     data class Error(@StringRes val messageRes: Int) : ActiveWorkoutUiState

@@ -329,38 +329,6 @@ class AccessibilityPatternsTest {
         assertThat(selected.single().config.getOrNull(SemanticsProperties.Text).orEmpty().joinToString { it.text }).contains(current)
     }
 
-    /** Complete with a half-typed number does nothing, so it says why, and says it again if asked again. */
-    @Test fun refusedCompletionIsAnnouncedOncePerAttempt() {
-        var completions = 0
-        compose.setContent {
-            WallCrawlTheme {
-                GymFloorSetRow(
-                    set = WorkoutSet(id = "s", workoutExerciseId = "e", setNumber = 1, exerciseType = ExerciseType.WEIGHT_REPS, targetReps = 8, targetWeight = 40.0),
-                    weightUnit = "kg", previousSet = null, onValuesChanged = {},
-                    onCompletionChanged = { _, _ -> completions++ }, onSkipSet = {}, onRecordEffort = { _, _ -> }, onRecordFeltManageable = {}
-                )
-            }
-        }
-        compose.onNodeWithContentDescription("Load (kg) for set 1").performTextReplacement("47.")
-        compose.onNodeWithContentDescription("Set 1 complete").performClick()
-        compose.waitForIdle()
-        val announced = hasText("Not changed: finish the number above") and SemanticsMatcher.keyIsDefined(SemanticsProperties.LiveRegion)
-        // The field keeps its own words; the refusal does not repeat them.
-        assertThat(compose.onAllNodesWithText("Enter a complete number", useUnmergedTree = true).fetchSemanticsNodes()).hasSize(1)
-        val first = compose.onNode(announced).fetchSemanticsNode().id
-        compose.onNodeWithContentDescription("Set 1 complete").performClick()
-        compose.waitForIdle()
-        assertThat(compose.onNode(announced).fetchSemanticsNode().id).isNotEqualTo(first)
-        assertThat(completions).isEqualTo(0)
-
-        // An edit answers the refusal: passing through another half-typed value stays silent.
-        val load = compose.onNodeWithContentDescription("Load (kg) for set 1")
-        load.performTextReplacement("47.5")
-        load.performTextReplacement("50.")
-        compose.waitForIdle()
-        compose.onNode(announced).assertDoesNotExist()
-    }
-
     /** Rows stack by text size for the width: normal sizes keep the row exactly as it was. */
     @Test fun stackingRowStacksByTextSizeForTheWidth() {
         var scale by mutableStateOf(1f)
@@ -441,25 +409,6 @@ class AccessibilityPatternsTest {
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "squat"))
     }
 
-    /** Unticking a completed set with a half-typed number is refused too, and the words fit that direction. */
-    @Test fun refusedUncompleteKeepsTheSetAndSaysNothingChanged() {
-        var changes = 0
-        compose.setContent {
-            WallCrawlTheme {
-                GymFloorSetRow(
-                    set = WorkoutSet(id = "s", workoutExerciseId = "e", setNumber = 1, exerciseType = ExerciseType.WEIGHT_REPS, targetReps = 8, targetWeight = 40.0, isCompleted = true),
-                    weightUnit = "kg", previousSet = null, onValuesChanged = {},
-                    onCompletionChanged = { _, _ -> changes++ }, onSkipSet = {}, onRecordEffort = { _, _ -> }, onRecordFeltManageable = {}
-                )
-            }
-        }
-        compose.onNodeWithContentDescription("Load (kg) for set 1").performTextReplacement("47.")
-        compose.onNode(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Checkbox) and hasClickAction()).performClick()
-        compose.waitForIdle()
-        compose.onNode(hasText("Not changed: finish the number above") and SemanticsMatcher.keyIsDefined(SemanticsProperties.LiveRegion)).assertExists()
-        assertThat(changes).isEqualTo(0)
-    }
-
     /** A menu anchor says it opens a list and whether the list is open. */
     @Test fun breakRangeAnchorIsADropdownThatSaysWhetherItIsOpen() {
         compose.setContent { WallCrawlTheme { BreakDurationSelector(weeks = 0, onSelectWeeks = {}) } }
@@ -485,8 +434,8 @@ class AccessibilityPatternsTest {
             WallCrawlTheme {
                 GymFloorSetRow(
                     set = WorkoutSet(id = "s", workoutExerciseId = "e", setNumber = 1, exerciseType = ExerciseType.WEIGHT_REPS, targetReps = 8, targetWeight = 40.0),
-                    weightUnit = "kg", previousSet = null, onValuesChanged = {},
-                    onCompletionChanged = { _, _ -> }, onSkipSet = {}, onRecordEffort = { _, _ -> }, onRecordFeltManageable = {}
+                    weightUnit = "kg", previousSet = null,
+                    onCompletionChanged = { _, _ -> }, onSkipSet = { _, _ -> }, onRecordEffort = { _, _ -> }, onRecordFeltManageable = {}
                 )
             }
         }
@@ -527,30 +476,24 @@ class AccessibilityPatternsTest {
         compose.onNodeWithTag("next").assertWidthIsEqualTo(280.dp)
     }
 
-    /** A description replaces what a field speaks, so the logger's fields still state their value and error. */
-    @Test fun aSetFieldSpeaksItsValueAndItsError() {
+    /** A description replaces what the value box speaks, so it states the value itself, and follows each step. */
+    @Test fun aSetValueSpeaksItsValueAsItSteps() {
         compose.setContent {
             WallCrawlTheme {
                 GymFloorSetRow(
                     set = WorkoutSet(id = "s", workoutExerciseId = "e", setNumber = 1, exerciseType = ExerciseType.WEIGHT_REPS, targetReps = 8, targetWeight = 40.0),
-                    weightUnit = "kg", previousSet = null, onValuesChanged = {},
-                    onCompletionChanged = { _, _ -> }, onSkipSet = {}, onRecordEffort = { _, _ -> }, onRecordFeltManageable = {}
+                    weightUnit = "kg", previousSet = null,
+                    onCompletionChanged = { _, _ -> }, onSkipSet = { _, _ -> }, onRecordEffort = { _, _ -> }, onRecordFeltManageable = {}
                 )
             }
         }
         val load = compose.onNodeWithContentDescription("Load (kg) for set 1")
         load.assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "40"))
-        load.performTextReplacement("47.")
+        compose.onNodeWithContentDescription("Increase Load for set 1").performClick()
         compose.waitForIdle()
-        load.assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "47."))
-        load.assert(SemanticsMatcher.expectValue(SemanticsProperties.Error, context.getString(R.string.set_field_incomplete_number)))
-        // The message is shown under the field too; that copy is hidden from TalkBack so it is read once.
-        val shown = compose.onAllNodesWithText(context.getString(R.string.set_field_incomplete_number), useUnmergedTree = true).fetchSemanticsNodes()
-        assertThat(shown).hasSize(1)
-        assertThat(SemanticsProperties.HideFromAccessibility in shown.single().config).isTrue()
-        load.performTextReplacement("47.5")
-        compose.waitForIdle()
-        load.assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Error))
+        val stepped = load.fetchSemanticsNode().config[SemanticsProperties.StateDescription]
+        assertThat(stepped).isNotEqualTo("40")
+        assertThat(stepped.toDouble()).isGreaterThan(40.0)
     }
 
     /** The last stop reason stays reachable, so the ones above it can be scrolled to. A dialog is its own window: see Limitations for its font scale. */
@@ -563,8 +506,8 @@ class AccessibilityPatternsTest {
                 WallCrawlTheme {
                     GymFloorSetRow(
                         set = WorkoutSet(id = "s", workoutExerciseId = "e", setNumber = 1, exerciseType = ExerciseType.WEIGHT_REPS, targetReps = 8, targetWeight = 40.0),
-                        weightUnit = "kg", previousSet = null, onValuesChanged = {},
-                        onCompletionChanged = { _, _ -> }, onSkipSet = {}, onRecordEffort = { _, _ -> }, onRecordFeltManageable = {}
+                        weightUnit = "kg", previousSet = null,
+                        onCompletionChanged = { _, _ -> }, onSkipSet = { _, _ -> }, onRecordEffort = { _, _ -> }, onRecordFeltManageable = {}
                     )
                 }
             }

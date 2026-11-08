@@ -54,6 +54,23 @@ class WorkoutHistoryRepositoryTest {
 
     @After fun tearDown() { db.close() }
 
+    @Test fun purposeSeparatesRecordBaselinesAndPreviousComparisonsWithoutHidingSupportHistory() = runBlocking<Unit> {
+        insert("ordinary", 100, 200, weight = 20.0)
+        insert("support", 300, 400, weight = 90.0)
+        insert("viewed", 500, 600, weight = 30.0)
+        insert("support-viewed", 700, 800, weight = 100.0)
+        db.openHelper.writableDatabase.execSQL("UPDATE workout_exercises SET purpose = 'SUPPORTIVE' WHERE sessionId IN ('support', 'support-viewed')")
+        val ordinary = requireNotNull(history().observeDetail("viewed").first())
+        assertThat(ordinary.previousPerformances.getValue("viewed-exercise").session.id).isEqualTo("ordinary")
+        assertThat(db.workoutSessionDao().getPersonalRecordBaselines("viewed").single().maxWeight).isEqualTo(20.0)
+        val support = requireNotNull(history().observeDetail("support-viewed").first())
+        assertThat(support.session.exercises.single().prescription.purpose.name).isEqualTo("SUPPORTIVE")
+        assertThat(support.previousPerformances.getValue("support-viewed-exercise").session.id).isEqualTo("support")
+        db.openHelper.writableDatabase.execSQL("UPDATE workout_exercises SET purpose = 'UNKNOWN' WHERE sessionId = 'support'")
+        assertThrows(IllegalArgumentException::class.java) { runBlocking { db.workoutSessionDao().getPersonalRecordBaselines("viewed") } }
+        assertThrows(IllegalArgumentException::class.java) { runBlocking { history().observeDetail("viewed").first() } }
+    }
+
     @Test fun ordinaryComparisonsDoNotLoad60000UnrelatedPriorSets() = runBlocking {
         assertLargePriorComparisons(citations = false)
     }

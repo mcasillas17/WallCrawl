@@ -76,6 +76,11 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.ui.semantics.stateDescription
+import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
+import wallcrawl.elopenmike.com.core.model.PlannedExercise
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
+import wallcrawl.elopenmike.com.core.ui.components.ConditionRefusal
+import wallcrawl.elopenmike.com.core.ui.components.localized
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
@@ -88,6 +93,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.util.Locale
+import java.text.NumberFormat
 import androidx.compose.material3.MaterialTheme
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.Exercise
@@ -100,7 +106,6 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlOutlinedButton
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.MIN_TOUCH_TARGET
-import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.shortLabelRes
@@ -177,8 +182,6 @@ fun TemplateEditorScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        WebBackgroundPattern()
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -206,8 +209,7 @@ fun TemplateEditorScreen(
                         }
                     ),
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Black,
+                    style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.a11yHeading().weight(1f)
                 )
             }
@@ -267,6 +269,39 @@ fun TemplateEditorScreen(
                     )
                 }
 
+                when (val planning = state.conditionPlanning) {
+                    is ConditionPlanningResult.Blocked -> item { ConditionRefusal(planning.reasons) }
+                    is ConditionPlanningResult.Ready -> if (planning.supportive.isNotEmpty()) item {
+                        WallCrawlCard {
+                            Text(stringResource(R.string.editor_support_help), color = MaterialTheme.colorScheme.onSurface)
+                            planning.supportive.forEach { support ->
+                                // Read-only reviewed doses must not inherit editable-field rounding.
+                                val numbers = NumberFormat.getNumberInstance(locale).apply {
+                                    maximumFractionDigits = 340
+                                    isGroupingUsed = false
+                                }
+                                val draft = TemplateExerciseDraft.from(PlannedExercise(support.exerciseId, support.prescription), locale).copy(
+                                    load = support.prescription.targetWeight?.let(numbers::format).orEmpty(),
+                                    assistance = support.prescription.targetAssistanceWeight?.let(numbers::format).orEmpty(),
+                                    distanceMeters = support.prescription.targetDistanceMeters?.let(numbers::format).orEmpty())
+                                Text(state.exerciseFor(draft)?.let { LocalExerciseVocabulary.current.exerciseName(it) }
+                                    ?: support.exerciseId, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.condition_supportive), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(draftSummary(draft, stringResource(WeightUnit.KG.shortLabelRes)), color = MaterialTheme.colorScheme.onSurface)
+                                planning.context.appliedRules.filter { it.exerciseIdentity.exerciseId == support.exerciseId &&
+                                    it.purpose == PrescriptionPurpose.SUPPORTIVE }.map { it.explanation }.distinct().forEach {
+                                    Text(it.localized(), color = MaterialTheme.colorScheme.onSurface)
+                                }
+                            }
+                            WallCrawlOutlinedButton(text = stringResource(R.string.editor_add_support),
+                                onClick = viewModel::adoptConditionSupport,
+                                enabled = !state.isSaving && !state.isCheckingSupport && !state.hasLoadFailed && !state.isDraftIncomplete,
+                                modifier = Modifier.fillMaxWidth())
+                        }
+                    }
+                    ConditionPlanningResult.NotApplicable -> Unit
+                }
+
                 if (state.showsRoundedStoredValues) {
                     item {
                         WallCrawlCard {
@@ -300,13 +335,6 @@ fun TemplateEditorScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Column {
-                            Text(
-                                text = stringResource(R.string.editor_exercises_eyebrow),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 1.sp,
-                                color = MaterialTheme.colorScheme.tertiary
-                            )
                             Text(
                                 text = pluralStringResource(
                                     R.plurals.count_exercises_selected,
@@ -545,7 +573,7 @@ private fun DiscardConfirmation(
         },
         confirmButton = {
             TextButton(onClick = onDiscard) {
-                Text(stringResource(R.string.editor_discard_confirm), color = MaterialTheme.colorScheme.tertiary)
+                Text(stringResource(R.string.editor_discard_confirm), color = MaterialTheme.colorScheme.error)
             }
         },
         dismissButton = {
@@ -561,11 +589,11 @@ private fun DiscardConfirmation(
 private fun EditorErrorCard(messageRes: Int) {
     WallCrawlCard(borderColor = CrimsonRedPrimary) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.Warning, null, tint = CrimsonRedLight, modifier = Modifier.size(16.dp))
+            Icon(Icons.Default.Warning, null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(16.dp))
             Spacer(Modifier.size(8.dp))
             Text(
                 stringResource(messageRes),
-                color = MaterialTheme.colorScheme.tertiary,
+                color = MaterialTheme.colorScheme.error,
                 fontSize = 13.sp,
                 // Announced: a refused save leaves the tapped button unchanged.
                 modifier = Modifier.a11yAnnounced()
@@ -627,6 +655,10 @@ private fun SelectedExerciseCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp
                 )
+                if (draft.purpose == PrescriptionPurpose.SUPPORTIVE) {
+                    Text(stringResource(R.string.condition_supportive),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+                }
                 if (isMissingFromCatalog) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
@@ -893,10 +925,9 @@ internal fun PrescriptionSheetContent(
 
         Text(
             text = stringResource(R.string.editor_effort_eyebrow),
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp,
-            color = MaterialTheme.colorScheme.tertiary
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.a11yHeading()
         )
         Text(
             text = stringResource(R.string.editor_effort_help),
@@ -1088,13 +1119,6 @@ private fun ExercisePickerSheet(
             ) {
                 Column {
                     Text(
-                        text = stringResource(R.string.picker_eyebrow),
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                        color = MaterialTheme.colorScheme.tertiary
-                    )
-                    Text(
                         modifier = Modifier.a11yHeading(),
                         text = stringResource(R.string.picker_title),
                         fontSize = 20.sp,
@@ -1211,7 +1235,7 @@ private fun ExercisePickerSheet(
                                 Icon(
                                     imageVector = Icons.Default.Add,
                                     contentDescription = stringResource(R.string.picker_add_content_description),
-                                    tint = CrimsonRedLight,
+                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }

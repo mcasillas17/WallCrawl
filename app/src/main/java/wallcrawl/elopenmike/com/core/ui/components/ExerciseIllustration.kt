@@ -69,20 +69,24 @@ fun ExerciseIllustration(
     visualProvider: ExerciseVisualProvider,
     modifier: Modifier = Modifier,
     height: Int = 180,
+    thumbnail: Boolean = false,
     animationsEnabled: Boolean = rememberAnimationsEnabled()
 ) {
     val variant = LocalIllustrationVariant.current
     // Above the key: pausing holds across the exercises of a workout.
     var playing by rememberSaveable { mutableStateOf(animationsEnabled) }
     // The setting can change while the app is away, and a saved or running state must not outlast that.
-    // Only the change stops it: Play, chosen with animations off, survives leaving and re-entering composition.
+    // Only a change moves it: Play, chosen with animations off, survives leaving and re-entering composition,
+    // and turning animations back on starts the loop again.
     var lastEnabled by rememberSaveable { mutableStateOf(animationsEnabled) }
     LaunchedEffect(animationsEnabled) {
-        if (lastEnabled && !animationsEnabled) playing = false
+        if (lastEnabled != animationsEnabled) playing = animationsEnabled
         lastEnabled = animationsEnabled
     }
     key(exercise?.id, visualProvider, variant) {
-        ExerciseIllustrationContent(exercise, visualProvider, variant, modifier, height, playing) { playing = !playing }
+        ExerciseIllustrationContent(exercise, visualProvider, variant, modifier, height, thumbnail, animationsEnabled, playing) {
+            playing = !playing
+        }
     }
 }
 
@@ -93,6 +97,8 @@ private fun ExerciseIllustrationContent(
     variant: IllustrationVariant,
     modifier: Modifier,
     height: Int,
+    thumbnail: Boolean,
+    animationsEnabled: Boolean,
     playing: Boolean,
     onTogglePlaying: () -> Unit
 ) {
@@ -108,8 +114,10 @@ private fun ExerciseIllustrationContent(
     var sequenceIndex by remember(frames) { mutableIntStateOf(0) }
     val frameIndex = playbackSequence.getOrElse(sequenceIndex) { 0 }
 
-    LaunchedEffect(frames, playing) {
-        if (!playing) return@LaunchedEffect
+    // Turning animations off returns to the first frame; a reader's own Pause keeps where it stopped.
+    LaunchedEffect(animationsEnabled) { if (!animationsEnabled) sequenceIndex = 0 }
+    LaunchedEffect(frames, playing, thumbnail) {
+        if (!playing || thumbnail) return@LaunchedEffect
         while (playbackSequence.size > 1 && currentCoroutineContext().isActive) {
             delay(FRAME_DURATION_MILLIS)
             sequenceIndex = (sequenceIndex + 1) % playbackSequence.size
@@ -148,11 +156,13 @@ private fun ExerciseIllustrationContent(
                     useOriginals = true
                 }
             )
+        } else if (height <= 100 || thumbnail) {
+            Icon(Icons.Default.FitnessCenter, stringResource(R.string.illustration_unavailable), tint = TextSecondary)
         } else {
             IllustrationPlaceholder(exercise = exercise)
         }
 
-        if (frames.size > 1) {
+        if (frames.size > 1 && height > 100 && !thumbnail) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)

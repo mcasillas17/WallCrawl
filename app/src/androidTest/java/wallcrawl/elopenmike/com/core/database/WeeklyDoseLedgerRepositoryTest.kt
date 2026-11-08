@@ -80,6 +80,40 @@ class WeeklyDoseLedgerRepositoryTest {
     }
 
     @Test
+    fun purposeChangeInvalidatesPersistedCacheAcrossDiskReopen(): Unit = runBlocking {
+        val name = "task13-ledger-${java.util.UUID.randomUUID()}.db"
+        database.close()
+        database = Room.databaseBuilder(context, WallCrawlDatabase::class.java, name).build()
+        try {
+            insertCompletedSession("ordinary", MONDAY_UTC_MILLIS, "synthetic-bench-press", 1)
+            insertCompletedSession("support", MONDAY_UTC_MILLIS + 1, "synthetic-bench-press", 1)
+            assertThat(repository().currentWeeklyLedger(PROFILE_ID, zone).creditedWorkSets).isEqualTo(2)
+            val before = checkNotNull(cachedRow()).sourceFingerprint
+            database.openHelper.writableDatabase.execSQL("UPDATE workout_exercises SET purpose = 'SUPPORTIVE' WHERE sessionId = 'support'")
+            database.close()
+            database = Room.databaseBuilder(context, WallCrawlDatabase::class.java, name).build()
+            assertThat(repository().currentWeeklyLedger(PROFILE_ID, zone).creditedWorkSets).isEqualTo(1)
+            assertThat(checkNotNull(cachedRow()).sourceFingerprint).isNotEqualTo(before)
+            database.close()
+            database = Room.databaseBuilder(context, WallCrawlDatabase::class.java, name).build()
+            assertThat(repository().currentWeeklyLedger(PROFILE_ID, zone).creditedWorkSets).isEqualTo(1)
+            val current = checkNotNull(cachedRow())
+            database.weeklyDoseLedgerStateDao().deleteCachedLedgersForProfile(PROFILE_ID)
+            database.weeklyDoseLedgerStateDao().upsertCachedLedger(current.copy(policyVersion = "PRIMARY_ONLY_V1",
+                ledgerPayload = current.ledgerPayload.replace("primary\tChest\t1", "primary\tChest\t99")))
+            database.close()
+            database = Room.databaseBuilder(context, WallCrawlDatabase::class.java, name).build()
+            assertThat(repository().currentWeeklyLedger(PROFILE_ID, zone).creditedWorkSets).isEqualTo(1)
+            assertThat(checkNotNull(cachedRow()).policyVersion).isEqualTo("ORDINARY_PRIMARY_ONLY_V2")
+            database.openHelper.writableDatabase.execSQL("UPDATE workout_exercises SET purpose = 'UNKNOWN' WHERE sessionId = 'support'")
+            assertThrows(IllegalArgumentException::class.java) { runBlocking { repository().currentWeeklyLedger(PROFILE_ID, zone) } }
+        } finally {
+            database.close()
+            context.deleteDatabase(name)
+        }
+    }
+
+    @Test
     fun theWholeWeekIsReconstructedWithNoLimitOnHowManySessionsItContains(): Unit = runBlocking {
         repeat(12) { index ->
             insertCompletedSession(
@@ -94,7 +128,7 @@ class WeeklyDoseLedgerRepositoryTest {
 
         assertThat(ledger.directPrimarySets).containsExactly("Chest", 24)
         assertThat(ledger.secondaryInvolvement).containsExactly("Triceps", 24)
-        assertThat(ledger.policyVersion).isEqualTo(LedgerPolicyVersion.PRIMARY_ONLY_V1)
+        assertThat(ledger.policyVersion).isEqualTo(LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2)
         assertThat(ledger.timeZoneId).isEqualTo("UTC")
         assertThat(ledger.catalogVersion).isEqualTo(SYNTHETIC_CATALOG_COMMIT)
         assertThat(ledger.reviewPolicyVersion).isEqualTo(1)
@@ -208,7 +242,7 @@ class WeeklyDoseLedgerRepositoryTest {
         assertThat(second).isEqualTo(first)
         assertThat(cachedRow()).isEqualTo(cachedAfterFirst)
         assertThat(checkNotNull(cachedAfterFirst).policyVersion)
-            .isEqualTo(LedgerPolicyVersion.PRIMARY_ONLY_V1.name)
+            .isEqualTo(LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2.name)
         assertThat(cachedAfterFirst.timeZoneId).isEqualTo("UTC")
         assertThat(cachedAfterFirst.sourceFingerprint).matches("[0-9a-f]{64}")
     }
@@ -513,7 +547,7 @@ class WeeklyDoseLedgerRepositoryTest {
                 .containing(currentInstant, ZoneId.of(timeZoneId))
                 .startEpochDay,
             timeZoneId = timeZoneId,
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1.name
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2.name
         )
 
     private fun ledgerRowCount(): Int =

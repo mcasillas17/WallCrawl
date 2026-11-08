@@ -42,7 +42,7 @@ jobs:
           java-version: "17"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
         with:
           cache-provider: basic
 
@@ -70,7 +70,7 @@ jobs:
 
       # Tag publication is gated on the same real Room migration and runtime schema
       # validation that protects pull requests and main. A JVM-only release build cannot
-      # prove that an installed database survives the complete schema-10 chain.
+      # prove that every supported starting schema reaches the current version.
       # AGP's connected-test runner can log an APK install failure and still exit 0
       # without a report, so a leg passes only if its report recorded at least one test.
       - name: Run instrumentation tests
@@ -118,12 +118,17 @@ jobs:
           java-version: "17"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
         with:
           cache-provider: basic
 
       - name: Run release tooling tests
         run: python3 -m unittest discover -s tools/release -p 'test_*.py' -v
+
+      - name: Check Room schema artifacts
+        run: |
+          python3 -m unittest discover -s tools/room -p 'test_*.py' -v
+          python3 tools/room/check_schemas.py
 
       - name: Derive release version
         id: version

@@ -45,7 +45,7 @@ class LocalDataArchiveTemplateUnitTest {
     }
 
     @Test fun earlierFormatsNeverCarryATemplateUnitAndKeepTheirChecksums() {
-        for (version in 1 until LocalDataArchiveFormat.ARCHIVE_VERSION) {
+        for (version in 1 until 6) {
             val original = archive(version)
             val encoded = bytes(original)
             val restored = LocalDataArchiveCodec.read(ByteArrayInputStream(encoded))
@@ -65,6 +65,12 @@ class LocalDataArchiveTemplateUnitTest {
             }
             assertEquals(ArchiveRejection.MALFORMED, error.rejection)
         }
+    }
+
+    @Test fun versionSixRecordedUnitKeepsOriginalCanonicalChecksum() {
+        val encoded = bytes(archive(version = 6, unit = WeightUnit.KG)).decodeToString()
+        val checksum = Regex("\"value\":\"([a-f0-9]{64})\"").find(encoded)!!.groupValues[1]
+        assertEquals("d325b2a6fdf65734da87615e6057e27f80ca6eed0b08a029870ca858de54e080", checksum)
     }
 
     @Test fun unknownUnitNamesAndDuplicatesAreRejectedBeforeTheChecksum() {

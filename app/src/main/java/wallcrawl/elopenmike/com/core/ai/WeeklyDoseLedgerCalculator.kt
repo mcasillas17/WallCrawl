@@ -4,6 +4,7 @@ import java.util.EnumMap
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.LedgerOmissionReason
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.ReviewedExerciseMetadata
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
@@ -38,6 +39,7 @@ class WeeklyDoseLedgerCalculator {
 
         sessions.forEach { session ->
             session.exercises.forEach { exercise ->
+                if (exercise.prescription.purpose != PrescriptionPurpose.ORDINARY) return@forEach
                 val workSets = exercise.sets.count(WorkoutSet::isCreditableWorkSet)
                 if (workSets == 0) return@forEach
 
@@ -57,7 +59,7 @@ class WeeklyDoseLedgerCalculator {
                         )
                         // Secondary involvement is analytics only. It accumulates in its own
                         // map and is never merged into directPrimarySets, so no amount of
-                        // secondary work can inflate weekly dose under PRIMARY_ONLY_V1.
+                        // secondary work can inflate weekly dose under ORDINARY_PRIMARY_ONLY_V2.
                         attribution.reviewed.descriptiveSecondaryMuscles
                             .filterNot { it == attribution.reviewed.directPrimaryMuscle }
                             .forEach { secondaryMuscle ->
@@ -101,6 +103,11 @@ class WeeklyDoseLedgerCalculator {
             "A week cannot contain more than $MAX_SESSIONS_PER_WEEK completed sessions."
         }
 
+        require(sessions.sumOf { session -> session.exercises.sumOf { exercise ->
+            exercise.sets.count { it.isCreditableWorkSet }
+        } } <= MAX_WORK_SETS_PER_WEEK) {
+            "A week cannot contain more than $MAX_WORK_SETS_PER_WEEK completed work sets."
+        }
         val seenSessionIds = mutableSetOf<String>()
         val seenExerciseInstanceIds = mutableSetOf<String>()
         sessions.forEach { session ->
@@ -217,7 +224,7 @@ private fun WorkoutExercise.resolveAttribution(
 }
 
 /**
- * True when this set is one completed work set under `PRIMARY_ONLY_V1`.
+ * True for a completed non-warm-up set; instance purpose is checked separately.
  *
  * The classification is exhaustive on purpose: adding a set type later fails compilation
  * here, so a new type has to be credited or excluded deliberately rather than by default.

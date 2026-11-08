@@ -34,7 +34,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
  * worst case for a `String` in a parcel), an exercise id at the archive's id limit (longer
  * than any the catalog parser accepts, so an over-estimate; a recovered draft can keep an id
  * a later catalog dropped, as an unresolved row), UUID-length row ids, a loaded rest
- * provenance on every row, and the open sheet holding one more full encoded row, the
+ * provenance and the longer SUPPORTIVE purpose on every row, and the open sheet holding one more full encoded row, the
  * worst-case record again under row 0's identity, as an open sheet edits an existing row.
  */
 @RunWith(AndroidJUnit4::class)
@@ -82,6 +82,7 @@ class TemplateEditorSavedStateSizeTest {
         val worstRow = TemplateExerciseDraft(
             exerciseId = "x".repeat(wallcrawl.elopenmike.com.core.backup.LocalDataArchiveLimits.MAX_ID_LENGTH),
             exerciseType = squat.type,
+            purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE,
             sets = "12345678901", repMin = "12345678901", repMax = "12345678901",
             load = "12345678901", assistance = "12345678901", durationSeconds = "12345678901",
             distanceMeters = "12345678901", restSeconds = "12345678901",
@@ -147,6 +148,6 @@ class TemplateEditorSavedStateSizeTest {
 
         /** A quarter of the 1 MiB binder transaction buffer the whole task's state shares. */
         const val BUDGET_BYTES = 256 * 1024
-        const val DOCUMENTED_BYTES = 152_112
+        const val DOCUMENTED_BYTES = 153_132
     }
 }

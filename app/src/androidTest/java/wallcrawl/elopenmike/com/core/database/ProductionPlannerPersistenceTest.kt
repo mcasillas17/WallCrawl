@@ -66,6 +66,34 @@ import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
  */
 @RunWith(AndroidJUnit4::class)
 class ProductionPlannerPersistenceTest {
+    @Test fun generatedStartChecksPersistedRestrictionsWhenIncomingProfileOmitsTheMarker() = runBlocking {
+        profileRepository.saveProfile(onboardedProfile())
+        val profile = profileRepository.getProfileOnce()
+        val proposal = validatedPlan(contextBuilder.build())
+        database.openHelper.writableDatabase.execSQL("UPDATE user_profiles SET trainingConstraintsJson='FUTURE_CONSTRAINT'")
+        org.junit.Assert.assertThrows(IllegalStateException::class.java) {
+            runBlocking { workoutRepository.startWorkoutFromGenerated(proposal.workout, DISPLAY_NAME,
+                DISPLAY_RATIONALE, profile, proposal.snapshot) }
+        }
+        assertThat(database.workoutSessionDao().getActiveSession()).isNull()
+        assertThat(database.localDataBackupDao().selectRecommendationRecords()).isEmpty()
+    }
+    @Test fun generatedStartRefusesUnvalidatedConditionProvenance() = runBlocking {
+        profileRepository.saveProfile(onboardedProfile())
+        val profile = profileRepository.getProfileOnce()
+        val proposal = validatedPlan(contextBuilder.build())
+        val selections = listOf("z-future-condition", "a-future-condition").map {
+            wallcrawl.elopenmike.com.core.model.SelectedCondition(it, 1, emptyMap())
+        }
+        val frozen = wallcrawl.elopenmike.com.core.model.SessionConditionContext(1, 1,
+            selections, selections.associate { it.conditionId to "v1" }, emptyList(), emptyList(),
+            listOf("z-event", "a-event"))
+        val failure = runCatching { workoutRepository.startWorkoutFromGenerated(proposal.workout, DISPLAY_NAME,
+            DISPLAY_RATIONALE, profile, proposal.snapshot.copy(conditionContext = frozen)) }.exceptionOrNull()
+        assertThat(failure).isInstanceOf(wallcrawl.elopenmike.com.core.model.ConditionStartRefused::class.java)
+        assertThat(database.workoutSessionDao().getActiveSession()).isNull()
+        assertThat(database.localDataBackupDao().selectRecommendationRecords()).isEmpty()
+    }
     @Test
     fun corruptRecommendationFailsHistoryAndExportBeforeOpeningTheDestination() = runBlocking<Unit> {
         profileRepository.saveProfile(onboardedProfile())
@@ -304,7 +332,7 @@ class ProductionPlannerPersistenceTest {
         assertThat(storedRecord.sessionId).isEqualTo(session.id)
         assertThat(storedRecord.reviewedPathEnabled).isTrue()
         assertThat(storedRecord.trainingPolicyVersion).isEqualTo("STATE_BASED_DOSE_EFFORT_REST_V2")
-        assertThat(storedRecord.ledgerPolicyVersion).isEqualTo("PRIMARY_ONLY_V1")
+        assertThat(storedRecord.ledgerPolicyVersion).isEqualTo("ORDINARY_PRIMARY_ONLY_V2")
         assertThat(storedRecord.adaptationState).isNotNull()
         assertThat(storedRows.sets).hasSize(accepted.workout.exercises.sumOf { it.targetSets })
 
@@ -536,6 +564,6 @@ class ProductionPlannerPersistenceTest {
 
         /** What a user types into the load field; the planner prescribes none here. */
         const val USER_ENTERED_LOAD = 20.0
-        val CACHED_LEDGER_POLICY = LedgerPolicyVersion.PRIMARY_ONLY_V1
+        val CACHED_LEDGER_POLICY = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2
     }
 }

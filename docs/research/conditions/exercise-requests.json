@@ -1,0 +1,2366 @@
+{
+  "schemaVersion": 1,
+  "requests": [
+    {
+      "id": "supine-wall-supported-piriformis-stretch",
+      "conditionIds": [
+        "piriformis-syndrome"
+      ],
+      "name": "Supine wall-supported ankle-over-knee stretch",
+      "execution": "Supine; unaffected foot against wall, affected ankle above opposite kneecap; arms alongside, palms down; slight piriformis stretch. Hip angles are not quantified.",
+      "equipment": [
+        "wall",
+        "floor space"
+      ],
+      "movementRequirements": [
+        "floor transfer",
+        "hip and knee flexion",
+        "affected hip external rotation"
+      ],
+      "artwork": "New supplement identity; retained PNG sequence showing wall foot placement and crossed ankle. No artwork generated in Task 1.",
+      "reason": "No exact named variant among the 302 catalog entries; do not equate butterfly-stretch or hamstring-stretch. Source text and publisher Figure2 independently inspected: supine, supporting foot at wall and opposite ankle above knee. Numerical angles and individualized suitability remain unresolved.",
+      "sourceRefs": [
+        {
+          "conditionId": "piriformis-syndrome",
+          "sourceId": "shamsi-2024",
+          "location": "Methods > Interventions > Stretching exercise; Figure 2 (PDF pp. 3–4)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "piriformis-home-stretch-variant-unresolved",
+      "conditionIds": [
+        "piriformis-syndrome"
+      ],
+      "name": "Home static piriformis self-stretch, variant unresolved",
+      "execution": "Study identifies a static self-stretch but does not specify body position in its accessible exercise-protocol paragraph; do not substitute another paper’s variant.",
+      "equipment": [
+        "not reported"
+      ],
+      "movementRequirements": [
+        "not reported"
+      ],
+      "artwork": "Blocked until exact variant is established; request study exercise handout before retaining any new PNGs.",
+      "reason": "Exercise image handout mentioned but not attached to retrieved seven-page paper. No exact catalog mapping justified.",
+      "sourceRefs": [
+        {
+          "conditionId": "piriformis-syndrome",
+          "sourceId": "guner-2023",
+          "location": "Materials and methods > Exercise protocol (PDF p. 2)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "piriformis-bilateral-bridge-variant-unresolved",
+      "conditionIds": [
+        "piriformis-syndrome"
+      ],
+      "name": "Bilateral bridging, protocol details unresolved",
+      "execution": "Bilateral bridging is named; precise foot placement, range, load and repetitions are not reported.",
+      "equipment": [
+        "not reported"
+      ],
+      "movementRequirements": [
+        "bilateral bridge; further details not reported"
+      ],
+      "artwork": "Compare the study handout with catalog glute-bridge frames before deciding whether new PNGs are required.",
+      "reason": "Catalog glute-bridge is a possible match, not a verified exact study variant; no independent component effect established.",
+      "sourceRefs": [
+        {
+          "conditionId": "piriformis-syndrome",
+          "sourceId": "guner-2023",
+          "location": "Materials and methods > Exercise protocol (PDF p. 2)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "piriformis-feet-together-flexed-hip-knee-raise",
+      "conditionIds": [
+        "piriformis-syndrome"
+      ],
+      "name": "Feet-together side leg raise with hip/knee flexion",
+      "execution": "Side leg raise with hip and knee flexed 45 degrees and feet together; do not infer the unreported range or repetitions.",
+      "equipment": [
+        "not reported"
+      ],
+      "movementRequirements": [
+        "hip and knee flexion 45 degrees",
+        "feet together"
+      ],
+      "artwork": "Resolve the study handout and motion before commissioning a retained PNG sequence; distinguish from straight-leg side-lying abduction.",
+      "reason": "Existing side-lying-hip-abduction and side-lying-leg-raise records do not verify this flexed-knee feet-together protocol.",
+      "sourceRefs": [
+        {
+          "conditionId": "piriformis-syndrome",
+          "sourceId": "guner-2023",
+          "location": "Materials and methods > Exercise protocol (PDF p. 2)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-oa-unilateral-machine-knee-extension",
+      "conditionIds": [
+        "knee-osteoarthritis"
+      ],
+      "name": "Unilateral machine knee extension, study variant unresolved",
+      "execution": "One leg at a time on knee-extension machine in the START multi-exercise program. Chair/axis/cuff setup and exact ROM must be resolved before identity acceptance.",
+      "equipment": [
+        "knee-extension machine"
+      ],
+      "movementRequirements": [
+        "seated supported knee extension",
+        "unilateral loading"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog leg-extension is weight_reps/Machine and describes thigh support, but does not encode unilateral execution, START setup/range or clinical dosage; no direct equivalence asserted.",
+      "sourceRefs": [
+        {
+          "conditionId": "knee-osteoarthritis",
+          "sourceId": "start-2021",
+          "location": "Methods > Interventions > Strength Training"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-pfp-hip-abduction-variant-unresolved",
+      "conditionIds": [
+        "patellofemoral-pain"
+      ],
+      "name": "PFP hip-abduction execution unresolved",
+      "execution": "The program names side-lying and standing hip abduction; indexed supplemental HE-2 (printed p.9) describes side-lying abduction followed by standing progression after four weeks, not interchangeable alternatives. Optional elastic-band loading and stable-pelvis/no-compensation cues are reported. Complete protocol and figure inspection, exact support and resistance implementation remain unresolved.",
+      "equipment": [
+        "equipment unresolved: home hip-exercise program"
+      ],
+      "movementRequirements": [
+        "hip abduction",
+        "side-lying-to-standing progression; complete support/resistance implementation unresolved"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog side-lying-hip-abduction is bodyweight_reps/Bodyweight. Indexed supplemental HE-2 describes a side-lying-to-standing progression after four weeks, not free choice of position. Full-protocol/figure verification and exact support/resistance matching remain unresolved; no exact catalog equivalence or clinical clearance asserted.",
+      "sourceRefs": [
+        {
+          "conditionId": "patellofemoral-pain",
+          "sourceId": "pfp-equivalence-2023",
+          "location": "Abstract > Methods and Results; indexed partial Methods > Interventions"
+        },
+        {
+          "conditionId": "patellofemoral-pain",
+          "sourceId": "pfp-equivalence-2023",
+          "location": "Indexed supplement > HE-2 SIDELYING HIP ABDUCTION, progression (printed p.9)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-pt-single-leg-isometric-machine-extension",
+      "conditionIds": [
+        "patellar-tendinopathy"
+      ],
+      "name": "Single-leg machine knee-extension isometric at60-degree flexion",
+      "execution": "Single-leg leg-extension machine alternative in Breda stage 1; static quadriceps at60-degree knee flexion, 5x45 s at70%MVC in the study. Calibration/rest details and exact machine setup unresolved.",
+      "equipment": [
+        "knee-extension machine",
+        "method to establish MVC unresolved"
+      ],
+      "movementRequirements": [
+        "seated supported unilateral quadriceps isometric",
+        "fixed60-degree knee flexion"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog leg-extension is dynamic weight_reps with repetition progression; it does not encode MVC-calibrated sustained force or fixed knee angle. A duration/force clinical identity is required; not equivalent to generic5-second progression.",
+      "sourceRefs": [
+        {
+          "conditionId": "patellar-tendinopathy",
+          "sourceId": "breda-2021",
+          "location": "Methods > Interventions; Figure 2"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-pt-single-leg-isotonic-machine-press",
+      "conditionIds": [
+        "patellar-tendinopathy"
+      ],
+      "name": "Single-leg machine leg press, staged range and load",
+      "execution": "Breda stage 2 single-leg leg-press alternative; 4x15 at10–60-degree knee flexion progressing4x6 with almost full extension to90degrees and greater load. Exact station/load calibration must be reviewed.",
+      "equipment": [
+        "single-leg-capable leg-press machine"
+      ],
+      "movementRequirements": [
+        "supported unilateral leg press",
+        "clinically staged knee-flexion range"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog leg-press has generic Machine/weight_reps and routine progression; no documented equivalence to this unilateral stage-specific range. Preserve alternative to knee-extension machine, not a mandatory sequence between machines.",
+      "sourceRefs": [
+        {
+          "conditionId": "patellar-tendinopathy",
+          "sourceId": "breda-2021",
+          "location": "Methods > Interventions; Figure 2"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-itbs-modified-side-plank-clamshell",
+      "conditionIds": [
+        "iliotibial-band-related-lateral-knee-pain"
+      ],
+      "name": "Modified side plank with band-resisted clamshell",
+      "execution": "McKayTable 2 week 3/4 progression combines modified side plank and clamshell; 10repsx2 with light band then15x3. Knee support, band placement and precise stance require source-image/protocol review.",
+      "equipment": [
+        "floor mat",
+        "light resistance band"
+      ],
+      "movementRequirements": [
+        "side support with modified plank",
+        "hip external rotation with flexed knee",
+        "supported knee loading"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog side-plank supports forearm/foot and duration; banded-clamshell is separate dynamic hip work. Neither metadata establishes this combined supported-knee variant; retain separate PNG identity if commissioned.",
+      "sourceRefs": [
+        {
+          "conditionId": "iliotibial-band-related-lateral-knee-pain",
+          "sourceId": "mckay-2020",
+          "location": "Methods > Interventions; Tables 1–3"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-itbs-side-lying-hip-abduction",
+      "conditionIds": [
+        "iliotibial-band-related-lateral-knee-pain"
+      ],
+      "name": "Side-lying hip abduction, ITBS trial execution unresolved",
+      "execution": "McKayTable 2 starts side-lying hip abduction10x2 week 1 to10x3 week 2, then progresses to standing band walks. Exact leg/hip alignment and range not specified in table.",
+      "equipment": [
+        "floor space"
+      ],
+      "movementRequirements": [
+        "side-lying position",
+        "hip abduction"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog side-lying-hip-abduction has matching position/type but no study-specific execution verification. No PNG-frame review was performed, so direct equivalence remains unresolved.",
+      "sourceRefs": [
+        {
+          "conditionId": "iliotibial-band-related-lateral-knee-pain",
+          "sourceId": "mckay-2020",
+          "location": "Methods > Interventions; Tables 1–3"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-meniscus-incremental-exercise-variant-unresolved",
+      "conditionIds": [
+        "degenerative-meniscal-lesion"
+      ],
+      "name": "Degenerative-meniscus incremental exercise variant unresolved",
+      "execution": "ESCAPE main report identifies an incremental exercise program, 16 physical-therapy sessions of 30 minutes over 8 weeks. Exact individual tasks, equipment, range and load remain unresolved until the supplement is inspected.",
+      "equipment": [
+        "equipment unresolved: physical therapy program"
+      ],
+      "movementRequirements": [
+        "incremental exercise; exact movement tasks unresolved",
+        "knee/hip strength and coordination may be relevant under consensus; no exact task verified"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog squats/leg-press cannot be matched to an unspecified incremental program. Preserve a protocol-retrieval candidate, not a new generic exercise or approval of every squat.",
+      "sourceRefs": [
+        {
+          "conditionId": "degenerative-meniscal-lesion",
+          "sourceId": "escape-2022",
+          "location": "Methods > Treatment procedures > Physical therapy"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-acl-open-chain-extension-90-45",
+      "conditionIds": [
+        "anterior-cruciate-ligament-injury"
+      ],
+      "name": "Post ACLR open-chain knee extension, 90–45-degree clinical variant",
+      "execution": "Open-chain knee extension in90–45-degree knee-flexion arc from week 4 inAspetar recommendation, subject to graft/procedure and surgical instructions. Machine versus alternative resistance and dose require clinician specification.",
+      "equipment": [
+        "knee-extension resistance apparatus; exact setup unresolved"
+      ],
+      "movementRequirements": [
+        "controlled open-chain knee extension",
+        "restricted knee-flexion arc90–45degrees"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Catalog leg-extension is generic weight_reps/Machine with repetition/load progression and does not encode postoperative stage, arc or surgical instructions. Separate clinical variation request prevents routine progression from substituting for rehabilitation.",
+      "sourceRefs": [
+        {
+          "conditionId": "anterior-cruciate-ligament-injury",
+          "sourceId": "aspetar-2023",
+          "location": "Box 3 > Exercise initiation recommendations"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-mcl-quadriceps-set-unresolved",
+      "conditionIds": [
+        "medial-collateral-ligament-sprain"
+      ],
+      "name": "MCL early quadriceps setting, clinical execution unresolved",
+      "execution": "Reiderabstract names quadriceps setting after initial pool/whirlpool ROM in hinged valgus-support brace. Position, hold, force, repetition count and supervised progression remain unresolved.",
+      "equipment": [
+        "hinged knee brace in source clinical protocol",
+        "exercise support/setup unresolved"
+      ],
+      "movementRequirements": [
+        "isometric quadriceps activation",
+        "knee position unresolved"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "No equivalence to a dynamic catalog leg extension or genericduration progression. Abstract establishes exercise name but does not support an executable dose; full protocol required before commissioned PNG.",
+      "sourceRefs": [
+        {
+          "conditionId": "medial-collateral-ligament-sprain",
+          "sourceId": "reider-1994",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "knee-mcl-leg-raise-unresolved",
+      "conditionIds": [
+        "medial-collateral-ligament-sprain"
+      ],
+      "name": "MCL early leg raise, clinical execution unresolved",
+      "execution": "Reiderabstract names leg raises after initial ROM; precise straight-leg position, brace use duringexercise, load anddose not available. Verify full protocol before fixing execution.",
+      "equipment": [
+        "hinged knee brace in source clinical protocol",
+        "floor/plinth setup unresolved"
+      ],
+      "movementRequirements": [
+        "hip flexion leg raise; precise knee position unresolved"
+      ],
+      "artwork": "Candidate only. Requires exact execution review and, if commissioned, a separately attributed retained PNG sequence. No PNG generated or upstream artwork equivalence claimed.",
+      "reason": "Do not equate unspecified clinical legraise to abdominal straight-legraise or other hip exercise. Preserve exact known/unknown details and seek primary protocol; no artwork provenance fabricated.",
+      "sourceRefs": [
+        {
+          "conditionId": "medial-collateral-ligament-sprain",
+          "sourceId": "reider-1994",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "phoenix-bilateral-floor-bridge",
+      "conditionIds": [
+        "hip-osteoarthritis"
+      ],
+      "name": "PHOENIX bilateral floor bridge",
+      "execution": "Firm surface, knees bent, feet flat hip-width; raise hips/buttocks, hold 2–3 seconds, slowly lower.",
+      "equipment": [
+        "floor mat"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Hip extension"
+      ],
+      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
+      "reason": "Catalog glute-bridge names floor bridging but does not verify the study hold/stance from inspected metadata; exact-match review remains open.",
+      "sourceRefs": [
+        {
+          "conditionId": "hip-osteoarthritis",
+          "sourceId": "hall-2022-protocol",
+          "location": "Additional file 5 > Bridging; Functional / Knee Extensors"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "phoenix-chair-sit-to-stand",
+      "conditionIds": [
+        "hip-osteoarthritis"
+      ],
+      "name": "PHOENIX chair sit-to-stand",
+      "execution": "Chair, feet shoulder-width; slowly stand fully and sit slowly; base variant without added band, load or lower chair.",
+      "equipment": [
+        "chair"
+      ],
+      "movementRequirements": [
+        "Hip/knee flexion-extension",
+        "Standing balance"
+      ],
+      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
+      "reason": "Catalog squat variants do not verify this chair execution; inspect artwork and source supplement before reuse.",
+      "sourceRefs": [
+        {
+          "conditionId": "hip-osteoarthritis",
+          "sourceId": "hall-2022-protocol",
+          "location": "Additional file 5 > Bridging; Functional / Knee Extensors"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "leap-supine-static-hip-abduction",
+      "conditionIds": [
+        "gluteal-tendinopathy"
+      ],
+      "name": "LEAP supine static hip abduction",
+      "execution": "Supine static abduction at light effort, avoiding compressive hip adduction; resistance setup/angles need source figure verification.",
+      "equipment": [
+        "Resistance setup unresolved",
+        "floor mat"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Isometric hip abduction"
+      ],
+      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
+      "reason": "Existing dynamic abduction entries do not verify static supine execution; preserve missing setup rather than invent a band or angle.",
+      "sourceRefs": [
+        {
+          "conditionId": "gluteal-tendinopathy",
+          "sourceId": "mellor-2016-protocol",
+          "location": "Methods > Interventions; Table 3"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "leap-offset-bridge",
+      "conditionIds": [
+        "gluteal-tendinopathy"
+      ],
+      "name": "LEAP offset bridge",
+      "execution": "Figure 1: supine bridge, knees bent, both feet supported in a staggered position, one closer to the buttocks. No numeric angles or precise side-load distribution inferred.",
+      "equipment": [
+        "floor mat"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Asymmetric hip extension"
+      ],
+      "artwork": "Create and retain a new PNG sequence only after clinical/execution review; Figure 1 was inspected as evidence and is not app artwork or reusable provenance.",
+      "reason": "Visually verified staggered-foot execution differs from catalog single-leg bridge with one leg lifted. Clinical/catalog match review remains open.",
+      "sourceRefs": [
+        {
+          "conditionId": "gluteal-tendinopathy",
+          "sourceId": "mellor-2016-protocol",
+          "location": "Methods > Interventions; Table 3"
+        },
+        {
+          "conditionId": "gluteal-tendinopathy",
+          "sourceId": "mellor-2016-protocol",
+          "location": "Methods > Interventions; Figure 1 (Offset bridging exercise)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "adductor-supine-ball-squeeze-feet",
+      "conditionIds": [
+        "adductor-related-groin-pain"
+      ],
+      "name": "Supine adductor ball squeeze between feet",
+      "execution": "Supine; soccer ball between feet; isometric adduction. Knee/hip angles unresolved.",
+      "equipment": [
+        "soccer ball",
+        "floor mat"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Isometric hip adduction"
+      ],
+      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
+      "reason": "Cable/machine adduction is different; source-specific isometric hold needs retained PNGs after angle verification.",
+      "sourceRefs": [
+        {
+          "conditionId": "adductor-related-groin-pain",
+          "sourceId": "yousefzadeh-2018",
+          "location": "Materials and methods > Treatment; Tables 1 and 2"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "adductor-supine-ball-squeeze-knees",
+      "conditionIds": [
+        "adductor-related-groin-pain"
+      ],
+      "name": "Supine adductor ball squeeze between knees",
+      "execution": "Supine; soccer ball between knees; isometric adduction. Knee/hip angles unresolved.",
+      "equipment": [
+        "soccer ball",
+        "floor mat"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Isometric hip adduction"
+      ],
+      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
+      "reason": "Separate lever/ball position from feet variant; do not deduplicate by name alone.",
+      "sourceRefs": [
+        {
+          "conditionId": "adductor-related-groin-pain",
+          "sourceId": "yousefzadeh-2018",
+          "location": "Materials and methods > Treatment; Tables 1 and 2"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "pht-isometric-hamstring-bridge",
+      "conditionIds": [
+        "proximal-hamstring-tendinopathy"
+      ],
+      "name": "PHT isometric hamstring bridge",
+      "execution": "Broad source program includes double/single-leg isometric hamstring bridges and leg-support progression. Figure 3(a,b) now supports a separate fixed calf-on-box single-leg child; Figure 3(c,d) changes support. The whole set of choices/support/load progressions remains unresolved as one execution.",
+      "equipment": [
+        "floor mat",
+        "leg support variant unresolved"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Sustained hamstring/hip extension",
+        "Pelvic control"
+      ],
+      "artwork": "Unresolved broad progression; do not commission one sequence to stand for every variant. Only separately mapped fixed child pht-single-leg-calf-supported-isometric-hamstring-bridge has a source-bound draft hold brief.",
+      "reason": "Preserve the broad candidate and source chain; fixed Figure 3(a,b) calf-supported child does not settle double-leg or reduced-support progression. No generic catalog glute bridge or duration default can supply missing variant mechanics.",
+      "sourceRefs": [
+        {
+          "conditionId": "proximal-hamstring-tendinopathy",
+          "sourceId": "rich-2025-commentary",
+          "location": "Stage 1—Isometric; Table 1; Figure 3"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "pht-graded-compression-deadlift",
+      "conditionIds": [
+        "proximal-hamstring-tendinopathy"
+      ],
+      "name": "PHT modified deadlift with progressive hip flexion",
+      "execution": "Modified double/single-leg deadlift progressively increases hip flexion to functional demand; exact load/setup individualized.",
+      "equipment": [
+        "External load type unresolved"
+      ],
+      "movementRequirements": [
+        "Standing balance",
+        "Graded hip flexion",
+        "Hip hinge"
+      ],
+      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
+      "reason": "Figure 8(a) has now been visually inspected and shows one single-leg barbell example. The broad double/single-leg choices, individualized setup/load and target hip-flexion range remain unresolved; no generic Romanian-deadlift equivalence or universal progression is established.",
+      "sourceRefs": [
+        {
+          "conditionId": "proximal-hamstring-tendinopathy",
+          "sourceId": "rich-2025-commentary",
+          "location": "Stage 4—Compressive loading; Table 1; Figure 8; Pain monitoring"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "iliopsoas-side-lying-band-eccentric",
+      "conditionIds": [
+        "iliopsoas-related-groin-pain"
+      ],
+      "name": "Side-lying band-resisted eccentric-biased hip flexion",
+      "execution": "Opposite side-lying; affected ankle band anchored behind at knee height; knee flexed; controlled hip extension 3 counts, quick flexion 1 count; abdominals engaged and no loss of neutral spine.",
+      "equipment": [
+        "Resistance band",
+        "Sturdy anchor",
+        "floor mat"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Hip flexion-extension with bent knee",
+        "Neutral spine"
+      ],
+      "artwork": "Candidate supplement: retain actual PNG sequence after execution and clinical review. No PNG/artwork generated here; source illustration text is not verified visual provenance.",
+      "reason": "Standing knee raises and generic stretches are not equivalent; retain new identity pending Figures 2–3 visual review.",
+      "sourceRefs": [
+        {
+          "conditionId": "iliopsoas-related-groin-pain",
+          "sourceId": "rauseo-2017",
+          "location": "Intervention > Eccentric biased exercise; Table 5; Figures 2–3"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "liftmor-back-squat-variant-unresolved",
+      "conditionIds": [
+        "osteoporosis"
+      ],
+      "name": "LIFTMOR back squat — technique variant unresolved",
+      "execution": "Barbell back squat in LIFTMOR supervised HiRIT; exact depth, stance and rack safety setup need source/manual verification.",
+      "equipment": [
+        "Barbell",
+        "Squat Rack"
+      ],
+      "movementRequirements": [
+        "Back-racked loaded squat",
+        "Individual technique familiarisation",
+        "Repetition/load measurement"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog barbell-back-squat,barbell-deadlift,overhead-press and chin-up metadata inspected; nominal similarity does not verify exact studied depth/setup/landing. Retain study-specific candidate, not automatic equivalence.",
+      "sourceRefs": [
+        {
+          "conditionId": "osteoporosis",
+          "sourceId": "liftmor-2018",
+          "location": "Author thesis Chapter 5 > 5.3.3–5.3.4 Intervention/control, pp.120–121 (PDF pp.152–153)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "liftmor-deadlift-variant-unresolved",
+      "conditionIds": [
+        "osteoporosis"
+      ],
+      "name": "LIFTMOR deadlift — technique variant unresolved",
+      "execution": "Supervised loaded deadlift; exact start height, stance and grip not fully specified in Chapter5.",
+      "equipment": [
+        "Barbell"
+      ],
+      "movementRequirements": [
+        "Hip hinge with externally loaded lift",
+        "Individual technique familiarisation",
+        "Repetition/load measurement"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog barbell-back-squat,barbell-deadlift,overhead-press and chin-up metadata inspected; nominal similarity does not verify exact studied depth/setup/landing. Retain study-specific candidate, not automatic equivalence.",
+      "sourceRefs": [
+        {
+          "conditionId": "osteoporosis",
+          "sourceId": "liftmor-2018",
+          "location": "Author thesis Chapter 5 > 5.3.3–5.3.4 Intervention/control, pp.120–121 (PDF pp.152–153)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "liftmor-overhead-press-variant-unresolved",
+      "conditionIds": [
+        "osteoporosis"
+      ],
+      "name": "LIFTMOR overhead press — setup unresolved",
+      "execution": "Overhead press in supervised HiRIT; exact stance/grip/range not fully specified in Chapter5.",
+      "equipment": [
+        "Barbell"
+      ],
+      "movementRequirements": [
+        "Loaded overhead movement",
+        "Unresolved exact press setup",
+        "Repetition/load measurement"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog barbell-back-squat,barbell-deadlift,overhead-press and chin-up metadata inspected; nominal similarity does not verify exact studied depth/setup/landing. Retain study-specific candidate, not automatic equivalence.",
+      "sourceRefs": [
+        {
+          "conditionId": "osteoporosis",
+          "sourceId": "liftmor-2018",
+          "location": "Author thesis Chapter 5 > 5.3.3–5.3.4 Intervention/control, pp.120–121 (PDF pp.152–153)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "liftmor-jumping-chin-up-drop-landing",
+      "conditionIds": [
+        "osteoporosis"
+      ],
+      "name": "LIFTMOR jumping chin-up with drop landing",
+      "execution": "Underhand shoulder-width grip, shoulders/elbows initially90degrees; jump and pull upward, release/drop at apex, land as heavily as comfortable under trial supervision.",
+      "equipment": [
+        "Overhead chin-up bar",
+        "Appropriate landing surface"
+      ],
+      "movementRequirements": [
+        "Grasp overhead bar",
+        "Jump/pull and release",
+        "High-impact drop landing; not ordinary chin-up",
+        "Repetitions; landing mechanics unresolved for artwork"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog barbell-back-squat,barbell-deadlift,overhead-press and chin-up metadata inspected; nominal similarity does not verify exact studied depth/setup/landing. Retain study-specific candidate, not automatic equivalence.",
+      "sourceRefs": [
+        {
+          "conditionId": "osteoporosis",
+          "sourceId": "liftmor-2018",
+          "location": "Author thesis Chapter 5 > 5.3.3–5.3.4 Intervention/control, pp.120–121 (PDF pp.152–153)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "ra-cycle-ergometer-hiit",
+      "conditionIds": [
+        "rheumatoid-arthritis"
+      ],
+      "name": "RA studied cycle-ergometer interval training",
+      "execution": "Seated cycle ergometer interval bouts at individually tested HR targets within the supervised12week protocol; bike fit,cadence,resistance adjustment unspecified.",
+      "equipment": [
+        "Cycle ergometer",
+        "Heart-rate sensor"
+      ],
+      "movementRequirements": [
+        "Aerobic intervals with active recovery",
+        "HRmax established by CPET",
+        "Time/intensity measurement; no strength-set credit"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "No exact cycle interval execution/measurement equivalent in resistance catalog; retain protocol candidate with fit/cadence gaps and screened supervision.",
+      "sourceRefs": [
+        {
+          "conditionId": "rheumatoid-arthritis",
+          "sourceId": "bilberg-2024",
+          "location": "Exercise intervention > Table 1; symptom modification paragraph"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "axspa-treadmill-interval-pilot",
+      "conditionIds": [
+        "axial-spondyloarthritis"
+      ],
+      "name": "AxSpA pilot treadmill interval walking/running",
+      "execution": "Treadmill walking or running individually adapted to baseline-tested HRmax;4minute bouts interleaved active recovery,not a fixed walking speed or incline.",
+      "equipment": [
+        "Treadmill",
+        "Heart-rate monitor"
+      ],
+      "movementRequirements": [
+        "Walking/running endurance",
+        "Time and HR-based intensity",
+        "Individual fitness screening and supervision"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog resistance identities do not encode tested treadmill/HR interval shape; exact speed/incline individualized and unresolved.",
+      "sourceRefs": [
+        {
+          "conditionId": "axial-spondyloarthritis",
+          "sourceId": "sveaas-pilot-2014",
+          "location": "Methods > Participants; Intervention; Safety"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "axspa-abdominal-bridge-variant-unresolved",
+      "conditionIds": [
+        "axial-spondyloarthritis"
+      ],
+      "name": "AxSpA pilot abdominal stabilization bridge — position unresolved",
+      "execution": "Abdominal stabilization exercise described as abdominal bridge within6exercise strength bundle; exact prone/side/supine position,hold-versus-repetition and support not specified.",
+      "equipment": [
+        "Equipment/support unresolved from primary text"
+      ],
+      "movementRequirements": [
+        "Core stabilization",
+        "Unresolved support posture",
+        "Measurement shape must be resolved before artwork"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Do not equate glute-bridge or plank by name; primary text lacks execution detail. Preserve request as unresolved,not invented posture/dose.",
+      "sourceRefs": [
+        {
+          "conditionId": "axial-spondyloarthritis",
+          "sourceId": "sveaas-pilot-2014",
+          "location": "Methods > Participants; Intervention; Safety"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "fm-machine-leg-press-variant-unresolved",
+      "conditionIds": [
+        "fibromyalgia"
+      ],
+      "name": "Fibromyalgia machine leg press — exact setup unresolved",
+      "execution": "Machine leg press within person-centered15weekprogram;seat angle,foot stance and range individualized/not fully specified.",
+      "equipment": [
+        "Leg press machine"
+      ],
+      "movementRequirements": [
+        "Supported bilateral leg press;exact variant unresolved",
+        "Load/repetition measurement"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog leg-press,leg-extension,calf-raise metadata inspected;study does not verify exact apparatus/range/support. Retain research variant rather than claiming visual/execution equivalence or independent component efficacy.",
+      "sourceRefs": [
+        {
+          "conditionId": "fibromyalgia",
+          "sourceId": "larsson-2015",
+          "location": "Methods > Recruitment; Intervention; Box 1 Dosage of resistance exercise"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "fm-machine-knee-extension-variant-unresolved",
+      "conditionIds": [
+        "fibromyalgia"
+      ],
+      "name": "Fibromyalgia machine knee extension — exact range unresolved",
+      "execution": "Machine knee extension within15weekbundle;exact ROM,machine geometry and unilateral/bilateral execution unresolved.",
+      "equipment": [
+        "Knee extension machine"
+      ],
+      "movementRequirements": [
+        "Supported knee extension",
+        "Repetition/load;power phase separately supervised"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog leg-press,leg-extension,calf-raise metadata inspected;study does not verify exact apparatus/range/support. Retain research variant rather than claiming visual/execution equivalence or independent component efficacy.",
+      "sourceRefs": [
+        {
+          "conditionId": "fibromyalgia",
+          "sourceId": "larsson-2015",
+          "location": "Methods > Recruitment; Intervention; Box 1 Dosage of resistance exercise"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "fm-bodyweight-heel-raise-variant-unresolved",
+      "conditionIds": [
+        "fibromyalgia"
+      ],
+      "name": "Fibromyalgia bodyweight heel raise — support unresolved",
+      "execution": "Bodyweight heel raise;support,unilateral/bilateral stance and step versus floor not specified;rapid version addedweek5under supervision.",
+      "equipment": [
+        "Bodyweight",
+        "Support/step configuration unresolved"
+      ],
+      "movementRequirements": [
+        "Plantarflexion heel raise",
+        "Repetition and movement-speed attributes unresolved"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "Catalog leg-press,leg-extension,calf-raise metadata inspected;study does not verify exact apparatus/range/support. Retain research variant rather than claiming visual/execution equivalence or independent component efficacy.",
+      "sourceRefs": [
+        {
+          "conditionId": "fibromyalgia",
+          "sourceId": "larsson-2015",
+          "location": "Methods > Recruitment; Intervention; Box 1 Dosage of resistance exercise"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "fm-yang-tai-chi-program-unresolved",
+      "conditionIds": [
+        "fibromyalgia"
+      ],
+      "name": "Fibromyalgia Yang-style tai chi — forms unresolved",
+      "execution": "Instructor-led classic Yang-style sequence with warm-up,meditative movement,breathing/relaxation;individual named forms and transitions not fully extracted.",
+      "equipment": [
+        "Clear practice space",
+        "Qualified instructor for studied delivery"
+      ],
+      "movementRequirements": [
+        "Multicomponent coordinated whole-body movement",
+        "Time/frequency measurement",
+        "Not a single stretch or strength set"
+      ],
+      "artwork": "Retained PNG execution frames needed after independent execution/content review. No artwork generated, accepted or attributed by this research; source text inspection is not visual figure verification.",
+      "reason": "No exact sequence in catalog;retain program research request,individual forms/PNGstoryboard require separate extraction and review.",
+      "sourceRefs": [
+        {
+          "conditionId": "fibromyalgia",
+          "sourceId": "wang-2018",
+          "location": "Methods > Setting and participants; Interventions > Tai chi; Aerobic exercise"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hsd-side-lying-dumbbell-er-pillow",
+      "conditionIds": [
+        "hypermobility-spectrum-disorder"
+      ],
+      "name": "HSD side-lying dumbbell external rotation with pillow",
+      "execution": "Side-lying on a stable table as pictured, hips/knees flexed; lower arm supported and head on a pillow. Upper elbow at 90 degrees with a pillow between upper arm and trunk. Dumbbell hand begins on abdomen; rotate forearm upward while upper arm remains close to body/on pillow, then lower under control without trunk rotation.",
+      "equipment": [
+        "Dumbbell",
+        "Head pillow",
+        "Upper-arm pillow",
+        "Stable table"
+      ],
+      "movementRequirements": [
+        "Preserve the specified supported posture and arm/rotation geometry",
+        "Controlled unilateral repetition/load measurement; preserve source-specific supported posture",
+        "Head and upper-arm pillow contacts; table transfer"
+      ],
+      "artwork": "Fixed source-specific DRAFT pose brief only; three coherent male/female frame slots after scoped source-concordance review. Retain original PNG masters, true generation provenance and derived SVGs if generated. No artwork generated or accepted by this factual update.",
+      "reason": "Manual photograph pair and execution text inspected at the exact cited page; source-supported posture/equipment/motion define this candidate, not clinical dose. Head/upper-arm pillows and supported lower arm are explicit; keep separate from unresolved RoCTEx support. Independent component efficacy and clinical applicability remain unestablished; candidate only.",
+      "sourceRefs": [
+        {
+          "conditionId": "hypermobility-spectrum-disorder",
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual > Exercise 1, PDF p.5 (printed p.4), photograph pair and execution text"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hsd-prone-horizontal-abduction-er",
+      "conditionIds": [
+        "hypermobility-spectrum-disorder"
+      ],
+      "name": "HSD prone horizontal abduction with outward rotation",
+      "execution": "Prone on stable table, head supported/turned as photographed; straight dumbbell arm hangs toward floor at the described 90-degree shoulder-flexion start. Raise arm sideways to horizontal while rotating outward, then add further outward rotation at horizontal; lower while reversing rotation. Do not substitute a bodyweight T raise.",
+      "equipment": [
+        "Dumbbell",
+        "Stable table"
+      ],
+      "movementRequirements": [
+        "Preserve the specified supported posture and arm/rotation geometry",
+        "Controlled unilateral repetition/load measurement; preserve source-specific supported posture",
+        "Prone support; horizontal raise plus outward-rotation stages"
+      ],
+      "artwork": "Fixed source-specific DRAFT pose brief only; three coherent male/female frame slots after scoped source-concordance review. Retain original PNG masters, true generation provenance and derived SVGs if generated. No artwork generated or accepted by this factual update.",
+      "reason": "Manual photograph pair and execution text inspected at the exact cited page; source-supported posture/equipment/motion define this candidate, not clinical dose. Dumbbell and final rotation stage distinguish bodyweight prone T raise. Independent component efficacy and clinical applicability remain unestablished; candidate only.",
+      "sourceRefs": [
+        {
+          "conditionId": "hypermobility-spectrum-disorder",
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual > Exercise 2, PDF p.6 (printed p.5), photograph pair and execution text"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hsd-seated-dumbbell-scaption",
+      "conditionIds": [
+        "hypermobility-spectrum-disorder"
+      ],
+      "name": "HSD seated dumbbell scaption with scapular monitoring",
+      "execution": "Sit upright on a stable backless seat with feet hip-width. Dumbbell arm starts by side, thumb obliquely outward; opposite index/middle fingers behind the lower scapula. Lift obliquely forward/up to the qualitative overhead endpoint pictured, then lower slowly. No measured end angle is inferred.",
+      "equipment": [
+        "Dumbbell",
+        "Stable backless seat"
+      ],
+      "movementRequirements": [
+        "Preserve the specified supported posture and arm/rotation geometry",
+        "Controlled unilateral repetition/load measurement; preserve source-specific supported posture",
+        "Backless seated support; opposite-hand scapular monitoring; oblique overhead path"
+      ],
+      "artwork": "Fixed source-specific DRAFT pose brief only; three coherent male/female frame slots after scoped source-concordance review. Retain original PNG masters, true generation provenance and derived SVGs if generated. No artwork generated or accepted by this factual update.",
+      "reason": "Manual photograph pair and execution text inspected at the exact cited page; source-supported posture/equipment/motion define this candidate, not clinical dose. Qualitative overhead endpoint is pictured; no numeric end angle is invented and standing RoCTEx scaption remains distinct. Independent component efficacy and clinical applicability remain unestablished; candidate only.",
+      "sourceRefs": [
+        {
+          "conditionId": "hypermobility-spectrum-disorder",
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual > Exercise 3, PDF p.7 (printed p.6), photograph pair and execution text"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hsd-prone-er-shoulder-elbow-90",
+      "conditionIds": [
+        "hypermobility-spectrum-disorder"
+      ],
+      "name": "HSD prone external rotation with supported shoulder/elbow at90degrees",
+      "execution": "Prone on stable table, head resting on opposite forearm as pictured. Exercising upper arm supported at 90-degree abduction on the visible roll; elbow flexed 90 degrees, dumbbell forearm hanging vertically down. Rotate forearm upward to the pictured raised endpoint and lower under control, preserving upper-arm/support contact. No invented overhead endpoint.",
+      "equipment": [
+        "Dumbbell",
+        "Stable table",
+        "Upper-arm support roll"
+      ],
+      "movementRequirements": [
+        "Preserve the specified supported posture and arm/rotation geometry",
+        "Controlled unilateral repetition/load measurement; preserve source-specific supported posture",
+        "Fixed table/roll upper-arm support and 90/90 elbow geometry"
+      ],
+      "artwork": "Fixed source-specific DRAFT pose brief only; three coherent male/female frame slots after scoped source-concordance review. Retain original PNG masters, true generation provenance and derived SVGs if generated. No artwork generated or accepted by this factual update.",
+      "reason": "Manual photograph pair and execution text inspected at the exact cited page; source-supported posture/equipment/motion define this candidate, not clinical dose. Visible upper-arm support roll and pictured raised forearm are retained; no inferred overhead endpoint. Independent component efficacy and clinical applicability remain unestablished; candidate only.",
+      "sourceRefs": [
+        {
+          "conditionId": "hypermobility-spectrum-disorder",
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual > Exercise 4, PDF p.8 (printed p.7), photograph pair and execution text"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "barbell-deadlift-lbp-study-setup-unresolved",
+      "conditionIds": [
+        "chronic-primary-low-back-pain"
+      ],
+      "name": "Barbell deadlift, studied setup awaiting exact comparison",
+      "execution": "Barbell deadlift with abdominal bracing/breath hold and therapist-monitored neutral lumbar alignment through ascent/descent. The article refers to a prior pilot for full lift setup; stance, grip and start height are not independently established here.",
+      "equipment": [
+        "barbell",
+        "plates"
+      ],
+      "movementRequirements": [
+        "hip/knee movement during lifting",
+        "trunk bracing",
+        "unsupported standing; assessed ability required"
+      ],
+      "artwork": "Before any new PNG commission, inspect prior pilot/Aasa supplement and compare retained catalog barbell-deadlift sequence. If identical reuse existing identity; otherwise retain start/lift/return PNGs under a distinct source identity. No PNG generated.",
+      "reason": "Catalog barbell-deadlift is a plausible execution candidate, with Barbell and weight_reps; metadata alone cannot verify study start height/grip/ROM. Romanian, sumo, trap-bar and dumbbell variants are distinct. Supervision/dose does not itself create a new exercise identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "chronic-primary-low-back-pain",
+          "sourceId": "lbp-p2",
+          "location": "Methods > Interventions > High load lifting exercise, journal pp. 457–458"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "lumbar-directional-preference-exercise-unresolved",
+      "conditionIds": [
+        "lumbar-radicular-pain"
+      ],
+      "name": "Lumbar directional exercise, assessed direction and execution unresolved",
+      "execution": "Repeated/sustained lumbar movements selected by therapist according to symptom centralization. Extension often selected in this trial, but no direction assigned from diagnosis alone; position/variant and range await assessment and protocol supplement.",
+      "equipment": [
+        "not established until exact therapist-selected execution is identified"
+      ],
+      "movementRequirements": [
+        "assessed lumbar directional response",
+        "movement/position that centralizes symptoms; exact range unknown"
+      ],
+      "artwork": "Blocked: identify actual selected position and consult study supplement before commissioning retained PNGs. Do not generate generic extension art as diagnosis-specific treatment.",
+      "reason": "Catalog extension/flexion or stretches cannot be equated to clinician-selected mechanical-diagnosis treatment by name. A named unresolved request preserves the studied response criterion without inventing a universal execution.",
+      "sourceRefs": [
+        {
+          "conditionId": "lumbar-radicular-pain",
+          "sourceId": "lr-p1",
+          "location": "Methods > Randomization and Interventions"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "stationary-bicycle-warmup-lss-setup-unresolved",
+      "conditionIds": [
+        "lumbar-spinal-stenosis"
+      ],
+      "name": "Stationary bicycle warmup, seating setup unresolved",
+      "execution": "Stationary bicycle used as warmup before individualized manual therapy/exercise. Upright versus recumbent configuration, trunk support/angle, cadence, resistance and bicycle-specific dose not reported in the inspected treatment paragraph.",
+      "equipment": [
+        "stationary bicycle; exact seat/support configuration unresolved"
+      ],
+      "movementRequirements": [
+        "seated pedaling",
+        "hip/knee motion",
+        "transfer and balance requirements depend on machine"
+      ],
+      "artwork": "Compare source protocol/equipment and catalog cycling artwork before deciding reuse. If distinct, retain PNGs showing exact seat, support and pedal position after configuration verification.",
+      "reason": "Catalog cycling has coarse Cardio equipment and distance_duration shape; this does not verify the study stationary configuration or whether distance is meaningful for warmup. No exact match or clinical dose established.",
+      "sourceRefs": [
+        {
+          "conditionId": "lumbar-spinal-stenosis",
+          "sourceId": "lss-p1",
+          "location": "Methods > Treatment Arms"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "supine-neck-flexion-head-lift",
+      "conditionIds": [
+        "nonspecific-neck-pain"
+      ],
+      "name": "Supine neck-flexor head lift",
+      "execution": "Lift head from supine to train neck flexors against head weight. Detailed support, lift height, chin position and lowering tempo not specified in the inspected intervention paragraph. This is a dynamic head lift, distinct from a small supported chin nod.",
+      "equipment": [
+        "floor or plinth; exact support surface unresolved"
+      ],
+      "movementRequirements": [
+        "supine transfer",
+        "dynamic cervical flexion/head lift"
+      ],
+      "artwork": "Retained start/lift/return PNGs needed only after support, chin alignment and range are verified from original instructional material. No images generated.",
+      "reason": "Pinned catalog metadata search did not establish a cervical head-lift identity. Neck bridges, abdominal work and supported chin nods are not verified equivalents. Study 3×20 is extraction, not an app dose.",
+      "sourceRefs": [
+        {
+          "conditionId": "nonspecific-neck-pain",
+          "sourceId": "nn-p1",
+          "location": "Methods > Description of Interventions"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "seated-elastic-resisted-neck-training-unresolved",
+      "conditionIds": [
+        "nonspecific-neck-pain"
+      ],
+      "name": "Seated elastic-resisted neck effort, attachment unresolved",
+      "execution": "Seated elastic-band neck strengthening described forward, obliquely right/left and backward, calibrated by handheld isometric testing. Article calls program isometric; exact band anchorage/head contact and degree of movement require instructional source verification.",
+      "equipment": [
+        "elastic band",
+        "stable seat",
+        "handheld isometric strength device in study; not a consumer requirement inferred from catalog"
+      ],
+      "movementRequirements": [
+        "seated cervical directional effort",
+        "individual strength calibration",
+        "head-band attachment unresolved"
+      ],
+      "artwork": "Block drawing until attachment/contact and isometric versus repetition execution resolved; retain separate direction/setup PNGs if commissioned.",
+      "reason": "No catalog neck training execution verified. High-intensity calibrated neck loading cannot be replaced by generic stretch, hand-resisted low-load isometric or neck bridge; 80% study target is not user starting-load guidance.",
+      "sourceRefs": [
+        {
+          "conditionId": "nonspecific-neck-pain",
+          "sourceId": "nn-p1",
+          "location": "Methods > Description of Interventions"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "cervical-radicular-low-load-isometrics-unresolved",
+      "conditionIds": [
+        "cervical-radicular-pain"
+      ],
+      "name": "Cervical low-load isometrics/endurance, trial positions unresolved",
+      "execution": "Guideline describes neck-specific program progressing gentle isometrics to low-load endurance tailored to response. Exact force direction, resistance interface and body position need primary protocol verification; Dedering primary article remains abstract-only.",
+      "equipment": [
+        "not reported for exact execution"
+      ],
+      "movementRequirements": [
+        "clinician-assessed cervical/nerve-root capacity",
+        "low-load cervical effort; precise direction/ROM unknown"
+      ],
+      "artwork": "Blocked until primary instructional protocol is inspected. Retained setup/effort PNGs must distinguish no-motion isometrics from dynamic exercise.",
+      "reason": "CR-G1/CR-S1 describe a clinical program, not an exact catalog match. Do not borrow acute-WAD cheek-resisted rotation or nonspecific-neck elastic resistance as verified equivalence.",
+      "sourceRefs": [
+        {
+          "conditionId": "cervical-radicular-pain",
+          "sourceId": "cr-g1",
+          "location": "Overwegingen > Waarden en voorkeuren van patiënten (en evt. hun verzorgers)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "supine-supported-chin-nod",
+      "conditionIds": [
+        "whiplash-associated-disorder"
+      ],
+      "name": "Supine supported gentle chin nod",
+      "execution": "Lie supine with soft pillow under neck and knees bent. Gently nod as if saying yes; stop just before anterior neck muscles harden, then relax and return. Head remains supported; this is distinct from lifting the head.",
+      "equipment": [
+        "soft pillow",
+        "floor or plinth"
+      ],
+      "movementRequirements": [
+        "supine transfer",
+        "small gentle craniocervical nod",
+        "head/neck supported"
+      ],
+      "artwork": "Retain original supplement PNGs showing pillow, bent knees, neutral start and small nod. No generated or accepted artwork; avoid portraying a large head lift.",
+      "reason": "Catalog metadata did not verify this supported nod execution. Do not equate neck bridges/head lifts or extrapolate a generic stretching timer/progression. SIRA five-second example is source-specific.",
+      "sourceRefs": [
+        {
+          "conditionId": "whiplash-associated-disorder",
+          "sourceId": "wad-g1",
+          "location": "Appendix 3 > Exercise 1 The chin nod exercise, printed p. 45"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "seated-hand-resisted-cervical-rotation-isometric",
+      "conditionIds": [
+        "whiplash-associated-disorder"
+      ],
+      "name": "Seated hand-resisted cervical rotation isometric",
+      "execution": "Sit tall with relaxed slightly lowered chin; place hand on same-side cheek, gently attempt turning toward that shoulder against fingers while allowing no movement; repeat opposite side. SIRA labels this later-recovery strengthening.",
+      "equipment": [
+        "stable seat",
+        "own hand as resistance"
+      ],
+      "movementRequirements": [
+        "seated posture",
+        "no visible cervical rotation during effort",
+        "bilateral hand placement; individual capacity"
+      ],
+      "artwork": "Retain PNGs showing seated alignment, correct cheek contact and attempted-turn arrow with explicit no-motion cue on both sides. No artwork generated.",
+      "reason": "Catalog metadata did not verify this no-motion hand-resisted execution. Not equivalent to dynamic rotation, band-loaded neck training, or a neck bridge. Ten–twenty-percent effort/five-second holds are SIRA examples, not automatic app clearance or progression.",
+      "sourceRefs": [
+        {
+          "conditionId": "whiplash-associated-disorder",
+          "sourceId": "wad-g1",
+          "location": "Appendix 3 > Exercise 9 Neck strengthening exercises (isometric, no movement exercise), printed p. 49"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "chronic-wad-gentle-cervical-isometrics-unresolved",
+      "conditionIds": [
+        "whiplash-associated-disorder"
+      ],
+      "name": "Chronic-WAD cervical isometrics, setup unresolved",
+      "execution": "Trial began gentle unresisted flexion/extension/rotation isometrics, then low isometric resistance in supine/sitting; later pulley/guild-board endurance. Resistance interface/contact and exact initial positions not fully specified in inspected paragraph.",
+      "equipment": [
+        "not reported for initial isometrics",
+        "later weighted pulley or guild board; distinct execution requires separate verification"
+      ],
+      "movementRequirements": [
+        "clinician-assessed supine/sitting cervical effort",
+        "direction-specific no-motion effort; later endurance distinct"
+      ],
+      "artwork": "Blocked pending original protocol/handout; retain position/direction-specific PNGs only after identifying actual execution. Do not illustrate pulley work as the gentle starting stage.",
+      "reason": "No exact catalog execution verified; progression stages cannot be collapsed into one accepted exercise. Distinct from SIRA acute later-stage hand-on-cheek variant unless original protocol confirms equivalence.",
+      "sourceRefs": [
+        {
+          "conditionId": "whiplash-associated-disorder",
+          "sourceId": "wad-p1",
+          "location": "MATERIALS AND METHODS > Interventions > Physiotherapist-led Neck-specific Exercise Group (NSE)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "standing-dumbbell-scaption",
+      "conditionIds": [
+        "rotator-cuff-tendinopathy"
+      ],
+      "name": "Standing dumbbell scaption",
+      "execution": "Standing without external support, dumbbell in hand, palm slightly forward/thumb away; raise at 45° between sagittal/coronal planes toward horizontal, then lower under control.",
+      "equipment": [
+        "Dumbbell"
+      ],
+      "movementRequirements": [
+        "Unsupported standing",
+        "Shoulder elevation in specified scapular plane to horizontal, symptom-adjusted within studied protocol"
+      ],
+      "artwork": "Candidate only. No artwork generated, upstream attribution or clinical approval claimed. After execution review, commission/verify retained start, movement and end PNGs under separate supplement provenance; unresolved setup must be resolved before drawing.",
+      "reason": "Catalog front-raise is anterior elevation; dumbbell-lateral-raise does not verify this plane/grip. Dose alone is not a new identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "rotator-cuff-tendinopathy",
+          "sourceId": "ingwersen-2017",
+          "location": "Methods > Interventions; Appendices A and B > Exercise Program"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "side-lying-dumbbell-shoulder-external-rotation",
+      "conditionIds": [
+        "rotator-cuff-tendinopathy"
+      ],
+      "name": "Side-lying dumbbell shoulder external rotation",
+      "execution": "Side lying, dumbbell in upper hand, elbow held by side midway between ribs/hip; rotate forearm toward ceiling, no trunk rotation, return without resting. Maximum forearm vertical in source; pillow/support details not specified.",
+      "equipment": [
+        "Dumbbell"
+      ],
+      "movementRequirements": [
+        "Side-lying support/floor or treatment surface",
+        "Elbow at side; shoulder external rotation without trunk rotation"
+      ],
+      "artwork": "UNRESOLVED before generation: establish starting forearm position and concrete support surface/head/lower-arm arrangement from RoCTEx source. The one bounded source reopen in artwork fix round 1 returned a browser challenge. Do not ask a generator to invent support or import HEAVY pillows.",
+      "reason": "No catalog ER execution identified in enumerated shoulder records. HSD pillow/support variants require reconciliation; do not assume exact equivalence. Full-body starting pose/support remains unresolved after one challenged source reopen; draft generation is withheld for this request.",
+      "sourceRefs": [
+        {
+          "conditionId": "rotator-cuff-tendinopathy",
+          "sourceId": "ingwersen-2017",
+          "location": "Methods > Interventions; Appendices A and B > Exercise Program"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "supine-dumbbell-scapular-protraction",
+      "conditionIds": [
+        "rotator-cuff-tendinopathy"
+      ],
+      "name": "RoCTEx supine dumbbell scapular protraction, exact support unresolved",
+      "execution": "RoCTEx candidate: supine supported trunk, knees about 90 degrees, straight elbow and dumbbell pointing toward ceiling; raise shoulder/scapula without lifting/rotating trunk, lower without fully relaxing. Exact head/lower-body/support arrangement remains unresolved for fixed artwork. Do not import the photographed HEAVY extended-leg/table variant or its shoulder-return-to-contact cue.",
+      "equipment": [
+        "Dumbbell",
+        "Stable support surface; exact setup unresolved"
+      ],
+      "movementRequirements": [
+        "Supine supported trunk; exact full-body support geometry unresolved",
+        "Straight elbow; scapular protraction/retraction",
+        "RoCTEx knee/terminal cues retained; controlled unilateral repetition/load measurement"
+      ],
+      "artwork": "UNRESOLVED fixed execution: verify source-specific support and starting/terminal geometry before full-body generation. The separate HEAVY candidate cannot supply unreported RoCTEx setup. No image acceptance or clinical clearance.",
+      "reason": "Earlier shared candidate was accepted at common movement-core level, not as one final illustrated execution. Fixed HEAVY extended-leg/table/contact-return setup is now separately requested as hsd-supine-dumbbell-scapular-protraction. Preserve RoCTEx mapping roctex-3, knee-about-90-degree and no-relaxation cues, source chain and clinical limits. Exact full-body support still needs source details; schedules are not combined and neither source proves isolated efficacy.",
+      "sourceRefs": [
+        {
+          "conditionId": "rotator-cuff-tendinopathy",
+          "sourceId": "ingwersen-2017",
+          "location": "Methods > Interventions; Appendices A and B > Exercise Program"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "standing-straight-arm-band-shoulder-extension",
+      "conditionIds": [
+        "rotator-cuff-tendinopathy"
+      ],
+      "name": "Standing straight-arm band shoulder extension",
+      "execution": "Stand upright about 1.5 m from a fixed band anchor in front, with band middle approximately at shoulder height. Hold therapist-marked ends in both hands; keep back straight and shoulders slightly back. With straight arms, pull hands down/back toward the outside of the hips, then return under control without fully relaxing. Text gives about two seconds each direction; not a separately created identity for this tempo.",
+      "equipment": [
+        "Resistance Band"
+      ],
+      "movementRequirements": [
+        "Unsupported standing with upright back and shoulders slightly back",
+        "Secure front band anchor approximately at shoulder height; participant about 1.5 m away",
+        "Bilateral marked-end grip, straight elbows and shoulder extension toward outside of hips",
+        "Exact hand spacing, band pretension and individualized mark placement require execution review; approximate text distances are not universal fit/safety thresholds"
+      ],
+      "artwork": "Candidate only. No artwork generated or clinical approval claimed. After visual execution review, retain setup/start/pull/return PNGs showing shoulder-height anchor, approximate standing distance, marked-end bilateral grip and straight elbows under separate supplement provenance. Known textual anchor geometry must not be marked absent.",
+      "reason": "RoCTEx Appendix A/B Sixth Exercise explicitly supplies anchor height and approximate distance. Cable straight-arm-pulldown has a different cable/bar apparatus; banded-kickback is hip extension. Clinical dose/tempo alone does not create a distinct identity; preserve unresolved individual fit and source-specific dose.",
+      "sourceRefs": [
+        {
+          "conditionId": "rotator-cuff-tendinopathy",
+          "sourceId": "ingwersen-2017",
+          "location": "Methods > Participants, Settings, and Locations; Appendices A and B > Sixth Exercise"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "moon-anterior-shoulder-stretch-setup-unresolved",
+      "conditionIds": [
+        "full-thickness-rotator-cuff-tear"
+      ],
+      "name": "MOON anterior shoulder stretch — setup unresolved",
+      "execution": "Main manuscript identifies an anterior shoulder stretch only. Position, arm angle, support and stretching aid are not specified in inspected main text; retrieve linked booklet before exact mapping or artwork.",
+      "equipment": [
+        "Unresolved: support/stretching aid not established"
+      ],
+      "movementRequirements": [
+        "Anterior shoulder flexibility exercise",
+        "Exact body/arm position and range unresolved"
+      ],
+      "artwork": "Candidate only. No artwork generated, upstream attribution or clinical approval claimed. After execution review, commission/verify retained start, movement and end PNGs under separate supplement provenance; unresolved setup must be resolved before drawing.",
+      "reason": "Catalog doorway-chest-stretch cannot be assumed identical without study booklet; new dose alone is not justification for a duplicate.",
+      "sourceRefs": [
+        {
+          "conditionId": "full-thickness-rotator-cuff-tear",
+          "sourceId": "kuhn-2013",
+          "location": "Materials and Methods > Inclusion and Exclusion Criteria; Physical Therapy Program"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "frozen-shoulder-pendulum-setup-unresolved",
+      "conditionIds": [
+        "adhesive-capsulitis"
+      ],
+      "name": "Pain-limited shoulder pendulum — setup unresolved",
+      "execution": "Source names pendulum exercise within painless range. Exact trunk position, hand support, movement geometry and assistance are not described; resolve before execution/artwork mapping.",
+      "equipment": [
+        "Unresolved: support/setup not specified"
+      ],
+      "movementRequirements": [
+        "Pain-limited shoulder pendulum motion",
+        "Exact trunk support and arm path unresolved"
+      ],
+      "artwork": "Candidate only. No artwork generated, upstream attribution or clinical approval claimed. After execution review, commission/verify retained start, movement and end PNGs under separate supplement provenance; unresolved setup must be resolved before drawing.",
+      "reason": "Do not equate unspecified pendulum with a general shoulder stretch or invent support equipment.",
+      "sourceRefs": [
+        {
+          "conditionId": "adhesive-capsulitis",
+          "sourceId": "diercks-2004",
+          "location": "Materials and Methods (PDF pp. 499–500)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "standing-band-external-rotation-at-side-zero-to-forty-five",
+      "conditionIds": [
+        "shoulder-instability"
+      ],
+      "name": "Standing band shoulder external rotation at side, 0–45°",
+      "execution": "Standing, arm at 0° abduction, external-rotation arc 0–45° with resistance band. Watson stage1b requires clinician-selected scapular control; exact elbow support/anchor geometry not specified in Table1.",
+      "equipment": [
+        "Resistance Band",
+        "Secure anchor; exact height/setup unresolved"
+      ],
+      "movementRequirements": [
+        "Standing",
+        "Arm at side, 0° abduction",
+        "Controlled 0–45° ER; clinician-defined scapular control"
+      ],
+      "artwork": "Candidate only. No artwork generated, upstream attribution or clinical approval claimed. After execution review, commission/verify retained start, movement and end PNGs under separate supplement provenance; unresolved setup must be resolved before drawing.",
+      "reason": "Catalog band-pull-apart is chest-height horizontal pull, not arm-at-side rotation. Support/anchor differences must be resolved; HSD variants may be distinct.",
+      "sourceRefs": [
+        {
+          "conditionId": "shoulder-instability",
+          "sourceId": "warby-2018",
+          "location": "Methods > Participants and Recruitment; Interventions; Table 1 (PDF pp. 2–4)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "quadruped-straight-arm-scapular-retraction-protraction",
+      "conditionIds": [
+        "acromioclavicular-osteoarthritis"
+      ],
+      "name": "Quadruped straight-arm scapular retraction/protraction",
+      "execution": "On all fours with elbows straight, move scapulae through retraction/protraction as the first Appendix B scapular-stabilization stage. Exact hand/knee geometry not quantified; clarify for artwork, no elbow-flexion push-up.",
+      "equipment": [
+        "Bodyweight",
+        "Floor or stable padded support surface"
+      ],
+      "movementRequirements": [
+        "Hands-and-knees support",
+        "Straight elbows; isolated scapular motion"
+      ],
+      "artwork": "Candidate only. No artwork generated, upstream attribution or clinical approval claimed. After execution review, commission/verify retained start, movement and end PNGs under separate supplement provenance; unresolved setup must be resolved before drawing.",
+      "reason": "Catalog scapular-push-up is hands/toes high plank; quadruped support changes execution, not merely clinical dose.",
+      "sourceRefs": [
+        {
+          "conditionId": "acromioclavicular-osteoarthritis",
+          "sourceId": "harris-2012",
+          "location": "Appendix B > List of Therapeutic Exercises (PDF p. 80)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "achilles-barbell-calf-raise-disc",
+      "conditionIds": [
+        "midportion-achilles-tendinopathy"
+      ],
+      "name": "Bilateral straight-knee barbell calf raise on forefoot disc",
+      "execution": "Stand bilaterally with knees straight, forefeet on a disc weight and barbell on shoulders; raise/lower heels through the studied ankle range. Exact safe station, balance support and external load need individual review.",
+      "equipment": [
+        "Barbell",
+        "Disc weight/platform suitable for forefoot support"
+      ],
+      "movementRequirements": [
+        "Standing balance",
+        "Straight-knee plantarflexion",
+        "Forefoot support with heel excursion"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "Catalog standing-calf-raise uses a machine; this barbell/forefoot-disc setup differs in equipment. Tempo/RM schedule alone would not justify a new identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "midportion-achilles-tendinopathy",
+          "sourceId": "ach-r1",
+          "location": "Methods > Treatment Intervention (journal pp.1705–1706); Figure 1"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "achilles-straight-knee-eccentric-heel-lower",
+      "conditionIds": [
+        "midportion-achilles-tendinopathy"
+      ],
+      "name": "Straight-knee eccentric heel lowering on step",
+      "execution": "Unilateral controlled heel lowering from a step with the straight knee. Assisted return/loading-up method and safe support must be checked against source demonstration before release.",
+      "equipment": [
+        "Step/stair",
+        "Balance support; exact arrangement requires review",
+        "Backpack for later loading when prescribed"
+      ],
+      "movementRequirements": [
+        "Unilateral plantarflexor eccentric loading",
+        "Straight knee position",
+        "Heel excursion below forefoot support"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "Catalog calf-raise identities do not establish eccentric-only lowering and return execution. Preserve knee/step differences; do not create a new ID merely for repetitions or tempo.",
+      "sourceRefs": [
+        {
+          "conditionId": "midportion-achilles-tendinopathy",
+          "sourceId": "ach-r1",
+          "location": "Methods > Treatment Intervention (journal pp.1705–1706); Figure 1"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "achilles-bent-knee-eccentric-heel-lower",
+      "conditionIds": [
+        "midportion-achilles-tendinopathy"
+      ],
+      "name": "Bent-knee eccentric heel lowering on step",
+      "execution": "Unilateral controlled heel lowering from a step with the bent knee. Assisted return/loading-up method and safe support must be checked against source demonstration before release.",
+      "equipment": [
+        "Step/stair",
+        "Balance support; exact arrangement requires review",
+        "Backpack for later loading when prescribed"
+      ],
+      "movementRequirements": [
+        "Unilateral plantarflexor eccentric loading",
+        "Bent knee position",
+        "Heel excursion below forefoot support"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "Catalog calf-raise identities do not establish eccentric-only lowering and return execution. Preserve knee/step differences; do not create a new ID merely for repetitions or tempo.",
+      "sourceRefs": [
+        {
+          "conditionId": "midportion-achilles-tendinopathy",
+          "sourceId": "ach-r1",
+          "location": "Methods > Treatment Intervention (journal pp.1705–1706); Figure 1"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "insertional-chair-seated-neutral-heel-raise",
+      "conditionIds": [
+        "insertional-achilles-tendinopathy"
+      ],
+      "name": "Chair-seated bilateral heel raise limited to neutral",
+      "execution": "Sit on a chair with hips/knees bent 90 degrees, hands at knees and lean forward gently. Raise heels into plantarflexion, then return to neutral without dorsiflexion; LTCR brochure p.21.",
+      "equipment": [
+        "Chair",
+        "Floor surface"
+      ],
+      "movementRequirements": [
+        "Seated knee-flexed plantarflexion",
+        "Ankle motion neutral to plantarflexion"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "Catalog seated-calf-raise is a thigh-pad machine; source uses chair/hands and an explicit neutral floor limit. Setup/range differ independently of dose.",
+      "sourceRefs": [
+        {
+          "conditionId": "insertional-achilles-tendinopathy",
+          "sourceId": "iat-r",
+          "location": "Online supplemental file 3 > LTCR brochure pp.18–24; Rehabilitation schedule p.48"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "insertional-neutral-band-plantarflexion-straight-knee",
+      "conditionIds": [
+        "insertional-achilles-tendinopathy"
+      ],
+      "name": "Straight-knee band plantarflexion limited to neutral",
+      "execution": "Long-seated, affected leg extended. Loop band around forefoot, hold tension, plantarflex then return only to neutral; no dorsiflexion. LTCR brochure p.19.",
+      "equipment": [
+        "Resistance band"
+      ],
+      "movementRequirements": [
+        "Long-seated position",
+        "Straight knee position",
+        "Neutral-to-plantarflexion ankle motion"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "Exact band/knee setup and neutral range differ from loaded calf machines. Dose differences alone do not create this identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "insertional-achilles-tendinopathy",
+          "sourceId": "iat-r",
+          "location": "Online supplemental file 3 > LTCR brochure pp.18–24; Rehabilitation schedule p.48"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "insertional-neutral-band-plantarflexion-bent-knee",
+      "conditionIds": [
+        "insertional-achilles-tendinopathy"
+      ],
+      "name": "Bent-knee band plantarflexion limited to neutral",
+      "execution": "Long-seated, affected leg slightly flexed with a towel beneath the knee. Loop band around forefoot, hold tension, plantarflex then return only to neutral; no dorsiflexion. LTCR brochure p.20.",
+      "equipment": [
+        "Resistance band",
+        "Rolled towel"
+      ],
+      "movementRequirements": [
+        "Long-seated position",
+        "Bent knee position",
+        "Neutral-to-plantarflexion ankle motion"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "Exact band/knee setup and neutral range differ from loaded calf machines. Dose differences alone do not create this identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "insertional-achilles-tendinopathy",
+          "sourceId": "iat-r",
+          "location": "Online supplemental file 3 > LTCR brochure pp.18–24; Rehabilitation schedule p.48"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "plantar-fascia-towel-toe-heel-raise-step",
+      "conditionIds": [
+        "plantar-heel-pain-compatible-with-plantar-fasciitis"
+      ],
+      "name": "Heel raise on step with towel beneath toes",
+      "execution": "Unilateral heel raise on a step with a towel under the toes, individualized to dorsiflex toes at the top. Bilateral start if required; backpack may supply later external load.",
+      "equipment": [
+        "Step/stair",
+        "Towel",
+        "Backpack when externally loaded"
+      ],
+      "movementRequirements": [
+        "Great-toe extension",
+        "Loaded plantarflexion",
+        "Balance/support on a step"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "Generic calf-raise records do not encode the towel-under-toes windlass setup. First-MTP or insertional Achilles restrictions can make this exact execution inappropriate.",
+      "sourceRefs": [
+        {
+          "conditionId": "plantar-heel-pain-compatible-with-plantar-fasciitis",
+          "sourceId": "php-r",
+          "location": "Methods > Interventions > Plantar-specific stretching and High-load strength training (PDF p.2); Figures1–2"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "seated-hand-assisted-plantar-fascia-stretch",
+      "conditionIds": [
+        "plantar-heel-pain-compatible-with-plantar-fasciitis"
+      ],
+      "name": "Seated hand-assisted plantar-fascia stretch",
+      "execution": "Sit with the affected leg crossed over the other; affected-side hand pulls toes toward the shin while the other hand palpates the fascia to confirm tension.",
+      "equipment": [
+        "Chair or suitable seated surface"
+      ],
+      "movementRequirements": [
+        "Hip position for leg crossing",
+        "Hand access to toes",
+        "Toe extension"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "Wall calf stretch has a different execution and target setup. This is flexibility work; it cannot receive strength-set credit or generic five-second progression.",
+      "sourceRefs": [
+        {
+          "conditionId": "plantar-heel-pain-compatible-with-plantar-fasciitis",
+          "sourceId": "php-r",
+          "location": "Methods > Interventions > Plantar-specific stretching and High-load strength training (PDF p.2); Figures1–2"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "acute-sprain-protected-active-ankle-rom-unresolved",
+      "conditionIds": [
+        "lateral-ankle-sprain"
+      ],
+      "name": "Protected active ankle ROM after assessed sprain—execution unresolved",
+      "execution": "Protected active ankle ROM selected by severity/healing and identified impairment. The guideline does not specify one universal direction, range, position or dose; these must be resolved before illustration or programming.",
+      "equipment": [
+        "Clinician-selected protection/support; unresolved"
+      ],
+      "movementRequirements": [
+        "Clinician-assessed injury and permitted movement",
+        "Active ankle motion within specified protection"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "A generic ankle motion name cannot establish a safe acute-sprain routine. Preserve this as an unresolved request, with no invented fracture protocol or numeric range.",
+      "sourceRefs": [
+        {
+          "conditionId": "lateral-ankle-sprain",
+          "sourceId": "ank-g",
+          "location": "Summary of Recommendations > Acute/Postacute Protection and Optimal Loading; Therapeutic Exercise (CPG3)"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "seated-anchored-band-ankle-dorsiflexion",
+      "conditionIds": [
+        "chronic-ankle-instability"
+      ],
+      "name": "Seated anchored-band ankle dorsiflexion",
+      "execution": "Sit on the floor with one band end around a treatment table and the other around the involved forefoot/metatarsal heads; perform ankle dorsiflexion through the trial range while keeping the intended seated setup.",
+      "equipment": [
+        "Resistance band",
+        "Stable treatment-table anchor",
+        "Floor mat"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Ankle dorsiflexion",
+        "Secure resistance anchor"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "Catalog metadata/ID inspection did not verify this direction-specific anchored-band execution. Band color/dose are protocol choices, not new identities.",
+      "sourceRefs": [
+        {
+          "conditionId": "chronic-ankle-instability",
+          "sourceId": "cai-r1",
+          "location": "Methods > Strength-Training Protocol; Table2"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "seated-anchored-band-ankle-inversion",
+      "conditionIds": [
+        "chronic-ankle-instability"
+      ],
+      "name": "Seated anchored-band ankle inversion",
+      "execution": "Sit on the floor with one band end around a treatment table and the other around the involved forefoot/metatarsal heads; perform ankle inversion through the trial range while keeping the intended seated setup.",
+      "equipment": [
+        "Resistance band",
+        "Stable treatment-table anchor",
+        "Floor mat"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Ankle inversion",
+        "Secure resistance anchor"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "Catalog metadata/ID inspection did not verify this direction-specific anchored-band execution. Band color/dose are protocol choices, not new identities.",
+      "sourceRefs": [
+        {
+          "conditionId": "chronic-ankle-instability",
+          "sourceId": "cai-r1",
+          "location": "Methods > Strength-Training Protocol; Table2"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "seated-anchored-band-ankle-eversion",
+      "conditionIds": [
+        "chronic-ankle-instability"
+      ],
+      "name": "Seated anchored-band ankle eversion",
+      "execution": "Sit on the floor with one band end around a treatment table and the other around the involved forefoot/metatarsal heads; perform ankle eversion through the trial range while keeping the intended seated setup.",
+      "equipment": [
+        "Resistance band",
+        "Stable treatment-table anchor",
+        "Floor mat"
+      ],
+      "movementRequirements": [
+        "Floor transfer",
+        "Ankle eversion",
+        "Secure resistance anchor"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "Catalog metadata/ID inspection did not verify this direction-specific anchored-band execution. Band color/dose are protocol choices, not new identities.",
+      "sourceRefs": [
+        {
+          "conditionId": "chronic-ankle-instability",
+          "sourceId": "cai-r1",
+          "location": "Methods > Strength-Training Protocol; Table2"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "single-leg-stance-eyes-open-progression-unresolved",
+      "conditionIds": [
+        "chronic-ankle-instability"
+      ],
+      "name": "Single-leg stance with eyes open—progression unresolved",
+      "execution": "Maintain single-leg stance with eyes open in the balance program. Exact level, hand position, support availability and duration must be verified before a standalone home variant is released.",
+      "equipment": [
+        "Safe surface",
+        "Fall-protection/support arrangement unresolved"
+      ],
+      "movementRequirements": [
+        "Single-leg balance",
+        "Vision",
+        "Controlled recovery from loss of balance"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "Balance components were studied within a progressive supervised program; isolated stance cannot inherit the whole program effect. Catalog calf raise is not a stance exercise.",
+      "sourceRefs": [
+        {
+          "conditionId": "chronic-ankle-instability",
+          "sourceId": "cai-r1",
+          "location": "Methods > Rehabilitation Procedures > Balance-Training Protocol"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "posterior-tibial-plantarflexed-eccentric-adduction",
+      "conditionIds": [
+        "posterior-tibial-tendinopathy"
+      ],
+      "name": "Plantarflexed eccentric foot adduction—apparatus unresolved",
+      "execution": "Posterior-tibialis-focused eccentric adduction from end range toward neutral with the ankle plantarflexed, as described in the review table. Exact trial apparatus, support and resistance attachment remain unresolved; do not assume a generic band matches.",
+      "equipment": [
+        "Trial resistance apparatus/attachment unresolved"
+      ],
+      "movementRequirements": [
+        "Plantarflexed ankle position",
+        "Controlled eccentric foot adduction"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "Review gives execution direction but primary protocol is inaccessible. Keep precise known range/action and apparatus gap rather than asserting catalog inversion equivalence.",
+      "sourceRefs": [
+        {
+          "conditionId": "posterior-tibial-tendinopathy",
+          "sourceId": "ptt-s",
+          "location": "Table3 > Exercise descriptors"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "peroneal-band-loading-execution-unresolved",
+      "conditionIds": [
+        "peroneal-tendinopathy"
+      ],
+      "name": "Peroneal band loading—execution unresolved",
+      "execution": "TheraBand peroneal strengthening was offered in a mixed-pathology clinical series. Direction, limb position, attachment and range were not specified sufficiently to verify an exact therapeutic execution.",
+      "equipment": [
+        "Resistance band",
+        "Anchor/support unresolved"
+      ],
+      "movementRequirements": [
+        "Clinician-confirmed tendon diagnosis",
+        "Ankle loading; exact direction/range unresolved"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "No verified isolated-tendinopathy exercise RCT or precise dose. This request retains a research lead, not an accepted eversion prescription borrowed from Achilles or CAI.",
+      "sourceRefs": [
+        {
+          "conditionId": "peroneal-tendinopathy",
+          "sourceId": "per-r2",
+          "location": "Materials and methods > Conservative management and peroneal strengthening"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "short-foot-arch-raise-no-toe-flexion",
+      "conditionIds": [
+        "medial-tibial-stress-syndrome"
+      ],
+      "name": "Short-foot arch raise without toe flexion",
+      "execution": "Elevate the medial arch and bring metatarsal heads toward the heel without lifting the forefoot or flexing toes; source progresses seated to double-leg then single-leg stance. Positions are progression choices to verify individually.",
+      "equipment": [
+        "Chair for seated stage",
+        "Floor surface"
+      ],
+      "movementRequirements": [
+        "Intrinsic-foot/arch control",
+        "No toe clawing",
+        "Later standing balance"
+      ],
+      "artwork": "Unresolved progression scope: do not commission one sequence that purports to represent seated, double-leg and single-leg standing. Separate seated-only candidate seated-short-foot-arch-hold-no-toe-flexion has a fixed draft hold brief; standing contacts/balance choices still need review.",
+      "reason": "Exact foot-control execution differs from calf raises/toe touches. Study found posture/QoL change, no added pain benefit; timed hold is a protocol parameter, not automatic strength credit. Broad progression remains unresolved for one fixed artwork identity. The seated stage is now separately requested; it does not settle standing support or progression.",
+      "sourceRefs": [
+        {
+          "conditionId": "medial-tibial-stress-syndrome",
+          "sourceId": "mtss-r2",
+          "location": "Methods > Lower-Leg Exercise Intervention; Table1"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "weighted-towel-toe-curl",
+      "conditionIds": [
+        "medial-tibial-stress-syndrome"
+      ],
+      "name": "Towel toe curl with optional external resistance",
+      "execution": "Use the toes to pull a towel along a smooth surface; source added 1- and 2-kg weights to the towel. Starting resistance and position need individual review.",
+      "equipment": [
+        "Towel",
+        "Smooth floor",
+        "External towel weight when prescribed"
+      ],
+      "movementRequirements": [
+        "Toe flexion/grip",
+        "Seated or other source-confirmed position unresolved"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "Distinct toe-flexor execution; no claim this isolated component reduces MTSS symptoms. Additional dose alone does not define identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "medial-tibial-stress-syndrome",
+          "sourceId": "mtss-r2",
+          "location": "Methods > Lower-Leg Exercise Intervention; Table1"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hallux-flexor-strengthening-execution-unresolved",
+      "conditionIds": [
+        "first-metatarsophalangeal-osteoarthritis"
+      ],
+      "name": "Hallux-flexor strengthening—execution unresolved",
+      "execution": "Flexor-hallucis strengthening was part of a functional hallux-limitus multimodal trial. Exact position, resistance and movement range were not reported in the accessible abstract and remain unresolved.",
+      "equipment": [
+        "Resistance/support unresolved"
+      ],
+      "movementRequirements": [
+        "Great-toe movement; permitted range unresolved",
+        "Clinician-confirmed diagnosis"
+      ],
+      "artwork": "Candidate supplement: retain an actual PNG sequence for this exact execution after execution/clinical review. No PNG or clinical/artwork provenance generated here; unresolved instructions must be settled before illustration.",
+      "reason": "Functional hallux limitus evidence is indirect for radiographic OA, and the full primary exercise instructions are inaccessible. Do not substitute towel curl by name alone.",
+      "sourceRefs": [
+        {
+          "conditionId": "first-metatarsophalangeal-osteoarthritis",
+          "sourceId": "mtp-r3",
+          "location": "Abstract > Methods, Results and Conclusions"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "wrist-extensor-loading-execution-unresolved",
+      "conditionIds": [
+        "lateral-elbow-tendinopathy"
+      ],
+      "name": "Wrist-extensor resisted loading, study execution unresolved",
+      "execution": "Resisted wrist extension using isometric,concentric and/or eccentric contractions;exact grip,support,range and implement require primary protocol/figure verification.",
+      "equipment": [
+        "Resistance implement unresolved; do not assume catalog dumbbell setup"
+      ],
+      "movementRequirements": [
+        "Wrist extension",
+        "Support/forearmposition and range unresolved"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "Catalog wrist-extension is Dumbbell/weight_reps with unsupported bent-over forearms and visually uncertain motion per inspected catalog/ledger. Guideline lacks exact setup. Reuse catalog if actual execution matches; dose alone is not a new identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "lateral-elbow-tendinopathy",
+          "sourceId": "let-g1",
+          "location": "Recommendations > Interventions: Therapeutic Exercise; evidence synthesis > Therapeutic Exercise"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "rubber-bar-eccentric-wrist-flexion",
+      "conditionIds": [
+        "medial-elbow-tendinopathy"
+      ],
+      "name": "Rubber-bar eccentric wrist-flexor release",
+      "execution": "Noninvolved arm preloads the rubber bar. Involved wrist flexors slowly release torsion eccentrically. Original figure/video review must resolve inconsistent flexor/extensor caption wording.",
+      "equipment": [
+        "Flexible rubber resistance bar"
+      ],
+      "movementRequirements": [
+        "Bimanual grip and preloading",
+        "Involved wrist-flexor eccentric release",
+        "Elbow/forearm position awaiting figure verification"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "Catalog wrist-curl uses a standing barbell; wrist-extension uses unsupported dumbbells. Neither establishes torsion-bar execution. Different implement and preloading require review, rather than different clinical dose.",
+      "sourceRefs": [
+        {
+          "conditionId": "medial-elbow-tendinopathy",
+          "sourceId": "met-p1",
+          "location": "Methods > Treatment; Results; Discussion; Figure 1 caption"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "assisted-supinated-dumbbell-eccentric-elbow-flexion",
+      "conditionIds": [
+        "distal-biceps-tendinopathy"
+      ],
+      "name": "Contralaterally assisted supinated dumbbell eccentric elbow flexion",
+      "execution": "Involved supinated arm controls dumbbell lowering initially in midrange. Opposite arm assists lifting/support, as described for Figure 1. Exact posture/end range awaits visual review.",
+      "equipment": [
+        "Dumbbell"
+      ],
+      "movementRequirements": [
+        "Unilateral elbow-flexion lowering",
+        "Contralateral arm assistance",
+        "Supinated forearm; initial midrange"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "Catalog bicep-curl is bilateral unsupported standing dynamic curling; hammer-curl is neutral grip. Assistance and studied range differ. Retain unresolved posture until source figure verification; do not duplicate merely for dose.",
+      "sourceRefs": [
+        {
+          "conditionId": "distal-biceps-tendinopathy",
+          "sourceId": "dbt-p1",
+          "location": "Case Presentation > Intervention; Table 2; Outcomes"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "cts-lumbrical-stretch-execution-unresolved",
+      "conditionIds": [
+        "carpal-tunnel-syndrome"
+      ],
+      "name": "CTS combined-orthosis lumbrical stretch, execution unresolved",
+      "execution": "Lumbrical-oriented stretch studied alongside orthoses. Primary full methods/handout unavailable, so joint positions, range and hold require verification.",
+      "equipment": [
+        "Orthosis type varies between trial arms; exact stretch equipment unresolved"
+      ],
+      "movementRequirements": [
+        "Finger/wrist position unverified",
+        "Selected mild-to-moderate CTS population"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact lumbrical-stretch execution verified in catalog metadata. Generic wrist stretching is not proven equivalent. No executable dose from abstract or secondary summary.",
+      "sourceRefs": [
+        {
+          "conditionId": "carpal-tunnel-syndrome",
+          "sourceId": "cts-p2",
+          "location": "Abstract > Participants, Interventions; 2019 CPG Therapeutic Exercise extraction"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "median-nerve-glide-cts-execution-unresolved",
+      "conditionIds": [
+        "carpal-tunnel-syndrome"
+      ],
+      "name": "Median nerve glide for CTS, trial execution unresolved",
+      "execution": "Median-nerve glide studied with splinting and tendon glides. Exact sequence/range requires primary-method verification.",
+      "equipment": [
+        "Splint cointervention; glide equipment not reported"
+      ],
+      "movementRequirements": [
+        "Median-nerve-specific sequence unverified",
+        "Do not substitute an ulnar glide"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact median-nerve sequence verified in catalog metadata. Trial showed no incremental benefit. Preserve as an uncertain research request, not default therapy.",
+      "sourceRefs": [
+        {
+          "conditionId": "carpal-tunnel-syndrome",
+          "sourceId": "cts-p1",
+          "location": "Abstract > Methods and Results; indexed Results"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "tendon-glide-cts-execution-unresolved",
+      "conditionIds": [
+        "carpal-tunnel-syndrome"
+      ],
+      "name": "Hand tendon glide for CTS, trial execution unresolved",
+      "execution": "Tendon glide studied with splint and median-nerve glides. Exact finger/wrist sequence was not verified from primary full methods.",
+      "equipment": [
+        "Splint cointervention; glide equipment not reported"
+      ],
+      "movementRequirements": [
+        "Finger-tendon excursion sequence unresolved",
+        "Distinct from median-nerve gliding"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact catalog sequence verified. Tendon and nerve glides are separate executions; primary abstract is not an execution manual.",
+      "sourceRefs": [
+        {
+          "conditionId": "carpal-tunnel-syndrome",
+          "sourceId": "cts-p1",
+          "location": "Abstract > Methods and Results; indexed Results"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "ulnar-nerve-glide-elbow-execution-unresolved",
+      "conditionIds": [
+        "ulnar-neuropathy-at-the-elbow"
+      ],
+      "name": "Ulnar nerve glide at elbow, trial execution unresolved",
+      "execution": "Nerve-gliding arm of the mild/moderate UNE trial. Exact upper-limb positions, sequence and range unverified.",
+      "equipment": [
+        "Not reported for exact glide execution"
+      ],
+      "movementRequirements": [
+        "Ulnar-nerve-specific movement unresolved",
+        "No assumed equivalence to median-nerve CTS glides"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "Trial found no additional benefit over information. Preserve the uncertain candidate without inventing a sequence; no exact catalog identity verified.",
+      "sourceRefs": [
+        {
+          "conditionId": "ulnar-neuropathy-at-the-elbow",
+          "sourceId": "une-p1",
+          "location": "Abstract"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "measured-isometric-thumb-extension-spring-gauge",
+      "conditionIds": [
+        "de-quervain-tenosynovitis"
+      ],
+      "name": "Measured isometric thumb extension with spring gauge",
+      "execution": "Forearm supported on table, hand beyond edge, wrist neutral, proximal thumb phalanx under padded spring gauge. Unaffected hand loads/unloads gauge and stabilizes base. Hold thumb neutral against measured force.",
+      "equipment": [
+        "Stable table",
+        "Padded spring-gauge exercise device",
+        "Clinical digital force meter for MVIC calibration"
+      ],
+      "movementRequirements": [
+        "Table-supported forearm",
+        "Isometric thumb extension",
+        "Measured force; unaffected-hand assistance"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact catalog thumb-extension gauge identity verified. Support, device and calibrated force distinguish this from band exercise. Dose arms at 25% versus 70% MVIC remain one execution identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "de-quervain-tenosynovitis",
+          "sourceId": "dqt-p1",
+          "location": "Methods > Exercise intervention; Results > Adverse events"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "thumb-cmc-coordination-execution-unresolved",
+      "conditionIds": [
+        "thumb-carpometacarpal-osteoarthritis"
+      ],
+      "name": "Thumb-CMC coordination and stability, exact home execution unresolved",
+      "execution": "Therapist-taught thumb positioning/coordination targeting CMC extension/abduction, followed by thenar strengthening. Exact home sequences await trial appendix review.",
+      "equipment": [
+        "Orthosis as studied cointervention",
+        "Exercise implements unverified"
+      ],
+      "movementRequirements": [
+        "Thumb-CMC coordination",
+        "Exact joint alignment, range and resistance unresolved"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact CMC-coordination identity verified. Do not replace it with generic grip exercise. Possible overlap with opposition/band work needs source verification; clinical dose alone is not a new identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "thumb-carpometacarpal-osteoarthritis",
+          "sourceId": "cmc-p1",
+          "location": "Methods > Interventions, PDF pp.3–4; Results, PDF p.6; Table 2, PDF p.10"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hand-small-large-fist-active-rom",
+      "conditionIds": [
+        "thumb-carpometacarpal-osteoarthritis",
+        "finger-interphalangeal-osteoarthritis"
+      ],
+      "name": "Active small-fist and large-fist hand ROM sequence",
+      "execution": "Actively roll fingers into small and large fist, then open, as described in mixed hand-OA programs. End range and thumb position require original handout/figure verification.",
+      "equipment": [
+        "Own hand; no external resistance established"
+      ],
+      "movementRequirements": [
+        "Active finger flexion/extension",
+        "Small and large fist are distinct positions",
+        "Joint-specific comfortable range unresolved"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact fist-ROM sequence verified in catalog. Grip strengthening differs from active ROM. Mixed hand-OA program component is indirect for isolated IP/CMC disease, with no isolated efficacy.",
+      "sourceRefs": [
+        {
+          "conditionId": "thumb-carpometacarpal-osteoarthritis",
+          "sourceId": "hoa-s2",
+          "location": "Characteristics of included studies > Hennig 2015 and Østerås 2014; Description of studies > Adverse events"
+        },
+        {
+          "conditionId": "finger-interphalangeal-osteoarthritis",
+          "sourceId": "hoa-p2",
+          "location": "Methods > Exercise intervention and Table 1; Results > Adverse events"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hand-grip-rubber-ball-squeeze",
+      "conditionIds": [
+        "thumb-carpometacarpal-osteoarthritis",
+        "finger-interphalangeal-osteoarthritis"
+      ],
+      "name": "Hand grip with rubber ball",
+      "execution": "Squeeze a compliant rubber ball as a Hennig program component. Ball stiffness, diameter and finger/thumb geometry are not established from the review table; primary handout verification required.",
+      "equipment": [
+        "Compliant rubber ball; stiffness and size unresolved"
+      ],
+      "movementRequirements": [
+        "Whole-hand grip",
+        "Force and range unresolved",
+        "Tube geometry may require distinct execution verification"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact ball-handgrip identity verified. This is not a wrist or elbow curl. Mixed hand-OA component has no isolated efficacy; different dose alone will not create another identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "thumb-carpometacarpal-osteoarthritis",
+          "sourceId": "hoa-s2",
+          "location": "Characteristics of included studies > Hennig 2015 and Østerås 2014; Description of studies > Adverse events"
+        },
+        {
+          "conditionId": "finger-interphalangeal-osteoarthritis",
+          "sourceId": "hoa-s2",
+          "location": "Characteristics of included studies > Hennig 2015 and Østerås 2014; Description of studies > Adverse events"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "band-thumb-abduction-extension-execution-unresolved",
+      "conditionIds": [
+        "thumb-carpometacarpal-osteoarthritis"
+      ],
+      "name": "Band-resisted thumb abduction/extension, setup unresolved",
+      "execution": "Thumb abduction/extension against elastic band in a mixed hand-OA program. Anchor, hand position, joint alignment and whether directions are separate exercises await primary handout.",
+      "equipment": [
+        "Elastic band; attachment unresolved"
+      ],
+      "movementRequirements": [
+        "Thumb abduction/extension",
+        "Anchor and range unresolved",
+        "CMC stability not assumed for finger-IP OA"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact band-thumb identity verified. Resolve direction and geometry before combined-direction artwork. Clinical dose alone is not a new identity.",
+      "sourceRefs": [
+        {
+          "conditionId": "thumb-carpometacarpal-osteoarthritis",
+          "sourceId": "hoa-s2",
+          "location": "Characteristics of included studies > Hennig 2015 and Østerås 2014; Description of studies > Adverse events"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "finger-stretch-hand-oa-execution-unresolved",
+      "conditionIds": [
+        "thumb-carpometacarpal-osteoarthritis",
+        "finger-interphalangeal-osteoarthritis"
+      ],
+      "name": "Finger stretch from hand-OA program, execution unresolved",
+      "execution": "Finger stretch listed in mixed hand-OA program. Assistance, joint positions, direction and hold were not verified. No forceful passive end-range prescription.",
+      "equipment": [
+        "Not reported until primary handout identified"
+      ],
+      "movementRequirements": [
+        "Finger-joint mobility",
+        "Exact stretch direction/support unresolved",
+        "Stretch does not earn strength-set credit"
+      ],
+      "artwork": "Candidate only. Verify source execution/figures and compare catalog before commissioning; if new, retain actual setup/start/action/return PNGs including support,equipment and range. No PNG generated or provenance fabricated.",
+      "reason": "No exact matching finger stretch verified. Name alone cannot establish equivalence. Withhold illustration until original execution is resolved.",
+      "sourceRefs": [
+        {
+          "conditionId": "thumb-carpometacarpal-osteoarthritis",
+          "sourceId": "hoa-s2",
+          "location": "Characteristics of included studies > Hennig 2015 and Østerås 2014; Description of studies > Adverse events"
+        },
+        {
+          "conditionId": "finger-interphalangeal-osteoarthritis",
+          "sourceId": "hoa-p2",
+          "location": "Methods > Exercise intervention and Table 1; Results > Adverse events"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "hsd-supine-dumbbell-scapular-protraction",
+      "conditionIds": [
+        "hypermobility-spectrum-disorder"
+      ],
+      "name": "HEAVY table-supported extended-leg dumbbell scapular protraction",
+      "execution": "Photographed HEAVY Exercise 5 variant: supine on stable table with legs extended, head/back on support, opposite hand relaxed at abdomen as pictured. Exercising shoulder at 90 degrees, elbow straight and dumbbell hand vertical. Raise the shoulder/scapula by reaching the straight arm upward without head/back lift or shrug; lower until shoulder returns to support.",
+      "equipment": [
+        "Dumbbell",
+        "Stable table"
+      ],
+      "movementRequirements": [
+        "Supine transfer and extended-leg table support",
+        "Straight-elbow vertical dumbbell reach by scapular protraction/retraction",
+        "Head/back stay supported; shoulder returns to support",
+        "Controlled unilateral repetition/load measurement"
+      ],
+      "artwork": "Source-specific fixed HEAVY DRAFT sequence, not a universal shared protraction image. Use only HEAVY Exercise 5 in exact generation references; retain actual PNG masters and real provenance if generated after source re-review. No image or execution acceptance here.",
+      "reason": "Previously merged with RoCTEx at common movement-core level. Fixed artwork now separates the photographed extended-leg/table/head-back-support and shoulder-return-to-contact setup from RoCTEx knee/terminal cues; this split is based on execution, not dose. The earlier shared review remains historical and does not prove one final illustration. Clinical/provenance limits and independent component uncertainty remain.",
+      "sourceRefs": [
+        {
+          "conditionId": "hypermobility-spectrum-disorder",
+          "sourceId": "liaghat-protocol-2020",
+          "location": "Supplementary file 3 HEAVY manual > Exercise 5, PDF p.9 (printed p.8), photograph pair and execution text"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "pht-single-leg-calf-supported-isometric-hamstring-bridge",
+      "conditionIds": [
+        "proximal-hamstring-tendinopathy"
+      ],
+      "name": "Single-leg calf-supported isometric hamstring bridge, Figure 3(a,b)",
+      "execution": "Figure 3(a,b): supine with head/shoulders supported on the pictured padded plinth, arms crossed; one calf supported on a stable box resting on the same plinth, other hip/knee flexed and elevated. Raise hips and hold the pictured level-pelvis bridge in (b). This fixed hold does not include double-leg or reduced-support (c,d) alternatives; no numeric angle or dose is inferred.",
+      "equipment": [
+        "Stable padded plinth",
+        "Stable calf-support box on the plinth"
+      ],
+      "movementRequirements": [
+        "Transfer onto pictured padded plinth",
+        "One calf contacts box; opposite leg elevated/flexed",
+        "Head/shoulder support and crossed arms",
+        "Sustained isometric hamstring/hip-extension hold with pelvic control"
+      ],
+      "artwork": "Fixed Figure 3(b) static-hold DRAFT: the identical raised pose may fill all three frame slots. No bouncing or dynamic bridge repetitions; setup can be explained separately. Source-concordance review precedes generation; retain PNG masters/provenance if generated.",
+      "reason": "Narrow source-bound child of unresolved pht-isometric-hamstring-bridge. Support contact, unilateral lever and duration measurement distinguish this execution from catalog glute/single-leg bridges; dose alone does not. Broad double/single-leg/support progression remains unresolved and no isolated component efficacy is claimed.",
+      "sourceRefs": [
+        {
+          "conditionId": "proximal-hamstring-tendinopathy",
+          "sourceId": "rich-2025-commentary",
+          "location": "Stage 1—Isometric > Figure 3(a,b), calf-supported single-leg setup and held position"
+        }
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "seated-short-foot-arch-hold-no-toe-flexion",
+      "conditionIds": [
+        "medial-tibial-stress-syndrome"
+      ],
+      "name": "Seated short-foot arch hold without toe flexion",
+      "execution": "Seated-only starting stage: foot on floor/support, elevate medial arch and bring metatarsal heads toward heel without lifting forefoot or flexing/clawing toes. Hold that arch-controlled pose. Standing double-/single-leg progression is excluded; no numeric angle or new clinical hold duration is inferred.",
+      "equipment": [
+        "Stable chair or seated support",
+        "Floor surface"
+      ],
+      "movementRequirements": [
+        "Seated support",
+        "Medial-arch control with forefoot contact",
+        "Toes remain uncurled; no forefoot lift",
+        "Static hold measurement; no automatic strength-set credit"
+      ],
+      "artwork": "Fixed seated foot-focused DRAFT hold; identical held pose across all three slots is appropriate. Do not depict standing balance, heel raise or toe curl. Retain actual PNG/provenance if generated after scoped source review.",
+      "reason": "Narrow child of short-foot-arch-raise-no-toe-flexion; only the already reported seated stage is depicted, not its standing progression. No new efficacy or dose claim. Source bundle had no added pain/MTSS severity benefit and does not establish strength credit.",
+      "sourceRefs": [
+        {
+          "conditionId": "medial-tibial-stress-syndrome",
+          "sourceId": "mtss-r2",
+          "location": "Methods > Lower-Leg Exercise Intervention; Table1"
+        }
+      ],
+      "status": "candidate"
+    }
+  ]
+}

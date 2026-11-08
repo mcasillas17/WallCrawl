@@ -23,6 +23,8 @@ class GeneratedWorkoutValidator(
     private val exerciseCatalog: ExerciseCatalog
 ) {
 
+    internal suspend fun catalogExercise(id: String) = exerciseCatalog.getExerciseById(id)
+
     /**
      * Every structural problem in [workout], in report order, or an empty list.
      *
@@ -132,7 +134,10 @@ enum class WorkoutPlanningFailure {
     NO_STRENGTH_CANDIDATES,
 
     /** Strength candidates exist, but none of them train any split. */
-    NO_CANDIDATES_FOR_ANY_SPLIT
+    NO_CANDIDATES_FOR_ANY_SPLIT,
+
+    /** Reviewed condition requirements cannot be delivered by this ordinary plan. */
+    CONDITION_REQUIREMENTS_UNSATISFIED
 }
 
 /**
@@ -145,5 +150,13 @@ enum class WorkoutPlanningFailure {
 class WorkoutValidationException(
     message: String,
     val failure: WorkoutPlanningFailure,
-    val automaticEligibilityFailure: AutomaticEligibilityFailure? = null
+    val automaticEligibilityFailure: AutomaticEligibilityFailure? = null,
+    val conditionReasons: List<wallcrawl.elopenmike.com.core.model.ConditionViolation> = emptyList()
 ) : IllegalArgumentException(message)
+
+internal fun conditionPlanningFailure(reasons: List<wallcrawl.elopenmike.com.core.model.ConditionViolation>): Nothing =
+    throw WorkoutValidationException(
+        message = "Cannot generate workout: condition requirements are unsatisfied.",
+        failure = WorkoutPlanningFailure.CONDITION_REQUIREMENTS_UNSATISFIED,
+        conditionReasons = wallcrawl.elopenmike.com.core.model.conditionList(reasons)
+    )

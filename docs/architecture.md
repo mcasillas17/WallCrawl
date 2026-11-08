@@ -932,7 +932,13 @@ no separate write path that copies a logged value back into
 
 ## Room persistence and invariants
 
-`WallCrawlDatabase` is currently schema version 16. Its tables store:
+`WallCrawlDatabase` is currently schema version 16. Its compiler-exported schema is
+tracked under `app/schemas/` and regenerated in CI. See [Room schema artifacts](room-schemas.md)
+for generation/check commands, the historical SQL-fixture boundary, and the two preserved
+legacy SQL-default differences. Schema artifacts contain no user data and are only packaged
+in the instrumentation APK; archive format versioning remains independent.
+
+Its tables store:
 
 - the user profile, including onboarding status, multi-select fitness goals,
   training constraints, return-after-break weeks, confirmed starting loads,
@@ -1052,15 +1058,15 @@ diagram, OEM limitations, and the lack of any previous-backup erasure guarantee.
 
 ### User-owned export, restore, and deletion
 
-`core/backup` writes archive format **version 6** and reads versions 1 through 6: one JSON
-document holding the profile, templates, every session with its exercises and sets, and
+`core/backup` writes archive format **version 8** and reads versions 1 through 8. Each JSON
+document holds the profile, templates, every session with its exercises and sets, and
 the whole-program validation record for each session started from a recommendation. That
 version is independent of the Room schema version, which travels alongside the app
 version, the creation time, and the bundled catalog commit as provenance only.
 
 Version 2 added the `recommendations` array. A version 1 document restores exactly as it
 always did and simply carries none; a version 1 document that uses a version 2 field is
-refused rather than quietly upgraded. Versions newer than 6 are refused as
+refused rather than quietly upgraded. Versions newer than 8 are refused as
 unsupported. Each record must name a session the same document carries, exactly once.
 Version 4 adds owned deload preferences; older checksums and missing-choice
 semantics are preserved. A choice row also makes a restore destination nonempty.
@@ -1077,6 +1083,17 @@ validated projection transactionally and never reserves/completes a slot anew.
 Version 6 adds a template's optional `weightUnit`. It is written only when the template
 has one, a version 1–5 document carrying it is refused, and older documents restore
 their templates with no unit, never an assumed one.
+
+Two version 7 encoders used different canonical bytes. The reader identifies the format
+from its fields and checks the checksum with that encoder's field order and defaults.
+It rejects a mixture of the two layouts even if a field is empty. Version 8 can retain
+both reported condition IDs and selected answers without inferring one from the other.
+A version 7 `MOBILITY` row keeps its historical role alongside its supportive purpose.
+A `MAIN` row remains ordinary. An originally supportive row retains its own origin,
+including when its session has no frozen context.
+Per-repetition holds remain separate from total-duration targets and performed values.
+Session context, recommendation bindings and independent reassessment records survive
+when present. Restoring an older archive creates none of these facts.
 
 ```text
 Room (profile, templates, sessions, exercises, sets, recommendation records,

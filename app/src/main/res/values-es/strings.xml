@@ -20,7 +20,11 @@
     <string name="today_error_deload_read">No se pudo cargar tu elección para un entrenamiento. Vuelve a intentarlo antes de iniciar un entrenamiento automático.</string>
     <string name="today_error_deload_write">No se pudo guardar tu elección. Aquí no se aceptó ni cambió nada. Vuelve a intentarlo.</string>
     <string name="today_deload_title">Un entrenamiento con menos series</string>
-    <string name="today_deload_accepted">Menos series aceptadas para un entrenamiento</string>
+    <string name="today_view_exercises">Ver ejercicios</string>
+    <string name="today_details">Detalles</string>
+    <string name="today_hide_details">Ocultar detalles</string>
+    <string name="today_deload_applied_summary">Una serie menos por ejercicio, con un mínimo de una.</string>
+    <string name="today_deload_accepted">Menos series en esta sesión</string>
     <string name="today_deload_reason_request">Solicitaste menos series.</string>
     <string name="today_deload_reason_returning">Indicaste que vuelves después de una pausa. La orientación de regreso ya se aplica independientemente de esta elección.</string>
     <string name="today_deload_effect">Tu próximo entrenamiento automático, y solo UNO, usa las metas de trabajo de referencia actuales con una serie de trabajo menos por ejercicio, mínimo una. Mantiene las metas de referencia de carga, asistencia, repeticiones, duración, esfuerzo y descanso. La progresión queda en pausa, incluido cualquier aumento sugerido.</string>
@@ -67,9 +71,9 @@
     <string name="value_not_available">—</string>
 
     <!-- ============================ Bottom navigation ============================ -->
-    <string name="nav_today">Hoy</string>
+    <string name="nav_today">Entrenar</string>
     <string name="nav_progress">Progreso</string>
-    <string name="nav_exercises">Ejercicios</string>
+    <string name="nav_exercises">Biblioteca</string>
     <string name="nav_profile">Perfil</string>
 
     <!-- ============================ Language ============================ -->
@@ -80,45 +84,44 @@
     <string name="language_option_system_short">Auto</string>
 
     <!-- ============================ Onboarding ============================ -->
-    <string name="onboarding_welcome_title">Bienvenido, Crawler</string>
-    <string name="onboarding_welcome_subtitle">Vamos a configurar tu identidad de entrenamiento.</string>
-    <string name="onboarding_goals_title">Objetivos de entrenamiento</string>
+    <string name="onboarding_welcome_title">Te damos la bienvenida a WallCrawl</string>
+    <string name="onboarding_welcome_subtitle">Configura tus entrenamientos en ocho pasos.</string>
+    <string name="onboarding_goals_title">Tus objetivos</string>
     <string name="onboarding_goals_subtitle">Elige tus objetivos.</string>
     <string name="onboarding_experience_title">Experiencia y unidades</string>
     <string name="onboarding_experience_subtitle">Elige tu unidad de peso preferida y tu experiencia previa.</string>
     <string name="onboarding_movement_capability_title">Preferencias de movimiento</string>
     <string name="onboarding_movement_capability_subtitle">Cuéntanos qué te resulta cómodo hoy. Puedes cambiarlo después.</string>
-    <string name="onboarding_schedule_title">Frecuencia de entrenamiento</string>
+    <string name="onboarding_schedule_title">Tu horario</string>
     <string name="onboarding_schedule_subtitle">Define tu rutina semanal y la duración que prefieres por sesión.</string>
-    <string name="onboarding_equipment_title">Equipo disponible</string>
+    <string name="onboarding_equipment_title">Tu equipo</string>
     <string name="onboarding_equipment_subtitle">Escoge el equipo que tengas disponible.</string>
-    <string name="onboarding_safety_title">Seguridad y recuperación</string>
+    <string name="onboarding_safety_title">Restricciones de movimiento</string>
     <string name="onboarding_safety_subtitle">Cuéntanos qué zonas quieres cuidar.</string>
-    <string name="onboarding_summary_title">Todo listo para empezar</string>
-    <string name="onboarding_summary_subtitle">Revisa tu configuración antes de generar tu primer entrenamiento.</string>
+    <string name="onboarding_summary_title">Revisa tus preferencias</string>
+    <string name="onboarding_summary_subtitle">Puedes cambiar estas opciones en Perfil y ajustes.</string>
 
-    <string name="onboarding_step_counter">PASO %1$s DE %2$s</string>
-    <string name="onboarding_codename_heading">TU NOMBRE CLAVE</string>
-    <string name="onboarding_codename_prompt">¿Cómo quieres que WallCrawl te llame durante los entrenamientos?</string>
-    <string name="onboarding_codename_placeholder">p. ej. Pedro, Gabriela, Miguel, Ale</string>
+    <string name="onboarding_step_counter">Paso %1$s de %2$s</string>
+    <string name="onboarding_codename_heading">Tu nombre</string>
+    <string name="onboarding_codename_placeholder">p. ej., Álex</string>
 
-    <string name="onboarding_goals_heading">OBJETIVOS DE ENTRENAMIENTO</string>
+    <string name="onboarding_goals_heading">Objetivos de entrenamiento</string>
     <string name="onboarding_goals_hint">Selecciona lo que aplique a tu bloque actual (conserva al menos uno):</string>
 
-    <string name="onboarding_unit_heading">UNIDAD DE PESO PREFERIDA</string>
+    <string name="onboarding_unit_heading">Unidad de peso preferida</string>
     <string name="onboarding_unit_hint">Se usa para las cargas, los discos y el registro.</string>
-    <string name="onboarding_experience_heading">NIVEL DE EXPERIENCIA</string>
+    <string name="onboarding_experience_heading">Nivel de experiencia</string>
 
-    <string name="onboarding_schedule_days_heading">DÍAS DE ENTRENAMIENTO POR SEMANA</string>
-    <string name="onboarding_duration_heading">DURACIÓN OBJETIVO</string>
+    <string name="onboarding_schedule_days_heading">Días de entrenamiento por semana</string>
+    <string name="onboarding_duration_heading">Duración objetivo</string>
     <string name="onboarding_duration_hint">Incluye las series de calentamiento, el volumen de trabajo y los descansos.</string>
-    <string name="onboarding_break_heading">¿VUELVES DESPUÉS DE UNA PAUSA?</string>
+    <string name="onboarding_break_heading">¿vuelves después de una pausa?</string>
     <string name="onboarding_break_hint">Indica cuánto duró tu pausa para que WallCrawl empiece con un volumen conservador.</string>
 
-    <string name="onboarding_equipment_quick_heading">ATAJOS DE EQUIPO</string>
+    <string name="onboarding_equipment_quick_heading">Opciones de equipo</string>
     <string name="onboarding_equipment_bodyweight_only">Solo peso corporal</string>
     <string name="onboarding_equipment_full_gym">Gimnasio completo</string>
-    <string name="onboarding_equipment_heading">EQUIPO DISPONIBLE</string>
+    <string name="onboarding_equipment_heading">Equipo disponible</string>
     <string name="onboarding_equipment_hint">Marca lo que tengas en casa o en el gimnasio:</string>
     <string name="band_setup_heading">Anclajes de banda: confirma por separado</string>
     <string name="band_setup_hint">Confirma solo lo que realmente tengas. Gimnasio completo no selecciona estas opciones. Cada una es independiente; selecciona %1$s por separado.</string>
@@ -127,13 +130,13 @@
     <string name="band_setup_low_description">Anclaje fijo asegurado cerca del suelo.</string>
     <string name="band_setup_kickback_description">Sujeción al tobillo y apoyo estable al alcance de la mano en el mismo conjunto de anclaje bajo. Selecciona también el anclaje bajo por separado.</string>
 
-    <string name="onboarding_safety_heading">ARTICULACIONES SENSIBLES</string>
+    <string name="onboarding_safety_heading">Articulaciones sensibles</string>
     <string name="onboarding_safety_hint">Cuéntanos qué articulaciones quieres cuidar. Los entrenamientos automáticos leen tu respuesta. «Solo bajo impacto» ya se aplica hoy; todavía ningún ejercicio revisado está autorizado para una articulación concreta, así que si eliges una de esas, WallCrawl no tendrá entrenamientos automáticos que ofrecer hasta que exista esa revisión. La exploración y los entrenamientos manuales no cambian. Esto no es consejo médico.</string>
-    <string name="onboarding_safety_none_title">Sin molestias / sin restricciones</string>
+    <string name="onboarding_safety_none_title">Sin restricciones</string>
     <string name="onboarding_safety_none_subtitle">Ninguna zona que cuidar.</string>
     <string name="onboarding_safety_tag_prompt">O marca zonas específicas:</string>
 
-    <string name="onboarding_summary_heading">PLAN DE ENTRENAMIENTO</string>
+    <string name="onboarding_summary_heading">Preferencias de entrenamiento</string>
     <string name="onboarding_summary_label_name">Nombre</string>
     <string name="onboarding_summary_label_goals">Objetivos</string>
     <string name="onboarding_summary_label_experience">Experiencia</string>
@@ -146,11 +149,9 @@
     <string name="onboarding_summary_value_no_sensitive">Ninguna</string>
     <string name="onboarding_summary_label_break">Regreso tras la pausa</string>
     <string name="onboarding_summary_value_break">%1$s • %2$s</string>
-    <string name="onboarding_ready_title">⚡ Todo listo</string>
-    <string name="onboarding_ready_body">WallCrawl ya va a preparar tu planificador local. Puedes cambiar todo esto después desde tu perfil.</string>
 
     <string name="onboarding_action_continue">Continuar</string>
-    <string name="onboarding_action_start">Empezar a entrenar</string>
+    <string name="onboarding_action_start">Guardar y terminar</string>
     <string name="onboarding_action_saving">Guardando tu perfil…</string>
 
     <string name="onboarding_error_required_field">Responde cada campo obligatorio de la configuración inicial.</string>
@@ -158,7 +159,7 @@
     <string name="onboarding_error_invalid_field">Revisa el campo marcado e inténtalo de nuevo.</string>
     <string name="onboarding_error_save_failed">No se pudo guardar tu perfil. Inténtalo de nuevo.</string>
 
-    <string name="onboarding_restore_title">¿YA TIENES UN ARCHIVO DE WALLCRAWL?</string>
+    <string name="onboarding_restore_title">¿ya tienes un archivo de WallCrawl?</string>
     <string name="onboarding_restore_scope">El archivo tiene todo: tu perfil, tus rutinas y todos los entrenamientos que registraste.</string>
     <string name="onboarding_restore_action">Restaurar perfil desde archivo</string>
 
@@ -309,22 +310,12 @@
     <string name="today_loading">Preparando el plan de hoy…</string>
     <string name="today_error_title">No se pudo generar</string>
     <string name="today_greeting">Listo para entrenar, %1$s</string>
-    <string name="today_weekly_goal_met">Meta semanal cumplida</string>
-    <string name="today_active_session_heading">ENTRENAMIENTO EN CURSO</string>
     <string name="today_action_resume">Reanudar</string>
-    <string name="today_plan_heading">EL PLAN DE HOY</string>
     <string name="today_regenerate_content_description">Generar otro entrenamiento</string>
     <string name="today_stat_duration">~%1$s min</string>
-    <string name="today_routine_heading">RUTINA</string>
     <string name="today_exercise_position">%1$s.</string>
     <string name="today_action_start">Empezar entrenamiento</string>
-    <string name="today_action_regenerate">Generar otro entrenamiento</string>
-    <string name="today_custom_routines_heading">RUTINAS PERSONALIZADAS</string>
     <string name="today_my_workouts_title">Mis rutinas</string>
-    <string name="today_my_workouts_body">Crea, guarda y repite tus propias rutinas.</string>
-    <string name="today_action_open_templates">Abrir mis rutinas</string>
-    <string name="today_plan_context_target">ENFOQUE: %1$s</string>
-    <string name="today_plan_context_offline">Creado en tu teléfono</string>
 
     <string name="today_error_no_candidates">Todavía no hay ejercicios que coincidan con tu equipo y tus exclusiones. Agrega equipo o quita una exclusión en el perfil.</string>
     <string name="today_error_no_strength_candidates">Las máquinas de cardio y los estiramientos no se programan como trabajo de fuerza. Agrega equipo de fuerza en el perfil o crea tu propia rutina.</string>
@@ -345,12 +336,7 @@
     <string name="today_error_reviewed_none_eligible">Ningún ejercicio cumple todas las reglas de la planificación automática revisada. Aun así puedes crear tu propia rutina.</string>
 
     <!-- ============================ Exercise catalog ============================ -->
-    <string name="exercises_eyebrow">CATÁLOGO</string>
-    <string name="exercises_title">Biblioteca de ejercicios</string>
-    <string name="exercises_search_placeholder">Busca ejercicios, músculos o equipo…</string>
     <string name="exercises_search_clear">Borrar la búsqueda</string>
-    <string name="exercises_filter_muscle">MÚSCULO OBJETIVO</string>
-    <string name="exercises_filter_equipment">EQUIPO</string>
     <string name="exercises_empty">Ningún ejercicio coincide con esta búsqueda.</string>
     <string name="exercises_catalog_error">No se pudo cargar el catálogo de ejercicios sin conexión. Reinstala o actualiza WallCrawl e inténtalo de nuevo.</string>
 
@@ -373,10 +359,8 @@
     <!-- ============================ Active workout ============================ -->
     <string name="workout_error_title">Error en el entrenamiento</string>
     <string name="workout_action_go_back">Volver</string>
-    <string name="workout_close_content_description">Cerrar el entrenamiento</string>
     <string name="workout_exercise_position">Ejercicio %1$s de %2$s</string>
     <string name="workout_action_finish">Terminar</string>
-    <string name="workout_action_previous">Anterior</string>
     <string name="workout_action_next">Siguiente ejercicio</string>
     <string name="workout_action_finish_workout">Terminar el entrenamiento</string>
     <string name="workout_suggested_load">Sugerido: %1$s %2$s</string>
@@ -410,7 +394,6 @@
     <string name="rest_remaining_accessibility">Descanso restante: %1$s</string>
     <string name="rest_add_thirty">+30 s</string>
     <string name="rest_skip">Omitir el descanso</string>
-    <string name="rest_dismiss">Descartar</string>
     <string name="rest_countdown">%1$s:%2$s</string>
 
     <string name="finish_confirm_action">Terminar de todos modos</string>
@@ -433,16 +416,12 @@
     <string name="set_field_increase_accessibility">Aumentar %1$s de la serie %2$s</string>
     <string name="set_field_value_accessibility">%1$s de la serie %2$s</string>
     <string name="set_copy_previous_accessibility">Usar la %1$s anterior de %2$s para la serie %3$s</string>
-    <string name="set_complete_refused">Sin cambios: termina el número de arriba</string>
-    <string name="set_complete">Completar la serie</string>
     <string name="set_completed">Completada</string>
-    <string name="set_complete_accessibility">Serie %1$s completada</string>
     <string name="set_skip_or_stop">Omitir o detener</string>
     <string name="set_feedback_show">Agregar comentarios (opcional)</string>
     <string name="set_feedback_hide">Ocultar los comentarios</string>
     <string name="set_felt_manageable">¿Se sintió manejable?</string>
     <string name="set_manageable_accessibility">La serie %1$s se sintió manejable: %2$s</string>
-    <string name="set_choose_starting_load">Elige la carga inicial</string>
 
     <string name="effort_optional">El esfuerzo es opcional. Puedes dejarlo en blanco.</string>
     <string name="effort_rpe_decrease_accessibility">Reducir el RPE de la serie %1$s</string>
@@ -460,9 +439,7 @@
     <string name="stop_reason_other">Otro motivo</string>
 
     <!-- ============================ Workout summary ============================ -->
-    <string name="summary_eyebrow">ENTRENAMIENTO COMPLETADO</string>
     <string name="summary_success_content_description">Entrenamiento completado</string>
-    <string name="summary_section">RESUMEN DE LA SESIÓN</string>
     <string name="summary_metric_duration">Duración</string>
     <string name="summary_metric_sets">Series registradas</string>
     <string name="summary_metric_volume">Volumen levantado</string>
@@ -472,7 +449,6 @@
     <string name="summary_duration_value">%1$s min</string>
 
     <!-- ============================ Templates ============================ -->
-    <string name="templates_eyebrow">RUTINAS PERSONALIZADAS</string>
     <string name="templates_title">Mis rutinas</string>
     <string name="templates_create_content_description">Crear una rutina</string>
     <string name="templates_empty_title">Crea tu propia rutina</string>
@@ -493,7 +469,6 @@
     <string name="editor_name_placeholder">p. ej. Hipertrofia de tren superior</string>
     <string name="editor_notes_label">Notas (opcional)</string>
     <string name="editor_notes_placeholder">p. ej. Técnica estricta y 90 s de descanso</string>
-    <string name="editor_exercises_eyebrow">EJERCICIOS</string>
     <string name="editor_action_add">+ Agregar ejercicio</string>
     <string name="editor_empty_title">Todavía no agregaste ejercicios</string>
     <string name="editor_equipment_warning">⚠️ Este equipo no está en tu perfil actual</string>
@@ -561,13 +536,10 @@
     <string name="draft_error_invalid_combination">Estos objetivos no se pueden combinar en este ejercicio.</string>
     <string name="draft_error_missing_exercise">Este ejercicio ya no se puede usar como se guardó.</string>
 
-    <string name="picker_eyebrow">CATÁLOGO</string>
     <string name="picker_title">Agregar ejercicio</string>
     <string name="picker_add_content_description">Agregar</string>
 
     <!-- ============================ Progress ============================ -->
-    <string name="progress_eyebrow">PROGRESO</string>
-    <string name="progress_title">Constancia y rendimiento</string>
     <string name="progress_goal">Meta: %1$s/sem</string>
     <string name="progress_weekly_volume">Volumen semanal</string>
     <string name="progress_volume_value">%1$s %2$s</string>
@@ -592,11 +564,11 @@
     <string name="progress_metric_volume_def">El volumen es carga × reps solo en series con peso; el peso corporal, la asistencia, el tiempo y la distancia no son tonelaje.</string>
     <string name="progress_streak_grace_note">Una semana en curso sin terminar no corta tu racha.</string>
 
-    <!-- Dosis primaria revisada: cuenta PRIMARY_ONLY_V1, separada de la actividad amplia. -->
+    <!-- Dosis primaria revisada: cuenta ORDINARY_PRIMARY_ONLY_V2, separada de la actividad amplia. -->
     <string name="progress_dose_heading">Dosis primaria revisada</string>
     <string name="progress_dose_unattributed">El trabajo sin datos musculares aprobados sigue incluido en tu actividad registrada.</string>
     <string name="progress_dose_none">No hay series de trabajo completadas para revisar esta semana.</string>
-    <string name="progress_dose_policy">Política PRIMARY_ONLY_V1: se cuenta un músculo primario aprobado por serie de trabajo completada. Los calentamientos y los músculos secundarios descritos nunca cuentan como dosis.</string>
+    <string name="progress_dose_policy">Política ORDINARY_PRIMARY_ONLY_V2: se cuenta un músculo primario aprobado por serie de trabajo ordinario completada. El trabajo de apoyo, los calentamientos y los músculos secundarios descritos nunca cuentan como dosis.</string>
     <string name="progress_dose_details">Detalles de la dosis revisada</string>
     <string name="progress_dose_direct_heading">Series primarias acreditadas</string>
     <string name="progress_dose_secondary_heading">Participación secundaria descrita</string>
@@ -616,9 +588,10 @@
     <string name="progress_involvement_details">Detalles de la participación muscular</string>
 
     <!-- Estado del detalle progresivo, anunciado para tecnología de asistencia. -->
+    <string name="progress_details_expanded">Expandido</string>
+    <string name="progress_details_collapsed">Contraído</string>
     <string name="a11y_expanded">Expandido</string>
     <string name="a11y_collapsed">Contraído</string>
-    <string name="progress_history_heading">HISTORIAL DE ENTRENAMIENTOS</string>
     <string name="progress_history_empty">Todavía no hay entrenamientos registrados. Completa el primero para ver tu historial aquí.</string>
     <string name="progress_history_duration">%1$s min</string>
     <string name="progress_history_volume">%1$s %2$s de volumen</string>
@@ -627,25 +600,15 @@
     <string name="progress_performance_weight_reps">%1$s %2$s × %3$s</string>
 
     <!-- ============================ Profile ============================ -->
-    <string name="profile_eyebrow">AJUSTES</string>
-    <string name="profile_title">Perfil de entrenamiento</string>
-    <string name="profile_goals_heading">OBJETIVOS DE ENTRENAMIENTO</string>
-    <string name="profile_goals_hint">Selecciona lo que aplique a tu bloque actual (conserva al menos uno):</string>
-    <string name="profile_preferences_heading">PREFERENCIAS DE ENTRENAMIENTO</string>
     <string name="profile_preferred_unit">Unidad de peso preferida</string>
     <string name="profile_preferred_duration">Duración preferida</string>
     <string name="profile_duration_value">~%1$s min</string>
     <string name="profile_training_days">Días de entrenamiento por semana</string>
-    <string name="profile_equipment_heading">EQUIPO DISPONIBLE</string>
-    <string name="profile_muscle_heading">PRIORIDADES MUSCULARES</string>
-    <string name="profile_safety_heading">SEGURIDAD AL ENTRENAR</string>
     <string name="profile_safety_description">Tu selección de articulaciones se lee al crear entrenamientos automáticos. «Solo bajo impacto» ya se aplica hoy; todavía ningún ejercicio revisado está autorizado para una articulación concreta, así que si eliges una de esas, WallCrawl no tendrá entrenamientos automáticos que ofrecer hasta que exista esa revisión. La exploración y los entrenamientos manuales no cambian. Esto no es consejo médico.</string>
     <string name="profile_break_title">Regreso después de una pausa</string>
     <string name="profile_break_hint">Ajusta la duración de tu pausa para que WallCrawl adapte el volumen que planifica.</string>
     <string name="profile_app_preferences_heading">PREFERENCIAS DE LA APP</string>
     <string name="profile_theme_title">Tema de la interfaz</string>
-    <string name="profile_credits_heading">CRÉDITOS Y LICENCIAS</string>
-    <string name="profile_credits_body">Quién creó las ilustraciones de los ejercicios y bajo qué licencia se distribuyen.</string>
     <string name="profile_load_error">No se pudo cargar tu perfil. Inténtalo de nuevo.</string>
 
     <string name="profile_capability_title">PREFERENCIAS DE MOVIMIENTO</string>
@@ -682,7 +645,7 @@
     <string name="local_data_description">Exporta todo lo que WallCrawl guarda en este dispositivo, restáuralo en una instalación nueva o elimínalo.</string>
     <string name="local_data_export">Exportar mis datos</string>
     <string name="local_data_export_progress">Exportando…</string>
-    <string name="local_data_export_hint">Escribe un solo archivo con tu perfil, tus respuestas de movimiento, tus rutinas y todos tus entrenamientos. Es información personal legible: elige un lugar de confianza y ten en cuenta que el selector puede ofrecerte almacenamiento en la nube.</string>
+    <string name="local_data_export_hint">Escribe un solo archivo con tu perfil, tus respuestas de movimiento, tus condiciones seleccionadas y el contexto de tus sesiones, tus rutinas y todos tus entrenamientos. Es información personal legible: elige un lugar de confianza y ten en cuenta que el selector puede ofrecerte almacenamiento en la nube.</string>
     <string name="local_data_export_success">Se exportaron %1$s y %2$s.</string>
     <string name="local_data_export_failed">La exportación falló. Si se creó un archivo, está incompleto: elimínalo e inténtalo de nuevo.</string>
     <string name="local_data_export_too_large">Tus datos de entrenamiento son demasiado grandes para escribirlos en un solo archivo de exportación, así que reintentar no funcionará. Si se creó un archivo, está incompleto: elimínalo.</string>
@@ -708,7 +671,7 @@
     <string name="local_data_delete_hint">Elimina solo la copia de este dispositivo. Los archivos que ya exportaste, y cualquier copia de seguridad que haya conservado una versión anterior de Android, no se tocan.</string>
     <string name="local_data_delete_failed">No se pudieron eliminar los datos locales. Inténtalo de nuevo.</string>
     <string name="local_data_delete_confirm_title">¿Eliminar todos los datos locales?</string>
-    <string name="local_data_delete_confirm_body">Esto elimina de forma permanente tu perfil y tus preferencias, tus respuestas de movimiento, tus rutinas guardadas, todos los entrenamientos registrados (incluido uno en curso) y los totales semanales en caché. No se puede deshacer, y la app vuelve a la configuración inicial. Los archivos que ya exportaste no se eliminan. Las ilustraciones de los ejercicios y el catálogo incluido se conservan. Tu idioma es un ajuste del dispositivo y no se modifica.</string>
+    <string name="local_data_delete_confirm_body">Esto elimina de forma permanente tu perfil y tus preferencias, tus respuestas de movimiento, tus condiciones seleccionadas, el contexto de las sesiones y las reevaluaciones pendientes, tus rutinas guardadas, todos los entrenamientos registrados (incluido uno en curso) y los totales semanales en caché. No se puede deshacer, y la app vuelve a la configuración inicial. Los archivos que ya exportaste no se eliminan. Las ilustraciones de los ejercicios y el catálogo incluido se conservan. Tu idioma es un ajuste del dispositivo y no se modifica.</string>
     <string name="local_data_delete_confirm_action">Eliminar todo</string>
     <string name="local_data_delete_confirm_cancel">Conservar mis datos</string>
     <string name="local_data_busy">Trabajando…</string>
@@ -785,10 +748,6 @@
     <plurals name="today_weekly_progress">
         <item quantity="one">%1$s de %2$s entrenamiento completado esta semana</item>
         <item quantity="other">%1$s de %2$s entrenamientos completados esta semana</item>
-    </plurals>
-    <plurals name="today_weekly_goal_remaining">
-        <item quantity="one">Falta %1$s para la meta semanal</item>
-        <item quantity="other">Faltan %1$s para la meta semanal</item>
     </plurals>
     <plurals name="today_active_session_sets">
         <item quantity="one">%1$s de %2$s serie registrada</item>
@@ -923,11 +882,11 @@
     <string name="history_deload_requested">Elección aceptada de entrenamiento más ligero registrada: solicitada explícitamente.</string>
     <string name="history_deload_returning">Elección aceptada de entrenamiento más ligero registrada: orientación para el regreso.</string>
     <string name="history_deload_not_accepted">Esta recomendación no registra una elección aceptada de entrenamiento más ligero.</string>
-    <string name="history_previous">Desempeño anterior habitual</string>
+    <string name="history_previous">Desempeño anterior con el mismo propósito</string>
     <string name="history_previous_unavailable">No se registró un desempeño anterior válido para este ejercicio y formato.</string>
     <string name="history_sources">Fuentes citadas por la progresión registrada</string>
     <string name="history_source_id">Identificador de la sesión citada</string>
-    <string name="history_source_unavailable">La fuente citada no existe, no es realmente anterior o no tiene mediciones completadas compatibles. El desempeño anterior habitual no la reemplaza.</string>
+    <string name="history_source_unavailable">La fuente citada no existe, no es realmente anterior o no tiene mediciones completadas compatibles. El desempeño anterior no la reemplaza.</string>
     <string name="history_no_sources">No hay citas compatibles de sesiones de origen disponibles.</string>
     <string name="history_comparison_note">Las mediciones anteriores usan la unidad registrada en esa sesión. El plan y el desempeño que siguen pertenecen al entrenamiento consultado; no se infieren porcentajes ni cambios no registrados.</string>
     <string name="history_evidence_note">Solo se muestran como evidencia anterior las series de trabajo completadas, sin interrupción y compatibles. Se excluyen los calentamientos.</string>
@@ -1012,8 +971,6 @@
     <string name="program_recorded_objective">Objetivo registrado: %1$s</string>
     <string name="program_recorded_heading">Programa al iniciar el entrenamiento</string>
     <string name="program_completed_history">Sesiones del programa finalizadas</string>
-    <string name="program_choice">Modo de recomendación</string>
-    <string name="program_ordinary_choice">Entrenamiento habitual</string>
     <string name="program_session_choice">Sesión del programa</string>
     <string name="program_start_session">Iniciar sesión del programa</string>
     <string name="local_data_rejected_program">La exportación o restauración requiere una versión de la app compatible con todas las políticas de programa registradas. Se conservan tus datos locales; no se omitió nada.</string>
@@ -1106,13 +1063,91 @@
     <string name="analytics_week_value_none">nada registrado</string>
     <string name="analytics_exercise_options_too_many">Hay demasiados ejercicios registrados para listarlos aquí.</string>
     <string name="analytics_decision_row">%1$s, %2$s</string>
+    <string name="credits_notice_supplement">Catálogo creado para WallCrawl</string>
+    <string name="credits_notice_supplement_license">Licencia del suplemento de WallCrawl</string>
+    <string name="condition_title">Apoyo para condiciones</string>
+    <string name="condition_selection_hint">Solo se muestra el apoyo revisado que esta app puede aplicar. Las respuestas desconocidas siguen siendo desconocidas.</string>
+    <string name="condition_unsupported">Selección conservada: %1$s (contexto %2$d). El apoyo no está disponible.</string>
+    <string name="condition_remove">Quitar %1$s</string>
+    <string name="condition_add">Agregar %1$s</string>
+    <string name="condition_answer_limit">No se puede añadir otra respuesta porque los datos guardados han alcanzado el límite. Se conservan todas tus respuestas.</string>
+    <string name="condition_unknown">No se sabe</string>
+    <string name="condition_unknown_answer">Respuesta guardada no reconocida: %1$s = %2$s</string>
+    <string name="condition_recorded_answer">%1$s: %2$s</string>
+    <string name="condition_pending_title">Revisión necesaria tras detenerse por dolor</string>
+    <string name="condition_pending_hint">Una detención registrada por dolor necesita revisión en Perfil antes de iniciar otro entrenamiento. Quitar una selección no la borra.</string>
+    <string name="condition_active_refusal">Termina o cancela el entrenamiento activo antes de cambiar las respuestas de condiciones.</string>
+    <string name="condition_stale_refusal">El contexto guardado o la detención por dolor cambió. Revisa el evento actual y vuelve a enviar sus respuestas.</string>
+    <string name="condition_answers_refusal">Revisa las respuestas requeridas. Las respuestas desconocidas o no reconocidas no pueden autorizar este entrenamiento.</string>
+    <string name="condition_support_unavailable">El apoyo revisado para estos datos guardados no está disponible. La selección y cualquier revisión pendiente siguen guardadas.</string>
+    <string name="condition_start_refusal">Este entrenamiento no pudo superar las comprobaciones de condiciones. Revisa tu perfil y genera otro entrenamiento. Puedes terminar o cancelar un entrenamiento existente.</string>
+    <string name="condition_pending_read_error">No se pudieron cargar las revisiones pendientes. Se desconoce su estado. Vuelve a abrir Perfil para intentarlo de nuevo.</string>
+    <string name="condition_pending_source">Condición registrada: %1$s · Ejercicio: %2$s</string>
+    <string name="condition_reassess">Enviar respuestas para esta detención</string>
+    <string name="condition_supportive">Actividad de apoyo · no cuenta como series de fuerza</string>
+    <string name="condition_execution_fact">%1$s · apoyo %2$s · ejecución %3$s · política %4$d</string>
+    <string name="condition_recorded_title">Contexto de condiciones registrado</string>
+    <string name="condition_recorded_hint">Se muestran los datos y las instrucciones originales registrados. Los totales de actividad no son puntuaciones de recuperación.</string>
+    <string name="condition_recorded_identity">%1$s · contexto %2$d · apoyo %3$s</string>
+    <string name="condition_recorded_version">Formato registrado %1$d / política %2$d no compatible. Estos datos no se han reinterpretado.</string>
+    <string name="condition_load_error">No se pudo cargar el apoyo para condiciones. Se conservaron las selecciones guardadas.</string>
+    <string name="condition_save_error">No se guardaron los cambios. Termina o cancela cualquier entrenamiento activo y vuelve a intentarlo. Se conserva tu borrador.</string>
+    <string name="condition_edit">Editar condiciones</string>
+    <string name="condition_save">Guardar condiciones</string>
+    <string name="condition_cancel">Cancelar cambios de condiciones</string>
+    <string name="condition_required_prompt">%1$s (obligatorio)</string>
+    <string name="editor_add_support">Añadir apoyo para las afecciones</string>
+    <string name="editor_support_help">Añade las actividades de apoyo que corresponden a las afecciones seleccionadas con las dosis indicadas. Se reemplazarán los ejercicios coincidentes de este borrador. Guarda para conservar los cambios. La compatibilidad se comprobará de nuevo al empezar.</string>
+    <string name="editor_support_changed">El apoyo ha cambiado o no está disponible. Revisa las indicaciones actuales antes de añadirlo de nuevo. El borrador no ha cambiado.</string>
+    <string name="editor_support_precision">Esta dosis exacta no se puede guardar con las unidades o la precisión de medida actuales de la plantilla. Prueba otra unidad o solicita un entrenamiento generado. El borrador no ha cambiado.</string>
+    <string name="condition_workout_changed">Tu historial de entrenamientos, perfil o indicaciones para tus afecciones ha cambiado. Solicita un nuevo entrenamiento antes de empezar.</string>
+    <string name="condition_reference_search">Buscar afecciones o regiones del cuerpo</string>
+    <string name="condition_reference_unavailable">No se pudo cargar la guía de afecciones.</string>
+    <string name="condition_reference_empty">Ninguna afección coincide con tu búsqueda.</string>
+    <string name="condition_reference_publications">Publicaciones</string>
+    <string name="condition_reference_access_note">Los resultados describen los grupos y las intervenciones estudiadas. Las etiquetas indican qué material se pudo consultar. Las notas de investigación están en inglés.</string>
+    <string name="condition_reference_full">Se consultó el texto completo</string>
+    <string name="condition_reference_partial">Se consultó el resumen o parte del texto</string>
+    <string name="condition_reference_show_notes">Ver notas de investigación</string>
+    <string name="condition_reference_hide_notes">Ocultar notas de investigación</string>
+    <string name="condition_reference_population">Población estudiada</string>
+    <string name="condition_reference_findings">Resultados publicados</string>
+    <string name="condition_reference_limits">Limitaciones</string>
+    <string name="condition_related_show">Ver bibliografía relacionada (%1$d)</string>
+    <string name="condition_related_hide">Ocultar bibliografía relacionada (%1$d)</string>
+    <string name="condition_related_note">Estas citas provienen de una búsqueda bibliográfica más amplia. Algunos estudios incluyen a personas con otros diagnósticos.</string>
+    <string name="condition_related_registry">Se consultó el registro o un resumen del estudio</string>
+    <string name="condition_name_piriformis_syndrome">Síndrome del piriforme</string>
+    <string name="condition_name_gluteal_tendinopathy">Tendinopatía glútea</string>
+    <string name="condition_name_lumbar_radiculopathy">Radiculopatía lumbar</string>
+    <string name="condition_name_nonspecific_low_back_pain">Dolor lumbar inespecífico</string>
+    <string name="condition_name_rotator_cuff_related_shoulder_pain">Dolor de hombro relacionado con el manguito rotador</string>
+    <string name="condition_name_lateral_elbow_tendinopathy">Tendinopatía lateral del codo</string>
+    <string name="condition_name_carpal_tunnel_syndrome">Síndrome del túnel carpiano</string>
+    <string name="condition_name_patellofemoral_pain">Dolor patelofemoral</string>
+    <string name="condition_legacy_title">Afecciones registradas anteriormente</string>
+    <string name="condition_legacy_refusal">La planificación está en pausa porque esta versión no tiene orientación revisada para una afección registrada anteriormente. Puedes conservar el registro o eliminarlo del perfil si ya no corresponde.</string>
+    <string name="condition_legacy_remove">Eliminar registro: %1$s</string>
+    <string name="workout_target_with_hold">%1$s · Mantén %2$s s por repetición</string>
+    <string name="history_hold_per_rep">Tiempo de sostén por repetición</string>
+    <string name="condition_reference_open">Abrir publicación</string>
+    <string name="condition_reference_link_error">No se pudo abrir esta publicación en un navegador.</string>
+    <string name="condition_reference_illustrations">Ilustraciones del catálogo de movimientos de esta publicación</string>
+    <string name="pain_offer_title">¿Dejar %1$s fuera de los entrenamientos automáticos?</string>
+    <string name="pain_offer_body">Detuviste esta serie por dolor. Puedes dejar este ejercicio fuera de futuros entrenamientos automáticos y volver a incluirlo desde Perfil.</string>
+    <string name="pain_offer_accept">Dejarlo fuera</string>
+    <string name="pain_offer_decline">Conservarlo</string>
+    <string name="profile_exclusion_save_error">No se pudieron guardar los ejercicios excluidos. No se cambió nada. Inténtalo de nuevo.</string>
+    <string name="profile_excluded_heading">Ejercicios excluidos</string>
+    <string name="profile_excluded_hint">Los entrenamientos automáticos los dejan fuera. Quita uno para permitirlo de nuevo.</string>
+    <string name="profile_excluded_remove">Quitar</string>
+    <string name="profile_excluded_remove_description">Quitar %1$s de los ejercicios excluidos</string>
     <string name="a11y_loading">Cargando</string>
     <string name="a11y_muscle_priority">Prioridad de %1$s: %2$s</string>
     <string name="a11y_edit_named">Editar %1$s</string>
     <string name="a11y_delete_named">Eliminar %1$s</string>
     <string name="illustration_pause">Pausar animación</string>
     <string name="illustration_play">Reproducir animación</string>
-    <string name="onboarding_codename_label">Nombre clave</string>
     <string name="a11y_trend_up">Sube</string>
     <string name="a11y_trend_down">Baja</string>
 </resources>

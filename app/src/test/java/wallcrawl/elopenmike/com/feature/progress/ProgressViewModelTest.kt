@@ -144,7 +144,7 @@ class ProgressViewModelTest {
         private fun snapshot(workouts: Int = 0): ProgressSnapshot {
             val week = TrainingWeek.containing(Instant.ofEpochMilli(MONDAY), UTC)
             fun ledger(epochDay: Long) = WeeklyDoseLedger(
-                LedgerPolicyVersion.PRIMARY_ONLY_V1, epochDay, UTC.id, "test", 1,
+                LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2, epochDay, UTC.id, "test", 1,
                 emptyMap(), emptyMap(), emptyMap()
             )
             return ProgressSnapshot(

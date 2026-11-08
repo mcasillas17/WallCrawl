@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "iliopsoas-related-groin-pain",
+    "label": "iliopsoas-related groin pain",
+    "aliases": [],
+    "distinctions": "Clinical iliopsoas-related pain may include tendinopathy/snapping; distinct from FAI/labral causes and post-THA mechanical impingement."
+  },
+  "scope": {
+    "population": "Iliopsoas-related groin pain with diagnosis/cause established.",
+    "stage": "Native-hip tendinopathy case only for exercise; broader stages unresolved.",
+    "operativeStatus": "Nonoperative rehabilitation only; postoperative pathways require separate assessment.",
+    "exclusions": "Post-THA, post-arthroscopy, acute injury and coexisting intra-articular pathology require separate assessment.",
+    "uncertainty": "Source eligibility limits applicability; it does not establish contraindications."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "iliopsoas related groin pain exercise systematic review trial rehabilitation",
+      "decision": "Located 2026 systematic review; conservative execution gap retained.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "\"Clinical Diagnosis and Treatment of Iliopsoas\" \"2026\" \"5912\"",
+      "decision": "Verified July 29, 2026 metadata and fullTextXML.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "\"10.26603/ijspt20171150\" correction retraction",
+      "decision": "No notice located; full case details supersede overbroad abstract interpretation.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    }
+  ],
+  "sources": [
+    {
+      "id": "rauseo-2017",
+      "title": "THE REHABILITATION OF A RUNNER WITH ILIOPSOAS TENDINOPATHY USING AN ECCENTRIC-BIASED EXERCISE-A CASE REPORT",
+      "doi": "10.26603/ijspt20171150",
+      "pmid": "29234566",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5717490/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Primary full text inspected at linked archive/publisher; Europe PMC XML used where PMC HTML challenged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "Single case report; no comparator.",
+      "population": "39-year-old female runner, 3 months symptoms, ultrasound diagnosis; native hip.",
+      "comparator": "None.",
+      "coInterventions": "Kinetic-chain strength, stretching, gait retraining and graded running.",
+      "outcomes": "VAS 6→2/10 at 12 weeks, 1/10 at 5 years; component attribution impossible.",
+      "followUp": "12 weeks, 17 -week running details, 5 years.",
+      "uncertainty": "Single case; abstract says unrestricted 12 weeks but body documents ongoing limitations 17 weeks; retain discrepancy.",
+      "harms": "Groin/back symptoms during return-to-running; systematic ascertainment absent.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "Opposite side-lying, band at ankle anchored behind; knee bent; 3-count controlled extension, 1-count flexion; spine neutral.",
+        "dose": "3 sets×15 reps.",
+        "frequency": "Twice/day 12 weeks.",
+        "supervision": "Therapist taught, home execution.",
+        "progression": "Increase band when pain minor/absent.",
+        "stoppingRules": "Exercise≤ 5/10; running progression<2/10; offending activity initially avoided 4–6 weeks."
+      },
+      "locations": [
+        "Intervention > Eccentric biased exercise; Table 5; Figures 2–3",
+        "Outcomes; Table 2; Return to running > Table 6"
+      ]
+    },
+    {
+      "id": "vandeputte-2026",
+      "title": "Clinical Diagnosis and Treatment of Iliopsoas-Related Groin Pain: A Systematic Review",
+      "doi": "10.3390/jcm15155912",
+      "pmid": "42590015",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13466767/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete Europe PMC fullTextXML inspected; PMC challenge and publisher 429; metadata July 29, 2026 verified."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "PubMed/publisher/archive metadata and DOI correction/retraction query.",
+        "result": "No notice found in bounded inspected records; final 2026 publication predates access."
+      },
+      "design": "PRISMA review; 3 diagnostic / 71 treatment studies; search 13 March 2026.",
+      "population": "Native hips, post-arthroscopy, and THA; heterogeneous etiology.",
+      "comparator": "Mostly nonrandomized/single-arm surgical/injection studies.",
+      "coInterventions": "Varied physiotherapy, injections, activity modification.",
+      "outcomes": "Conservative exercise poorly standardized; no validated personalized rehabilitation pathway.",
+      "followUp": "Heterogeneous.",
+      "uncertainty": "Diagnostic studies high bias; mostly low/moderate treatment quality; no synthesis pooling.",
+      "harms": "Surgical atrophy/weakness concerns; exercise harms not systematically established.",
+      "limitations": "Post-THA mechanical impingement is distinct; do not import native-runner loading automatically.",
+      "protocol": {
+        "execution": "No common conservative exercise execution established.",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Materials and Methods > 2.1 Eligibility Criteria; 2.2 Information Sources",
+        "Results > 3.4.1 Conservative Treatment; Discussion > 4.3 Treatment Strategies; 4.6 Limitations and Future Directions"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "iliopsoas-case",
+      "kind": "study-result",
+      "statement": "VAS 6→2/10 at 12 weeks, 1/10 at 5 years; component attribution impossible.",
+      "citations": [
+        {
+          "sourceId": "rauseo-2017",
+          "location": "Outcomes; Table 2; Return to running > Table 6"
+        }
+      ],
+      "applicability": "39-year-old female runner, 3 months symptoms, ultrasound diagnosis; native hip.",
+      "limitations": "Single case; abstract says unrestricted 12 weeks but body documents ongoing limitations 17 weeks; retain discrepancy."
+    },
+    {
+      "id": "iliopsoas-execution",
+      "kind": "published-recommendation",
+      "statement": "Case author supplies an individualized side-lying eccentric-biased hip-flexor exercise.",
+      "citations": [
+        {
+          "sourceId": "rauseo-2017",
+          "location": "Intervention > Eccentric biased exercise; Table 5; Figures 2–3"
+        }
+      ],
+      "applicability": "39-year-old female runner, 3 months symptoms, ultrasound diagnosis; native hip.",
+      "limitations": "Single case, not a general dosing recommendation."
+    },
+    {
+      "id": "iliopsoas-evidence-gap",
+      "kind": "evidence-gap",
+      "statement": "Conservative exercise poorly standardized; no validated personalized rehabilitation pathway.",
+      "citations": [
+        {
+          "sourceId": "vandeputte-2026",
+          "location": "Results > 3.4.1 Conservative Treatment; Discussion > 4.3 Treatment Strategies; 4.6 Limitations and Future Directions"
+        }
+      ],
+      "applicability": "Native hips, post-arthroscopy, and THA; heterogeneous etiology.",
+      "limitations": "Diagnostic studies high bias; mostly low/moderate treatment quality; no synthesis pooling."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "iliopsoas-side-lying-band-eccentric-mapping",
+      "exerciseId": null,
+      "requestId": "iliopsoas-side-lying-band-eccentric",
+      "findingIds": [
+        "iliopsoas-execution"
+      ],
+      "matchRationale": "Standing knee raises and generic stretches are not equivalent; retain new identity pending Figures 2–3 visual review.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "iliopsoas-single-case-candidate",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Preserve the described exercise for independent review in a comparable assessed native-hip case; withhold condition-wide prescription.",
+      "findingIds": [
+        "iliopsoas-execution",
+        "iliopsoas-evidence-gap"
+      ],
+      "citations": [
+        {
+          "sourceId": "rauseo-2017",
+          "location": "Intervention > Eccentric biased exercise; Table 5; Figures 2–3"
+        }
+      ],
+      "applicability": {
+        "population": "One 39-year-old female runner with ultrasound-diagnosed native-hip iliopsoas tendinopathy and symptoms for three months; all broader application is indirect.",
+        "stage": "Native-hip tendinopathy case only for exercise; broader stages unresolved.",
+        "rationale": "Draft inference constrained to the linked population and intervention; no individual clearance."
+      },
+      "limitations": "Very low certainty, bundled care, no isolated component effect.",
+      "mappingIds": [
+        "iliopsoas-side-lying-band-eccentric-mapping"
+      ],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "All material is draft and clinically unreviewed; no runtime mapping, supported-condition claim, default dose or escalation clearance follows.",
+    "No universal numeric load/range cap or hard exercise contraindication was established; benefit from alternatives and trial exclusions do not prove harm.",
+    "Concurrent condition restrictions, equipment requirements and independent joint limits remain controlling; stretching never earns strength-set credit or generic five-second progression.",
+    "Evidence supports only an individualized candidate; no condition-wide hip-flexion/extension ban, optimal dose or general return-to-running threshold.",
+    "Case includes stretching other regions which could conflict with other tendon restrictions; do not copy the entire bundle.",
+    "No exercise RCT isolated this native-hip execution in the retrieved focused review; postoperative mechanical cause cannot be self-treated from this record."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

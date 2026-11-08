@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guided_exercises">Ejercicios</string>
+    <string name="guided_search_exercises">Buscar ejercicios</string>
+    <string name="guided_filters">Filtros</string>
+    <string name="guided_filter_count">Filtros (%1$s)</string>
+    <string name="guided_clear_filters">Borrar filtros</string>
+    <string name="guided_muscles">Músculos</string>
+    <string name="guided_show_results">Ver resultados</string>
+    <string name="guided_more_details">Más detalles</string>
+    <string name="guided_condition_guide">Guía de afecciones</string>
+    <string name="guided_profile_settings">Perfil y ajustes</string>
+    <string name="guided_training_preferences">Preferencias de entrenamiento</string>
+    <string name="guided_equipment">Equipo</string>
+    <string name="guided_movement_restrictions">Movimiento y restricciones</string>
+    <string name="guided_app_preferences">Preferencias de la app</string>
+    <string name="guided_your_data">Tus datos</string>
+    <string name="guided_about_credits">Acerca de la app y créditos</string>
+    <string name="guided_data_summary">Exportar, restaurar o eliminar datos locales</string>
+    <string name="guided_credits_summary">Ilustraciones, atribuciones y licencias</string>
+    <string name="guided_review_restrictions">Revisar restricciones</string>
+    <string name="guided_review_legacy">La planificación de entrenamientos está en pausa por una afección indicada anteriormente.</string>
+    <string name="guided_restrictions_summary">Limitaciones de movimiento: %1$s · Ejercicios excluidos: %2$s</string>
+    <string name="guided_goals">Objetivos</string>
+    <string name="guided_muscle_priorities">Prioridades musculares</string>
+    <string name="guided_sensitivities">Preferencias de sensibilidad</string>
+    <string name="guided_workouts_load_error">No se pudieron cargar los entrenamientos guardados.</string>
+    <string name="guided_research_about">Consulta los resultados de los estudios, sus limitaciones y los ejercicios utilizados en la investigación. Estas referencias tienen fines educativos.</string>
+    <string name="guided_original_restriction">Valor guardado originalmente: %1$s</string>
+    <string name="guided_no_marked_limits">Sin limitaciones ni exclusiones marcadas</string>
+    <string name="guided_saved_restrictions">Restricciones registradas</string>
+</resources>

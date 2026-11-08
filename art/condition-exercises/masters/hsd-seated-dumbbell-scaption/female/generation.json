@@ -1,0 +1,12 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Scientific educational exercise sprite strip for a mobile exercise catalog. Wide 3:1 transparent canvas, exactly three invisible EQUAL WIDTH square cells arranged left to right. In each cell center a complete full-body portrait at identical scale, alignment and camera angle with clear empty margins on all sides. All anatomy, equipment and contact points fully inside that cell. Depict the SAME adult demonstrator, clothing, hand, dumbbell and viewpoint in all three cells. Clean moderately thin WHITE contour-only ink with transparent interiors, pure white solid strokes, transparent negative space. No solid silhouettes, gray shading, textures, glow, colored areas, floor strip, panel dividers, arrows, captions, numbers, or labels. Sparse clear line work, accurate joints and hands. No secondary/inset views. Adult female demonstrator with hair tied up clear of shoulders. Seated unilateral dumbbell scaption with opposite hand monitoring lower shoulder blade. Short-sleeve shirt and shorts, sit upright on a stable backless stool, both feet hip-width and flat. Fixed near frontal three-quarter view, same seated size and stool placement in all cells. One small dumbbell in right hand, thumb pointing obliquely outward. LEFT arm reaches behind the back with left fingertips against lower right shoulder blade in ALL three poses, so elbow projects slightly behind body; do not bring free hand forward. LEFT cell: right dumbbell arm straight by right thigh. MIDDLE: right arm lifts diagonally forward/out to midway toward overhead. RIGHT: right straight arm high above head at a slight outward and forward diagonal, keeping torso and head upright and both feet planted. Place whole figure lower on canvas in ALL frames to reserve overhead clearance. No arm switching, no biceps curl.",
+  "outputSha256": "6d810f9465a3c0d4eb55aaa19da61d11068e8bece88392871cbc220c6cec91f0",
+  "layout": "three-panels",
+  "variant": "female",
+  "exerciseId": "hsd-seated-dumbbell-scaption",
+  "nativeStrip": {
+    "path": "masters/hsd-seated-dumbbell-scaption/female/native-strip.png",
+    "sha256": "6d810f9465a3c0d4eb55aaa19da61d11068e8bece88392871cbc220c6cec91f0"
+  }
+}

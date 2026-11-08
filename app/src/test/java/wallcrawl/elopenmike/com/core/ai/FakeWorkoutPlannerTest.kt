@@ -1,6 +1,24 @@
 package wallcrawl.elopenmike.com.core.ai
 
 import com.google.common.truth.Truth.assertThat
+import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
+import wallcrawl.elopenmike.com.core.model.ConditionPrescriptionBounds
+import wallcrawl.elopenmike.com.core.model.ConditionSchedule
+import wallcrawl.elopenmike.com.core.model.ConditionViolation
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
+import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.RestClass
+import wallcrawl.elopenmike.com.core.model.SelectedCondition
+import wallcrawl.elopenmike.com.core.model.SessionConditionContext
+import wallcrawl.elopenmike.com.core.model.SessionProgramConstraints
+import wallcrawl.elopenmike.com.core.model.TrainingProgramState
+import wallcrawl.elopenmike.com.core.model.TrainingProgramStatePolicyVersion
+import wallcrawl.elopenmike.com.core.model.UserRestPreference
+import wallcrawl.elopenmike.com.core.model.WeeklyDoseLedger
+import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.convertWeight
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.Exercise
@@ -55,6 +73,209 @@ import org.junit.Before
 import org.junit.Test
 
 class FakeWorkoutPlannerTest {
+
+    @Test fun conditionWorkoutIncludesExactSupportAndOrdinaryProvenance() = runTest {
+        val context = ConditionPlannerFixtures.context()
+        val workout = FakeWorkoutPlanner().generateWorkout(context)
+        assertThat(workout.exercises.map { it.exerciseId }).containsExactly("ordinary", "supportive")
+        assertThat(workout.exercises.single { it.exerciseId == "supportive" }.prescription).isEqualTo(ConditionPlannerFixtures.dose)
+        assertThat(workout.conditionDecisions.map { it.exerciseIdentity.exerciseId }).containsExactly("ordinary", "supportive")
+        assertThat(workout.conditionDecisions.single { it.exerciseIdentity.exerciseId == "supportive" }.executionIdentity).isEqualTo("support-execution")
+    }
+
+    @Test fun conditionSupportiveIdsAreReservedEvenWhenCatalogEntryLooksLikeStrength() = runTest {
+        val supportive = ConditionPlannerFixtures.ordinary.copy(id = "supportive")
+        val dose = ExercisePrescription(ExerciseType.BODYWEIGHT_REPS, 1,
+            RepRange(2, 2), restSeconds = 7,
+            purpose = PrescriptionPurpose.SUPPORTIVE)
+        val workout = FakeWorkoutPlanner().generateWorkout(ConditionPlannerFixtures.context(supportExercise = supportive, supportiveDose = dose))
+        assertThat(workout.exercises.single { it.exerciseId == "supportive" }.prescription).isEqualTo(dose)
+        assertThat(workout.exercises.map { it.exerciseId }.distinct()).hasSize(workout.exercises.size)
+    }
+
+    @Test fun conditionSupportOnlyNeverSubstitutesForAnOrdinaryWorkout() = runTest {
+        val context = ConditionPlannerFixtures.context(ordinaryExercises = emptyList())
+        try {
+            FakeWorkoutPlanner().generateWorkout(context)
+            fail("Supportive-only workout must be refused")
+        } catch (error: WorkoutValidationException) {
+            assertThat(error.failure).isEqualTo(WorkoutPlanningFailure.CONDITION_REQUIREMENTS_UNSATISFIED)
+        }
+    }
+
+    @Test fun conditionSecondsBudgetReducesOnlyOptionalOrdinarySets() = runTest {
+        val context = ConditionPlannerFixtures.context().copy(preferredWorkoutDurationMinutes = 6)
+        val workout = FakeWorkoutPlanner().generateWorkout(context)
+        assertThat(workout.exercises.single { it.exerciseId == "ordinary" }.targetSets).isEqualTo(2)
+        assertThat(workout.exercises.single { it.exerciseId == "supportive" }.prescription).isEqualTo(ConditionPlannerFixtures.dose)
+        assertThat(WorkoutDurationEstimator.estimateSeconds(workout.exercises)).isAtMost(360L)
+    }
+
+    @Test fun conditionRequiredWorkOverflowRefusesInsteadOfTruncatingOrDroppingSupport() = runTest {
+        try {
+            FakeWorkoutPlanner().generateWorkout(ConditionPlannerFixtures.context().copy(preferredWorkoutDurationMinutes = 5))
+            fail("Required work cannot fit")
+        } catch (error: WorkoutValidationException) {
+            assertThat(error.failure).isEqualTo(WorkoutPlanningFailure.CONDITION_REQUIREMENTS_UNSATISFIED)
+        }
+    }
+
+    @Test fun conditionFrequencyUsesPlanOverrideEvenWhenSupportIsNotDue() = runTest {
+        for (exposures in listOf(emptyList(), listOf(ConditionExposure("manual", "supportive", ConditionPlannerFixtures.now - 1)))) {
+            val context = ConditionPlannerFixtures.context(
+                schedule = ConditionSchedule(4, 24, ConditionPlannerFixtures.text), exposures = exposures
+            ).copy(trainingFrequencyDaysPerWeek = 2)
+            try {
+                FakeWorkoutPlanner().generateWorkout(context)
+                fail("Plan frequency cannot deliver reviewed support")
+            } catch (error: WorkoutValidationException) {
+                assertThat(error.failure).isEqualTo(WorkoutPlanningFailure.CONDITION_REQUIREMENTS_UNSATISFIED)
+            }
+        }
+    }
+
+    @Test fun conditionScheduleEvidenceWithMissingSupportFailsClosed() = runTest {
+        val context = ConditionPlannerFixtures.context(exposures = listOf(ConditionExposure("manual", "supportive", ConditionPlannerFixtures.now - 1)))
+            .copy(conditionSupport = null)
+        try {
+            FakeWorkoutPlanner().generateWorkout(context)
+            fail("Missing schedule reference must fail closed")
+        } catch (error: WorkoutValidationException) {
+            assertThat(error.failure).isEqualTo(WorkoutPlanningFailure.CONDITION_REQUIREMENTS_UNSATISFIED)
+        }
+    }
+
+
+
+    @Test fun conditionSupportiveLoadsAndAssistanceUseProfileUnitsExactly() = runTest {
+        for (type in listOf(ExerciseType.WEIGHT_REPS, ExerciseType.ASSISTED_BODYWEIGHT)) {
+            val support = ConditionPlannerFixtures.supportive.copy(type = type)
+            val dose = ExercisePrescription(type, 2, RepRange(4, 4),
+                targetWeight = if (type == ExerciseType.WEIGHT_REPS) 3.0 else null,
+                targetAssistanceWeight = if (type == ExerciseType.ASSISTED_BODYWEIGHT) 3.0 else null,
+                restSeconds = 17, purpose = PrescriptionPurpose.SUPPORTIVE)
+            val profile = UserProfile(preferredUnit = WeightUnit.LBS,
+                activeConditions = listOf(SelectedCondition("fictional-condition", 1, emptyMap())))
+            val context = ConditionPlannerFixtures.context(supportExercise = support, supportiveDose = dose, profile = profile)
+                .copy(priorUserRestPreferences = mapOf("supportive" to UserRestPreference(RestClass.entries.first(), 300)))
+            val workout = FakeWorkoutPlanner().generateWorkout(context)
+            val planned = workout.exercises.single { it.exerciseId == "supportive" }
+            assertThat(planned.prescription).isEqualTo(dose.copy(
+                targetWeight = dose.targetWeight?.let { convertWeight(it, WeightUnit.KG, WeightUnit.LBS) },
+                targetAssistanceWeight = dose.targetAssistanceWeight?.let { convertWeight(it, WeightUnit.KG, WeightUnit.LBS) }))
+            assertThat(ConditionPlanningPolicy().validate(planned, context.conditionPlanning as ConditionPlanningResult.Ready)).isEmpty()
+        }
+    }
+
+    @Test fun conditionNotDueSupportIsOmittedAndHigherPlanFrequencyIsHonored() = runTest {
+        val profile = UserProfile(daysPerWeek = 2, preferredUnit = WeightUnit.KG,
+            activeConditions = listOf(SelectedCondition("fictional-condition", 1, emptyMap())))
+        val context = ConditionPlannerFixtures.context(profile = profile,
+            schedule = ConditionSchedule(4, 24, ConditionPlannerFixtures.text),
+            exposures = listOf(ConditionExposure("manual", "supportive", ConditionPlannerFixtures.now - 1)))
+            .copy(trainingFrequencyDaysPerWeek = 4)
+        val workout = FakeWorkoutPlanner().generateWorkout(context)
+        assertThat(workout.exercises.map { it.exerciseId }).containsExactly("ordinary")
+        assertThat(workout.conditionDecisions.map { it.exerciseIdentity.exerciseId }).containsExactly("ordinary")
+    }
+
+    @Test fun conditionBlockedReasonsReachExistingGenerationFailure() = runTest {
+        val reason = ConditionViolation("pending-reassessment", setOf("removed"), setOf("ordinary"))
+        try {
+            FakeWorkoutPlanner().generateWorkout(WorkoutGenerationContext(UserProfile(),
+                allowedExercises = listOf(ConditionPlannerFixtures.ordinary), conditionPlanning = ConditionPlanningResult.Blocked(listOf(reason))))
+            fail("Blocked context must not generate")
+        } catch (error: WorkoutValidationException) {
+            assertThat(error.conditionReasons).containsExactly(reason)
+        }
+    }
+
+    @Test fun conditionNonStrengthOrdinaryPoolCannotBorrowSupportiveFocus() = runTest {
+        val stretch = ConditionPlannerFixtures.ordinary.copy(isStretch = true)
+        try {
+            FakeWorkoutPlanner().generateWorkout(ConditionPlannerFixtures.context(ordinaryExercises = listOf(stretch)))
+            fail("No ordinary strength focus")
+        } catch (error: WorkoutValidationException) {
+            assertThat(error.conditionReasons.map { it.reason }).containsExactly("insufficient-ordinary-focus")
+        }
+    }
+
+    @Test fun conditionRequiredMovementAndFamilyRulesSurviveReservationAndBudgeting() = runTest {
+        val first = ConditionPlannerFixtures.ordinary
+        val second = first.copy(id = "ordinary-two")
+        val context = ConditionPlannerFixtures.context(ordinaryExercises = listOf(first, second))
+            .copy(preferredWorkoutDurationMinutes = 10,
+                programConstraints = SessionProgramConstraints(requiredMovementPatterns = setOf(MovementPattern.HORIZONTAL_PUSH)))
+        val workout = FakeWorkoutPlanner().generateWorkout(context)
+        assertThat(workout.exercises.filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }.map { it.exerciseId })
+            .containsExactly(first.id, second.id)
+        assertThat(WorkoutDurationEstimator.estimateSeconds(workout.exercises)).isAtMost(600L)
+        for (constraints in listOf(SessionProgramConstraints(uniqueProgressionFamilies = true),
+            SessionProgramConstraints(requiredMovementPatterns = setOf(MovementPattern.HORIZONTAL_PULL)))) {
+            try {
+                FakeWorkoutPlanner().generateWorkout(context.copy(programConstraints = constraints))
+                fail("Ordinary constraints cannot be weakened")
+            } catch (error: WorkoutValidationException) {
+                assertThat(error.conditionReasons.map { it.reason }).containsExactly("insufficient-ordinary-constraints")
+            }
+        }
+    }
+
+    @Test fun conditionUnclampedBudgetRefusesVeryLongSupport() = runTest {
+        val dose = ConditionPlannerFixtures.dose.copy(targetSets = 10, targetDurationSeconds = 3600)
+        try {
+            FakeWorkoutPlanner().generateWorkout(ConditionPlannerFixtures.context(supportiveDose = dose).copy(preferredWorkoutDurationMinutes = 240))
+            fail("Clamped display minutes must not prove fit")
+        } catch (error: WorkoutValidationException) {
+            assertThat(error.conditionReasons.map { it.reason }).containsExactly("insufficient-duration")
+        }
+    }
+
+    @Test fun conditionScheduleEvidenceWithMismatchedRuleFailsClosedEvenNotDue() = runTest {
+        val context = ConditionPlannerFixtures.context(exposures = listOf(ConditionExposure("manual", "supportive", ConditionPlannerFixtures.now - 1)))
+        val ready = context.conditionPlanning as ConditionPlanningResult.Ready
+        val frozen = ready.context
+        val invalid = SessionConditionContext(1, 1, frozen.selectedConditions, frozen.sourceSupportVersions, frozen.appliedRules,
+            frozen.consumedScheduleEvidence.map { it.copy(reference = it.reference.copy(ruleId = "missing-rule")) }, emptyList())
+        try {
+            FakeWorkoutPlanner().generateWorkout(context.copy(conditionPlanning = ConditionPlanningResult.Ready(ready.ordinaryRules, ready.supportive, invalid)))
+            fail("Unresolved reference cannot establish frequency")
+        } catch (error: WorkoutValidationException) {
+            assertThat(error.conditionReasons.map { it.reason }).containsExactly("unresolved-support-schedule")
+        }
+    }
+
+    @Test fun conditionBudgetDropsOnlyOptionalOrdinaryWorkAndItsReceipts() = runTest {
+        val first = ConditionPlannerFixtures.ordinary
+        val optional = first.copy(id = "z-optional")
+        val state = TrainingProgramState(TrainingProgramStatePolicyVersion.PROGRAM_STATE_V1, AdaptationState.UNCALIBRATED,
+            WeeklyDoseLedger(LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2, MONDAY_EPOCH_DAY, "UTC", SYNTHETIC_CATALOG_VERSION, 1,
+                emptyMap(), emptyMap(), emptyMap()))
+        val context = ConditionPlannerFixtures.context(ordinaryExercises = listOf(first, optional))
+            .copy(preferredWorkoutDurationMinutes = 7, trainingProgramState = state,
+                programConstraints = SessionProgramConstraints(requiredMovementPatterns = setOf(MovementPattern.HORIZONTAL_PUSH)))
+        val workout = FakeWorkoutPlanner().generateWorkout(context)
+        assertThat(workout.exercises.map { it.exerciseId }).containsExactly(first.id, "supportive")
+        assertThat(workout.progressionDecisions.map { it.exerciseId }).containsExactly(first.id)
+        assertThat(workout.conditionDecisions.map { it.exerciseIdentity.exerciseId }).containsExactly(first.id, "supportive")
+        assertThat(workout.progressionDecisions.single().prescription).isEqualTo(workout.exercises.first().prescription)
+        assertThat(WorkoutDurationEstimator.estimateSeconds(workout.exercises)).isAtMost(420L)
+        assertThat(workout.title.split.trainsAsFocus(first)).isTrue()
+    }
+
+    @Test fun conditionBudgetCannotDropRequiredOrdinaryMovement() = runTest {
+        val first = ConditionPlannerFixtures.ordinary
+        val required = first.copy(id = "required", reviewedMetadata = first.reviewedMetadata!!.copy(movementPattern = MovementPattern.VERTICAL_PUSH))
+        val context = ConditionPlannerFixtures.context(ordinaryExercises = listOf(first, required))
+            .copy(preferredWorkoutDurationMinutes = 7,
+                programConstraints = SessionProgramConstraints(requiredMovementPatterns = setOf(MovementPattern.HORIZONTAL_PUSH, MovementPattern.VERTICAL_PUSH)))
+        try {
+            FakeWorkoutPlanner().generateWorkout(context)
+            fail("Required movement cannot be dropped to fit")
+        } catch (error: WorkoutValidationException) {
+            assertThat(error.conditionReasons.map { it.reason }).containsExactly("insufficient-duration")
+        }
+    }
 
     private lateinit var planner: FakeWorkoutPlanner
     private val allExercises = InMemoryExerciseCatalog.SAMPLE_EXERCISES

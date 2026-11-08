@@ -9,6 +9,7 @@ import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.PlannedExercise
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.RepRange
 import wallcrawl.elopenmike.com.core.model.RestClass
 import wallcrawl.elopenmike.com.core.model.RestTargetSource
@@ -375,6 +376,34 @@ class TemplateExerciseDraftTest {
     @Test
     fun encodeDecodeRoundTripsAnAbsentRestClassAndSource() {
         assertThat(TemplateExerciseDraft.decode(weightReps().encode())).isEqualTo(weightReps())
+    }
+
+    @Test
+    fun supportivePurposeSurvivesSeedEditAndSavedStateRoundTrip() {
+        val planned = PlannedExercise(
+            "fictional-supported-exercise",
+            ExercisePrescription(ExerciseType.DURATION, 1, targetDurationSeconds = 45,
+                purpose = PrescriptionPurpose.SUPPORTIVE)
+        )
+        val draft = TemplateExerciseDraft.from(planned, english, "row-1")
+        val restored = TemplateExerciseDraft.decode(draft.encode())!!
+
+        assertThat(valid(restored.copy(restSeconds = "60", restWasEdited = true))
+            .prescription.purpose).isEqualTo(PrescriptionPurpose.SUPPORTIVE)
+        assertThat(restored.convertedLoads(WeightUnit.LBS, WeightUnit.KG, english)!!.purpose)
+            .isEqualTo(PrescriptionPurpose.SUPPORTIVE)
+        assertThat(valid(restored).prescription).isEqualTo(planned.prescription)
+    }
+
+    @Test
+    fun legacySavedRowDefaultsOrdinaryAndUnknownPurposeIsRejected() {
+        val oldPayload = weightReps().encode().substringBeforeLast('\u001F')
+        assertThat(TemplateExerciseDraft.decode(oldPayload)!!.validate(WeightUnit.LBS))
+            .isInstanceOf(DraftValidation.Valid::class.java)
+        assertThat(valid(TemplateExerciseDraft.decode(oldPayload)!!).prescription.purpose)
+            .isEqualTo(PrescriptionPurpose.ORDINARY)
+        assertThat(TemplateExerciseDraft.decode(oldPayload + "\u001FUNKNOWN")).isNull()
+        assertThat(TemplateExerciseDraft.decode(oldPayload + "\u001F")).isNull()
     }
 
     @Test

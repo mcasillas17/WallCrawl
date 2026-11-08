@@ -1,0 +1,24 @@
+<resources>
+    <string name="guided_train_change">Cambiar</string>
+    <string name="guided_train_source">Elige tu entrenamiento</string>
+    <string name="guided_train_ordinary">Entrenamiento de hoy</string>
+    <string name="guided_train_explore">Explorar programas</string>
+    <string name="guided_train_options">Opciones de entrenamiento</string>
+    <string name="guided_train_regenerate_hint">Sustituye la recomendación actual por otro entrenamiento del mismo origen.</string>
+    <string name="guided_train_preview">Vista previa del entrenamiento</string>
+    <string name="guided_train_resume">Continuar entrenamiento</string>
+    <string name="guided_train_active">Entrenamiento en curso</string>
+    <string name="guided_train_focus_missing">Sin cobertura para: %1$s</string>
+    <string name="guided_train_why">¿Por qué este entrenamiento?</string>
+    <string name="guided_train_adjustment_review">Revisar la reducción de series</string>
+    <string name="guided_train_adjustment_unavailable">Los objetivos propuestos no están disponibles. Podrás revisarlos cuando haya una recomendación con series de trabajo.</string>
+    <string name="guided_train_busy">Actualizando entrenamiento…</string>
+    <string name="guided_train_starting">Iniciando entrenamiento…</string>
+    <string name="guided_train_error">Entrenamiento no disponible</string>
+    <string name="guided_progress_recent">Entrenamientos recientes</string>
+    <string name="guided_progress_trends">Tendencias de rendimiento</string>
+    <string name="guided_progress_muscles">Detalles musculares</string>
+    <string name="guided_progress_train">Ir a Entrenar</string>
+    <string name="guided_train_no_active_program">No hay ninguna sesión de programa activa para iniciar. Gestiona tu programa o cambia el origen del entrenamiento.</string>
+    <string name="guided_train_unreadable_restrictions">No se pudieron leer algunas restricciones de movimiento guardadas. La planificación automática está en pausa.</string>
+</resources>

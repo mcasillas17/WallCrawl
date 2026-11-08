@@ -20,6 +20,7 @@ import wallcrawl.elopenmike.com.core.model.PerformanceComparison
 import wallcrawl.elopenmike.com.core.model.PerformanceObservation
 import wallcrawl.elopenmike.com.core.model.PerformanceSeries
 import wallcrawl.elopenmike.com.core.model.PerformanceShape
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.ProgressAnalytics
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.TrainingWeek
@@ -28,6 +29,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.convertWeight
+import wallcrawl.elopenmike.com.core.model.trainingActivity
 
 /** A range beyond the analytics representation bounds; reported as too large, never truncated. */
 class AnalyticsRangeTooLargeException : IllegalStateException("Analytics range exceeds its representation bound.")
@@ -75,7 +77,8 @@ class ProgressAnalyticsCalculator(
             // Per-session ledger calls cannot see a whole week, so the existing weekly ledger's own bounds are
             // checked here once per week and reported as too large rather than as a read error.
             if (exceedsLedgerWeekBounds(byWeek[week].orEmpty())) throw AnalyticsRangeTooLargeException()
-            byWeek[week].orEmpty().sortedWith(compareBy({ it.completedAtTimestamp }, { it.id })).map { session ->
+            val trainingSessions = byWeek[week].orEmpty().mapNotNull { it.trainingActivity() }
+            trainingSessions.sortedWith(compareBy({ it.completedAtTimestamp }, { it.id })).map { session ->
                 val completed = session.exercises
                     .filter { it.inScope(scope, exercisesById) }
                     .flatMap { exercise -> exercise.sets.filter { it.isCompleted } }
@@ -86,7 +89,7 @@ class ProgressAnalyticsCalculator(
                 }
                 val ledger = ledgerCalculator.calculate(
                     listOf(session.restrictedTo(scope)),
-                    exercisesById, LedgerPolicyVersion.PRIMARY_ONLY_V1, week, catalogVersion, reviewPolicyVersion
+                    exercisesById, LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2, week, catalogVersion, reviewPolicyVersion
                 )
                 ledger.unattributedWorkSets.forEach { (reason, count) -> unattributed.merge(reason, count, Int::plus) }
                 val member = scope == AnalyticsScope.All || completed.isNotEmpty()
@@ -132,7 +135,7 @@ class ProgressAnalyticsCalculator(
                 AnalyticsSeries(buckets)
             },
             fullWeeks = weeks.size - 1,
-            hasWorkoutsInRange = sessions.isNotEmpty(),
+            hasWorkoutsInRange = rows.any { it.isNotEmpty() },
             unclassifiableSets = unclassifiable,
             unattributedWorkSets = unattributed.filterValues { it > 0 },
             performance = if (scope is AnalyticsScope.Exercise) {
@@ -171,7 +174,7 @@ class ProgressAnalyticsCalculator(
             .sortedWith(compareBy({ it.completedAtTimestamp }, { it.startedAtTimestamp }, { it.id }))
             .flatMap { session ->
                 session.exercises
-                    .filter { it.exerciseId == exerciseId }
+                    .filter { it.exerciseId == exerciseId && it.prescription.purpose == PrescriptionPurpose.ORDINARY }
                     .sortedWith(compareBy({ it.orderIndex }, { it.id }))
                     .groupBy { it.shape() }
                     .mapNotNull { (shape, instances) ->

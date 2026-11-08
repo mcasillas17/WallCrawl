@@ -27,6 +27,21 @@ class BundledExerciseCatalogTest {
     )
     private val catalog = BundledExerciseCatalog(FixedSource(snapshot))
 
+    @Test fun previousWallStretchIdReadsTheSameIllustrationWithoutAddingAnotherPickerRow() = runTest {
+        val movement = inclinePress.copy(id = "supine-wall-supported-piriformis-stretch")
+        val previous = "figure-four-stretch"
+        val frames = listOf(ExerciseVisual("wall-stretch.svg"))
+        val source = FixedSource(snapshot.copy(exercises = listOf(movement), framesByExerciseId = mapOf(movement.id to frames)))
+        val bundle = BundledExerciseCatalog(source)
+        assertThat(bundle.getAllExercises().first()).containsExactly(movement)
+        assertThat(bundle.getExerciseById(previous)).isEqualTo(movement.copy(id = previous))
+        assertThat(wallcrawl.elopenmike.com.core.exercise.visual.WorkoutGuideVisualProvider(source).framesFor(previous)).isEqualTo(frames)
+        for (id in listOf(previous, movement.id)) {
+            assertThat(wallcrawl.elopenmike.com.core.model.UserProfile(excludedExerciseIds = listOf(id)).planningExclusions)
+                .containsExactly(previous, movement.id)
+        }
+    }
+
     @Test
     fun getAllExercises_preservesGeneratedOrder() = runTest {
         assertThat(catalog.getAllExercises().first().map { it.id })

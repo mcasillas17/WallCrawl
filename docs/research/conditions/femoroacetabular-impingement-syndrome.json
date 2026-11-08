@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "femoroacetabular-impingement-syndrome",
+    "label": "femoroacetabular impingement syndrome",
+    "aliases": [],
+    "distinctions": "Symptoms/signs plus morphology define syndrome; incidental morphology alone is not this condition. Separate OA and postoperative protocols."
+  },
+  "scope": {
+    "population": "Symptomatic nonarthritic FAI, assessed clinically/radiographically.",
+    "stage": "Nonoperative; source populations largely surgical candidates or cam morphology.",
+    "operativeStatus": "Nonoperative rehabilitation only; postoperative pathways require separate assessment.",
+    "exclusions": "Established OA, prior surgery, dysplasia/other pathology need separate review.",
+    "uncertainty": "Source eligibility limits applicability; it does not establish contraindications."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "PhysioFIRST femoroacetabular impingement 2026 strengthening stretching trial results",
+      "decision": "Retrieved 2026 final primary full text/European archive; retained null primary finding.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "\"Personalised Hip Therapy\" \"1217\" PMID",
+      "decision": "Retrieved protocol/exclusions with fulltext.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web search; primary publisher/PubMed/Europe PMC retrieval",
+      "query": "\"10.1136/bjsports-2025-110986\" correction retraction",
+      "decision": "No notice found; final publication July 2026 verified against PubMed.",
+      "limitations": "Focused regional review, not an exhaustive systematic search; English-accessible sources prioritized."
+    }
+  ],
+  "sources": [
+    {
+      "id": "griffin-2018",
+      "title": "Hip arthroscopy versus best conservative care for the treatment of femoroacetabular impingement syndrome (UK FASHIoN): a multicentre randomised controlled trial",
+      "doi": "10.1016/S0140-6736(18)31202-9",
+      "pmid": "29893223",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5988794/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Primary full text inspected at linked archive/publisher; Europe PMC XML used where PMC HTML challenged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "Multicentre assessor-blinded RCT; n=348.",
+      "population": "Age≥ 16, symptomatic cam/pincer morphology, considered surgical candidates; no established OA or prior shape-changing surgery.",
+      "comparator": "Arthroscopy.",
+      "coInterventions": "Education, pain relief; optional injection in conservative arm.",
+      "outcomes": "12-month iHOT-33 adjusted difference 6.8 (1.7–12.0) favored surgery; both groups improved.",
+      "followUp": "6 and 12 months.",
+      "uncertainty": "Unblinded, no untreated control; surgical comparison cannot prove exercise harm.",
+      "harms": "Muscle soreness common; adverse events self-reported 6 weeks; serious events hospital-reported.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "Individualized control, mobility/strength home program.",
+        "dose": "No universal repetitions.",
+        "frequency": "6–10 contacts/12–24 weeks.",
+        "supervision": "Trained physiotherapist.",
+        "progression": "Individualized supervised progression.",
+        "stoppingRules": "not reported in main trial."
+      },
+      "locations": [
+        "Methods > Procedures",
+        "Results > Outcomes and adverse events"
+      ]
+    },
+    {
+      "id": "wall-2016-protocol",
+      "title": "Personalised Hip Therapy: development of a non-operative protocol to treat femoroacetabular impingement syndrome in the FASHIoN randomised controlled trial",
+      "doi": "10.1136/bjsports-2016-096368",
+      "pmid": "27629405",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5036255/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Primary full text inspected at linked archive/publisher; Europe PMC XML used where PMC HTML challenged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "Consensus development/internal pilot; 21 assigned PHT.",
+      "population": "Symptomatic nonarthritic FAI surgical candidates.",
+      "comparator": "Arthroscopy pilot, no efficacy analysis here.",
+      "coInterventions": "Education, analgesia, optional manual therapy/injection.",
+      "outcomes": "Feasible structure; 13/21 closely followed protocol.",
+      "followUp": "Six-week pilot adverse-event report.",
+      "uncertainty": "Consensus threshold and small pilot; not component efficacy.",
+      "harms": "13 muscle-soreness reports; no serious events.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "Control→strength/mobility within pain-free available range.",
+        "dose": "No uniform sets/repetitions.",
+        "frequency": "6–10 contacts/12–26 weeks plus home.",
+        "supervision": "Qualified trained physiotherapist.",
+        "progression": "Increase ROM/resistance individually.",
+        "stoppingRules": "Avoid painful hard-end stretches; reduce/avoid deep flexion/adduction/internal rotation in daily activity."
+      },
+      "locations": [
+        "Results > Table 1; Protocol exclusions",
+        "Results > Feasibility/adverse events"
+      ]
+    },
+    {
+      "id": "kemp-2026",
+      "title": "Physiotherapist-led treatment for femoroacetabular impingement syndrome (the PhysioFIRST study): an assessor-blinded, limited disclosure randomised controlled trial",
+      "doi": "10.1136/bjsports-2025-110986",
+      "pmid": "42082318",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13479264/",
+      "publicationStatus": "Final journal publication, before access date.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Primary full text inspected at linked archive/publisher; Europe PMC XML used where PMC HTML challenged."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Primary metadata and retrieved text inspected; regional update searches. Bounded check, not registry-wide clearance.",
+        "result": "No notice identified in inspected text; no formal replacement established."
+      },
+      "design": "Assessor-blinded limited-disclosure RCT; 154, 142 followed.",
+      "population": "Nonoperative cam-related FAI; prior hip/back surgery and OA excluded.",
+      "comparator": "Standardized stretching with equal contact/gym access.",
+      "coInterventions": "Both education; strength personalized/manual therapy.",
+      "outcomes": "Six-month iHOT-33 difference 0.2 (−5.9 to 6.3); no primary superiority. Dichotomized pain improvement OR 2.36 (1.15–4.84) favored strength.",
+      "followUp": "3 and 6 months.",
+      "uncertainty": "No usual-care arm; COVID stopped recruitment; editorial roles disclosed; NHMRC funded.",
+      "harms": "Two adverse/one serious event, all unrelated; no treatment-related event reported.",
+      "limitations": "Not clinical approval or a universal ordinary-training restriction.",
+      "protocol": {
+        "execution": "Individual hip/trunk strength, functional/plyometric work and activity plan.",
+        "dose": "No single fixed exercise dose.",
+        "frequency": "First 3 months: weekly supervised plus 2 home/week; later gym/home and monthly consults.",
+        "supervision": "Up to 15 combined contacts/6 months.",
+        "progression": "Therapist modifies unacceptable pain.",
+        "stoppingRules": "No universal numeric threshold."
+      },
+      "locations": [
+        "Methods > Physiotherapy-led treatments; Table 1",
+        "Results > Primary outcomes; Adverse events"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "surgery-comparison",
+      "kind": "study-result",
+      "statement": "12-month iHOT-33 adjusted difference 6.8 (1.7–12.0) favored surgery; both groups improved.",
+      "citations": [
+        {
+          "sourceId": "griffin-2018",
+          "location": "Results > Outcomes and adverse events"
+        }
+      ],
+      "applicability": "Age≥ 16, symptomatic cam/pincer morphology, considered surgical candidates; no established OA or prior shape-changing surgery.",
+      "limitations": "Unblinded, no untreated control; surgical comparison cannot prove exercise harm."
+    },
+    {
+      "id": "pht-position-advice",
+      "kind": "published-recommendation",
+      "statement": "PHT advises reducing impingement-provoking daily positions and excludes painful hard-end stretching.",
+      "citations": [
+        {
+          "sourceId": "wall-2016-protocol",
+          "location": "Results > Table 1; Protocol exclusions"
+        }
+      ],
+      "applicability": "Symptomatic nonarthritic FAI surgical candidates.",
+      "limitations": "Consensus threshold and small pilot; not component efficacy."
+    },
+    {
+      "id": "strength-not-uniquely-superior",
+      "kind": "study-result",
+      "statement": "Six-month iHOT-33 difference 0.2 (−5.9 to 6.3); no primary superiority. Dichotomized pain improvement OR 2.36 (1.15–4.84) favored strength.",
+      "citations": [
+        {
+          "sourceId": "kemp-2026",
+          "location": "Results > Primary outcomes; Adverse events"
+        }
+      ],
+      "applicability": "Nonoperative cam-related FAI; prior hip/back surgery and OA excluded.",
+      "limitations": "No usual-care arm; COVID stopped recruitment; editorial roles disclosed; NHMRC funded."
+    }
+  ],
+  "exerciseMappings": [],
+  "proposedRules": [
+    {
+      "id": "symptom-guided-fai-range",
+      "kind": "range-limit",
+      "basis": "published-recommendation",
+      "statement": "Consider modifying symptom-provoking impingement positions and painful end-range stretching during review; no numeric ROM cap.",
+      "findingIds": [
+        "pht-position-advice"
+      ],
+      "citations": [
+        {
+          "sourceId": "wall-2016-protocol",
+          "location": "Results > Table 1; Protocol exclusions"
+        }
+      ],
+      "applicability": {
+        "population": "Symptomatic radiographically assessed nonarthritic FAI; PHT primarily surgical candidates and PhysioFIRST cam-morphology adults; excluded prior surgery/OA pathways unresolved.",
+        "stage": "Nonoperative; source populations largely surgical candidates or cam morphology.",
+        "rationale": "Draft inference constrained to the linked population and intervention; no individual clearance."
+      },
+      "limitations": "Advice within personalized treatment, not permanent blanket flexion/rotation exclusion.",
+      "mappingIds": [],
+      "status": "candidate"
+    },
+    {
+      "id": "preserve-tolerable-options",
+      "kind": "exclusion",
+      "basis": "product-precaution",
+      "statement": "Withhold categorical stretching or strength exclusions based only on treatment comparisons.",
+      "findingIds": [
+        "strength-not-uniquely-superior"
+      ],
+      "citations": [
+        {
+          "sourceId": "kemp-2026",
+          "location": "Results > Primary outcomes; Adverse events"
+        }
+      ],
+      "applicability": {
+        "population": "Symptomatic radiographically assessed nonarthritic FAI; PHT primarily surgical candidates and PhysioFIRST cam-morphology adults; excluded prior surgery/OA pathways unresolved.",
+        "stage": "Nonoperative; source populations largely surgical candidates or cam morphology.",
+        "rationale": "Draft inference constrained to the linked population and intervention; no individual clearance."
+      },
+      "limitations": "Product evidence rule; not medical clearance of every variant.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "All material is draft and clinically unreviewed; no runtime mapping, supported-condition claim, default dose or escalation clearance follows.",
+    "No universal numeric load/range cap or hard exercise contraindication was established; benefit from alternatives and trial exclusions do not prove harm.",
+    "Concurrent condition restrictions, equipment requirements and independent joint limits remain controlling; stretching never earns strength-set credit or generic five-second progression.",
+    "No single exact exercise execution shared by individualized packages was verified; no exercise request invented from muscle-group names.",
+    "Movement advice is published consensus within care packages, not proof every deep squat, hip rotation or stretch is harmful.",
+    "Long-term structural protection and precise individualized safe ROM remain unresolved."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

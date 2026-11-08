@@ -1,0 +1,37 @@
+[
+  {
+    "requestId": "knee-itbs-side-lying-hip-abduction",
+    "referenceExerciseId": "side-lying-leg-raise",
+    "conditionId": "iliotibial-band-related-lateral-knee-pain",
+    "sourceId": "mckay-2020",
+    "finding": "Side-Lying Leg Raise illustrates the supported-head, straight-knee lateral raise in both catalog variants. The lower hand supports the head and the elbow rests on the floor. The lower leg can remain straight in the study. The author asks for forward-facing toes throughout and gives no numeric height. Use the written cue for foot orientation, which the simplified drawings cannot establish precisely. The alternative Side-Lying Hip Abduction props the torso on the forearm and leaves the head unsupported.",
+    "sources": [
+      {
+        "title": "McKay et al., pilot randomized study, Table 2, exercise 2",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7247177/"
+      },
+      {
+        "title": "SieuNarine-McKay, original UBC thesis, Table 5, group C, exercise 2, printed p. 45",
+        "url": "https://central.bac-lac.gc.ca/.item?app=Library&id=TC-BVAU-58531&oclc_number=1032932654&op=pdf"
+      }
+    ],
+    "executionNote": "In the study author’s thesis, Table 5 specifies a supported head and straight upper knee. Keep the toes facing forward as the leg lifts. The lower knee may bend. No lift angle is specified."
+  },
+  {
+    "requestId": "phoenix-bilateral-floor-bridge",
+    "referenceExerciseId": null,
+    "conditionId": "hip-osteoarthritis",
+    "sourceId": "hall-2022-protocol",
+    "finding": "Glute Bridge matches the bilateral exercise identity. PHOENIX starts on a firm surface with bent knees, feet flat and hip-width apart. Participants lift, pause for two to three seconds and lower slowly. The upstream and female sequences reach a low supported position. The male pelvis stays raised at its lowest frame. None of the drawings measures stance width or pause duration. An all-variant demonstration of the complete repetition needs a corrected lowered male endpoint.",
+    "sources": [
+      {
+        "title": "Hall et al., PHOENIX protocol",
+        "url": "https://link.springer.com/article/10.1186/s12891-022-05282-0"
+      },
+      {
+        "title": "PHOENIX Additional file 5, p. 1, Hip Extensors, Bridging, Bridge row",
+        "url": "https://static-content.springer.com/esm/art%3A10.1186%2Fs12891-022-05282-0/MediaObjects/12891_2022_5282_MOESM5_ESM.pdf"
+      }
+    ]
+  }
+]

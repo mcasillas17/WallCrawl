@@ -1,0 +1,268 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "iliotibial-band-related-lateral-knee-pain",
+    "label": "iliotibial-band-related lateral knee pain",
+    "aliases": [
+      "iliotibial band syndrome",
+      "ITBS"
+    ],
+    "distinctions": "ITB-related lateral knee pain differs from generic hip weakness or all lateral knee pain; no universal biomechanical cause established."
+  },
+  "scope": {
+    "population": "Clinically assessed runners with ITB-related lateral knee pain; strongest exact protocol anchor female recreational runners.",
+    "stage": "Chronic>=3 months in 2020pilot; 2026symptom duration not clear.",
+    "operativeStatus": "Nonoperative; prior knee surgery excluded in both pilots.",
+    "exclusions": "Other lateral-knee sources such as meniscal, ligament, OA or popliteus disease require differentiation.",
+    "uncertainty": "Research extraction only; no universal safe dose, clearance or diagnosis inferred."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "\"iliotibial band\" McKay 2020 rehabilitation pilot randomized full text",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "\"Effectiveness of Manual Therapy Versus Strength Training\" 2026 DOI",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "\"10.1186/s13018-020-01713-7\" correction retraction",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    }
+  ],
+  "sources": [
+    {
+      "id": "mckay-2020",
+      "title": "Iliotibial band syndrome rehabilitation in female runners: a pilot randomized study",
+      "doi": "10.1186/s13018-020-01713-7",
+      "pmid": "32448384",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7247177/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text, tables, methods, results and limitations retrieved through lawful Europe PMC fullTextXML: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7247177/fullTextXML . PMC direct browser access sometimes challenged; XML retrieval succeeded. Figures not visually verified."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance."
+      },
+      "design": "Pilot RCT, 28 enrolled, 24 analyzed, 8/arm; per-protocol.",
+      "population": "Female recreational runners 19–45,>=15km/week, unilateral ITBS>=3 months; Noble/local tenderness; other knee disease excluded.",
+      "comparator": "ITB stretching vs conventional hip exercises vs progressive complex hip/core exercise.",
+      "coInterventions": "All avoid painful activity then gradual return; running progression after 30 min pain-free fast walk.",
+      "outcomes": "8-week within-group changes across pain/LEFS, strength/balance; some between-group contrasts. Exploratory, multiple outcomes; no robust superiority conclusion or precise general effectCI.",
+      "followUp": "8 weeks; no recurrence reported within that window.",
+      "uncertainty": "Small women-only sample, 4dropouts, short follow-up, self-report, per-protocol, multiplicity; no untreated control.",
+      "harms": "No recurrence during study; formal adverse-event collection not clearly reported.",
+      "limitations": "Small women-only sample, 4dropouts, short follow-up, self-report, per-protocol, multiplicity; no untreated control.",
+      "protocol": {
+        "execution": "Progresses modified side plank/clamshell, side-lying abduction to band walks, hip hike to single-leg squat, bridge variants.",
+        "dose": "Examples Table 2: modified side plank 30sx 2 week 1; abduction 10x 2 week 1 to 10x 3 week 2; clam+modified plank 10x 2 light band week 3 to 15x 3 week 4; single-leg squat 10x 2 week 3 to 12x 3 week 4.",
+        "frequency": "3 days/week, 8 weeks.",
+        "supervision": "Designed by kinesiologist/strength coach; measurement visits; continuous-session supervision not specified.",
+        "progression": "Weekly Table 2 complexity progression; pain-free 30 min fast walk before run intervals.",
+        "stoppingRules": "Avoid painful activities until controlled; no numeric pain/load cap."
+      },
+      "locations": [
+        "Methods > Participants and diagnosis",
+        "Methods > Interventions; Tables 1–3",
+        "Results > within/between groups; Discussion > limitations"
+      ]
+    },
+    {
+      "id": "khizar-2026",
+      "title": "Effectiveness of Manual Therapy Versus Strength Training for Iliotibial Band Syndrome on Pain and Functional Recovery in Runners: A Pilot Study",
+      "doi": "10.3822/ijtmb.v19i2.1279",
+      "pmid": "42428596",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13347770/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text, tables, methods, results and limitations retrieved through lawful Europe PMC fullTextXML: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13347770/fullTextXML . PMC direct browser access sometimes challenged; XML retrieval succeeded. Figures not visually verified."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance."
+      },
+      "design": "Pilot randomized comparison, n 34, 17/arm, published 11Jun 2026.",
+      "population": "Adult runners, mostly 18–35, Noble or Ober positive, NPRS>5, running>=5/week; other pathology/surgery excluded.",
+      "comparator": "Hip/knee strengthening vs deep friction/stretch/mobilization/foam-roll manual therapy.",
+      "coInterventions": "Usual running if tolerable; no new terrain/intensity/footwear or analgesics; weekly logs.",
+      "outcomes": "Table 4 NPRS manual 8.88→8.12, strength 8.41→2.88; LEFS 43.94→50.24 vs 41.12→57.33. Table 5 pooled pain figures conflict with Table 4 and baseline imbalance p.04. No trustworthy adjusted effect/CI supplied.",
+      "followUp": "6 weeks only.",
+      "uncertainty": "Small single-center pilot; diagnosis includes Ober alone; statistical-table inconsistencies; baseline pain imbalance; no long-term or no-treatment comparator. Very low confidence.",
+      "harms": "Adverse-event reporting not identified; no long-term recurrence measure.",
+      "limitations": "Small single-center pilot; diagnosis includes Ober alone; statistical-table inconsistencies; baseline pain imbalance; no long-term or no-treatment comparator. Very low confidence.",
+      "protocol": {
+        "execution": "Modified side plank/clamshell, band walks, single-leg squat/bridges, then lunges, Bulgarian split squat, hip thrust.",
+        "dose": "Table 2 examples: week 1 modifiedplank 2x 15(5 s); week 2 squat 2x 12–15(2 s); week 5 Bulgarian 2x 12–15; week 6 3x 15–20.",
+        "frequency": "5/week for 6 weeks; 30 s interset, 1 min between exercises.",
+        "supervision": "Clinical setting; standard initial instructions; qualifications/session monitoring not fully specified.",
+        "progression": "Table 2 weekly sets/reps/complexity; external load not quantified.",
+        "stoppingRules": "Tolerable running without quantified cutoff; no explicit exercise stopping algorithm."
+      },
+      "locations": [
+        "Methods > Participants and interventions; Table 2",
+        "Results > Tables 4 and 5",
+        "Discussion > limitations"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "itbs-pilot-results",
+      "kind": "study-result",
+      "statement": "McKay 24 analyzed participants showed within-group improvements and some between-group contrasts; small per-protocol pilot with multiple outcomes cannot establish robust regimen superiority.",
+      "citations": [
+        {
+          "sourceId": "mckay-2020",
+          "location": "Methods > Interventions; Tables 1–3"
+        },
+        {
+          "sourceId": "mckay-2020",
+          "location": "Results > within/between groups; Discussion > limitations"
+        }
+      ],
+      "applicability": "Female recreational runners 19–45,>=15km/week, unilateral ITBS>=3 months; Noble/local tenderness; other knee disease excluded.",
+      "limitations": "8 weeks, women-only, no untreated group; confidence low."
+    },
+    {
+      "id": "itbs-pain-activity",
+      "kind": "published-recommendation",
+      "statement": "McKay instructed avoidance of painful activities until controlled, then gradual reintroduction; running intervals began after 30 min pain-free fast walking.",
+      "citations": [
+        {
+          "sourceId": "mckay-2020",
+          "location": "Methods > Interventions; Tables 1–3"
+        }
+      ],
+      "applicability": "Participants in this chronic female-runner pilot.",
+      "limitations": "Advice not separately randomized; no universal gym-load cap or pain cutoff."
+    },
+    {
+      "id": "itbs-2026-uncertain",
+      "kind": "study-result",
+      "statement": "Table 4 NPRS manual 8.88→8.12, strength 8.41→2.88; LEFS 43.94→50.24 vs 41.12→57.33. Table 5 pooled pain figures conflict with Table 4 and baseline imbalance p.04. No trustworthy adjusted effect/CI supplied.",
+      "citations": [
+        {
+          "sourceId": "khizar-2026",
+          "location": "Methods > Participants and interventions; Table 2"
+        },
+        {
+          "sourceId": "khizar-2026",
+          "location": "Results > Tables 4 and 5"
+        }
+      ],
+      "applicability": "Adult runners, mostly 18–35, Noble or Ober positive, NPRS>5, running>=5/week; other pathology/surgery excluded.",
+      "limitations": "Low confidence; no numerical rule from inconsistent outcome tables."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "itbs-modified-side-plank-clamshell-candidate",
+      "exerciseId": null,
+      "requestId": "knee-itbs-modified-side-plank-clamshell",
+      "findingIds": [
+        "itbs-pilot-results"
+      ],
+      "matchRationale": "Catalog side-plank supports forearm/foot and duration; banded-clamshell is separate dynamic hip work. Neither metadata establishes this combined supported-knee variant; retain separate PNG identity if commissioned.",
+      "status": "candidate"
+    },
+    {
+      "id": "itbs-side-lying-hip-abduction-candidate",
+      "exerciseId": null,
+      "requestId": "knee-itbs-side-lying-hip-abduction",
+      "findingIds": [
+        "itbs-pilot-results"
+      ],
+      "matchRationale": "Catalog side-lying-hip-abduction has matching position/type but no study-specific execution verification. No PNG-frame review was performed, so direct equivalence remains unresolved.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "itbs-consider-hip-program",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain progressive hip/core exercise variants as clinical-content research candidates; do not declare the experimental program superior or copy all weekly progressions into an ordinary split.",
+      "findingIds": [
+        "itbs-pilot-results",
+        "itbs-2026-uncertain"
+      ],
+      "citations": [
+        {
+          "sourceId": "mckay-2020",
+          "location": "Methods > Interventions; Tables 1–3"
+        },
+        {
+          "sourceId": "khizar-2026",
+          "location": "Results > Tables 4 and 5"
+        }
+      ],
+      "applicability": {
+        "population": "Clinically assessed runners with ITB-related lateral knee pain; strongest exact protocol anchor female recreational runners.",
+        "stage": "Chronic>=3 months in 2020pilot; 2026symptom duration not clear.",
+        "rationale": "Both pilots studied multimodal progression; 2026reporting concerns reduce confidence."
+      },
+      "limitations": "Component benefit and exact identities unresolved; no universal safety claim.",
+      "mappingIds": [
+        "itbs-modified-side-plank-clamshell-candidate",
+        "itbs-side-lying-hip-abduction-candidate"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "itbs-modify-provocation",
+      "kind": "symptom-response",
+      "basis": "unresolved-hypothesis",
+      "statement": "Candidate ordinary-workout implication: identify and modify symptom-provoking activities with gradual return; keep a clinician-set response plan instead of a blanket squat or running ban.",
+      "findingIds": [
+        "itbs-pain-activity"
+      ],
+      "citations": [
+        {
+          "sourceId": "mckay-2020",
+          "location": "Methods > Interventions; Tables 1–3"
+        }
+      ],
+      "applicability": {
+        "population": "Clinically assessed runners with ITB-related lateral knee pain; strongest exact protocol anchor female recreational runners.",
+        "stage": "Chronic>=3 months in 2020pilot; 2026symptom duration not clear.",
+        "rationale": "Trial activity advice is directly documented but not an independently tested restriction."
+      },
+      "limitations": "No validated generic pain cutoff or gym-load boundary; diagnostic assessment required.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Researcher appraisal, not formal GRADE: low confidence in comparative program effects and very low confidence in exact universal restrictions; small pilots and reporting concerns.",
+    "Exploratory small trials; limited ordinary-gym, nonrunner, older-adult or postoperative applicability.",
+    "2026Table 4/5 pain values inconsistent; baseline imbalance, no adjusted effectCI. Do not pool as reliable comparative effect.",
+    "McKayTable 2 modified-side-plank week 2 repetition multiplier incomplete; not repaired by guessing.",
+    "No universal knee-angle, hip-adduction or running-distance ban supported.",
+    "Independent clinical review absent; doses are reported study protocols, not app prescriptions.",
+    "No universal contraindication follows from trial exclusion or another exercise showing benefit. No generic five-second progression or stretch strength-set credit."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

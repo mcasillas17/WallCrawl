@@ -11,10 +11,13 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.withIndex
+import wallcrawl.elopenmike.com.core.database.dao.ConditionContextRead
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
 import wallcrawl.elopenmike.com.core.database.repository.ProgramRepository
+import wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog
+import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
 import wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent
 import wallcrawl.elopenmike.com.core.model.ProgramReadState
 import wallcrawl.elopenmike.com.core.model.ProgramHeader
@@ -56,7 +59,10 @@ class WorkoutGenerationContextBuilder(
     private val nowTimestamp: () -> Long = System::currentTimeMillis,
     private val zoneId: () -> ZoneId = ZoneId::systemDefault,
     private val deloadRepository: DeloadRepository? = null,
-    private val programRepository: ProgramRepository? = null
+    private val programRepository: ProgramRepository? = null,
+    private val conditionSupport: suspend () -> ConditionSupportCatalog = {
+        ConditionSupportCatalog("unavailable", emptyMap())
+    }
 ) {
     /**
      * Reuses Today’s clock and Room invalidation, not polling queries. A day/zone change
@@ -100,12 +106,37 @@ class WorkoutGenerationContextBuilder(
     suspend fun build(
         intent: WorkoutPlanningIntent = WorkoutPlanningIntent.ORDINARY,
         regenerationIndex: Int? = null
+    ): WorkoutGenerationContext = buildContext(intent, regenerationIndex, null, null)
+
+    /** Caller owns gate → Room transaction. These reads replace every gate-taking bootstrap read. */
+    internal suspend fun buildInTransaction(
+        intent: WorkoutPlanningIntent,
+        regenerationIndex: Int?,
+        read: ConditionContextRead,
+        support: ConditionSupportCatalog
+    ): WorkoutGenerationContext = buildContext(intent, regenerationIndex, read, support)
+
+    private suspend fun buildContext(
+        intent: WorkoutPlanningIntent,
+        regenerationIndex: Int?,
+        transactionRead: ConditionContextRead?,
+        transactionSupport: ConditionSupportCatalog?
     ): WorkoutGenerationContext {
-        val now = Instant.ofEpochMilli(nowTimestamp())
-        val zone = zoneId()
-        val initialProfile = userProfileRepository.getProfileOnce()
+        val now = Instant.ofEpochMilli(transactionRead?.history?.asOfTimestamp ?: nowTimestamp())
+        val zone = transactionRead?.history?.zoneId ?: zoneId()
+        val initialProfile = transactionRead?.profile ?: userProfileRepository.getProfileOnce()
+        val needsConditionRead = transactionRead != null || initialProfile.hasConditionReports ||
+            workoutRepository.hasPendingConditionReassessment(initialProfile.id)
+        var support = transactionSupport ?: if (needsConditionRead) conditionSupport() else null
+        var conditionRead = transactionRead ?: support?.let { workoutRepository.getConditionContext(initialProfile.id, it, now.toEpochMilli(), zone, intent == WorkoutPlanningIntent.PROGRAM) }
+        val initialProgram = if (intent == WorkoutPlanningIntent.PROGRAM && conditionRead == null) programRepository?.get(initialProfile.id) else null
+        // A program projection can observe a selection made after the bootstrap profile read.
+        if (conditionRead == null && initialProgram?.profile?.hasConditionReports == true) {
+            support = conditionSupport()
+            conditionRead = workoutRepository.getConditionContext(initialProfile.id, support, now.toEpochMilli(), zone, true)
+        }
         val projection = if (intent == WorkoutPlanningIntent.PROGRAM) {
-            when (val state = programRepository?.get(initialProfile.id)) {
+            when (val state = conditionRead?.program ?: initialProgram) {
                 is ProgramReadState.Supported -> state
                 is ProgramReadState.Unsupported -> throw ProgramException(ProgramFailure.UNSUPPORTED_POLICY)
                 is ProgramReadState.Empty, null -> throw ProgramException(ProgramFailure.MISSING_OR_NOT_ACTIVE)
@@ -113,8 +144,11 @@ class WorkoutGenerationContextBuilder(
         } else null
         // Program configuration and the live constraints must come from one coherent read.
         val profile = if (projection != null) projection.profile
-            ?: throw ProgramException(ProgramFailure.PROFILE_UNAVAILABLE) else initialProfile
-        val programHeader = projection?.header ?: programRepository?.getHeader(profile.id) ?: ProgramHeader.absent(profile.id)
+            ?: throw ProgramException(ProgramFailure.PROFILE_UNAVAILABLE) else conditionRead?.profile ?: initialProfile
+        check(profile.unresolvedTrainingConstraintsRaw == null) {
+            "Unresolved training constraints prevent workout planning."
+        }
+        val programHeader = conditionRead?.programHeader ?: projection?.header ?: programRepository?.getHeader(profile.id) ?: ProgramHeader.absent(profile.id)
         val programInput = projection?.let {
             val progress = MultiWeekProgramPolicy.reconstruct(it.enrollment, it.sessions)
             if (progress != it.progress) throw ProgramException(ProgramFailure.INVALID_PROGRESS)
@@ -202,6 +236,15 @@ class WorkoutGenerationContextBuilder(
             )
         } else null
 
+        val conditionPlanning = if (support != null && conditionRead != null) {
+            ConditionPlanningPolicy().resolve(profile, allowedExercises, allExercises.associateBy { it.id }, support, conditionRead.history)
+        } else ConditionPlanningResult.NotApplicable
+        val conditionCandidates = when (conditionPlanning) {
+            is ConditionPlanningResult.Ready -> allowedExercises.filter { it.id in conditionPlanning.ordinaryRules }
+            is ConditionPlanningResult.Blocked -> emptyList()
+            ConditionPlanningResult.NotApplicable -> allowedExercises
+        }
+
         return WorkoutGenerationContext(
             userProfile = profile,
             fitnessGoals = programInput?.enrollment?.configuration?.goals?.toSet() ?: profile.goals,
@@ -220,10 +263,11 @@ class WorkoutGenerationContextBuilder(
             exerciseHistory = exerciseHistory,
             recentlyTrainedMuscles = historyAnalyzer.recentlyTrainedMuscles(
                 sessions = recentCompletedSessions,
-                nowTimestamp = now.toEpochMilli()
+                nowTimestamp = now.toEpochMilli(),
+                exercisesById = allExercises.associateBy { it.id }
             ),
-            excludedExerciseIds = profile.excludedExerciseIds,
-            allowedExercises = allowedExercises,
+            excludedExerciseIds = profile.planningExclusions,
+            allowedExercises = conditionCandidates,
             automaticEligibilityResult = automaticEligibilityResult,
             capabilityEvidence = capabilityEvidence,
             schedulingEvidence = schedulingEvidence,
@@ -235,7 +279,10 @@ class WorkoutGenerationContextBuilder(
             regenerationIndex = regenerationIndex,
             planningIntent = intent,
             programHeader = programHeader,
-            programInput = programInput
+            programInput = programInput,
+            conditionPlanning = conditionPlanning,
+            conditionHistory = conditionRead?.history,
+            conditionSupport = support
         ).also { it.validatedProgramSession() }
     }
 
@@ -246,6 +293,7 @@ class WorkoutGenerationContextBuilder(
         var examinedPrescriptions = 0
         for (session in sessions) {
             for (exercise in session.exercises) {
+                if (exercise.isLegacyMobility) continue
                 if (examinedPrescriptions == MAX_PRIOR_REST_PRESCRIPTIONS) {
                     return preferences
                 }

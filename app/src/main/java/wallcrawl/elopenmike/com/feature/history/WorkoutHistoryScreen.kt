@@ -136,9 +136,14 @@ fun WorkoutHistoryDetailScreen(
                 }
                 is WorkoutHistoryDetailUiState.Loaded -> {
                     sessionFacts(state.detail)
+                    state.detail.session.conditionContext?.let { context ->
+                        item { wallcrawl.elopenmike.com.core.ui.components.RecordedConditions(context) }
+                    }
                     recordedReasons(state.reasons)
                     state.detail.session.exercises.sortedWith(compareBy({ it.orderIndex }, { it.id })).forEach { exercise ->
                         item { HistoryHeading(exercise.exerciseId) }
+                        item { wallcrawl.elopenmike.com.core.ui.components.ConditionExecution(
+                            state.detail.session.conditionContext, exercise.exerciseId, exercise.prescription.purpose) }
                         field(R.string.history_exercise_type) { stringResource(exerciseTypeRes(exercise.prescription.exerciseType)) }
                         if (exercise.notes.isNotEmpty()) field(R.string.history_notes) { exercise.notes }
                         heading(R.string.history_previous)
@@ -248,6 +253,7 @@ private fun LazyListScope.prescription(prescription: ExercisePrescription, unit:
         field(R.string.set_field_load) { weight(prescription.targetWeight, unit) }
     if (prescription.exerciseType == ExerciseType.ASSISTED_BODYWEIGHT)
         field(R.string.history_assistance) { weight(prescription.targetAssistanceWeight, unit) }
+    prescription.holdSeconds?.let { field(R.string.history_hold_per_rep) { seconds(it) } }
     prescription.targetDurationSeconds?.let { field(R.string.set_field_seconds) { seconds(it) } }
     prescription.targetDistanceMeters?.let { field(R.string.set_field_meters) { meters(it) } }
     field(R.string.history_effort_target) {

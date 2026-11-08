@@ -43,9 +43,24 @@ interface UserProfileDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdate(profile: UserProfileEntity)
 
+    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = 'IN_PROGRESS'")
+    suspend fun activeWorkoutCount(): Int
+
     @Transaction
     suspend fun insertOrUpdateWithNextRevision(profile: UserProfileEntity): UserProfileEntity {
-        val nextRevision = (getProfile(profile.id)?.revision ?: -1L) + 1L
+        val previous = getProfile(profile.id)
+        if (previous != null) {
+            check(previous.trainingConstraintsJson == profile.trainingConstraintsJson ||
+                decodeTrainingConstraints(previous.trainingConstraintsJson).second == null) {
+                "Unresolved training constraints require review before replacement."
+            }
+            check((previous.activeConditionsJson == profile.activeConditionsJson &&
+                previous.reportedConditionsJson == profile.reportedConditionsJson) || activeWorkoutCount() == 0) {
+                "Active conditions cannot change during a workout."
+            }
+        }
+        check(previous == null || previous.revision < Long.MAX_VALUE) { "Profile revision is exhausted." }
+        val nextRevision = (previous?.revision ?: -1L) + 1L
         return profile.copy(revision = nextRevision).also { revisedProfile ->
             insertOrUpdate(revisedProfile)
         }
@@ -53,7 +68,7 @@ interface UserProfileDao {
 }
 
 @Dao
-interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao, ProgramDao {
+interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao, ConditionHistoryDao {
     @Transaction
     suspend fun readWorkoutSummary(sessionId: String, calculator: ProgressCalculator): WorkoutSummary? {
         val session = getBoundedHistorySessions(listOf(sessionId)).singleOrNull()?.toWorkoutSession()
@@ -114,12 +129,12 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao, Pro
         status: SessionStatus = SessionStatus.COMPLETED
     ): Flow<List<WorkoutSessionWithExercisesAndSets>>
 
-    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = :status")
+    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = :status AND $COUNTS_AS_TRAINING_SESSION")
     fun observeCompletedSessionCount(
         status: SessionStatus = SessionStatus.COMPLETED
     ): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = :status AND completedAtTimestamp >= :startTimestamp AND completedAtTimestamp < :endTimestampExclusive")
+    @Query("SELECT COUNT(*) FROM workout_sessions WHERE status = :status AND completedAtTimestamp >= :startTimestamp AND completedAtTimestamp < :endTimestampExclusive AND $COUNTS_AS_TRAINING_SESSION")
     fun observeCompletedSessionCountInRange(
         startTimestamp: Long,
         endTimestampExclusive: Long,
@@ -196,13 +211,45 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao, Pro
         expectedDeloadDecisionRevision: Long? = null,
         acceptedDeloadOfferId: String? = null,
         expectedProgramHeader: ProgramHeader? = null,
-        programSession: ProgramSessionSnapshot? = null
+        programSession: ProgramSessionSnapshot? = null,
+        conditionCheck: (suspend WorkoutSessionDao.() -> SessionConditionContext?)? = null
     ): WorkoutSessionWithExercisesAndSets {
-        check(getProfileRevision(expectedProfileId) == expectedProfileRevision) {
-            "User profile changed while the workout recommendation was being started."
+        if (getProfileRevision(expectedProfileId) != expectedProfileRevision) {
+            throw ConditionStartRefused("stale-profile")
         }
         val existingActiveSession = getActiveSession()
         if (existingActiveSession != null) return existingActiveSession
+        check(getProgramProfile(expectedProfileId)?.trainingConstraintsJson
+            ?.let { decodeTrainingConstraints(it).second == null } == true) {
+            "Unresolved training constraints prevent a new workout."
+        }
+        val profile = getProgramProfile(expectedProfileId)?.toUserProfile()
+            ?: throw ConditionStartRefused("missing-profile")
+        val pending = conditionPendingProbe(expectedProfileId, 1)
+        if (pending.isNotEmpty()) throw ConditionStartRefused(pending.map {
+            ConditionViolation("pending-reassessment", setOf(it.conditionId), setOf(it.exerciseId))
+        })
+        if (profile.reportedConditions.isNotEmpty()) throw ConditionStartRefused("legacy-condition-report")
+        if (conditionCheck == null && (profile.activeConditions.isNotEmpty() ||
+                session.conditionContextJson != null || exercises.any { it.purpose != PrescriptionPurpose.ORDINARY.name })) {
+            throw ConditionStartRefused("missing-condition-context", profile.activeConditions.map { it.conditionId }.toSet())
+        }
+        val checkedContext = conditionCheck?.invoke(this)
+        if (profile.activeConditions.isNotEmpty() && checkedContext == null ||
+            checkedContext != null && checkedContext.selectedConditions != profile.activeConditions ||
+            exercises.any { it.purpose == PrescriptionPurpose.SUPPORTIVE.name } && profile.activeConditions.isEmpty()) {
+            throw ConditionStartRefused("missing-condition-context")
+        }
+        if (session.origin == WorkoutOrigin.PLANNER && checkedContext != null && recommendation == null)
+            throw ConditionStartRefused("missing-condition-context")
+        val checkedSession = session.copy(conditionContextJson = checkedContext?.let(ConditionContextCodec::encodeSession))
+        val contextDigest = checkedContext?.canonicalDigest
+        require(recommendation?.conditionContextDigest == null || recommendation.conditionContextDigest == contextDigest) {
+            "Recommendation condition context does not match the frozen session."
+        }
+        require(recommendation == null || (recommendation.conditionContextDigest == null) == (contextDigest == null)) {
+            "Recommendation and session must agree on condition context."
+        }
 
         val header = if (session.origin == WorkoutOrigin.PLANNER) readProgramHeader(expectedProfileId) else null
         if (header != null && expectedProgramHeader != header &&
@@ -242,7 +289,7 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao, Pro
             }
         } else null
 
-        insertWorkout(session, exercises, sets)
+        insertWorkout(checkedSession, exercises, sets)
         recommendation?.let { record ->
             check(record.sessionId == session.id) {
                 "A recommendation record must belong to the session it is written with."
@@ -354,6 +401,57 @@ interface WorkoutExerciseDao {
 
 @Dao
 interface WorkoutSetDao {
+    @Query("SELECT w.conditionContextJson FROM workout_sessions w JOIN workout_exercises e ON e.sessionId = w.id JOIN workout_sets s ON s.workoutExerciseId = e.id WHERE s.id = :setId")
+    suspend fun getOutcomeConditionContext(setId: String): String?
+
+    @Query("SELECT e.* FROM workout_exercises e JOIN workout_sets s ON s.workoutExerciseId = e.id WHERE s.id = :setId")
+    suspend fun getOutcomeExercise(setId: String): WorkoutExerciseEntity?
+
+    @Query("SELECT * FROM user_profiles WHERE id = :profileId")
+    suspend fun getOutcomeProfile(profileId: String): UserProfileEntity?
+
+    @Query("UPDATE user_profiles SET revision = revision + 1 WHERE id = :profileId AND revision = :expectedRevision")
+    suspend fun advanceOutcomeProfileRevision(profileId: String, expectedRevision: Long): Int
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun replaceOutcomeMarker(marker: wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendingEntity)
+
+    @Transaction
+    suspend fun recordOutcomeAndConditionStops(setId: String, performance: SetPerformanceInput): Int {
+        validateSetPerformance(performance)
+        val previous = getSetById(setId) ?: return 0
+        validatePerformanceForType(previous.exerciseType, performance)
+        val changed = updateSetOutcome(setId, performance.reps, performance.weight, performance.assistanceWeight,
+            performance.durationSeconds, performance.distanceMeters, performance.rpe, performance.rir,
+            performance.feltManageable, performance.completedAtTimestamp, performance.stoppedAtTimestamp,
+            performance.stopReason, performance.isCompleted)
+        val newPain = performance.stopReason == SetStopReason.PAIN_STOP &&
+            (previous.stopReason != SetStopReason.PAIN_STOP || previous.stoppedAtTimestamp != performance.stoppedAtTimestamp)
+        if (changed != 1 || !newPain) return changed
+        val encoded = getOutcomeConditionContext(setId) ?: return changed
+        val context = try { ConditionContextCodec.decodeSession(encoded) } catch (error: IllegalArgumentException) {
+            throw IllegalStateException("Cannot record a conditional pain stop with unreadable session context.", error)
+        }
+        val exercise = checkNotNull(getOutcomeExercise(setId)) { "Stopped exercise disappeared." }
+        val selectedIds = context.selectedConditions.map { it.conditionId }.toSet()
+        val rules = context.appliedRules.filter { it.exerciseIdentity.exerciseId == exercise.exerciseId && it.purpose.name == exercise.purpose }
+        check(previous.exerciseType == exercise.exerciseType && context.policyVersion == 1 && selectedIds.isNotEmpty() && rules.map { it.reference.conditionId }.toSet() == selectedIds &&
+            rules.all { it.reference.policyVersion == 1 && it.exerciseIdentity.exerciseType == exercise.exerciseType }) {
+            "Cannot record a conditional pain stop without applicable frozen provenance."
+        }
+        val profile = checkNotNull(getOutcomeProfile(UserProfile.DEFAULT_PROFILE_ID)) { "Condition profile is missing." }
+        profile.toUserProfile()
+        check(profile.revision in 0 until Long.MAX_VALUE) { "Profile revision is exhausted." }
+        rules.map { it.reference.conditionId }.distinct().forEach { conditionId ->
+            // The transaction establishes event order, including distinct stops at equal milliseconds.
+            replaceOutcomeMarker(wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendingEntity(
+                profile.id, conditionId, exercise.exerciseId, java.util.UUID.randomUUID().toString(), context.canonicalDigest,
+                1, requireNotNull(performance.stoppedAtTimestamp), setId))
+        }
+        check(advanceOutcomeProfileRevision(profile.id, profile.revision) == 1) { "Condition profile changed." }
+        return changed
+    }
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSets(sets: List<WorkoutSetEntity>)
 

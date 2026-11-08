@@ -9,11 +9,14 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -37,6 +40,11 @@ import com.google.common.truth.Truth.assertThat
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
+import wallcrawl.elopenmike.com.core.model.RepRange
+import wallcrawl.elopenmike.com.core.model.PlannedExercise
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 import java.util.Locale
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
@@ -154,6 +162,64 @@ class WorkoutHistoryNavigationTest {
         }
         container.userProfileRepository.saveProfile(UserProfile(onboardingCompleted = true))
         repeat(25) { index -> seed("history-$index", index) }
+    }
+
+    @Test fun leavingAndResumingRestoresTheSetDraftAndLogsItOnce() = runBlocking {
+        val profile = container.userProfileRepository.getUserProfile().first()
+        assertThat(profile.preferredUnit).isEqualTo(WeightUnit.LBS)
+        val template = WorkoutTemplate(
+            name = "Upper body",
+            weightUnit = WeightUnit.LBS,
+            exercises = listOf(PlannedExercise("dumbbell-bench-press", ExercisePrescription(
+                exerciseType = ExerciseType.WEIGHT_REPS, targetSets = 3,
+                repRange = RepRange(8, 8), targetWeight = 70.0
+            )))
+        )
+        val id = container.workoutRepository.startWorkoutFromTemplate(template, profile).id
+        val resume = context.getString(R.string.guided_train_resume)
+        val log = context.getString(R.string.guided_log_set)
+        show()
+        fun tap(label: String) {
+            compose.waitUntil(10_000) { compose.onAllNodes(hasText(label)).fetchSemanticsNodes().isNotEmpty() }
+            val button = compose.onNodeWithText(label)
+            if (compose.onAllNodes(hasText(label) and hasAnyAncestor(hasScrollAction())).fetchSemanticsNodes().isNotEmpty()) {
+                button.performScrollTo()
+            }
+            button.performClick()
+        }
+        tap(resume)
+        compose.waitUntil(10_000) { compose.onAllNodes(hasText(log)).fetchSemanticsNodes().isNotEmpty() }
+        val demo = context.getString(R.string.guided_expand_demo, "Dumbbell Bench Press")
+        compose.onNodeWithContentDescription(demo).performClick()
+        compose.waitUntil(10_000) {
+            compose.onAllNodes(hasText("Frame", substring = true)).fetchSemanticsNodes().isNotEmpty()
+        }
+        tap(context.getString(R.string.action_close))
+        capture("guided-session")
+        val plus = context.getString(R.string.set_field_increase_accessibility, context.getString(R.string.set_field_reps), "1")
+        compose.onNodeWithContentDescription(plus).performScrollTo().performClick()
+        tap(context.getString(R.string.guided_leave_workout))
+        tap(context.getString(R.string.guided_resume_later))
+        compose.waitUntil { navigation.currentDestination?.route == AppRoutes.TODAY }
+        restoration.emulateSavedInstanceStateRestore()
+        tap(resume)
+        tap(log)
+        compose.waitUntil(10_000) {
+            runBlocking { container.workoutRepository.getSessionById(id)?.completedSetsCount == 1 }
+        }
+        val sets = checkNotNull(container.workoutRepository.getSessionById(id)).exercises.single().sets
+        assertThat(sets.first().completedReps).isEqualTo(9)
+        assertThat(sets.first().completedWeight).isEqualTo(70.0)
+        val unitLabel = context.getString(R.string.set_field_with_unit, context.getString(R.string.set_field_load), WeightUnit.LBS.symbol)
+        listOf("2.5", "1").forEach { step ->
+            compose.onNodeWithContentDescription(context.getString(R.string.guided_change_step, unitLabel, step))
+                .performScrollTo().performClick()
+        }
+        val increaseLoad = context.getString(R.string.set_field_increase_accessibility, context.getString(R.string.set_field_load), "2")
+        compose.onNodeWithContentDescription(increaseLoad).performScrollTo().performClick()
+        compose.onNodeWithText("70.1").assertIsDisplayed()
+        compose.onNodeWithText(log).performScrollTo().assertIsDisplayed()
+        capture("guided-session-fine")
     }
 
     @Test fun databaseRemainsOpenUntilCompositionIsDisposed() {
@@ -370,6 +436,8 @@ class WorkoutHistoryNavigationTest {
         seedPushUps("analytics-newer", "Analytics push newer", now - 60_000L, 12)
         show()
         compose.runOnIdle { navigation.navigate(AppRoutes.PROGRESS) }
+        openTrends(context)
+
         selectPushUpScope()
         restoration.emulateSavedInstanceStateRestore()
         // Bounded saved state: the selection, not the chart, returns after recreation.
@@ -390,6 +458,8 @@ class WorkoutHistoryNavigationTest {
         seedPushUps("analytics-this-week", "Analytics push this week", insideWeek(0), 12)
         show(theme = ThemePreference.LIGHT)
         compose.runOnIdle { navigation.navigate(AppRoutes.PROGRESS) }
+        openTrends(context)
+
         scrollProgressTo(androidx.compose.ui.test.hasContentDescription("Bar chart of", substring = true))
         capture("progress-analytics-en")
         scrollProgressTo(hasText("(this week so far)", substring = true))
@@ -411,6 +481,7 @@ class WorkoutHistoryNavigationTest {
         val spanish = context.createConfigurationContext(Configuration(context.resources.configuration).apply {
             setLocales(LocaleList(Locale.forLanguageTag("es-MX")))
         })
+        openTrends(spanish)
         val chip = spanish.getString(R.string.analytics_scope_exercise)
         scrollProgressTo(hasText(chip))
         compose.onNodeWithText(chip).performClick()
@@ -435,6 +506,13 @@ class WorkoutHistoryNavigationTest {
         if (weeksAgo == 0) return maxOf(current.startEpochMillis + 1_000L, now - 60_000L)
         return wallcrawl.elopenmike.com.core.model.TrainingWeek
             .startingOn(current.startEpochDay - 7L * weeksAgo, zone).startEpochMillis + 12 * 3_600_000L
+    }
+
+    private fun openTrends(localized: android.content.Context) {
+        val label = localized.getString(R.string.guided_progress_trends)
+        scrollProgressTo(hasText(label))
+        compose.onNodeWithText(label).performClick()
+        compose.waitUntil { navigation.currentDestination?.route == AppRoutes.TRENDS }
     }
 
     private fun selectPushUpScope() {
@@ -643,7 +721,7 @@ class WorkoutHistoryNavigationTest {
         restoration.setContent {
             navigation = rememberNavController()
             CompositionLocalProvider(
-                LocalContext provides localized,
+                LocalContext provides localized, LocalResources provides localized.resources,
                 LocalConfiguration provides configuration,
                 LocalDensity provides Density(context.resources.displayMetrics.density, fontScale)
             ) {

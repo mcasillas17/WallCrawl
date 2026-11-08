@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guided_exercises">Exercises</string>
+    <string name="guided_search_exercises">Search exercises</string>
+    <string name="guided_filters">Filters</string>
+    <string name="guided_filter_count">Filters (%1$s)</string>
+    <string name="guided_clear_filters">Clear filters</string>
+    <string name="guided_muscles">Muscles</string>
+    <string name="guided_show_results">Show results</string>
+    <string name="guided_more_details">More details</string>
+    <string name="guided_condition_guide">Condition guide</string>
+    <string name="guided_profile_settings">Profile and settings</string>
+    <string name="guided_training_preferences">Training preferences</string>
+    <string name="guided_equipment">Equipment</string>
+    <string name="guided_movement_restrictions">Movement and restrictions</string>
+    <string name="guided_app_preferences">App preferences</string>
+    <string name="guided_your_data">Your data</string>
+    <string name="guided_about_credits">About and credits</string>
+    <string name="guided_data_summary">Export, restore or delete local data</string>
+    <string name="guided_credits_summary">Artwork, attribution and licenses</string>
+    <string name="guided_review_restrictions">Review restrictions</string>
+    <string name="guided_review_legacy">Workout planning is paused for a previously reported condition.</string>
+    <string name="guided_restrictions_summary">Movement limits: %1$s · Excluded exercises: %2$s</string>
+    <string name="guided_goals">Goals</string>
+    <string name="guided_muscle_priorities">Muscle priorities</string>
+    <string name="guided_sensitivities">Sensitivity preferences</string>
+    <string name="guided_workouts_load_error">Saved workouts could not be loaded.</string>
+    <string name="guided_research_about">Browse study findings, their limitations and the exercises used in the research. These references are for education.</string>
+    <string name="guided_original_restriction">Originally stored: %1$s</string>
+    <string name="guided_no_marked_limits">No limits or exclusions marked</string>
+    <string name="guided_saved_restrictions">Recorded restrictions</string>
+</resources>

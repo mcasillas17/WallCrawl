@@ -1,0 +1,7 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Use case: precise-object-edit\nEdit target: the supplied native female exercise PNG, only.\nPrimary request: Correct ONLY the small head-support contact error. Lower the back of the head/occiput into unmistakable visible contact with the top of the SAME existing padded plinth. The head must rest naturally on the plinth rather than hover above it, with a relaxed neck and nose facing upward. No head lift, chin curl or new pillow. The back-of-head contour should meet the padded plinth top contour so there is no visible floating gap.\nStrict invariants: Preserve the same person, current footwear, crossed arms/hands, elevated bent free leg, working calf resting broadly on the existing box, box on the same plinth, raised held hips, shoulder contact, body proportions, all equipment geometry, camera, framing, square canvas, margins, and thin hollow WHITE contour style. Change no other part of the pose or scene. Keep all interiors unfilled and transparent, and preserve actual background transparency. No text, labels, arrows, shading, fill, halo or extra objects. This remains one stationary calf-supported single-leg bridge hold.\n",
+  "outputSha256": "2587721b3863c4a97c1d453cfd3ec600f380810ab960cb31a0721994c1e3957c",
+  "generationMode": "native-image-edit",
+  "referencedInputRole": "prior native v1 output supplied to final v2 edit"
+}

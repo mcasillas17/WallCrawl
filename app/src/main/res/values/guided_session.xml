@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guided_leave_short">Leave</string>
+    <string name="guided_leave_workout">Leave workout</string>
+    <string name="guided_keep_training">Keep training</string>
+    <string name="guided_resume_later">Leave and resume later</string>
+    <string name="guided_discard_workout">Discard workout…</string>
+    <string name="guided_previous_exercise">Previous exercise</string>
+    <string name="guided_expand_demo">Expand %1$s demonstration</string>
+    <string name="guided_rest_options">Rest timer options</string>
+    <string name="guided_dismiss_timer">Dismiss timer</string>
+    <string name="guided_log_set">Log set</string>
+    <string name="guided_save_changes">Save changes</string>
+    <string name="guided_mark_unlogged">Mark unlogged</string>
+    <string name="guided_rest">Rest</string>
+    <string name="guided_sets">Sets</string>
+    <string name="guided_unlogged">Unlogged</string>
+    <string name="guided_change_step">Change adjustment size for %1$s, currently %2$s</string>
+    <string name="guided_set_maximum">%1$s must be %2$s or less.</string>
+    <string name="guided_set_need_load_reps">Enter a positive load and rep count.</string>
+    <string name="guided_set_need_reps">Enter at least one rep.</string>
+    <string name="guided_set_need_duration">Enter at least one second.</string>
+    <string name="guided_set_need_distance_duration">Enter a positive distance or duration.</string>
+    <string name="guided_summary_partial">Your program advanced one session. Only logged sets count toward performance.</string>
+    <string name="guided_view_workout">View workout</string>
+</resources>

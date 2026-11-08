@@ -48,7 +48,6 @@ import wallcrawl.elopenmike.com.core.exercise.workoutguide.CatalogAttribution
 import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlSecondaryButton
-import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
 import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
@@ -70,8 +69,6 @@ fun CreditsScreen(
     var linkError by remember { mutableStateOf<String?>(null) }
 
     Box(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        WebBackgroundPattern()
-
         Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
             Row(
                 Modifier.fillMaxWidth().padding(vertical = 12.dp),

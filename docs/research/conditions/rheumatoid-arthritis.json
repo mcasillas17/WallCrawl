@@ -1,0 +1,377 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "rheumatoid-arthritis",
+    "label": "rheumatoid arthritis",
+    "aliases": [],
+    "distinctions": "Inflammatory systemic RA differs from OA, nonspecific arthralgia or a single tendinopathy. Joint/site and damage are attributes."
+  },
+  "scope": {
+    "population": "Adults with diagnosed RA; disease activity,joint damage/deformity and comorbidity alter applicability.",
+    "stage": "Stable treated low/moderate disease activity represented in recent HIIT RCT; severe flare, unstable disease or recent surgery not established.",
+    "operativeStatus": "Primarily nonoperative exercise research; surgical protocols and postoperative clearance not established.",
+    "exclusions": "RAPIT baseline-damage subgroup concern;2024 trial excludes cardiovascular/other limitations precluding HIIT. Trial eligibility is not a general prohibition.",
+    "uncertainty": "No diagnosis-only ban on resistance exercise, no universal pain cap or unrestricted loading established."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Web scientific search; primary publisher/PubMed retrieval",
+      "query": "rheumatoid arthritis exercise RAPIT 2003 high intensity 2024 39179363 trial",
+      "decision": "Retrieved and extracted the primary studies and current sources declared below; retained population, dose, uncertainty and harms. Later evidence contextualizes rather than automatically replaces earlier studies.",
+      "limitations": "Focused search, not exhaustive systematic review. Source-specific access limits and integrity failures remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Web scientific search; primary publisher/PubMed retrieval",
+      "query": "rheumatoid arthritis ACR exercise 2025 2026 guideline update systematic review contraindications",
+      "decision": "Retrieved and extracted the primary studies and current sources declared below; retained population, dose, uncertainty and harms. Later evidence contextualizes rather than automatically replaces earlier studies.",
+      "limitations": "Focused search, not exhaustive systematic review. Source-specific access limits and integrity failures remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Direct primary PubMed abstract reopening; bounded indexed primary passage check",
+      "query": "Direct reopen: https://pubmed.ncbi.nlm.nih.gov/13130460/",
+      "decision": "Recorded only explicit accessible protocol categories, program duration and any source-stated sequence; full-text status unchanged.",
+      "limitations": "Bounded protocol-fact audit, no broad discovery or new clinical guidance. Unseen mechanics, dose/frequency, supervision and stopping details remain not reported."
+    }
+  ],
+  "sources": [
+    {
+      "id": "acr-2023",
+      "title": "2022 American College of Rheumatology (ACR) Guideline for Exercise, Rehabilitation, Diet, and Additional Integrative Interventions for Rheumatoid Arthritis",
+      "doi": "10.1002/art.42507",
+      "pmid": "37227071",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10947582/",
+      "publicationStatus": "2022 guideline published2023; PMC author manuscript available2024.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Web-rendered complete PMC manuscript inspected, especially Table3 and exercise/guiding-principle sections. Direct XML retrieval500 and direct HTML bot challenge; those failures are not called fulltext."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Crossref lookup returned HTTP Error 429: Too Many Requests; no complete external registry check. No notice identified in the retrieved article text; absence not established."
+      },
+      "design": "Systematic review and GRADE-guided interprofessional consensus.",
+      "population": "RA adults, supplementary to DMARD treatment; surgical interventions outside scope.",
+      "comparator": "Exercise versus no exercise across studies.",
+      "coInterventions": "Disease-modifying pharmacotherapy and individualized interdisciplinary care.",
+      "outcomes": "Overall exercise strong recommendation,moderate certainty; resistance conditional,very-low certainty. Dose/type not formally fixed.",
+      "followUp": "Varied underlying studies.",
+      "uncertainty": "Modality-specific evidence weaker than overall exercise; access,bias and patient preferences matter.",
+      "harms": "Tailoring/supervision discussed; no universal harms threshold.",
+      "limitations": "Joint damage,deformity,activity,comorbidity and capabilities require tailoring; no blanket joint-loading exclusion.",
+      "protocol": {
+        "execution": "Multiple exercise categories; no exact trial execution.",
+        "dose": "No formally defined common dose.",
+        "frequency": "Moving regularly; no formally fixed frequency.",
+        "supervision": "Appropriate qualified supervision emphasized for resistance exercise.",
+        "progression": "Tailored to current disease trajectory/capabilities.",
+        "stoppingRules": "not reported as a universal symptom algorithm."
+      },
+      "locations": [
+        "Table 3; Recommendations for exercise",
+        "Guiding principles; resistance exercise explanation"
+      ]
+    },
+    {
+      "id": "rapit-2003",
+      "title": "Is a long-term high-intensity exercise program effective and safe in patients with rheumatoid arthritis? Results of a randomized controlled trial",
+      "doi": "10.1002/art.11216",
+      "pmid": "13130460",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/13130460/",
+      "publicationStatus": "final peer-reviewed journal article",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed abstract/metadata inspected. Complete original methods and baseline-damage subgroup tables not obtained; cannot extract exact RAPIT execution or numeric damage threshold. Accessible-protocol audit: PubMed Abstract > Objective reopened; two-year program duration is explicit but supplies no weekly frequency, session duration or exercise selection. Full methods and damage-stratum tables remain unavailable."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Inspected Crossref metadata has no update-to entry; this does not establish absence of corrections or retractions. No replacement established by focused currentness search."
+      },
+      "design": "Multicentre randomized trial;309participants.",
+      "population": "RA adults; baseline large-joint damage subgroup highlighted; details not established from abstract.",
+      "comparator": "Two-year intensive RAPIT versus usual-care physical therapy.",
+      "coInterventions": "not reported in accessible abstract.",
+      "outcomes": "MACTAR change difference year2 3.1 (95%CI0.7–5.5); HAQ −0.09 (−0.18 to−0.01). Overall median large-joint damage not increased; considerable baseline-damage group may progress more.",
+      "followUp": "Two years.",
+      "uncertainty": "Subgroup damage signal without accessible exact stratification; small HAQ difference.",
+      "harms": "No detrimental disease-activity effect reported; possible large-joint structural harm in considerable-baseline-damage subgroup.",
+      "limitations": "Cannot translate subgroup signal into all-RA weight cap; no fulltext protocol.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Objective describes intensive RAPIT exercise versus usual-care physical therapy. Individual exercise selection and mechanics are not specified.",
+        "dose": "reported in accessible text: Abstract > Objective specifies a two-year intensive exercise program. This is total program duration; session minutes, exercise repetitions and load are not reported.",
+        "frequency": "not reported in the inspected abstract; complete methods not obtained.",
+        "supervision": "not reported as a delivery or session-supervision schedule in the inspected abstract; complete methods not obtained.",
+        "progression": "not reported in the inspected abstract; complete methods not obtained.",
+        "stoppingRules": "not reported in the inspected abstract; complete methods not obtained."
+      },
+      "locations": [
+        "Abstract > Methods; Results; Conclusion",
+        "Abstract > Objective"
+      ]
+    },
+    {
+      "id": "bilberg-2024",
+      "title": "High-intensity interval training improves cardiovascular and physical health in patients with rheumatoid arthritis: a multicentre randomised controlled trial",
+      "doi": "10.1136/bjsports-2024-108369",
+      "pmid": "39179363",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11672065/",
+      "publicationStatus": "final peer-reviewed journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Europe PMC complete XML PMC11672065 retrieved; methods,Table1,results,adverse events and limitations inspected. Publisher PDF attempt unsuccessful; no supplement or artwork visual claim."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Crossref lookup returned HTTP Error 429: Too Many Requests; no complete external registry check. No notice identified in the retrieved article text; absence not established."
+      },
+      "design": "Assessor-blinded randomized multicentre trial;87adults,86%female,age20–60.",
+      "population": "RA>1year,stable antirheumatic medication3months,DAS28<5.1; prescreened rheumatologist/CPET, cardiovascular and participation-limiting comorbidity excluded.",
+      "comparator": "Advice moderate PA≥150min/week plus equipment-free home exercise; unequal supervision.",
+      "coInterventions": "Stable antirheumatic treatment; two participants later received corticosteroid injections and modified exercise.",
+      "outcomes": "VO2max difference3.71mL/kg/min (95%CI2.16–5.25). Pain −4.0 (−13.07 to5.06),DAS28 −0.25 (−0.60 to0.10): no significant differences. Fitness benefit is not proof of anti-inflammatory efficacy.",
+      "followUp": "12weeks/3months.",
+      "uncertainty": "Selected mostly female cohort,short follow-up,combined HIIT/strength,unequal contact; ClinicalTrials.gov registered retrospectively, Swedish registration prospectively.",
+      "harms": "One irregular-heart-rate episode required cardiology review and moderate-intensity continuation; four transient musculoskeletal pain cases modified exercise; one persistent-pain case stopped strength component.",
+      "limitations": "Not transferable to severe/unstable RA, all damaged joints, or unscreened HIIT.",
+      "protocol": {
+        "execution": "Cycle ergometer HIIT plus8individually adapted large-muscle strength exercises: examples leg press,squat,hip extension,pulldown,biceps curl,rows,sit-ups,lumbar extension; plus self-selected aerobic session.",
+        "dose": "HIIT10min60–70%HRmax warmup,4×4min90–95%HRmax with3min70%active recovery,3mincooldown;strength20min,2–3sets8–10reps.",
+        "frequency": "Two supervised sessions and one40min70%HRmax aerobic session/week,12weeks.",
+        "supervision": "Rheumatology-expert physiotherapists, groups8; rheumatologist/CPET screening and HR sensors.",
+        "progression": "HIIT target over2weeks;strength weeks1–2 50–60%1RM15reps1–2sets;3–6 60–70%8–10reps2–3sets;7–12 70–80%.",
+        "stoppingRules": "Trial allowed pain≤5/10;temporarily modified if>5 or>24h persistence;flare/joint effusion prompted rheumatology consultation. These are study-specific, not app defaults."
+      },
+      "locations": [
+        "Methods > Participants; Adverse effects and safety",
+        "Exercise intervention > Table 1; symptom modification paragraph",
+        "Results > Primary/Secondary outcomes; Adverse effect and safety"
+      ]
+    },
+    {
+      "id": "eular-pa-2026",
+      "title": "EULAR recommendations for physical activity in people with inflammatory arthritis and osteoarthritis: 2025 update",
+      "doi": "10.1016/j.ard.2026.03.006",
+      "pmid": "42036268",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42036268/",
+      "publicationStatus": "Final journal article June2026; online26April2026. Retrieved13-page repository publisher postprint still displays ahead-of-issue pagination.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "PubMed metadata and complete repository publisher postprint https://orbi.uliege.be/bitstream/2268/344456/1/Raush%20EULAR%20Physical%20activity%20recommendation%202026.pdf retrieved. Table1 and recommendations4–7 explanations inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Inspected Crossref metadata has no update-to entry; this does not establish absence of corrections or retractions. No replacement established by focused currentness search."
+      },
+      "design": "EULAR evidence/consensus update; searches August2024,26-member task force, four principles and11recommendations.",
+      "population": "Inflammatory arthritis including RA/SpA and hip/knee OA; condition-specific adaptation still needed.",
+      "comparator": "Heterogeneous underlying comparisons.",
+      "coInterventions": "Usual disease care; behavior change and physical-activity support.",
+      "outcomes": "Recommends assessment, individualized adaptation, competent delivery and explicit FITT-volume-progression; no single optimal execution.",
+      "followUp": "Varies; no pooled follow-up.",
+      "uncertainty": "General PA applicability does not eliminate comorbidity/execution risk. Contraindication-for-PA-per-se wording cannot establish every exercise safe.",
+      "harms": "Discusses transient soreness versus joint symptoms and limited underlying harms data; not universal safety clearance.",
+      "limitations": "The24-hour rule is an example used in some studies;48–72hour soreness can occur. Neither is a validated universal stop threshold.",
+      "protocol": {
+        "execution": "Individualized aerobic,strength,flexibility and neuromotor activity; not an exact exercise.",
+        "dose": "Specify individual frequency,intensity,time,type,volume and progression; no common patient dose.",
+        "frequency": "Individualized.",
+        "supervision": "Competent health professionals; delivery adapted to preferences.",
+        "progression": "Lower tolerated starting dose in deconditioned/functionally limited participants and gradual increase.",
+        "stoppingRules": "Consider symptomatic activity alternatives; no single validated numeric algorithm."
+      },
+      "locations": [
+        "Table 1; Overarching principles C/D; Recommendations 4–7 (PDF pp.5–7)",
+        "Recommendation 5 explanation (PDF pp.6–7)"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "regular-tailored-exercise",
+      "kind": "published-recommendation",
+      "statement": "ACR recommends regular exercise overall, while resistance recommendation is conditional with very-low certainty. Current EULAR update retains individualized adaptation and competent delivery. Neither fixes one universal dose.",
+      "citations": [
+        {
+          "sourceId": "acr-2023",
+          "location": "Table 3; Recommendations for exercise"
+        },
+        {
+          "sourceId": "eular-pa-2026",
+          "location": "Table 1; Overarching principles C/D; Recommendations 4–7 (PDF pp.5–7)"
+        }
+      ],
+      "applicability": "RA with joint/activity/comorbidity assessment.",
+      "limitations": "Recommendations accompany DMARD care and do not clear a specific exercise for every joint."
+    },
+    {
+      "id": "hiit-fitness-effect",
+      "kind": "study-result",
+      "statement": "VO2max difference3.71mL/kg/min (95%CI2.16–5.25). Pain −4.0 (−13.07 to5.06),DAS28 −0.25 (−0.60 to0.10): no significant differences. Fitness benefit is not proof of anti-inflammatory efficacy.",
+      "citations": [
+        {
+          "sourceId": "bilberg-2024",
+          "location": "Exercise intervention > Table 1; symptom modification paragraph"
+        },
+        {
+          "sourceId": "bilberg-2024",
+          "location": "Results > Primary/Secondary outcomes; Adverse effect and safety"
+        }
+      ],
+      "applicability": "RA>1year,stable antirheumatic medication3months,DAS28<5.1; prescreened rheumatologist/CPET, cardiovascular and participation-limiting comorbidity excluded.",
+      "limitations": "Combined supervised intervention; no isolated execution effect."
+    },
+    {
+      "id": "symptom-guided-modification",
+      "kind": "published-recommendation",
+      "statement": "2024 study adapted each session to symptoms,temporarily modified excessive/persistent pain and referred flare/effusions. Current EULAR describes24-hour rule as an example and delayed soreness48–72h; no universal pain classifier.",
+      "citations": [
+        {
+          "sourceId": "bilberg-2024",
+          "location": "Exercise intervention > Table 1; symptom modification paragraph"
+        },
+        {
+          "sourceId": "bilberg-2024",
+          "location": "Results > Primary/Secondary outcomes; Adverse effect and safety"
+        },
+        {
+          "sourceId": "eular-pa-2026",
+          "location": "Recommendation 5 explanation (PDF pp.6–7)"
+        }
+      ],
+      "applicability": "RA>1year,stable antirheumatic medication3months,DAS28<5.1; prescreened rheumatologist/CPET, cardiovascular and participation-limiting comorbidity excluded.",
+      "limitations": "Trial numeric threshold and timing need clinical review; pain alone cannot diagnose inflammation."
+    },
+    {
+      "id": "baseline-damage-caution",
+      "kind": "study-result",
+      "statement": "MACTAR change difference year2 3.1 (95%CI0.7–5.5); HAQ −0.09 (−0.18 to−0.01). Overall median large-joint damage not increased; considerable baseline-damage group may progress more. Possible damage progression concern specifically concerned considerable baseline large-joint damage.",
+      "citations": [
+        {
+          "sourceId": "rapit-2003",
+          "location": "Abstract > Methods; Results; Conclusion"
+        }
+      ],
+      "applicability": "RAPIT RA participants; large-joint structural endpoint.",
+      "limitations": "Abstract-only subgroup details; do not mix hand/foot radiographic endpoints or invent a damage cutpoint."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "ra-cycle-ergometer-hiit-mapping",
+      "exerciseId": null,
+      "requestId": "ra-cycle-ergometer-hiit",
+      "findingIds": [
+        "hiit-fitness-effect"
+      ],
+      "matchRationale": "No exact cycle interval execution/measurement equivalent in resistance catalog; retain protocol candidate with fit/cadence gaps and screened supervision.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "review-supervised-hiit",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain screened supervised cycle intervals for review alongside individualized strength; no automatic HIIT or disease-activity benefit claim.",
+      "findingIds": [
+        "hiit-fitness-effect"
+      ],
+      "citations": [
+        {
+          "sourceId": "bilberg-2024",
+          "location": "Exercise intervention > Table 1; symptom modification paragraph"
+        },
+        {
+          "sourceId": "bilberg-2024",
+          "location": "Results > Primary/Secondary outcomes; Adverse effect and safety"
+        }
+      ],
+      "applicability": {
+        "population": "RA>1year,stable antirheumatic medication3months,DAS28<5.1; prescreened rheumatologist/CPET, cardiovascular and participation-limiting comorbidity excluded.",
+        "stage": "Stable treated RA; recent surgery and severe flare unestablished.",
+        "rationale": "Fitness improved under clinical screening/supervision."
+      },
+      "limitations": "Rare harms,long-term structural safety and independent cycling component benefit unresolved.",
+      "mappingIds": [
+        "ra-cycle-ergometer-hiit-mapping"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "review-symptom-response",
+      "kind": "symptom-response",
+      "basis": "published-recommendation",
+      "statement": "Candidate: preserve symptom-based session modification and clinician assessment for flare/effusions; do not hardcode study pain/time thresholds as universal RA rules.",
+      "findingIds": [
+        "symptom-guided-modification"
+      ],
+      "citations": [
+        {
+          "sourceId": "bilberg-2024",
+          "location": "Exercise intervention > Table 1; symptom modification paragraph"
+        },
+        {
+          "sourceId": "eular-pa-2026",
+          "location": "Recommendation 5 explanation (PDF pp.6–7)"
+        }
+      ],
+      "applicability": {
+        "population": "RA>1year,stable antirheumatic medication3months,DAS28<5.1; prescreened rheumatologist/CPET, cardiovascular and participation-limiting comorbidity excluded.",
+        "stage": "Symptoms can vary across stable disease and flares.",
+        "rationale": "Source protocol plus current adaptation guidance."
+      },
+      "limitations": "Requires clinical implementation and escalation review; no diagnostic self-triage algorithm.",
+      "mappingIds": [],
+      "status": "candidate"
+    },
+    {
+      "id": "review-damaged-joint-loading",
+      "kind": "load-limit",
+      "basis": "product-precaution",
+      "statement": "Candidate evidence-handling precaution: do not extrapolate intensive large-joint loading into considerable pre-existing large-joint damage without individualized review. No numeric cap or all-RA lifting ban.",
+      "findingIds": [
+        "baseline-damage-caution"
+      ],
+      "citations": [
+        {
+          "sourceId": "rapit-2003",
+          "location": "Abstract > Methods; Results; Conclusion"
+        }
+      ],
+      "applicability": {
+        "population": "RA with known considerable large-joint structural damage.",
+        "stage": "Structural damage attribute,not all active RA or hand/foot damage.",
+        "rationale": "Possible subgroup structural-harm signal warrants preserving uncertainty."
+      },
+      "limitations": "Exact subgroup definition and primary fulltext remain open; product precaution is not a sourced universal contraindication.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Independent clinical review absent. All mappings/rules/requests are candidates; no therapeutic release, clinical approval or universally safe exercise claim.",
+    "Source doses describe studied or recommended contexts, not individual app prescriptions. No generic five-second stretch progression or strength-set credit for stretching.",
+    "Coexisting conditions, equipment, independently selected joint limits and user-confirmed starting load remain separate constraints; no restriction may be relaxed to fill an empty workout.",
+    "RAPIT full methods,damage-stratum tables and separate hand/foot reports not extracted; no numeric large-joint damage/load threshold derived.",
+    "No validated self-directed flare/pain distinction or safe generic starting load; cardiovascular screening and individualized joint limits remain necessary research context.",
+    "Fresh2026 RA exit-meta-analysis DOI10.1007/s10067-026-08274-w full publisher text inspected: re-analysis of older ACR evidence,possible rather than definite stability; not a new exercise protocol or safety clearance."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

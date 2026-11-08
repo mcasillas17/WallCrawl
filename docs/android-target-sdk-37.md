@@ -199,5 +199,6 @@ Android 17 AVDs locally, use command-line tools 22 or newer.
   run at `d790077`, which targets 35. `aKilogramLoadStatesTheKilogramBoundItIsCheckedAgainst`
   failed once here on API 37 while the keyboard opened, then passed every rerun. Stabilizing both
   is a follow-up, because three legs make such failures more likely to show up.
-- Package 19 still owns Room schema export, the stale schema-10 CI comments, signing and
+- Package 19's [schema-artifact slice](room-schemas.md) covers Room export and migration CI references;
+  its remaining release work includes signing and
   shrinking, and the next alpha.

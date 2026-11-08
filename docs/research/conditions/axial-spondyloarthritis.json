@@ -1,0 +1,347 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "axial-spondyloarthritis",
+    "label": "axial spondyloarthritis",
+    "aliases": [],
+    "distinctions": "AxSpA includes ankylosing spondylitis; mechanical back pain is not equivalent. Ankylosis,osteoporosis,enthesitis,fracture and surgery are attributes."
+  },
+  "scope": {
+    "population": "Adults meeting axSpA criteria,including radiographic/nonradiographic disease; active but selected fit-to-exercise cohorts.",
+    "stage": "Pilot moderate/high disease activity with stable TNF therapy; advanced fused/fragile spine and postoperative use unresolved.",
+    "operativeStatus": "Primarily nonoperative exercise research; surgical protocols and postoperative clearance not established.",
+    "exclusions": "Pilot excluded established CVD,exercise-limiting comorbidity,pregnancy and inability to attend. These exclusions do not establish universal contraindications.",
+    "uncertainty": "Exercise benefit does not establish unrestricted high-impact/spinal loading or a universal stretch regimen."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Web scientific search; primary publisher/PubMed retrieval",
+      "query": "ASAS EULAR recommendations axial spondyloarthritis 2025 2026 exercise physiotherapy 2022 update",
+      "decision": "Retrieved and extracted the primary studies and current sources declared below; retained population, dose, uncertainty and harms. Later evidence contextualizes rather than automatically replaces earlier studies.",
+      "limitations": "Focused search, not exhaustive systematic review. Source-specific access limits and integrity failures remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Direct primary PubMed abstract reopening; bounded indexed primary passage check",
+      "query": "Direct reopen: https://pubmed.ncbi.nlm.nih.gov/30745314/",
+      "decision": "Recorded only explicit accessible protocol categories, program duration and any source-stated sequence; full-text status unchanged.",
+      "limitations": "Bounded protocol-fact audit, no broad discovery or new clinical guidance. Unseen mechanics, dose/frequency, supervision and stopping details remain not reported."
+    }
+  ],
+  "sources": [
+    {
+      "id": "sveaas-pilot-2014",
+      "title": "Efficacy of High Intensity Exercise on Disease Activity and Cardiovascular Risk in Active Axial Spondyloarthritis: A Randomized Controlled Pilot Study",
+      "doi": "10.1371/journal.pone.0108688",
+      "pmid": "25268365",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4182541/",
+      "publicationStatus": "final peer-reviewed journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete article text retrieved and relevant population, methods, results, harms and limitations inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Inspected Crossref metadata has no update-to entry; this does not establish absence of corrections or retractions. No replacement established by focused currentness search."
+      },
+      "design": "Single-blind randomized exploratory pilot;28randomized,24per-protocol (10exercise,14control); no formal sample-size calculation or multiplicity adjustment.",
+      "population": "ASAS axSpA,18–70,BASDAI≥3.5,stable TNF-inhibitor use3months,no regular endurance/strength>1h/week in prior year. No established CVD/limiting comorbidity.",
+      "comparator": "Treatment as usual, asked not to start exercise; one control initiated TNF therapy.",
+      "coInterventions": "Usual medications,including NSAIDs/TNF inhibitors.",
+      "outcomes": "ASDAS mean difference−0.7 (95%CI−1.4 to0.1),crosses null; BASDAI−2.0 (−3.6 to−0.4);BASFI−1.4 (−2.6 to−0.3);VO2peak+3.7 (2.1–5.2). Primary result uncertainty must not be hidden by secondary benefits.",
+      "followUp": "12weeks.",
+      "uncertainty": "Small per-protocol sample,sex imbalance,no adjustment for many comparisons; no long-term structural outcome.",
+      "harms": "No adverse events reported among completers; one intervention dropout found training physically challenging/time consuming; one immediate hospitalization withdrawal.",
+      "limitations": "Not an advanced ankylosis/fracture or postoperative trial; absence of observed flare is not universal safety.",
+      "protocol": {
+        "execution": "Treadmill walking/running intervals plus6individualized strength exercises: dumbbell bench/chest press,squat/leg press,dumbbell row,machine biceps/triceps,abdominal bridge.",
+        "dose": "40min endurance:4×4min90–95%HRmax with3min70%active rests;20minstrength,2–3sets8–10RM.",
+        "frequency": "3sessions/week12weeks:2supervised combined;1self-directed≥40minendurance>70%HRmax.",
+        "supervision": "Individual physiotherapist supervision for2sessions/week; HRmax baseline test/pulse monitor.",
+        "progression": "Physiotherapist individually adapted/progressed intensity.",
+        "stoppingRules": "not reported as a numeric pain-stop rule; disease activity,CRP/ESR and adverse events monitored."
+      },
+      "locations": [
+        "Methods > Participants; Intervention; Safety",
+        "Results > Participant flow; Primary outcome; Table 2; Discussion"
+      ]
+    },
+    {
+      "id": "sveaas-2020",
+      "title": "High intensity exercise for 3 months reduces disease activity in axial spondyloarthritis (axSpA): a multicentre randomised trial of 100 patients",
+      "doi": "10.1136/bjsports-2018-099943",
+      "pmid": "30745314",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30745314/",
+      "publicationStatus": "Final2020journal issue; online11February2019.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed metadata/abstract inspected; publisher full article not obtained in this batch. Do not reuse2014protocol as exact2020execution. Accessible-protocol audit: PubMed Abstract > Method reopened; exercise categories and three-month program duration are explicit. No sessions, HR/RM targets, supervision or stopping schedule borrowed from the 2014 pilot; full methods remain uninspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Inspected Crossref metadata has no update-to entry; this does not establish absence of corrections or retractions. No replacement established by focused currentness search."
+      },
+      "design": "Multicentre randomized trial100patients;97completed postintervention measurement.",
+      "population": "AxSpA adults; detailed inclusion/stage distribution not extracted from abstract.",
+      "comparator": "Usual activity/standard care comparison reported in abstract; exact contact matching unresolved.",
+      "coInterventions": "not reported in accessible abstract.",
+      "outcomes": "At3months ASDAS treatment effect−0.6 (95%CI−0.8 to−0.3);BASDAI−1.2 (−1.8 to−0.7). Function,inflammation and cardiovascular health also improved.",
+      "followUp": "3months.",
+      "uncertainty": "Full methods/harms and advanced-ankylosis applicability not established; secondary analyses are same cohort,not replication.",
+      "harms": "Not fully reported in accessible abstract; no broad safety clearance.",
+      "limitations": "Abstract supports benefit but not an exact app protocol.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Method describes high-intensity cardiorespiratory and muscular-strength exercise. Exact movements, apparatus and intensity targets are not specified.",
+        "dose": "reported in accessible text: Abstract > Method specifies exercise over three months. This is program duration; session minutes, sets/repetitions and HR/RM targets are not reported.",
+        "frequency": "not reported in the inspected 2020-trial abstract; the 2014 pilot schedule is not assigned to this trial.",
+        "supervision": "not reported in the inspected 2020-trial abstract; the 2014 pilot delivery is not assigned to this trial.",
+        "progression": "not reported in the inspected 2020-trial abstract; full methods not obtained.",
+        "stoppingRules": "not reported in the inspected 2020-trial abstract; full methods not obtained."
+      },
+      "locations": [
+        "Abstract > Methods; Results; Conclusion",
+        "Abstract > Method"
+      ]
+    },
+    {
+      "id": "kcr-2026",
+      "title": "Korean College of Rheumatology treatment recommendations for patients with axial spondyloarthritis: 2026 update",
+      "doi": "10.4078/jrd.2026.0126",
+      "pmid": "42812279",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13619551/",
+      "publicationStatus": "Final1October2026,33(4):255–278; co-publication planned in official journals,not independent evidence.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Complete EuropePMC XML PMC13619551 retrieved. Metadata,date,exercise Recommendation4-2 and development/limitations text inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Inspected Crossref metadata has no update-to entry; this does not establish absence of corrections or retractions. No replacement established by focused currentness search."
+      },
+      "design": "Systematic evidence review,GRADE and Korean expert consensus;20recommendations.",
+      "population": "Adults with axSpA in Korean care context.",
+      "comparator": "Underlying exercise versus usual/no exercise comparisons.",
+      "coInterventions": "Exercise alongside disease monitoring/pharmacologic treatment.",
+      "outcomes": "Strong recommendation regular exercise;low certainty disease activity/function from mostly unblinded studies. Spinal mobility evidence more robust; no single optimal routine.",
+      "followUp": "Varies across underlying studies.",
+      "uncertainty": "National context,heterogeneous exercise and patient-reported endpoints.",
+      "harms": "No serious exercise-attributable adverse events reported in summarized trials; reporting limits persist.",
+      "limitations": "No universal range/impact/load thresholds or postoperative execution.",
+      "protocol": {
+        "execution": "Aerobic,mobility,home exercise,Pilates and supervised rehabilitation among reviewed approaches.",
+        "dose": "No common optimal dose.",
+        "frequency": "Regular exercise; exact common frequency not specified.",
+        "supervision": "Individual clinical care context.",
+        "progression": "not reported as one protocol.",
+        "stoppingRules": "not reported as a validated universal algorithm."
+      },
+      "locations": [
+        "Main subjects > Patient education and non-pharmacologic management > Recommendation 4-2",
+        "Introduction; Recommendation development"
+      ]
+    },
+    {
+      "id": "eular-pa-2026",
+      "title": "EULAR recommendations for physical activity in people with inflammatory arthritis and osteoarthritis: 2025 update",
+      "doi": "10.1016/j.ard.2026.03.006",
+      "pmid": "42036268",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/42036268/",
+      "publicationStatus": "Final journal article June2026; online26April2026. Retrieved13-page repository publisher postprint still displays ahead-of-issue pagination.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "PubMed metadata and complete repository publisher postprint https://orbi.uliege.be/bitstream/2268/344456/1/Raush%20EULAR%20Physical%20activity%20recommendation%202026.pdf retrieved. Table1 and recommendations4–7 explanations inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Inspected primary article metadata/version and linked notices; Crossref DOI works metadata request and focused later-evidence searches on 2026-11-01. Not a registry-wide clearance.",
+        "result": "Inspected Crossref metadata has no update-to entry; this does not establish absence of corrections or retractions. No replacement established by focused currentness search."
+      },
+      "design": "EULAR evidence/consensus update; searches August2024,26-member task force, four principles and11recommendations.",
+      "population": "Inflammatory arthritis including RA/SpA and hip/knee OA; condition-specific adaptation still needed.",
+      "comparator": "Heterogeneous underlying comparisons.",
+      "coInterventions": "Usual disease care; behavior change and physical-activity support.",
+      "outcomes": "Recommends assessment, individualized adaptation, competent delivery and explicit FITT-volume-progression; no single optimal execution.",
+      "followUp": "Varies; no pooled follow-up.",
+      "uncertainty": "General PA applicability does not eliminate comorbidity/execution risk. Contraindication-for-PA-per-se wording cannot establish every exercise safe.",
+      "harms": "Discusses transient soreness versus joint symptoms and limited underlying harms data; not universal safety clearance.",
+      "limitations": "The24-hour rule is an example used in some studies;48–72hour soreness can occur. Neither is a validated universal stop threshold.",
+      "protocol": {
+        "execution": "Individualized aerobic,strength,flexibility and neuromotor activity; not an exact exercise.",
+        "dose": "Specify individual frequency,intensity,time,type,volume and progression; no common patient dose.",
+        "frequency": "Individualized.",
+        "supervision": "Competent health professionals; delivery adapted to preferences.",
+        "progression": "Lower tolerated starting dose in deconditioned/functionally limited participants and gradual increase.",
+        "stoppingRules": "Consider symptomatic activity alternatives; no single validated numeric algorithm."
+      },
+      "locations": [
+        "Table 1; Overarching principles C/D; Recommendations 4–7 (PDF pp.5–7)",
+        "Recommendation 5 explanation (PDF pp.6–7)"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "pilot-mixed-results",
+      "kind": "study-result",
+      "statement": "ASDAS mean difference−0.7 (95%CI−1.4 to0.1),crosses null; BASDAI−2.0 (−3.6 to−0.4);BASFI−1.4 (−2.6 to−0.3);VO2peak+3.7 (2.1–5.2). Primary result uncertainty must not be hidden by secondary benefits.",
+      "citations": [
+        {
+          "sourceId": "sveaas-pilot-2014",
+          "location": "Methods > Participants; Intervention; Safety"
+        },
+        {
+          "sourceId": "sveaas-pilot-2014",
+          "location": "Results > Participant flow; Primary outcome; Table 2; Discussion"
+        }
+      ],
+      "applicability": "ASAS axSpA,18–70,BASDAI≥3.5,stable TNF-inhibitor use3months,no regular endurance/strength>1h/week in prior year. No established CVD/limiting comorbidity.",
+      "limitations": "Primary ASDAS CI crossed zero; not equivalent to the later larger study."
+    },
+    {
+      "id": "larger-trial-benefit",
+      "kind": "study-result",
+      "statement": "At3months ASDAS treatment effect−0.6 (95%CI−0.8 to−0.3);BASDAI−1.2 (−1.8 to−0.7). Function,inflammation and cardiovascular health also improved.",
+      "citations": [
+        {
+          "sourceId": "sveaas-2020",
+          "location": "Abstract > Methods; Results; Conclusion"
+        }
+      ],
+      "applicability": "AxSpA adults; detailed inclusion/stage distribution not extracted from abstract.",
+      "limitations": "Abstract-only; exact execution/harms/stage applicability unresolved."
+    },
+    {
+      "id": "regular-individualized-exercise",
+      "kind": "published-recommendation",
+      "statement": "KCR2026 strongly recommends regular exercise despite low certainty for disease activity/function; EULAR2026 supports individual assessment/adaptation and competent delivery.",
+      "citations": [
+        {
+          "sourceId": "kcr-2026",
+          "location": "Main subjects > Patient education and non-pharmacologic management > Recommendation 4-2"
+        },
+        {
+          "sourceId": "eular-pa-2026",
+          "location": "Table 1; Overarching principles C/D; Recommendations 4–7 (PDF pp.5–7)"
+        }
+      ],
+      "applicability": "Adults with axSpA.",
+      "limitations": "No optimal exercise or blanket ROM/load cap established."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "axspa-treadmill-interval-pilot-mapping",
+      "exerciseId": null,
+      "requestId": "axspa-treadmill-interval-pilot",
+      "findingIds": [
+        "pilot-mixed-results"
+      ],
+      "matchRationale": "Catalog resistance identities do not encode tested treadmill/HR interval shape; exact speed/incline individualized and unresolved.",
+      "status": "candidate"
+    },
+    {
+      "id": "axspa-abdominal-bridge-variant-unresolved-mapping",
+      "exerciseId": null,
+      "requestId": "axspa-abdominal-bridge-variant-unresolved",
+      "findingIds": [
+        "pilot-mixed-results"
+      ],
+      "matchRationale": "Do not equate glute-bridge or plank by name; primary text lacks execution detail. Preserve request as unresolved,not invented posture/dose.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "review-individualized-pilot-executions",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain pilot endurance/core execution candidates for review; strength/flexibility and aerobic components must retain distinct measurement and prescription.",
+      "findingIds": [
+        "pilot-mixed-results",
+        "regular-individualized-exercise"
+      ],
+      "citations": [
+        {
+          "sourceId": "sveaas-pilot-2014",
+          "location": "Methods > Participants; Intervention; Safety"
+        },
+        {
+          "sourceId": "sveaas-pilot-2014",
+          "location": "Results > Participant flow; Primary outcome; Table 2; Discussion"
+        },
+        {
+          "sourceId": "kcr-2026",
+          "location": "Main subjects > Patient education and non-pharmacologic management > Recommendation 4-2"
+        }
+      ],
+      "applicability": {
+        "population": "ASAS axSpA,18–70,BASDAI≥3.5,stable TNF-inhibitor use3months,no regular endurance/strength>1h/week in prior year. No established CVD/limiting comorbidity.",
+        "stage": "Stable medications,active but selected disease; advanced ankylosis/fracture and surgery unresolved.",
+        "rationale": "Source demonstrates feasibility/secondary benefits; larger study supports activity without validating identical execution."
+      },
+      "limitations": "Pilot primary uncertainty,exact core variant and screening preclude automatic app dose.",
+      "mappingIds": [
+        "axspa-treadmill-interval-pilot-mapping",
+        "axspa-abdominal-bridge-variant-unresolved-mapping"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "withhold-global-intensity-ban",
+      "kind": "load-limit",
+      "basis": "product-precaution",
+      "statement": "Do not create a diagnosis-only low-intensity ceiling or high-intensity clearance from these data; preserve individualized stage,fracture,ankylosis,enthesitis and cardiovascular review.",
+      "findingIds": [
+        "pilot-mixed-results",
+        "larger-trial-benefit",
+        "regular-individualized-exercise"
+      ],
+      "citations": [
+        {
+          "sourceId": "sveaas-pilot-2014",
+          "location": "Results > Participant flow; Primary outcome; Table 2; Discussion"
+        },
+        {
+          "sourceId": "sveaas-2020",
+          "location": "Abstract > Methods; Results; Conclusion"
+        },
+        {
+          "sourceId": "eular-pa-2026",
+          "location": "Table 1; Overarching principles C/D; Recommendations 4–7 (PDF pp.5–7)"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with axSpA; advanced structural/extra-articular contexts unresolved.",
+        "stage": "Individual stage and comorbidities required.",
+        "rationale": "Benefit trials contradict an assumed universal high-intensity ban but do not prove unrestricted mechanical loading."
+      },
+      "limitations": "Product evidence-handling precaution,not a new published numeric restriction.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Independent clinical review absent. All mappings/rules/requests are candidates; no therapeutic release, clinical approval or universally safe exercise claim.",
+    "Source doses describe studied or recommended contexts, not individual app prescriptions. No generic five-second stretch progression or strength-set credit for stretching.",
+    "Coexisting conditions, equipment, independently selected joint limits and user-confirmed starting load remain separate constraints; no restriction may be relaxed to fill an empty workout.",
+    "No exact catalog-level range/load/impact prohibition established for all axSpA; ankylosed osteoporotic spine,acute fracture,active enthesitis and postoperative contexts need separate evidence/review.",
+    "Current ASAS-EULAR2022 recommendation4 indexed primary section inspected; publisher403. KCR2026 final full text and EULAR2026 full postprint included instead of pretending full ASAS access.",
+    "2025BSR targeted-DMARD guideline and2026Spanish ESPOGUIA summary surfaced; no separate protocol extracted. FutureDecember2026 BMJ proof PMID42716561 excluded because publication before access not verified."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

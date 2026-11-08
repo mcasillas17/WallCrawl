@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.core.backup
 
+import wallcrawl.elopenmike.com.core.model.PendingConditionReassessment
 import wallcrawl.elopenmike.com.core.model.ProgramEnrollment
 import wallcrawl.elopenmike.com.core.model.ProgramAssociation
 import wallcrawl.elopenmike.com.core.model.RecommendationRecord
@@ -36,6 +37,10 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
  * Version 5 adds owned program enrollment and frozen membership; formats 1..4 stay unchanged.
  * Version 6 records a template's weight unit when it has one. Formats 1..5 never carried
  * it, so their templates read back as unit-unknown and keep their checksums.
+ * Two writers shipped version 7. One recorded reported condition IDs, exercise roles and
+ * per-repetition holds. The other recorded condition selections, frozen session context,
+ * prescription purpose, receipt binding, unresolved restrictions and reassessment markers.
+ * Version 8 preserves both sets of facts, including the historical mobility role.
  *
  * ## What it contains
  *
@@ -51,7 +56,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
  * ## Sensitivity
  *
  * An archive is readable personal information: training history, physical capability
- * answers, and body-adjacent preferences in clear text. The checksum detects corruption or
+ * answers, condition selections and context, and body-adjacent preferences in clear text. The checksum detects corruption or
  * accidental modification. It is **not** encryption and **not** proof of authenticity;
  * anyone who edits an archive can recompute it. Users choose where an archive is written,
  * and a Storage Access Framework destination may be a cloud-backed provider.
@@ -59,7 +64,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 object LocalDataArchiveFormat {
 
     /** The only archive format this build writes. */
-    const val ARCHIVE_VERSION: Int = 6
+    const val ARCHIVE_VERSION: Int = 8
 
     /** Every archive format this build can read. */
     val SUPPORTED_ARCHIVE_VERSIONS: IntRange = 1..ARCHIVE_VERSION
@@ -97,6 +102,8 @@ object LocalDataArchiveLimits {
     const val MAX_TOTAL_SETS: Int = 50_000
 
     const val MAX_ID_LENGTH: Int = 200
+    // Splitting a v17 joined report could attach up to two trailing pipe characters to the next ID.
+    const val MAX_REPORTED_CONDITION_ID_LENGTH: Int = MAX_ID_LENGTH + 2
     const val MAX_NAME_LENGTH: Int = 500
     const val MAX_NOTES_LENGTH: Int = 10_000
     const val MAX_SHORT_TEXT_LENGTH: Int = 200
@@ -156,13 +163,19 @@ data class LocalDataSnapshot(
     val recommendationRecords: List<RecommendationRecord> = emptyList(),
     val deloadPreferences: DeloadPreferences? = null,
     val programEnrollment: ProgramEnrollment? = null,
-    val programAssociations: List<ProgramAssociation> = emptyList()
+    val programAssociations: List<ProgramAssociation> = emptyList(),
+    val pendingConditionReassessments: List<PendingConditionReassessment> = emptyList()
 )
+
+/** Version 7 had two distinct canonical encodings under the same version number. */
+enum class ArchiveV7Layout { CONDITION_CONTEXT, REPORTED_CONDITIONS }
 
 /** A complete archive: its provenance and the records it carries. */
 data class LocalDataArchive(
     val metadata: LocalDataArchiveMetadata,
-    val snapshot: LocalDataSnapshot
+    val snapshot: LocalDataSnapshot,
+    /** Needed only to reproduce the source checksum when reading or rewriting version 7. */
+    val version7Layout: ArchiveV7Layout = ArchiveV7Layout.CONDITION_CONTEXT
 )
 
 /**

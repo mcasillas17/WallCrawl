@@ -13,6 +13,33 @@ class WorkoutHistoryAnalyzerTest {
     private val analyzer = WorkoutHistoryAnalyzer()
 
     @Test
+    fun mixedFocusUsesOnlyOrdinaryCatalogMuscles() {
+        val ordinary = completedSession("mixed", 1_000, "press", listOf(completedSet("one", 1, 40.0, 10)))
+        val support = ordinary.exercises.single().copy(id = "support", exerciseId = "row",
+            prescription = ordinary.exercises.single().prescription.copy(
+                purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE))
+        val mixed = ordinary.copy(focusMuscles = listOf("Chest", "Back"), exercises = ordinary.exercises + support)
+        val catalog = listOf(syntheticApprovedExercise("press", "Chest", legacyPrimaryMuscles = listOf("Chest")),
+            syntheticApprovedExercise("row", "Back", legacyPrimaryMuscles = listOf("Back")))
+            .associateBy { it.id }
+        assertThat(analyzer.recentlyTrainedMuscles(listOf(mixed), 2_000, exercisesById = catalog)).containsExactly("Chest")
+    }
+
+    @Test
+    fun supportiveSameIdDoesNotReplaceOrdinaryHistoryOrFocus() {
+        val ordinary = completedSession("ordinary", 1_000, "press", listOf(completedSet("one", 1, 40.0, 10)))
+        val supportive = completedSession("supportive", 2_000, "press", listOf(completedSet("two", 1, 90.0, 20)),
+            focusMuscles = listOf("Back")).let { s -> s.copy(exercises = s.exercises.map { ex ->
+                ex.copy(prescription = ex.prescription.copy(purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE))
+            }) }
+        assertThat(analyzer.exerciseHistory(listOf(ordinary, supportive)).getValue("press").lastWeight).isEqualTo(40.0)
+        assertThat(analyzer.latestCompletedExercisePerformance(listOf(ordinary, supportive), "press")!!.sets.single().id).isEqualTo("one")
+        assertThat(analyzer.recentlyTrainedMuscles(listOf(ordinary, supportive), 3_000)).containsExactly("Chest")
+        assertThat(analyzer.latestCompletedExercisePerformance(listOf(ordinary, supportive), "press",
+            wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE)!!.sets.single().id).isEqualTo("two")
+    }
+
+    @Test
     fun exerciseHistory_usesLatestCompletedSessionForRecentPerformance() {
         val older = completedSession(
             id = "older",

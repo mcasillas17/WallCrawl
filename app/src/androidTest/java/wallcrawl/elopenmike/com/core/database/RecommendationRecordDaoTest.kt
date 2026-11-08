@@ -25,6 +25,10 @@ import wallcrawl.elopenmike.com.core.model.WorkoutRankingReason
 import wallcrawl.elopenmike.com.core.model.WorkoutRankingReasonCode
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
 import wallcrawl.elopenmike.com.core.database.repository.toRecommendationRecord
+import wallcrawl.elopenmike.com.core.database.repository.ConditionContextCodec
+import wallcrawl.elopenmike.com.core.database.relation.toWorkoutSession
+import wallcrawl.elopenmike.com.core.model.SessionConditionContext
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 
 /**
  * A started session and the provenance of the plan it came from land together, or not at all.
@@ -35,6 +39,47 @@ import wallcrawl.elopenmike.com.core.database.repository.toRecommendationRecord
  */
 @RunWith(AndroidJUnit4::class)
 class RecommendationRecordDaoTest {
+    @Test fun unrecognizedPersistedPurposeCannotBecomeOrdinary() = runBlocking<Unit> {
+        database.workoutSessionDao().insertWorkout(
+            sessionEntity("unknown-purpose"),
+            listOf(exerciseEntity("unknown-purpose").copy(purpose = "FUTURE_PURPOSE")),
+            listOf(setEntity())
+        )
+        assertThrows(IllegalArgumentException::class.java) {
+            runBlocking {
+                database.workoutSessionDao().getSessionWithDetails("unknown-purpose")!!.toWorkoutSession()
+            }
+        }
+    }
+    @Test fun frozenContextAndReceiptMustMatchInsideStartTransaction() = runBlocking {
+        val context = (ConditionStartFixtures.context().conditionPlanning as wallcrawl.elopenmike.com.core.model.ConditionPlanningResult.Ready).context
+        val json = ConditionContextCodec.encodeSession(context)
+        database.userProfileDao().insertOrUpdate(profileEntity().copy(activeConditionsJson = ConditionContextCodec.encodeSelections(context.selectedConditions)))
+        val sessions = database.workoutSessionDao()
+        listOf(json to "b".repeat(64), json to null, null to context.canonicalDigest).forEach { (frozen, digest) ->
+            assertThrows(if (frozen == null) wallcrawl.elopenmike.com.core.model.ConditionStartRefused::class.java else IllegalArgumentException::class.java) {
+                runBlocking {
+                    sessions.insertWorkoutUnlessActive(sessionEntity("wrong").copy(conditionContextJson = frozen),
+                        emptyList(), emptyList(), PROFILE_ID, 0L,
+                        recommendation = recordEntity("wrong").copy(conditionContextDigest = digest),
+                        conditionCheck = { frozen?.let(ConditionContextCodec::decodeSession) })
+                }
+            }
+            assertThat(sessions.getSessionWithDetails("wrong")).isNull()
+        }
+        sessions.insertWorkoutUnlessActive(sessionEntity("right").copy(conditionContextJson = json),
+            listOf(exerciseEntity("right").copy(exerciseId = "supportive", exerciseType = ExerciseType.DURATION,
+                targetRepMin = null, targetRepMax = null, targetDurationSeconds = 20,
+                restSeconds = ConditionStartFixtures.dose.restSeconds, purpose = "SUPPORTIVE")),
+            listOf(setEntity().copy(exerciseType = ExerciseType.DURATION, targetReps = null, targetDurationSeconds = 20)), PROFILE_ID, 0L,
+            recommendation = recordEntity("right").copy(conditionContextDigest = context.canonicalDigest),
+            conditionCheck = { context })
+        assertThat(sessions.getSessionWithDetails("right")!!.toWorkoutSession().conditionContext).isEqualTo(context)
+        assertThat(sessions.getSessionWithDetails("right")!!.toWorkoutSession().exercises.single().prescription.purpose)
+            .isEqualTo(PrescriptionPurpose.SUPPORTIVE)
+        assertThat(sessions.getRecommendationRecord("right")!!.toRecommendationRecord().conditionContextDigest)
+            .isEqualTo(context.canonicalDigest)
+    }
     @Test
     fun mixedReasonsRoundTripThroughTheExistingRoomColumnAndStrictDomainMapper() = runBlocking {
         val reasons = listOf(

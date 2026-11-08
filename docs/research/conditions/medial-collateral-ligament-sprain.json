@@ -1,0 +1,322 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "medial-collateral-ligament-sprain",
+    "label": "medial collateral ligament sprain",
+    "aliases": [
+      "MCL sprain",
+      "MCL injury",
+      "medial collateral ligament injury"
+    ],
+    "distinctions": "Isolated MCL sprain differs from combined ACL-MCL, multiligament injury and medial meniscus pain."
+  },
+  "scope": {
+    "population": "Clinically graded isolated MCL sprain; grades I–III assessed distinctly.",
+    "stage": "Acute healing and residual instability; grade and injury location matter.",
+    "operativeStatus": "Nonoperative isolated injuries; combined ligament injury and operative repair outside extracted protocols.",
+    "exclusions": "Unknown grade/location, valgus/rotatory instability, combined ACL/meniscus injury and postoperative status require separate clinical assessment.",
+    "uncertainty": "Research extraction only; no universal safe dose, clearance or diagnosis inferred."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "\"Non-operative treatment of medial collateral ligament injuries\" 2024 001750",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "\"medial collateral\" Reider 1994 5 year follow-up early functional rehabilitation study",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "\"medial collateral\" Ballmer Jakob 1988 prospective randomized immediate mobilisation plaster",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search; primary PubMed/publisher pages; Europe PMC retrieval",
+      "query": "\"10.1136/bmjsem-2023-001750\" correction retraction",
+      "decision": "Retained source-specific evidence below; trial eligibility limits remain population boundaries.",
+      "limitations": "Focused search, not exhaustive/systematic; publisher403/PMC challenge handled through lawful XML or conservative abstract-only status."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Direct primary PubMed abstract reopening; bounded indexed primary passage check",
+      "query": "Direct reopen: https://pubmed.ncbi.nlm.nih.gov/7943511/ ; https://pubmed.ncbi.nlm.nih.gov/3178440/",
+      "decision": "Recorded only explicit accessible protocol categories, program duration and any source-stated sequence; full-text status unchanged.",
+      "limitations": "Bounded protocol-fact audit, no broad discovery or new clinical guidance. Unseen mechanics, dose/frequency, supervision and stopping details remain not reported."
+    }
+  ],
+  "sources": [
+    {
+      "id": "mcl-review-2024",
+      "title": "Shedding light on the non-operative treatment of the forgotten side of the knee: rehabilitation of medial collateral ligament injuries-a systematic review",
+      "doi": "10.1136/bmjsem-2023-001750",
+      "pmid": "38933372",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11202733/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text, tables, methods, results and limitations retrieved through lawful Europe PMC fullTextXML: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11202733/fullTextXML . PMC direct browser access sometimes challenged; XML retrieval succeeded. Figures not visually verified."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance."
+      },
+      "design": "SR, 26 reports, n 1912, search December 2023; no meta-analysis; very-low GRADE.",
+      "population": "Isolated nonoperative MCL grades I–III; not combined ACLR/multiligament rehab.",
+      "comparator": "Various exercise, bracing, immobilization, surgery comparisons.",
+      "coInterventions": "Heterogeneous bracing/physiotherapy; details sparse.",
+      "outcomes": "Grade I/II studies often allow tolerated weight-bearing/ambulation. Exercise success 70–98%, RTS 3–12 weeks across heterogeneous reports, not a personalized prognosis. No superior protocol or universal brace timing established.",
+      "followUp": "Variable, mostly older studies; 18 pre 2000.",
+      "uncertainty": "Poor dose reporting, bias, indirectness, heterogeneity. Grade III restrictions varied; do not treat observed timelines as clearance.",
+      "harms": "Immobilization studies report quadriceps atrophy; no pooled exercise-harm estimate.",
+      "limitations": "Poor dose reporting, bias, indirectness, heterogeneity. Grade III restrictions varied; do not treat observed timelines as clearance.",
+      "protocol": {
+        "execution": "Isometrics, progressive ROM/strength, functional/sport drills variably described.",
+        "dose": "not reported adequately for a reproducible common program",
+        "frequency": "not reported as common frequency",
+        "supervision": "Heterogeneous clinical programs; no common schedule.",
+        "progression": "Grading, stability, pain/function; no validated shared algorithm.",
+        "stoppingRules": "No universal numeric stop criterion; valgus-protection/bracing decisions depend on clinical assessment."
+      },
+      "locations": [
+        "Methods > Eligibility criteria and data extraction",
+        "Results > Exercise therapy; Bracing; Immobilisation",
+        "Discussion > evidence limitations and Conclusion"
+      ]
+    },
+    {
+      "id": "reider-1994",
+      "title": "Treatment of isolated medial collateral ligament injuries in athletes with early functional rehabilitation. A five-year follow-up study",
+      "doi": "10.1177/036354659402200406",
+      "pmid": "7943511",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/7943511/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed complete abstract inspected; publisher full text not retrieved; third-party PDF lead not used as full-text verification. Accessible-protocol audit: complete PubMed abstract reopened; its intervention sequence and progression are recorded without inventing session dose, frequency, supervision or return criteria. No full-text access upgrade."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance."
+      },
+      "design": "Prospective cohort of 35 athletes; no randomized comparator.",
+      "population": "Athletes with isolated grade III MCL sprains; combined ligament injuries outside scope.",
+      "comparator": "No concurrent control; historical surgery/immobilization comparisons.",
+      "coInterventions": "Lateral hinged brace provides valgus support while allowing flexion/extension; pool or whirlpool ROM.",
+      "outcomes": "Abstract describes ROM, then quadriceps sets/leg raises; resistance added after 90-degree flexion. Mean HSS 45.9/50 (range 41–50). Historical comparisons cannot establish superiority.",
+      "followUp": "Mean 5.3 years (range 2.5–8).",
+      "uncertainty": "Old uncontrolled athletic cohort; full text not retrieved; dose/frequency and validated return criteria inaccessible.",
+      "harms": "Exercise-specific harms not reported in abstract.",
+      "limitations": "Old uncontrolled athletic cohort; full text not retrieved; dose/frequency and validated return criteria inaccessible.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract describes lateral hinged valgus-support bracing allowing knee motion, initial pool/whirlpool ROM, then quadriceps setting and leg raises. Exact exercise setup and brace use during each exercise remain unspecified.",
+        "dose": "not reported as repetitions, holds, resistance or program duration in the inspected abstract; mean 5.3 years is follow-up, not intervention duration.",
+        "frequency": "not reported in the inspected abstract; full methods not retrieved.",
+        "supervision": "not reported as a session-supervision schedule in the inspected abstract; full methods not retrieved.",
+        "progression": "reported in accessible text: Abstract adds resistive exercise when 90 degrees of knee flexion is present and allows unrestricted sports upon recovery. This describes the selected 35-athlete isolated grade III program; recovery criteria and loading details remain unspecified, not universal clearance.",
+        "stoppingRules": "not reported as an exercise stopping rule in the inspected abstract; return upon recovery lacks precise clearance criteria."
+      },
+      "locations": [
+        "Abstract > Methods and Results",
+        "Abstract (unstructured), intervention sequence and return-to-sport sentences 2–6"
+      ]
+    },
+    {
+      "id": "ballmer-1988",
+      "title": "The non operative treatment of isolated complete tears of the medial collateral ligament of the knee. A prospective study",
+      "doi": "10.1007/BF00451505",
+      "pmid": "3178440",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3178440/",
+      "publicationStatus": "final journal article",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed complete abstract inspected; publisher full text not retrieved. Accessible-protocol audit: PubMed abstract reopened; immediate mobilization versus plaster is a treatment category, not a reproducible exercise program. Follow-up was not converted into treatment duration. No access upgrade."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Source record and Europe PMC REST core metadata inspected, including commentCorrectionList and firstPublicationDate; selected DOI correction/retraction web searches; no formal registry-wide audit.",
+        "result": "No correction/retraction link in the inspected Europe PMC core metadata; bounded metadata check, not registry-wide clearance."
+      },
+      "design": "Prospective randomized comparison, n=20.",
+      "population": "Isolated grade III MCL; stress radiographs 6–10 mm medial opening; arthroscopy excluded cruciate, meniscus and cartilage injury.",
+      "comparator": "Immediate mobilization versus plaster immobilization.",
+      "coInterventions": "not reported in accessible abstract.",
+      "outcomes": "All good/excellent; 60% had minimal 3-mm residual laxity. No significant modality difference except faster work return with mobilization. Effect CI not given.",
+      "followUp": "Average 1.5 years.",
+      "uncertainty": "Very small old trial; abstract only; does not demonstrate unrestricted valgus/pivoting safety.",
+      "harms": "Residual laxity in 60%; other harms not reported.",
+      "limitations": "Very small old trial; abstract only; does not demonstrate unrestricted valgus/pivoting safety.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract compares immediate mobilization with plaster immobilization for selected isolated grade III MCL injuries. Specific exercise mechanics are not described.",
+        "dose": "not reported as exercise dose or treatment duration in the inspected abstract; 1.5 years is follow-up, not treatment duration.",
+        "frequency": "not reported in the inspected abstract; full methods not retrieved.",
+        "supervision": "not reported as a treatment-supervision schedule in the inspected abstract; full methods not retrieved.",
+        "progression": "not reported in the inspected abstract; full methods not retrieved.",
+        "stoppingRules": "not reported in the inspected abstract; full methods not retrieved."
+      },
+      "locations": [
+        "Abstract > Methods and Results",
+        "Abstract (unstructured), opening treatment-comparison sentence"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "mcl-evidence-weak",
+      "kind": "study-result",
+      "statement": "Grade I/II studies often allow tolerated weight-bearing/ambulation. Exercise success 70–98%, RTS 3–12 weeks across heterogeneous reports, not a personalized prognosis. No superior protocol or universal brace timing established.",
+      "citations": [
+        {
+          "sourceId": "mcl-review-2024",
+          "location": "Results > Exercise therapy; Bracing; Immobilisation"
+        },
+        {
+          "sourceId": "mcl-review-2024",
+          "location": "Discussion > evidence limitations and Conclusion"
+        }
+      ],
+      "applicability": "Isolated nonoperative MCL grades I–III; not combined ACLR/multiligament rehab.",
+      "limitations": "Very-low GRADE, heterogeneity, poor protocol reporting; no generic brace/dose invented."
+    },
+    {
+      "id": "mcl-braced-functional-cohort",
+      "kind": "study-result",
+      "statement": "Abstract describes ROM, then quadriceps sets/leg raises; resistance added after 90-degree flexion. Mean HSS 45.9/50 (range 41–50). Historical comparisons cannot establish superiority.",
+      "citations": [
+        {
+          "sourceId": "reider-1994",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "applicability": "Athletes with isolated grade III MCL sprains; combined ligament injuries outside scope.",
+      "limitations": "Abstract-only, uncontrolled; 90-degreecriterion not a universal threshold."
+    },
+    {
+      "id": "mcl-mobilization-comparison",
+      "kind": "study-result",
+      "statement": "All good/excellent; 60% had minimal 3-mm residual laxity. No significant modality difference except faster work return with mobilization. Effect CI not given.",
+      "citations": [
+        {
+          "sourceId": "ballmer-1988",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "applicability": "Isolated grade III MCL; stress radiographs 6–10 mm medial opening; arthroscopy excluded cruciate, meniscus and cartilage injury.",
+      "limitations": "Abstract-only, n 20; no precise exercise harm/dose estimates."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "mcl-quadriceps-set-unresolved-candidate",
+      "exerciseId": null,
+      "requestId": "knee-mcl-quadriceps-set-unresolved",
+      "findingIds": [
+        "mcl-braced-functional-cohort"
+      ],
+      "matchRationale": "No equivalence to a dynamic catalog leg extension or genericduration progression. Abstract establishes exercise name but does not support an executable dose; full protocol required before commissioned PNG.",
+      "status": "candidate"
+    },
+    {
+      "id": "mcl-leg-raise-unresolved-candidate",
+      "exerciseId": null,
+      "requestId": "knee-mcl-leg-raise-unresolved",
+      "findingIds": [
+        "mcl-braced-functional-cohort"
+      ],
+      "matchRationale": "Do not equate unspecified clinical legraise to abdominal straight-legraise or other hip exercise. Preserve exact known/unknown details and seek primary protocol; no artwork provenance fabricated.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "mcl-unknown-stage-gate",
+      "kind": "exclusion",
+      "basis": "product-precaution",
+      "statement": "Candidate ordinary-workout gate: withhold automatic injured-knee loading/progression when MCL grade, stability, associated injury or clinician restrictions are unknown. Obtain an individual plan rather than inventing a brace duration, valgus-load ceiling or return date.",
+      "findingIds": [
+        "mcl-evidence-weak",
+        "mcl-braced-functional-cohort",
+        "mcl-mobilization-comparison"
+      ],
+      "citations": [
+        {
+          "sourceId": "mcl-review-2024",
+          "location": "Discussion > evidence limitations and Conclusion"
+        },
+        {
+          "sourceId": "reider-1994",
+          "location": "Abstract > Methods and Results"
+        },
+        {
+          "sourceId": "ballmer-1988",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "applicability": {
+        "population": "Clinically graded isolated MCL sprain; grades I–III assessed distinctly.",
+        "stage": "Acute healing and residual instability; grade and injury location matter.",
+        "rationale": "Sparse grade-specific protocols and studies of assessed isolated injury cannot support an unknown-stage automated routine."
+      },
+      "limitations": "Product precaution rather than a published permanent contraindication; clinical review needed. No universal prohibition of motion or strength implied.",
+      "mappingIds": [],
+      "status": "candidate"
+    },
+    {
+      "id": "mcl-retrieve-early-exercises",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain early quadriceps-setting and leg-raise names as protocol-retrieval candidates only. Full clinical execution and grade/stage-specific dosage must be resolved before app use.",
+      "findingIds": [
+        "mcl-braced-functional-cohort"
+      ],
+      "citations": [
+        {
+          "sourceId": "reider-1994",
+          "location": "Abstract > Methods and Results"
+        }
+      ],
+      "applicability": {
+        "population": "Clinician-managed isolated MCL sprains resembling the athlete cohort.",
+        "stage": "Early braced functional rehabilitation under clinical assessment.",
+        "rationale": "Primary abstract identifies exercises but supplies insufficient executable detail."
+      },
+      "limitations": "Historical uncontrolled cohort; not demonstrated superior to other management; no unsupervised protocol released.",
+      "mappingIds": [
+        "mcl-quadriceps-set-unresolved-candidate",
+        "mcl-leg-raise-unresolved-candidate"
+      ],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Researcher appraisal, not formal GRADE: very low confidence in shared rehabilitation dosing or ordinary-workout restriction thresholds; no universal schedule established.",
+    "Very-low-certainty evidence; no common reliable resistance dose, bracing duration or universal return schedule.",
+    "Primary MCL study abstracts accessed; full clinical protocols and exercise harms remain unavailable.",
+    "GradeI/IIwalking tolerance observations are not safe-loading clearance for grade III, combined injury orunknown stage.",
+    "Reider 90-degreeflexion progression belongs to a braced clinical cohort; not a universal app rule.",
+    "Independent clinical review absent; doses are reported study protocols, not app prescriptions.",
+    "No universal contraindication follows from trial exclusion or another exercise showing benefit. No generic five-second progression or stretch strength-set credit."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

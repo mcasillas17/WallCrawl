@@ -1,0 +1,12 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Scientific educational line illustration for a workout app. Landscape 3:1 sprite strip with exactly three equally wide square cells next to one another, two generous completely empty gutters, no dividers. One entire figure centered in each cell at the same scale, camera, side, and ground line. Start, middle, end phase in reading order. Each figure and all equipment wholly inside its cell, with margins. Adult woman with tied-back hair wearing a plain short-sleeved athletic T-shirt and knee-length exercise shorts. A staggered-foot floor bridge seen at a slightly elevated three-quarter side angle. Head at left, feet at right. Both shoulders, head, arms and BOTH flat soles stay on floor in all three cells. Knees are bent, near foot is distinctly closer to hips and far foot farther forward. Left: pelvis rests on floor. Center: pelvis midway through lifting. Right: pelvis lifted to a straight shoulder–hip–knee line. Keep the same staggered foot contacts, figure scale, positions of shoulders and feet throughout. Draw clean thin pure WHITE outlines with sparse interior contour details. See-through body, clothing, equipment and background; all interiors transparent, no areas of solid paint. Flat, neutral instructional drawing composed for display against a dark background. No text, arrows, panel labels, dimensions, numerals, shading, halftone, glow, decorative marks or scenery.",
+  "outputSha256": "842adb01028353f4b75013b08583a0c7accdbc71c1f707cd230045b86745d2f4",
+  "layout": "three-panels",
+  "variant": "female",
+  "exerciseId": "leap-offset-bridge",
+  "nativeStrip": {
+    "path": "masters/leap-offset-bridge/female/native-strip.png",
+    "sha256": "842adb01028353f4b75013b08583a0c7accdbc71c1f707cd230045b86745d2f4"
+  }
+}

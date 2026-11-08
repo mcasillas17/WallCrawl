@@ -1,6 +1,5 @@
 package wallcrawl.elopenmike.com.core.ui.components
 
-import android.animation.ValueAnimator
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -9,8 +8,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.MotionDurationScale
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,17 +41,13 @@ fun Modifier.a11yAnnounced(): Modifier = semantics { liveRegion = LiveRegionMode
 
 /**
  * True when text is large for the width it has, so rows should stack or wrap: from stock scale 1.3
- * on a 412 dp phone, 1.15 at 360 dp, and about 1.01 at 320 dp, since 412 / 320 is 1.2875. Progress's weekly cards also stack
- * below 360 dp at any size, because side by side one of them broke a Spanish word there.
+ * on a 412 dp phone, 1.15 at 360 dp, and about 1.01 at 320 dp, since 412 / 320 is 1.2875.
  */
 @Composable
 fun isLargeText(): Boolean =
     LocalDensity.current.fontScale * COMMON_PHONE_WIDTH_DP / LocalConfiguration.current.screenWidthDp >= 1.3f
 
 private const val COMMON_PHONE_WIDTH_DP = 412f
-
-/** Below this width Progress's two weekly cards stack at any text size; side by side, one broke a Spanish word. */
-const val STACK_WEEKLY_CARDS_BELOW_DP = 360
 
 /** A plain row until text is large; then each item takes its own line, weights filling that line, and [verticalAlignment] has no effect. */
 @Composable
@@ -100,13 +99,16 @@ fun LoadingIndicator(modifier: Modifier = Modifier, strokeWidth: Dp = ProgressIn
 }
 
 /**
- * False when the user turned animations off (Remove animations, or animator scale 0). Read again
- * on every return to the app, where that setting is changed. Compose's own animations already
- * follow it.
+ * False when the user turned animations off (Remove animations, or animator scale 0). It reads the
+ * composition's [MotionDurationScale], the scale Compose's own animations follow, so it changes as
+ * soon as the setting does; it is read again on every return to the app as well.
  */
 @Composable
 fun rememberAnimationsEnabled(): Boolean {
-    var enabled by remember { mutableStateOf(ValueAnimator.areAnimatorsEnabled()) }
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { enabled = ValueAnimator.areAnimatorsEnabled() }
+    val scale = rememberCoroutineScope().coroutineContext[MotionDurationScale]
+    fun current() = (scale?.scaleFactor ?: 1f) > 0f
+    var enabled by remember(scale) { mutableStateOf(current()) }
+    LaunchedEffect(scale) { snapshotFlow { current() }.collect { enabled = it } }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { enabled = current() }
     return enabled
 }

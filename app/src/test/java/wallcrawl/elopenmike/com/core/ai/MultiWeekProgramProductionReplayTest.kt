@@ -309,7 +309,7 @@ class MultiWeekProgramProductionReplayTest {
                     return WeeklyDoseLedgerCalculator().calculate(
                         history.filter { it.status == SessionStatus.COMPLETED &&
                             it.completedAtTimestamp?.let { time -> week.contains(time) && time <= instant.toEpochMilli() } == true },
-                        byId, LedgerPolicyVersion.PRIMARY_ONLY_V1, week, bundled.sourceCommit, 2)
+                        byId, LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2, week, bundled.sourceCommit, 2)
                 }
                 override suspend fun currentWeeklyLedger(profileId: String, zoneId: ZoneId) =
                     weeklyLedgerAt(profileId, Instant.ofEpochMilli(now), zoneId)

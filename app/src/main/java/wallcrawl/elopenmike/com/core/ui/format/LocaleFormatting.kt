@@ -68,10 +68,14 @@ object LocaleFormatting {
      */
     fun parseDecimalInput(text: String): Double? {
         val trimmed = text.trim()
-        if (trimmed.isEmpty() || trimmed.length > MAX_INPUT_LENGTH) return null
+        return if (trimmed.length <= MAX_INPUT_LENGTH) parseExactMeasurement(trimmed) else null
+    }
 
+    /** Stepped and copied measurements may retain more digits from older recorded sets. */
+    internal fun parseExactMeasurement(text: String): Double? {
+        if (text.isEmpty()) return null
         var separatorIndex = -1
-        trimmed.forEachIndexed { index, character ->
+        text.forEachIndexed { index, character ->
             when {
                 character in '0'..'9' -> Unit
                 character == '.' || character == ',' -> {
@@ -81,12 +85,12 @@ object LocaleFormatting {
                 else -> return null
             }
         }
-        if (separatorIndex == 0 || separatorIndex == trimmed.lastIndex) return null
+        if (separatorIndex == 0 || separatorIndex == text.lastIndex) return null
 
         val normalized = if (separatorIndex < 0) {
-            trimmed
+            text
         } else {
-            trimmed.replaceRange(separatorIndex, separatorIndex + 1, ".")
+            text.replaceRange(separatorIndex, separatorIndex + 1, ".")
         }
         return normalized.toDoubleOrNull()?.takeIf(Double::isFinite)
     }

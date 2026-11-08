@@ -45,6 +45,12 @@ class StateBasedTrainingPolicyTest {
     )
 
     @Test
+    fun historicalLedgerPolicyCannotAuthorizeCurrentStrengthDose() {
+        assertThat(evaluate(ledgerTransform = { it.copy(policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1) }))
+            .isEqualTo(TrainingPolicyResult.Failure(TrainingPolicyFailureReason.UNSUPPORTED_LEDGER_POLICY))
+    }
+
+    @Test
     fun holdCannotIncreaseTheUncalibratedWeeklyAllowance() {
         val result = evaluate(
             adaptationState = AdaptationState.HOLD,
@@ -576,7 +582,7 @@ class StateBasedTrainingPolicyTest {
     ): TrainingPolicyResult {
         val ledger = ledgerTransform(
             WeeklyDoseLedger(
-                policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+                policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
                 weekStartEpochDay = MONDAY_EPOCH_DAY,
                 timeZoneId = "UTC",
                 catalogVersion = SYNTHETIC_CATALOG_VERSION,

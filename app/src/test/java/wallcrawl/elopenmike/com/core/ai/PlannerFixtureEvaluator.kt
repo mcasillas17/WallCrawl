@@ -19,6 +19,8 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.UserRestPreference
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
+import wallcrawl.elopenmike.com.core.model.ConditionViolation
+import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.ProgramPlanningInput
@@ -98,12 +100,15 @@ internal data class PlannerFixtureFailureEvaluation(
     val firstFailure: WorkoutPlanningFailure,
     val secondFailure: WorkoutPlanningFailure,
     val firstAutomaticEligibilityFailure: AutomaticEligibilityFailure?,
+    val firstConditionReasons: List<ConditionViolation>,
+    val secondConditionReasons: List<ConditionViolation>,
     val secondAutomaticEligibilityFailure: AutomaticEligibilityFailure?
 ) : PlannerFixtureEvaluation
 
 private data class CapturedPlannerFailure(
     val failure: WorkoutPlanningFailure,
-    val automaticEligibilityFailure: AutomaticEligibilityFailure?
+    val automaticEligibilityFailure: AutomaticEligibilityFailure?,
+    val conditionReasons: List<ConditionViolation>
 )
 
 internal data class PlannerFixtureInputSnapshot(
@@ -156,7 +161,11 @@ internal data class PlannerFixtureInputSnapshot(
     val programConstraints: SessionProgramConstraints,
     val planningIntent: WorkoutPlanningIntent,
     val programHeader: ProgramHeader,
-    val programInput: ProgramPlanningInput?
+    val programInput: ProgramPlanningInput?,
+    /** Condition planning results own immutable collections. */
+    val conditionPlanning: ConditionPlanningResult,
+    val conditionHistory: ConditionHistory?,
+    val conditionSupport: wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog?
 )
 
 /**
@@ -222,6 +231,8 @@ internal class PlannerFixtureEvaluator(
                     inputBefore = inputBefore,
                     inputAfterFirstAttempt = inputAfterFirst,
                     inputAfterSecondAttempt = inputAfterSecond,
+                    firstConditionReasons = firstFailure.conditionReasons,
+                    secondConditionReasons = secondFailure.conditionReasons,
                     firstFailure = firstFailure.failure,
                     secondFailure = secondFailure.failure,
                     firstAutomaticEligibilityFailure =
@@ -269,12 +280,14 @@ internal class PlannerFixtureEvaluator(
         } catch (exception: WorkoutValidationException) {
             CapturedPlannerFailure(
                 failure = exception.failure,
-                automaticEligibilityFailure = exception.automaticEligibilityFailure
+                automaticEligibilityFailure = exception.automaticEligibilityFailure,
+                conditionReasons = exception.conditionReasons
             )
         }
 
     private fun PlannerFixtureOutcome.toPlanningFailure(): WorkoutPlanningFailure = when (this) {
         PlannerFixtureOutcome.SUCCESS -> error("Successful fixtures do not map to planning failures.")
+        PlannerFixtureOutcome.CONDITION_REQUIREMENTS_UNSATISFIED -> WorkoutPlanningFailure.CONDITION_REQUIREMENTS_UNSATISFIED
         PlannerFixtureOutcome.NO_CANDIDATES -> WorkoutPlanningFailure.NO_CANDIDATES
         PlannerFixtureOutcome.NO_STRENGTH_CANDIDATES -> WorkoutPlanningFailure.NO_STRENGTH_CANDIDATES
         PlannerFixtureOutcome.NO_CANDIDATES_FOR_ANY_SPLIT ->
@@ -325,7 +338,10 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         ),
         planningIntent = planningIntent,
         programHeader = programHeader,
-        programInput = programInput?.deepCopy()
+        programInput = programInput?.deepCopy(),
+        conditionPlanning = conditionPlanning,
+        conditionHistory = conditionHistory,
+        conditionSupport = conditionSupport
     )
 
 private fun ProgramPlanningInput.deepCopy(): ProgramPlanningInput = copy(

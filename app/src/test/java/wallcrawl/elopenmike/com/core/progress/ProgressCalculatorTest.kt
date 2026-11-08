@@ -36,6 +36,44 @@ class ProgressCalculatorTest {
     }
 
     @Test
+    fun supportiveMeasurementsStayInActivityButNotPersonalRecordsOrStrengthTrends() {
+        val ordinary = session("ordinary", PREV_WEEK, sets = listOf(completedSet(1, 40.0, 10)))
+        val support = session("support", THIS_WEEK, sets = listOf(completedSet(1, 100.0, 20))).let { s ->
+            s.copy(exercises = s.exercises.map { ex -> ex.copy(prescription = ex.prescription.copy(
+                purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE)) })
+        }
+        val later = session("later", THIS_WEEK_2, sets = listOf(completedSet(1, 50.0, 10)))
+        assertThat(calculator.countPersonalRecords(support, listOf(ordinary))).isEqualTo(0)
+        assertThat(calculator.countPersonalRecords(later, listOf(ordinary, support))).isEqualTo(1)
+        val result = calculator.calculate(listOf(ordinary, support), profile, exercises, NOW, ZONE)
+        assertThat(result.completedSetsThisWeek).isEqualTo(1)
+        assertThat(result.totalVolumeThisWeek).isEqualTo(2_000.0)
+        assertThat(result.totalWorkoutsLogged).isEqualTo(2)
+        assertThat(result.recentPersonalRecords).isEmpty()
+        assertThat(result.strengthTrends).isEmpty()
+    }
+
+    @Test fun legacyMobilityOnlyAndMixedWorkoutsKeepHistoryWithoutCountingRoutineRows() {
+        val ordinary = session("mixed", THIS_WEEK)
+        val routine = session("routine", THIS_WEEK_2, sets = listOf(completedSet(1, 90.0, 12))).let { session ->
+            val ex = session.exercises.single()
+            session.copy(exercises = listOf(ex.copy(prescription = ex.prescription.copy(
+                purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE), isLegacyMobility = true)))
+        }
+        val mixed = ordinary.copy(exercises = ordinary.exercises + routine.exercises.single().copy(sessionId = ordinary.id))
+        val result = calculator.calculate(listOf(mixed, routine), profile, exercises, NOW, ZONE)
+        assertThat(result.workoutsThisWeek).isEqualTo(1)
+        assertThat(result.totalWorkoutsLogged).isEqualTo(1)
+        assertThat(result.totalRepsThisWeek).isEqualTo(10)
+        assertThat(result.totalVolumeThisWeek).isEqualTo(450.0)
+        assertThat(result.completedSetsThisWeek).isEqualTo(1)
+        assertThat(result.recentHistory.map { it.id }).containsExactly(mixed.id, routine.id)
+        assertThat(result.legacyPrimaryActivity.map { it.setsThisWeek }.distinct()).containsExactly(1)
+        assertThat(calculator.summarize(routine, emptyList()).totalSetsCompleted).isEqualTo(0)
+        assertThat(calculator.summarize(mixed, emptyList()).totalVolume).isEqualTo(450.0)
+    }
+
+    @Test
     fun calculate_emptyHistoryReportsZeroedActivity() {
         val result = calculator.calculate(
             completedSessions = emptyList(),

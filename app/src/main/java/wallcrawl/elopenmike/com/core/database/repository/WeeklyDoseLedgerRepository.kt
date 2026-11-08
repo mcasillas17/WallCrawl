@@ -37,7 +37,7 @@ interface WeeklyDoseLedgerRepository {
 }
 
 /**
- * Reconstructs and caches `PRIMARY_ONLY_V1` weekly ledgers from the local database.
+ * Reconstructs and caches `ORDINARY_PRIMARY_ONLY_V2` weekly ledgers from the local database.
  *
  * The data flow is one direction only:
  *
@@ -79,7 +79,7 @@ class OfflineWeeklyDoseLedgerRepository(
 
         val snapshot = catalogSource.snapshot()
         val exercisesById = snapshot.exercisesById()
-        val catalogVersion = snapshot.catalogAttribution.commit
+        val catalogVersion = snapshot.catalogVersion
         check(catalogVersion.isNotBlank()) {
             "The bundled catalog is missing the source commit that identifies its version."
         }
@@ -188,6 +188,6 @@ class OfflineWeeklyDoseLedgerRepository(
         exercises.acceptedReviewPolicyVersion()
 
     private companion object {
-        val POLICY_VERSION = LedgerPolicyVersion.PRIMARY_ONLY_V1
+        val POLICY_VERSION = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2
     }
 }

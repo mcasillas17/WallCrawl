@@ -44,6 +44,8 @@ import wallcrawl.elopenmike.com.core.exercise.workoutguide.AttributionNoticeSour
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSource
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogStore
 import wallcrawl.elopenmike.com.core.progress.ProgressCalculator
+import wallcrawl.elopenmike.com.core.condition.ConditionSupportStore
+import wallcrawl.elopenmike.com.core.condition.ConditionArtworkIdentity
 
 /**
  * Dependency container providing core database, catalog, filter, and deterministic planner instances.
@@ -70,6 +72,7 @@ interface AppContainer {
     val progressCalculator: ProgressCalculator
     val workoutGuideCatalogSource: WorkoutGuideCatalogSource
     val attributionNoticeSource: AttributionNoticeSource
+    val conditionSupportStore: ConditionSupportStore
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -89,6 +92,18 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     override val workoutGuideCatalogSource: WorkoutGuideCatalogSource
         get() = workoutGuideCatalogStore
 
+    override val conditionSupportStore: ConditionSupportStore by lazy {
+        ConditionSupportStore(context.assets, exerciseCatalog, prepareArtworkIdentity = { ids ->
+            ConditionArtworkIdentity.prepare(ids, exerciseVisualProvider) { path ->
+                context.assets.open(path).use { input ->
+                    val bytes = input.readBytes()
+                    require(bytes.size <= 4 * 1024 * 1024) { "Oversized artwork asset." }
+                    bytes
+                }
+            }
+        })
+    }
+
     override val attributionNoticeSource: AttributionNoticeSource by lazy {
         AssetAttributionNoticeReader(context.assets)
     }
@@ -100,14 +115,25 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     override val userProfileRepository: UserProfileRepository by lazy {
         OfflineUserProfileRepository(
             userProfileDao = database.userProfileDao(),
-            localDataWriteGate = localDataWriteGate
+            localDataWriteGate = localDataWriteGate,
+            conditionReassessmentDao = database.conditionReassessmentDao(),
+            conditionSupport = { conditionSupportStore.load() },
+            exerciseCatalog = exerciseCatalog
         )
     }
 
     override val workoutRepository: WorkoutRepository by lazy {
         OfflineWorkoutRepository(
             sessionDao = database.workoutSessionDao(),
-            setDao = database.workoutSetDao()
+            setDao = database.workoutSetDao(),
+            localDataWriteGate = localDataWriteGate,
+            conditionSupport = { conditionSupportStore.load() },
+            exerciseCatalog = exerciseCatalog,
+            generationContext = { intent, index -> workoutGenerationContextBuilder.build(intent, index) },
+            generationContextInTransaction = { intent, index, read, support ->
+                workoutGenerationContextBuilder.buildInTransaction(intent, index, read, support)
+            },
+            validateGenerated = { workout, generation -> programValidator.validate(workout, generation, allowRepair = false) }
         )
     }
 
@@ -173,7 +199,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             appVersionName = packageInfo?.versionName ?: UNKNOWN_APP_VERSION,
             appVersionCode = packageInfo?.let(PackageInfoCompat::getLongVersionCode) ?: 0L,
             catalogCommit = {
-                workoutGuideCatalogStore.currentSnapshot()?.catalogAttribution?.commit
+                workoutGuideCatalogStore.currentSnapshot()?.catalogVersion
             },
             localDataWriteGate = localDataWriteGate
         )
@@ -229,10 +255,11 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             // Read from the already-loaded snapshot, so recording the catalog a plan was
             // built against never forces asset I/O on the generation path.
             catalogVersion = {
-                workoutGuideCatalogStore.currentSnapshot()?.catalogAttribution?.commit
+                workoutGuideCatalogStore.currentSnapshot()?.catalogVersion
             },
             deloadRepository = deloadRepository,
-            programRepository = programRepository
+            programRepository = programRepository,
+            conditionSupport = { conditionSupportStore.load() }
         )
     }
 

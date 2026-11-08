@@ -6,7 +6,7 @@ import org.junit.Test
 class TrainingProgramStateTest {
 
     private val ledger = WeeklyDoseLedger(
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         weekStartEpochDay = 20_696L,
         timeZoneId = "UTC",
         catalogVersion = "catalog-commit",

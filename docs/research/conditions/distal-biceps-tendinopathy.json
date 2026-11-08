@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "distal-biceps-tendinopathy",
+    "label": "distal biceps tendinopathy",
+    "aliases": [],
+    "distinctions": "Tendinopathy is distinct from partial or complete rupture. The athlete case had a suspected, not imaging-confirmed, diagnosis."
+  },
+  "scope": {
+    "population": "Distal biceps tendinopathy; evidence comprises an athlete case and mixed-pathology series.",
+    "stage": "Suspected tendinopathy without confirmed rupture. Partial/complete tears and postoperative care remain separate.",
+    "operativeStatus": "Nonsurgical research unless explicitly noted; postoperative progression not established.",
+    "exclusions": "Source-specific trial exclusions are applicability limits,not universal contraindications; no automatic diagnosis-only ban.",
+    "uncertainty": "Draft research only. Side, stage, concurrent conditions, starting load and symptom response require individual clinical decisions."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Native web search with primary PubMed,publisher,PMC,and guideline retrieval",
+      "query": "distal biceps tendinopathy review conservative treatment exercise case report",
+      "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
+      "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search with primary PubMed,publisher,PMC,and guideline retrieval",
+      "query": "\"Multifaceted Exercise Prescription\" \"3\" \"sets\" biceps",
+      "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
+      "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search with primary PubMed,publisher,PMC,and guideline retrieval",
+      "query": "\"A Case Series of Symptomatic Distal Biceps Tendinopathy\" doi PMID",
+      "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
+      "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
+    }
+  ],
+  "sources": [
+    {
+      "id": "dbt-s1",
+      "title": "Clinical outcomes following treatment of distal biceps tendon partial tears and tendinopathy: a systematic review",
+      "doi": "10.1016/j.xrrt.2026.100770",
+      "pmid": "42305929",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13265997/",
+      "publicationStatus": "Final systematic review, online May 5, 2026;August 2026 collection, JSES Reviews Reports and Techniques 6(3):100770.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. Protocol fields deliberately not populated. [Full text](https://pmc.ncbi.nlm.nih.gov/articles/PMC13265997/). DOI 10.1016/j.xrrt.2026.100770; PMID 42305929. May 5 online; August 2026 collection. Open final review, full methods/results and tables inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Systematic review of 30 studies and 614 patients; no level I/II comparative studies.",
+      "population": "114 tendinopathies and 500 partial tears; diagnosis and treatment selection heterogeneous.",
+      "comparator": "Operative and nonoperative observational reports",
+      "coInterventions": "Activity modification, immobilization, strengthening variably reported",
+      "outcomes": "Both strategies described improvement; heterogeneous low-level evidence prevents pooling/equivalence inference.",
+      "followUp": "Study-specific; synthesis reports median follow-up of 24 months.",
+      "uncertainty": "Selected indexed abstract/discussion/tables inspected, not complete article; do not apply partial-tear escalation to isolated tendinopathy.",
+      "harms": "No isolated-tendinopathy loading harm/risk estimate established.",
+      "limitations": "30 studies/614 patients: 114 tendinopathies and 500 partial tears; no level I/II comparative studies, so no meta-analysis. Both operative and nonoperative reports describe pain/function improvement, but selection strongly favors nonoperative care for tendinopathy and surgery for tears. Conservative care varies (activity modification, immobilization, strengthening); dose reporting is poor. These mixed-pathology results cannot establish a loading protocol or rupture risk for isolated tendinopathy. Tendinopathy/partial tear/complete rupture and postoperative rehabilitation must remain distinct. Low-level literature and heterogeneity, rather than evidence of equivalence, constrain comparisons.",
+      "protocol": {
+        "execution": "not reported — exact primary protocol not independently established at this access level.",
+        "dose": "not reported — exact primary protocol not independently established at this access level.",
+        "frequency": "not reported — exact primary protocol not independently established at this access level.",
+        "supervision": "not reported — exact primary protocol not independently established at this access level.",
+        "progression": "not reported — exact primary protocol not independently established at this access level.",
+        "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
+      },
+      "locations": [
+        "Abstract > Results; Discussion > nonoperative management; study-characteristics tables"
+      ]
+    },
+    {
+      "id": "dbt-p1",
+      "title": "Multifaceted Exercise Prescription in the Management of an Overhead Athlete with Suspected Distal Biceps Tendinopathy: A Case Report",
+      "doi": "10.3390/jfmk5030056",
+      "pmid": "33467271",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7739288/",
+      "publicationStatus": "Final case report, Journal of Functional Morphology and Kinesiology, July 29, 2020;5(3):56.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text retrieved and relevant methods/results/limitations inspected; access details in the retained source report."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Single case report, no comparator",
+      "population": "19-year-old male collegiate pitcher, suspected distal biceps tendinopathy, symptoms6 weeks; no imaging confirmation",
+      "comparator": "None",
+      "coInterventions": "Manual therapy, ROM, forearm stretching, later concentric/plyometric sport work",
+      "outcomes": "Pain/function/strength improved; returned to offseason pitching; component efficacy cannot be isolated.",
+      "followUp": "Five visits over4 weeks; short-term follow-up",
+      "uncertainty": "Single athlete, unconfirmed diagnosis; narrative3×7 versus first-table3×10 discrepancy; not safe generic heavy loading.",
+      "harms": "Harms not systematically established.",
+      "limitations": "One 19-year-old baseball pitcher with suspected distal biceps tendinopathy, symptoms 6 weeks, five visits over 4 weeks. Pain-free ROM, manual therapy, forearm stretching and eccentric loading progressed to concentric and sport-specific plyometrics. Narrative prescribes eccentric 3×7, daily after visit two, controlled 3-second lowering; first-visit table instead lists 3×10 with 3-lb dumbbell. Stretch 3×30 seconds; later concentric 3×10. This case-specific/table discrepancy precludes one canonical dose. Improved pain/function/strength and returned to offseason pitching; no comparator and diagnosis not imaging-confirmed. Avoiding provoking heavy lifting, power cleans and pitching was individualized treatment advice, not tested universal contraindications. Harms not systematically established.",
+      "protocol": {
+        "execution": "Initially low-load eccentric elbow-flexor lowering in midrange, multiple forearm grips; Figure1 describes contralateral-arm assistance with dumbbell neutral/supinated and pulley variants. Later concentric and plyometric progressions are distinct.",
+        "dose": "Narrative: eccentric 3×7. Initial table: 3×10 with 3-lb dumbbell. Later concentric: 3×10. Forearm/biceps stretch: 3×30 seconds. Preserve discrepancy.",
+        "frequency": "Daily gym eccentric work after second visit, as individually instructed.",
+        "supervision": "Five physical-therapy visits over4 weeks; home/gym exercise.",
+        "progression": "Individual pain/function/strength-guided progression; later resisted/provocative tests asymptomatic before plyometrics. No transferable universal loading algorithm.",
+        "stoppingRules": "Avoid individually provoking heavy lifting/power cleans/pitching initially; narrative tolerability wording was case-specific, not a validated pain threshold."
+      },
+      "locations": [
+        "Case Presentation > Intervention; Table 2; Outcomes"
+      ]
+    },
+    {
+      "id": "dbt-p2",
+      "title": "A Case Series of Symptomatic Distal Biceps Tendinopathy",
+      "doi": "10.5397/cise.2018.21.4.213",
+      "pmid": "33330179",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7726399/",
+      "publicationStatus": "Final case series, Clinics in Shoulder and Elbow, December 2018;21(4):213.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "Primary abstract and/or indexed source passages inspected; complete article inspection not established. [Full text](https://pmc.ncbi.nlm.nih.gov/articles/PMC7726399/); [primary abstract](https://pubmed.ncbi.nlm.nih.gov/33330179/). DOI 10.5397/cise.2018.21.4.213; PMID 33330179. Final 2018 Clinics in Shoulder and Elbow article. Indexed clinical/MRI and treatment passages inspected; direct publisher PDF returned 403. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Case series, 21 patients.",
+      "population": "12 tendinopathies and 9 partial tears; complete ruptures excluded.",
+      "comparator": "No controlled exercise comparison",
+      "coInterventions": "Three-week supinated long-arm splint, NSAIDs and physical therapy; refractory cases received injection or surgery.",
+      "outcomes": "Five continued failures undergoing surgery had partial tears; no isolated exercise effect.",
+      "followUp": "not fully established in inspected passages",
+      "uncertainty": "Only indexed selected passages/primary metadata inspected; complete publisher PDF403. Splint position not a workout angle.",
+      "harms": "No isolated exercise harm estimate.",
+      "limitations": "21 patients, 12 tendinopathy and 9 partial tears. Complete ruptures were excluded and managed surgically. Initial care included a long-arm splint in forearm supination for 3 weeks, NSAIDs/physical therapy; refractory cases proceeded to ultrasound-guided injection and, for five continued failures with partial tears, surgery. No exercise-versus-control test or isolated exercise dose. Splint position is an initial treatment exposure, not a safe workout ROM threshold. Mixed pathology and escalation confound attribution; report cannot prove which movements cause rupture.",
+      "protocol": {
+        "execution": "reported in accessible text: Previously retrieved indexed Methods > Conservative treatment, rechecked through the same primary article XML: initial long-arm splint in forearm supination with physical therapy/NSAIDs. This is clinical immobilization, not an exercise position.",
+        "dose": "reported in accessible text: Methods > Conservative treatment (partial primary XML inspection): initial splint course three weeks. No isolated therapeutic exercise sets/repetitions/load reported.",
+        "frequency": "not reported — exact primary protocol not independently established at this access level.",
+        "supervision": "not reported — exact primary protocol not independently established at this access level.",
+        "progression": "not reported — exact primary protocol not independently established at this access level.",
+        "stoppingRules": "not reported — exact primary protocol not independently established at this access level."
+      },
+      "locations": [
+        "Methods > Conservative treatment; Results",
+        "Methods > Conservative treatment (partial XML passage)"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "dbt-s1-finding",
+      "kind": "study-result",
+      "statement": "Both strategies described improvement; heterogeneous low-level evidence prevents pooling/equivalence inference.",
+      "citations": [
+        {
+          "sourceId": "dbt-s1",
+          "location": "Abstract > Results; Discussion > nonoperative management; study-characteristics tables"
+        }
+      ],
+      "applicability": "114 tendinopathies and 500 partial tears; diagnosis and treatment selection heterogeneous.",
+      "limitations": "Selected indexed abstract/discussion/tables inspected, not complete article; do not apply partial-tear escalation to isolated tendinopathy. No isolated-tendinopathy loading harm/risk estimate established."
+    },
+    {
+      "id": "dbt-p1-finding",
+      "kind": "study-result",
+      "statement": "Pain/function/strength improved; returned to offseason pitching; component efficacy cannot be isolated.",
+      "citations": [
+        {
+          "sourceId": "dbt-p1",
+          "location": "Case Presentation > Intervention; Table 2; Outcomes"
+        }
+      ],
+      "applicability": "19-year-old male collegiate pitcher, suspected distal biceps tendinopathy, symptoms6 weeks; no imaging confirmation",
+      "limitations": "Single athlete, unconfirmed diagnosis; narrative3×7 versus first-table3×10 discrepancy; not safe generic heavy loading. Harms not systematically established."
+    },
+    {
+      "id": "dbt-p2-finding",
+      "kind": "study-result",
+      "statement": "Five continued failures undergoing surgery had partial tears; no isolated exercise effect.",
+      "citations": [
+        {
+          "sourceId": "dbt-p2",
+          "location": "Methods > Conservative treatment; Results"
+        }
+      ],
+      "applicability": "12 tendinopathies and 9 partial tears; complete ruptures excluded.",
+      "limitations": "Only indexed selected passages/primary metadata inspected; complete publisher PDF403. Splint position not a workout angle. No isolated exercise harm estimate."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "assisted-supinated-dumbbell-eccentric-elbow-flexion-mapping",
+      "exerciseId": null,
+      "requestId": "assisted-supinated-dumbbell-eccentric-elbow-flexion",
+      "findingIds": [
+        "dbt-p1-finding"
+      ],
+      "matchRationale": "Catalog bicep-curl is bilateral unsupported standing dynamic curling; hammer-curl is neutral grip. Assistance and studied range differ. Retain unresolved posture until source figure verification; do not duplicate merely for dose.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "dbt-loading-hypothesis",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Investigate contralaterally assisted eccentric elbow-flexor loading after individual diagnosis/stage assessment. A single athlete case cannot define a general regimen or tear rehabilitation.",
+      "findingIds": [
+        "dbt-p1-finding",
+        "dbt-s1-finding"
+      ],
+      "citations": [
+        {
+          "sourceId": "dbt-p1",
+          "location": "Case Presentation > Intervention; Table 2; Outcomes"
+        },
+        {
+          "sourceId": "dbt-s1",
+          "location": "Abstract > Results; Discussion > nonoperative management; study-characteristics tables"
+        }
+      ],
+      "applicability": {
+        "population": "Distal biceps tendinopathy; evidence comprises an athlete case and mixed-pathology series.",
+        "stage": "Suspected tendinopathy without confirmed rupture. Partial/complete tears and postoperative care remain separate.",
+        "rationale": "Source-specific draft implication. Preserve indirectness and all concurrent condition, equipment and joint restrictions."
+      },
+      "limitations": "Candidate only, unreviewed, not clinically released. No invented pain/load/ROM cutoff. Benefit does not establish that alternatives are harmful; trial exclusions are applicability limits.",
+      "mappingIds": [
+        "assisted-supinated-dumbbell-eccentric-elbow-flexion-mapping"
+      ],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "No high-level isolated-tendinopathy loading trial; review dominated by partial tears.",
+    "Narrative 3×7 versus initial table 3×10 in the case report; optimal starting load and range unresolved.",
+    "No isolated-tendinopathy rupture risk, supination ban or exact gym restriction established."
+  ],
+  "disposition": "unresolved",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

@@ -1,0 +1,438 @@
+[
+  {
+    "requestId": "ra-cycle-ergometer-hiit",
+    "status": "program",
+    "execution": "Pedal the cycle ergometer under physiotherapist supervision twice a week. Table 1 describes 10 minutes of warm-up at 60–70% of test-measured maximum heart rate, four 4-minute work bouts at 90–95%, intervening 3-minute active recoveries at 70%, and a 3-minute cooldown at 60–70%. A heart-rate sensor monitored effort. Participants worked up to target intensity over the first two weeks. These are the trial parameters.",
+    "remainingGap": "The paper defines a timed program. The training ergometer fit, cadence and method of varying resistance are unspecified. Equipment and workload increments used in the cardiopulmonary test cannot establish those training details.",
+    "sources": [
+      {
+        "title": "Bilberg et al. (2024), High-intensity interval training improves cardiovascular and physical health in patients with rheumatoid arthritis",
+        "url": "https://doi.org/10.1136/bjsports-2024-108369",
+        "location": "Exercise intervention, Table 1 and outcome assessment",
+        "access": "full text"
+      },
+      {
+        "title": "Bilberg et al., registered intervention protocol",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11672065/supplementaryFiles",
+        "location": "Supplement 1, Intervention (0–12 weeks)",
+        "access": "full supplement retrieved through Europe PMC, bjsports-58-23-s001.pdf"
+      }
+    ]
+  },
+  {
+    "requestId": "axspa-treadmill-interval-pilot",
+    "status": "program",
+    "execution": "On a treadmill, walk or run for four minutes at 90–95% of measured maximum heart rate. Alternate the work bouts with three-minute active recoveries at approximately 70% maximum heart rate. The trial used four work bouts within a supervised session described as 40 minutes, with speed and effort adapted to each participant. The pilot also allowed a separate individually performed endurance session.",
+    "remainingGap": "Walking and running are explicit alternatives. The intervention does not prescribe a single gait, speed, slope, or handrail contact. The Balke test in the protocol describes the fitness assessment.",
+    "sources": [
+      {
+        "title": "Sveaas et al. (2014), Efficacy of high intensity exercise on disease activity and cardiovascular risk in active axial spondyloarthritis",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4182541/",
+        "location": "Methods, Intervention",
+        "access": "full text"
+      },
+      {
+        "title": "Sveaas et al., Protocol S1",
+        "url": "https://doi.org/10.1371/journal.pone.0108688.s002",
+        "location": "Exercise intervention and physical fitness assessment",
+        "access": "full supplementary protocol, DOC"
+      }
+    ]
+  },
+  {
+    "requestId": "axspa-abdominal-bridge-variant-unresolved",
+    "status": "partial",
+    "execution": "One abdominal stabilization exercise called an abdominal bridge was included alongside five other strength exercises in the supervised, individually adapted session. The companion protocol identifies trunk and abdominal strengthening as a category.",
+    "remainingGap": "Neither the final methods nor Protocol S1 identifies which side of the body faces the floor, the bearing surfaces, or whether the bridge is held or repeated. A forearm plank, side plank and supine bridge would be different drawings.",
+    "sources": [
+      {
+        "title": "Sveaas et al. (2014), Efficacy of high intensity exercise on disease activity and cardiovascular risk in active axial spondyloarthritis",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4182541/",
+        "location": "Methods, Intervention",
+        "access": "full text"
+      },
+      {
+        "title": "Sveaas et al., Protocol S1",
+        "url": "https://doi.org/10.1371/journal.pone.0108688.s002",
+        "location": "Exercise intervention and physical fitness assessment",
+        "access": "full supplementary protocol, DOC"
+      }
+    ]
+  },
+  {
+    "requestId": "fm-machine-leg-press-variant-unresolved",
+    "status": "partial",
+    "execution": "Push against the leg-press machine using the lower limbs and bring the load back under control. At the introductory visit the physiotherapist fitted exercises and loads to the individual and recorded that plan. The training study and author thesis name the station.",
+    "remainingGap": "The individualized plans are not reproduced. The seat and footplate geometry, foot placement, range, and single- or two-leg execution are undetermined.",
+    "sources": [
+      {
+        "title": "Larsson et al. (2015), Resistance exercise improves muscle strength, health status and pain intensity in fibromyalgia",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4489359/",
+        "location": "Intervention and Box 1, dosage of resistance exercise",
+        "access": "full text"
+      },
+      {
+        "title": "Larsson (2018), Muscle strength and resistance exercise in women with fibromyalgia, a person-centred approach",
+        "url": "https://gupea.ub.gu.se/server/api/core/bitstreams/d3aac5b4-3b63-431a-bd24-6814d288d638/content",
+        "location": "Study II, person-centred progressive resistance exercise, printed pp. 19–21",
+        "access": "full doctoral thesis, University of Gothenburg"
+      }
+    ]
+  },
+  {
+    "requestId": "fm-machine-knee-extension-variant-unresolved",
+    "status": "partial",
+    "execution": "Straighten the knee against resistance on a weight machine, then return. The study distinguishes the ordinary strengthening exercise from an explosive knee-extension progression introduced at week eight. Each person’s exercise and load were adjusted with a physiotherapist.",
+    "remainingGap": "The machine model, seat geometry, shin-pad contact, starting and terminal angles, and laterality are unreported. The seated knee-extension dynamometer test has separate procedures.",
+    "sources": [
+      {
+        "title": "Larsson et al. (2015), Resistance exercise improves muscle strength, health status and pain intensity in fibromyalgia",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4489359/",
+        "location": "Intervention and Box 1, dosage of resistance exercise",
+        "access": "full text"
+      },
+      {
+        "title": "Larsson (2018), Muscle strength and resistance exercise in women with fibromyalgia, a person-centred approach",
+        "url": "https://gupea.ub.gu.se/server/api/core/bitstreams/d3aac5b4-3b63-431a-bd24-6814d288d638/content",
+        "location": "Study II, person-centred progressive resistance exercise, printed pp. 19–21",
+        "access": "full doctoral thesis, University of Gothenburg"
+      }
+    ]
+  },
+  {
+    "requestId": "fm-bodyweight-heel-raise-variant-unresolved",
+    "status": "partial",
+    "execution": "Use body weight to raise the heel or heels, then lower. The authors identify rapid heel raises as a progression added five weeks into the intervention. The initial exercise and the rapid progression are separate options.",
+    "remainingGap": "The trial and author’s thesis leave the support, use of one or both feet, foot position, and floor versus raised edge unspecified.",
+    "sources": [
+      {
+        "title": "Larsson et al. (2015), Resistance exercise improves muscle strength, health status and pain intensity in fibromyalgia",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4489359/",
+        "location": "Intervention and Box 1, dosage of resistance exercise",
+        "access": "full text"
+      },
+      {
+        "title": "Larsson (2018), Muscle strength and resistance exercise in women with fibromyalgia, a person-centred approach",
+        "url": "https://gupea.ub.gu.se/server/api/core/bitstreams/d3aac5b4-3b63-431a-bd24-6814d288d638/content",
+        "location": "Study II, person-centred progressive resistance exercise, printed pp. 19–21",
+        "access": "full doctoral thesis, University of Gothenburg"
+      }
+    ]
+  },
+  {
+    "requestId": "fm-yang-tai-chi-program-unresolved",
+    "status": "program",
+    "execution": "An instructor taught ten adapted forms drawn from the 108-posture Yang sequence. The forms progressively shift support from two legs toward one and increase trunk and arm turning. The instructor guide illustrates an hour comprising a five-minute welcome, ten-minute warm-up, thirty minutes of form practice and walking meditation, ten minutes of relaxation, breathing and meditation, and five minutes of review. The trial compared different class frequencies and durations.",
+    "remainingGap": "The published protocol and instructor guide do not enumerate the ten forms or their complete order, footwork and transitions. They define a taught sequence, not ten independently validated movements.",
+    "sources": [
+      {
+        "title": "Wang et al. (2018), Effect of tai chi versus aerobic exercise for fibromyalgia",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5861462/",
+        "location": "Methods, Tai chi",
+        "access": "full text"
+      },
+      {
+        "title": "Wang et al. (2015), A novel comparative effectiveness study of Tai Chi versus aerobic exercise for fibromyalgia",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4323027/",
+        "location": "Interventions, Tai Chi program",
+        "access": "full text"
+      },
+      {
+        "title": "Tufts instructors’ instructions for the fibromyalgia trial",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4323027/supplementaryFiles",
+        "location": "Additional file 2, Example of Tai Chi Class Structure",
+        "access": "full instructor supplement, DOC"
+      }
+    ]
+  },
+  {
+    "requestId": "barbell-deadlift-lbp-study-setup-unresolved",
+    "status": "specified",
+    "execution": "Use the trial’s conventional two-handed barbell lift. The plates rest on the floor with the bar close in front of the shins. Place the feet inside the hands, bend hips and knees to grip the bar and brace while holding neutral lumbar alignment. Extend hips and knees, keeping arms straight, until standing with the bar against the upper thighs. On the descent hinge the hips first, bend the knees as the bar passes them, and set the plates down. Release the bar and stand briefly before resetting. The trial monitored symptoms and individualized load.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Michaelson et al. (2016), High load lifting exercise and low load motor control exercises as interventions for patients with mechanical low back pain",
+        "url": "https://medicaljournalssweden.se/jrm/article/download/15412/19219/56936",
+        "location": "High load lifting exercise, printed pp. 457–458",
+        "access": "full published PDF"
+      },
+      {
+        "title": "Berglund (2016), Deadlift training for patients with mechanical low back pain",
+        "url": "https://www.diva-portal.org/smash/get/diva2%3A925706/FULLTEXT01.pdf",
+        "location": "High-load lifting exercise, printed pp. 20–22, Figure 2A–F reproduces the Aasa et al. trial demonstration",
+        "access": "full author thesis and six-panel figure inspected"
+      }
+    ],
+    "artBrief": {
+      "start": "Floor-supported bar at the shins, both hands outside the legs, hips and knees bent, long arms.",
+      "middle": "Bar passes the knees close to the body as hips and knees straighten.",
+      "end": "Stand tall with the bar at the upper thighs. Return it to the floor along the same close path, release and reset."
+    }
+  },
+  {
+    "requestId": "lumbar-directional-preference-exercise-unresolved",
+    "status": "assessment-dependent",
+    "execution": "At each session the therapist checked the response to repeated movements or sustained lumbar positions and chose the direction that moved distal symptoms toward the spine. For an extension responder Table 3 offers lying prone, sustained elbow support, a press-up to elbows, a press-up to straight arms, a straight-arm press-up with sag, a press-up with overpressure, and repeated extension in standing. These are progression options selected according to symptom response.",
+    "remainingGap": "The diagnosis alone cannot select direction, starting option, end range, progression or the need for therapist overpressure.",
+    "sources": [
+      {
+        "title": "Fritz et al. (2021), Physical therapy referral from primary care for acute back pain with sciatica",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7856080/",
+        "location": "Randomization and interventions",
+        "access": "full article, journal PDF inspected"
+      },
+      {
+        "title": "Fritz et al., NCT02391350 study protocol",
+        "url": "https://cdn.clinicaltrials.gov/large-docs/50/NCT02391350/Prot_000.pdf",
+        "location": "Early physical therapy treatment group, Table 3, Progression of Centralizing Extension Exercises",
+        "access": "full protocol PDF"
+      }
+    ]
+  },
+  {
+    "requestId": "stationary-bicycle-warmup-lss-setup-unresolved",
+    "status": "partial",
+    "execution": "Pedal a stationary exercise bicycle at the beginning of the manual therapy and exercise session. The therapist individualized the warm-up duration to the participant’s tolerance. This is the preparatory component of that intervention.",
+    "remainingGap": "The publicly included protocol does not state recumbent versus upright configuration, trunk support, pedal resistance or cadence, and specifies no fixed duration.",
+    "sources": [
+      {
+        "title": "Schneider et al. (2019), Comparative clinical effectiveness of nonsurgical treatment methods in patients with lumbar spinal stenosis",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6324321/",
+        "location": "Methods, treatment arms",
+        "access": "full text"
+      },
+      {
+        "title": "Schneider et al., study protocol",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6324321/supplementaryFiles",
+        "location": "Supplement 1, PDF p. 18, manual therapy and individualized exercise",
+        "access": "full protocol PDF, jamanetwopen-2-e186828-s001.pdf"
+      }
+    ]
+  },
+  {
+    "requestId": "supine-neck-flexion-head-lift",
+    "status": "partial",
+    "execution": "Lying on the back, lift the head using the neck flexors against the weight of the head, then lower between repetitions. The 2003 endurance group performed three sets of twenty. A separate earlier study describes a slow lift of about 5 cm and a short hold on a training bench for its weakest patients. The 2003 report does not adopt this height or hold for its endurance arm.",
+    "remainingGap": "The exact 2003 starting head support, chin alignment, lift endpoint and return cue are missing. A supported chin nod is a different task.",
+    "sources": [
+      {
+        "title": "Ylinen et al. (2003), Active neck muscle training in the treatment of chronic neck pain in women",
+        "url": "https://jamanetwork.com/journals/jama/fullarticle/196580",
+        "location": "Description of interventions, endurance and strength groups",
+        "access": "full journal methods"
+      },
+      {
+        "title": "Ylinen and Ruuska (1994), Clinical use of neck isometric strength measurement in rehabilitation",
+        "url": "https://convergemedtech.com/wp-content/uploads/2025/02/Clinical-use-of-neck-isometric-strength-measurements-in-rehabilitation.pdf",
+        "location": "Training description, pp. 466–467, Figure 2. This is the earlier method cited by the 2003 strength arm.",
+        "access": "full published PDF and figure inspected"
+      }
+    ]
+  },
+  {
+    "requestId": "seated-elastic-resisted-neck-training-unresolved",
+    "status": "program",
+    "execution": "The 2003 group sat to perform four elastic-resistance directions: straight forward, diagonally to each side, and straight backward. Load was set from measured isometric strength. The cited earlier forward demonstration shows a seated person facing away from a wall-bar anchor at head height, with an elastic band around the forehead. The trunk inclines from the hips while the neck and trunk stay aligned, rather than flexing the neck through a large arc. The earlier authors also describe reversing the pull for the extensors.",
+    "remainingGap": "The 2003 report does not depict all four variants. In particular the head contacts, body orientation and anchor geometry for the diagonal directions are not established by the precursor figure. The case-specific resistance and four variants preclude one universal image.",
+    "sources": [
+      {
+        "title": "Ylinen et al. (2003), Active neck muscle training in the treatment of chronic neck pain in women",
+        "url": "https://jamanetwork.com/journals/jama/fullarticle/196580",
+        "location": "Description of interventions, endurance and strength groups",
+        "access": "full journal methods"
+      },
+      {
+        "title": "Ylinen and Ruuska (1994), Clinical use of neck isometric strength measurement in rehabilitation",
+        "url": "https://convergemedtech.com/wp-content/uploads/2025/02/Clinical-use-of-neck-isometric-strength-measurements-in-rehabilitation.pdf",
+        "location": "Training description, pp. 466–467, Figure 2. This is the earlier method cited by the 2003 strength arm.",
+        "access": "full published PDF and figure inspected"
+      }
+    ]
+  },
+  {
+    "requestId": "cervical-radicular-low-load-isometrics-unresolved",
+    "status": "assessment-dependent",
+    "execution": "The guideline discusses progression from gentle neck isometrics to low-load endurance as tolerated. In Dedering’s radiculopathy protocol the physiotherapist examined the individual and selected specific exercises and doses from a progression framework. Home practice and education ran alongside the neck training.",
+    "remainingGap": "Neither the guideline recommendation nor the inspected trial protocol gives one universal force direction, contact point or starting posture for this request. The WAD manual comes from a different clinical protocol.",
+    "sources": [
+      {
+        "title": "Dutch guideline, Exercise therapy for cervical radicular syndrome",
+        "url": "https://richtlijnendatabase.nl/richtlijn/cervicaal_radiculair_syndroom/conservatieve_therapie_bij_rl_crs/fysiotherapie_bij_rl_crs/oefentherapie_bij_rl_crs.html",
+        "location": "Considerations and evidence tables for neck-specific training",
+        "access": "full guideline"
+      },
+      {
+        "title": "Dedering et al. (2014), Neck-specific training with a cognitive behavioural approach compared with prescribed physical activity in patients with cervical radiculopathy",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4243421/",
+        "location": "Interventions, neck-specific training and treatment progression",
+        "access": "full published trial protocol"
+      },
+      {
+        "title": "Dedering et al. (2018), The effects of neck-specific training versus prescribed physical activity on pain and disability in patients with cervical radiculopathy",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/30473018/",
+        "location": "Methods and results, randomized trial",
+        "access": "abstract"
+      }
+    ]
+  },
+  {
+    "requestId": "chronic-wad-gentle-cervical-isometrics-unresolved",
+    "status": "program",
+    "execution": "Begin supine with head supported in neutral and jaw relaxed. In the initial unresisted stage the eyes follow imagined nodding, turning to either side, or looking up/back while the neck stays still. In the low-resistance stage, attempt a small nod against a hand at the chin, rotation against the hand at the temple, or extension by pressing the back of the head into its support. The manual shows a folded towel under the head. Sitting follows adequate supine control. The trial subsequently added individually progressed endurance work.",
+    "remainingGap": "The family contains three directions, different resistance contacts and multiple stages. Each can be separately identified for review. The whole family cannot be illustrated with a single generic neck isometric.",
+    "sources": [
+      {
+        "title": "Landén Ludvigsson et al. (2015), The effect of neck-specific exercise with, or without a behavioral approach, on pain, disability, and self-efficacy in chronic whiplash-associated disorders",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4352069/",
+        "location": "Interventions, neck-specific exercise",
+        "access": "full text"
+      },
+      {
+        "title": "Peterson, Landén Ludvigsson and Peolsson, Neck-specific exercise program",
+        "url": "https://liu.diva-portal.org/smash/get/diva2%3A785214/FULLTEXT02.pdf",
+        "location": "Parts 1–2, pp. 2–5, captioned supine photographs and transition to sitting",
+        "access": "full authors’ manual for this trial, text and figures inspected"
+      }
+    ]
+  },
+  {
+    "requestId": "side-lying-dumbbell-shoulder-external-rotation",
+    "status": "specified",
+    "execution": "Lie on the opposite side on a flat surface, lower arm bent beneath the head as pictured, legs slightly bent for balance. Hold a dumbbell in the upper hand, elbow bent about 90 degrees and upper arm against the side with the elbow between hip and lower ribs. Start with the hand near the navel, low in front of the body. Keep the scapula slightly back and elbow fixed. Rotate the forearm upward as far as available, at most vertical, keeping the trunk still. Lower to just above the surface.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Ingwersen et al. (2017), Three months of progressive high-load versus traditional low-load strength training among patients with rotator cuff tendinopathy",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5576542/",
+        "location": "Appendices A and B, fourth and fifth exercise instructions",
+        "access": "full text"
+      },
+      {
+        "title": "Ingwersen et al., illustrated RoCTEx exercise appendices",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5576542/supplementaryFiles",
+        "location": "Appendix A, Fourth Exercise, two-panel demonstration; archive image 10.1177_2325967117723292-fig6.jpg",
+        "access": "original appendix photograph inspected"
+      }
+    ],
+    "artBrief": {
+      "start": "Side-lying with head on the lower arm, upper elbow beside the ribs, weight low in front.",
+      "middle": "Keep the elbow in place as the hand and weight arc upward.",
+      "end": "Show the attained external rotation, at most forearm vertical, trunk and pelvis stacked. Lower without resting the weight."
+    }
+  },
+  {
+    "requestId": "supine-dumbbell-scapular-protraction",
+    "status": "specified",
+    "execution": "Lie on the flat support with head, back and pelvis down, both knees bent to roughly 90 degrees and feet planted. Support one dumbbell over the working shoulder with the arm straight and vertical. Begin with the scapula resting on the surface. Keeping the elbow angle fixed and torso facing up, move that shoulder blade forward around the rib cage and reach the weight slightly higher. Lower the shoulder slowly, stopping before completely relaxing. Only the shoulder/scapula leaves the support.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Ingwersen et al. (2017), Three months of progressive high-load versus traditional low-load strength training among patients with rotator cuff tendinopathy",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5576542/",
+        "location": "Appendices A and B, fourth and fifth exercise instructions",
+        "access": "full text"
+      },
+      {
+        "title": "Ingwersen et al., illustrated RoCTEx exercise appendices",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5576542/supplementaryFiles",
+        "location": "Appendix A, Fifth Exercise, wide and close-up demonstration; archive image 10.1177_2325967117723292-fig7.jpg",
+        "access": "original appendix photograph inspected"
+      }
+    ],
+    "artBrief": {
+      "start": "Head supported, knees bent and both feet on the surface. Straight arm vertical with the dumbbell over the shoulder.",
+      "middle": "Shoulder lifts a short distance while the arm stays vertical. Head, rib cage and pelvis stay down.",
+      "end": "At the top the shoulder blade is lifted. Lower in control without fully relaxing between repetitions."
+    }
+  },
+  {
+    "requestId": "moon-anterior-shoulder-stretch-setup-unresolved",
+    "status": "specified",
+    "execution": "Use the two-part doorway option in the MOON nonoperative booklet. Stand facing the open doorway. Put a hand or forearm on each jamb at shoulder level, lean the body forward between the hands and hold. Ease back, place the hands or forearms higher than the head on the jambs, and lean forward again. The first part may also use the two walls of a corner. The study-era booklet shows a standing staggered stance as one example.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Kuhn et al. (2013), Effectiveness of physical therapy in treating atraumatic full-thickness rotator cuff tears",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3748251/",
+        "location": "Physical therapy program and supporting materials",
+        "access": "full published PDF, physical therapy program"
+      },
+      {
+        "title": "MOON Shoulder Group, nonoperative rotator cuff patient exercise booklet, study-era version",
+        "url": "https://www.bcsorthopedics.com/pdf/shoulder/non-operative-rotator-cuff-program.pdf",
+        "location": "Flexibility, printed p. 6, Door Stretch A and B, IRB approval August 2008",
+        "access": "full trial-era booklet and figures inspected"
+      },
+      {
+        "title": "MOON Shoulder Group, patient home therapy booklet",
+        "url": "https://moonshoulder.com/wp-content/uploads/2020/04/Patient-Home-Therapy-Booklet.pdf",
+        "location": "Flexibility, Door Stretch, A and B",
+        "access": "full consortium booklet"
+      }
+    ],
+    "artBrief": {
+      "start": "Face a doorway, standing with one foot forward, one forearm on each jamb at shoulder height.",
+      "middle": "Keep both forearms in contact and shift the body gently forward between the jambs.",
+      "end": "After easing back, move both contacts above the head and repeat the supported forward lean."
+    }
+  },
+  {
+    "requestId": "frozen-shoulder-pendulum-setup-unresolved",
+    "status": "partial",
+    "execution": "In the supervised-neglect group participants performed pendulum exercises and active shoulder movements inside their painless range, and resumed tolerated activities. The pendulum was one component of this approach.",
+    "remainingGap": "The article supplies no pendulum demonstration or equipment protocol. It leaves trunk and opposite-hand support, whether the arm is passive, and the plane and size of the swing open. The MOON booklet concerns a different population and intervention.",
+    "sources": [
+      {
+        "title": "Diercks and Stevens (2004), Gentle thawing of the frozen shoulder: a prospective study of supervised neglect versus intensive physical therapy",
+        "url": "https://upload.orthobullets.com/journalclub/free_pdf/15383804.pdf",
+        "location": "Materials and methods, printed pp. 499–500",
+        "access": "full published PDF"
+      }
+    ]
+  },
+  {
+    "requestId": "standing-band-external-rotation-at-side-zero-to-forty-five",
+    "status": "specified",
+    "execution": "For the Watson standing version, stand upright with the working upper arm by the trunk at zero abduction and elbow bent, holding an elastic band anchored across the body on the opposite side. Figure 3a shows a door-handle attachment near waist height and the elbow held at the side without a pad. Rotate the forearm away from the midline from neutral to a maximum of 45 degrees of external rotation per the trial table, then return under control without turning the torso. Scapular position and the effective arc were selected by the therapist. The authors demonstrate an additional scapula-resistance band in the figure when that correction is chosen.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Warby et al. (2018), Comparison of two exercise rehabilitation programs for multidirectional instability of the glenohumeral joint",
+        "url": "https://doi.org/10.1177/0363546517734508",
+        "location": "Table 1, Watson program stage 1b",
+        "access": "full published PDF inspected"
+      },
+      {
+        "title": "Watson et al. (2016), The treatment of multidirectional instability of the shoulder with a rehabilitation program: Part 1",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5023053/",
+        "location": "Stage 1, Arc of motion phase, ER/IR/extension control, Fig. 3a",
+        "access": "full author protocol and Fig. 3a inspected"
+      }
+    ],
+    "artBrief": {
+      "start": "Standing side-on to a fixed waist-height anchor across from the working arm, elbow bent at the side.",
+      "middle": "Keep the upper arm beside the trunk and rotate the forearm outward against the band.",
+      "end": "Stop within the selected arc, capped at 45 degrees for this drill. Keep torso steady and retrace the motion."
+    }
+  },
+  {
+    "requestId": "achilles-barbell-calf-raise-disc",
+    "status": "specified",
+    "execution": "In the pictured rack, stand on both forefeet at the edge of a flat weight disc with heels free, knees straight and weight shared equally. Carry the barbell across the shoulders with a wide two-handed grip. Rise onto both forefeet, then lower the heels through the available ankle excursion with the knees still straight. The heavy-slow trial used three seconds in each direction. The paper individualizes load progression, and supplies no universal weight or ankle angle.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Beyer et al. (2015), Heavy slow resistance versus eccentric training as treatment for Achilles tendinopathy",
+        "url": "https://tripp.co.za/wp-content/uploads/Beyer2015_Achillestendinopathy.pdf",
+        "location": "Interventions, p. 1706, Figure 1B and caption",
+        "access": "full published PDF and photograph inspected"
+      }
+    ],
+    "artBrief": {
+      "start": "Rear oblique view inside the rack, bar across shoulders, both hands on bar, both forefeet on the disc and heels free.",
+      "middle": "Keep knees straight and loading even as the heels rise.",
+      "end": "Both heels up, knees straight. Lower slowly through the available ankle range."
+    }
+  }
+]

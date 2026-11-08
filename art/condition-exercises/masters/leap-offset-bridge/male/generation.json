@@ -1,0 +1,12 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Wide 3:1 three-frame exercise sprite strip for a fitness app. Same adult man wearing a simple T-shirt and shorts repeated once in each of three equal width square cells, each full figure centered within its cell with empty margins. All three panels show the SAME staggered-foot floor bridge, same scale and elevated three-quarter side view, head on left, knees and feet on right. In every cell, both soles flat on one floor plane, near foot closer to pelvis than far foot, both knees bent, no foot ever lifted. Arms relaxed beside body; head and shoulders rest on floor. Cell one pelvis resting on floor. Cell two pelvis halfway lifted with both soles still planted. Cell three pelvis fully lifted to a smooth shoulder-hip-knee line, with both soles still planted and staggered. One clean white thin sports instruction contour drawing per panel, open white lines only, genuinely transparent interiors of person and clothing and transparent background for visibility over dark UI. Show simplest possible contours of one adult, no furniture. No panel borders, fills, text, numbers, arrows, motion trails, textures, gradients, shadows or scenery.",
+  "outputSha256": "bf66d25b9cbefde77e9d8aea1d8b8605995eb5773344d47dd7808d136893caf3",
+  "layout": "three-panels",
+  "variant": "male",
+  "exerciseId": "leap-offset-bridge",
+  "nativeStrip": {
+    "path": "masters/leap-offset-bridge/male/native-strip.png",
+    "sha256": "bf66d25b9cbefde77e9d8aea1d8b8605995eb5773344d47dd7808d136893caf3"
+  }
+}

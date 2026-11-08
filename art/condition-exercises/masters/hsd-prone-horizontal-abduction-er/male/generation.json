@@ -1,0 +1,12 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Scientific educational exercise sprite strip for a mobile exercise catalog. Wide 3:1 transparent canvas, exactly three invisible EQUAL WIDTH square cells arranged left to right. In each cell center a complete full-body portrait at identical scale, alignment and camera angle with clear empty margins on all sides. All anatomy, equipment and contact points fully inside that cell. Depict the SAME adult demonstrator, clothing, hand, dumbbell and viewpoint in all three cells. Clean moderately thin WHITE contour-only ink with transparent interiors, pure white solid strokes, transparent negative space. No solid silhouettes, gray shading, textures, glow, colored areas, floor strip, panel dividers, arrows, captions, numbers, or labels. Sparse clear line work, accurate joints and hands. No secondary/inset views. Adult male demonstrator. Prone single straight-arm dumbbell horizontal abduction and external rotation on a fixed flat padded table. Adult lies face down lengthwise on table in all three cells, head/legs supported, head near camera and turned on opposite forearm, working shoulder at near table edge. Camera fixed front three-quarter looking from head toward feet, so the near shoulder and outstretched arm remain visible. One small dumbbell in one hand. LEFT cell: straight working arm hangs vertically below shoulder toward floor alongside table. MIDDLE cell: straight working arm raised sideways to horizontal, shoulder height, dumbbell in hand with outward rotation starting. RIGHT cell: arm STILL sideways at the same horizontal height, hand and upper arm rotated outward further so orientation of thumb and dumbbell relative to frame 2 visibly changes. Torso remains prone in continuous table contact. Elbow remains long. Working arm extends to the SAME SIDE in cells 2 and 3. Short-sleeve shirt, shorts.",
+  "outputSha256": "9e43f8085229a58c106e55ac10e55f31d86c0bf7d5fc026be026e7db68169e27",
+  "layout": "three-panels",
+  "variant": "male",
+  "exerciseId": "hsd-prone-horizontal-abduction-er",
+  "nativeStrip": {
+    "path": "masters/hsd-prone-horizontal-abduction-er/male/native-strip.png",
+    "sha256": "9e43f8085229a58c106e55ac10e55f31d86c0bf7d5fc026be026e7db68169e27"
+  }
+}

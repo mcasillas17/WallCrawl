@@ -1,0 +1,426 @@
+[
+  {
+    "requestId": "piriformis-home-stretch-variant-unresolved",
+    "status": "partial",
+    "execution": "Participants performed a self-administered static piriformis stretch at home. Each stretch lasted 30 seconds. The study reports ten repetitions per set, twice daily.",
+    "remainingGap": "The published methods do not identify the starting posture, which leg contacts what, or the direction of pull. The illustrated patient sheet was not included in the article or its deposited media. The separate imaging study by Gulledge et al. compared hip positions and estimated piriformis length. It cannot reconstruct this trial’s missing handout or establish symptom relief.",
+    "sources": [
+      {
+        "title": "Guner and Ozcete (2023), Evaluation of the efficacy of ultrasound-guided dry needling therapy and exercise in piriformis muscle syndrome",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10508642/",
+        "location": "Materials and methods, exercise group. The only published figure depicts needling. The paper mentions a separate illustrated sheet given to participants.",
+        "access": "full-text"
+      },
+      {
+        "title": "Gulledge et al., Comparison of two stretching methods and optimization of stretching protocol for the piriformis muscle",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/24262799/",
+        "location": "Abstract, methods and results on CT-based muscle length in a separate study",
+        "access": "abstract only"
+      }
+    ]
+  },
+  {
+    "requestId": "piriformis-bilateral-bridge-variant-unresolved",
+    "status": "partial",
+    "execution": "The therapist taught bilateral bridging as a strengthening component of the home program. Both legs participate in the bridge. The paper gives a timed hold for the separate stretch only.",
+    "remainingGap": "The patient sheet is unavailable. Foot and shoulder support, knee bend, hip height and whether resistance was used are unreported.",
+    "sources": [
+      {
+        "title": "Guner and Ozcete (2023), Evaluation of the efficacy of ultrasound-guided dry needling therapy and exercise in piriformis muscle syndrome",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10508642/",
+        "location": "Materials and methods, exercise group. The only published figure depicts needling. The paper mentions a separate illustrated sheet given to participants.",
+        "access": "full-text"
+      }
+    ]
+  },
+  {
+    "requestId": "piriformis-feet-together-flexed-hip-knee-raise",
+    "status": "partial",
+    "execution": "The home program included a side leg raise with the feet together and the hip and knee flexed to 45 degrees. The study does not describe a band.",
+    "remainingGap": "The original sheet is needed to identify body support, which segment rises, movement endpoint and whether resistance was used. An ordinary catalog clamshell cannot establish those details.",
+    "sources": [
+      {
+        "title": "Guner and Ozcete (2023), Evaluation of the efficacy of ultrasound-guided dry needling therapy and exercise in piriformis muscle syndrome",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10508642/",
+        "location": "Materials and methods, exercise group. The only published figure depicts needling. The paper mentions a separate illustrated sheet given to participants.",
+        "access": "full-text"
+      }
+    ]
+  },
+  {
+    "requestId": "knee-oa-unilateral-machine-knee-extension",
+    "status": "partial",
+    "execution": "START participants trained knee extension on a Nautilus resistance machine, one leg at a time. Both strength groups used the same set of exercises under supervision with load prescribed relative to each participant’s tested one-repetition maximum. The START report did not find an advantage in its primary outcomes for high-intensity training over the comparators.",
+    "remainingGap": "The design paper and trial intervention methods identify the machine family but do not give this station’s lever pad placement, pivot alignment or training arc. The joint angles in strength testing are a separate procedure.",
+    "sources": [
+      {
+        "title": "Messier et al. (2013), Strength Training for Arthritis Trial (START): design and rationale",
+        "url": "https://thescholarship.ecu.edu/server/api/core/bitstreams/8bb6f208-3bdd-4db9-a5e3-af2d9fc75e38/content",
+        "location": "Strength interventions, printed p. 4. The authors identify Nautilus and unilateral lower-limb training.",
+        "access": "full-text"
+      },
+      {
+        "title": "Messier et al. (2021), Effect of high-intensity strength training on knee pain and knee joint compressive forces among adults with knee osteoarthritis",
+        "url": "https://jamanetwork.com/journals/jama/fullarticle/2776330",
+        "location": "Methods, Interventions, Strength Training, and primary outcomes.",
+        "access": "full-text"
+      }
+    ]
+  },
+  {
+    "requestId": "knee-pfp-hip-abduction-variant-unresolved",
+    "status": "program",
+    "execution": "HE-2 begins in side-lying. The lower hip is slightly bent and its knee flexed beyond 90°. The upper hip starts neutral and its knee straight. Lift the upper leg up and slightly behind the body until further travel would tilt the pelvis, then lower it. After four weeks the trial progresses to standing on one leg with that knee slightly bent. Move the training leg out and slightly back, then return, keeping the trunk and pelvis still. Elastic resistance can be added and increased in either exercise.",
+    "remainingGap": "The parent covers two separately illustratable positions separated by a trial progression. A single frame sequence would incorrectly join them. The described unresisted side-lying component can be considered separately.",
+    "sources": [
+      {
+        "title": "Hansen et al. (2023), Quadriceps or hip exercises for patellofemoral pain? Supplement",
+        "url": "https://bjsm.bmj.com/content/bjsports/early/2023/05/02/bjsports-2022-106197/DC1/embed/inline-supplementary-material-1.pdf?download=true",
+        "location": "HE-2, printed p. 9. Indexed supplement text and its two photo-pair descriptions were inspected.",
+        "access": "indexed-supplement"
+      },
+      {
+        "title": "Hansen et al. (2023), Quadriceps or hip exercises for patellofemoral pain?",
+        "url": "https://bjsm.bmj.com/content/57/20/1287",
+        "location": "Methods, focused hip exercise programme.",
+        "access": "full-text"
+      }
+    ]
+  },
+  {
+    "requestId": "knee-pt-single-leg-isometric-machine-extension",
+    "status": "specified",
+    "execution": "Sit against the leg-extension machine backrest, hold the handles and place both lower legs under the padded lever. Use both legs to bring the load to a position with 60° of knee flexion. Take the other leg off the load and hold the lever still with the working leg. The study used 45-second holds, two minutes of rest and progression toward 70% of maximum voluntary contraction. Re-engage both legs to return the lever. The extension setup is in the written directions. The adjacent photographs demonstrate the press alternative.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Breda et al. (2021), Progressive tendon-loading exercise therapy, Supplement 1",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8070614/supplementaryFiles",
+        "location": "bjsports-2020-103403supp001.pdf, pp. 5–6, stage 1 instructions and step-by-step machine setup.",
+        "access": "supplement"
+      }
+    ],
+    "artBrief": {
+      "start": "Back against seat, hands on handles, both legs under the padded lever.",
+      "middle": "Both legs move the lever to a 60° knee bend.",
+      "end": "The working leg alone holds that angle. Show the other leg clear of the lever."
+    }
+  },
+  {
+    "requestId": "knee-pt-single-leg-isotonic-machine-press",
+    "status": "specified",
+    "execution": "For the initial stage 2 range, sit with the full back supported, hands on handles and feet initially shoulder-width apart on the press plate. Work one leg at a time and leave the other at rest. Cycle under load between approximately 60° and 10° of knee flexion with a brief pause and a controlled return. The patient instructions later expand the travel toward 90° and near-straight as tolerated, with the knee kept out of lockout. This is the seated press shown in the manual.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Breda et al. (2021), Progressive tendon-loading exercise therapy, Supplement 1",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8070614/supplementaryFiles",
+        "location": "bjsports-2020-103403supp001.pdf, pp. 8–9, stage 2 initial and later ranges, photographs of the press and four instructions.",
+        "access": "supplement"
+      }
+    ],
+    "artBrief": {
+      "start": "Sit against the backrest, grip handles and set both feet on the plate.",
+      "middle": "Working foot stays planted as the knee bends toward 60°, with the other leg off the plate.",
+      "end": "Press toward a 10° knee bend in the initial range, then repeat."
+    }
+  },
+  {
+    "requestId": "knee-itbs-modified-side-plank-clamshell",
+    "status": "partial",
+    "execution": "Lie on the side with the elbow under the shoulder, knees stacked and both knees bent back to 90°. Keep the upper hand on the hip. Lift the torso from the lower elbow and bent lower leg so that the hips and shoulders stay in line. Holding that side bridge, open and close the knees while the feet stay together. Avoid rolling the upper shoulder forward. The study used a light resistance band in weeks 3 and 4, with the torso lowered between sets.",
+    "remainingGap": "The author’s thesis resolves support, alignment and the moving knee. Table 4 identifies the band strength but does not say where it contacts the legs. Placement on adjacent, differently named exercises cannot establish that detail.",
+    "sources": [
+      {
+        "title": "SieuNarine-McKay (2016), Evaluation of outcomes in assessment of iliotibial band syndrome rehabilitation programs",
+        "url": "https://central.bac-lac.gc.ca/.item?app=Library&id=TC-BVAU-58531&oclc_number=1032932654&op=pdf",
+        "location": "Table 4, printed p. 43, progression 2. Start position, execution, coaching and resistance rows.",
+        "access": "full-text"
+      },
+      {
+        "title": "McKay et al. (2020), Iliotibial band syndrome rehabilitation in female runners",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7247177/",
+        "location": "Table 2, integrated program, exercise 1 progression, weeks 3–4.",
+        "access": "full-text"
+      }
+    ]
+  },
+  {
+    "requestId": "knee-meniscus-incremental-exercise-variant-unresolved",
+    "status": "program",
+    "execution": "The eight-week supervised program included cycling, balancing on the injured leg while the opposite leg moved against an ankle pulley, calf raises on a leg press, machine hip extension, two-foot wobble-board balance, and unilateral leg press starting at 110° knee flexion. Later choices included single-leg calf raises, lunges below 90° knee flexion and a cross-trainer. Walking, stairs, running or jumping were selected for the participant’s needs. The separate home program named single-leg standing and a step-down.",
+    "remainingGap": "The intervention consisted of 16 supervised sessions plus home activities. A separate request must identify a particular drill and its version. The week range and individual adjustments are part of the protocol.",
+    "sources": [
+      {
+        "title": "Noorduyn et al. (2022), ESCAPE trial, Supplement 2",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9270699/supplementaryFiles",
+        "location": "jamanetwopen-e2220394-s002.pdf, eAppendix pp. 2–3, supervised and home exercises.",
+        "access": "supplement"
+      }
+    ]
+  },
+  {
+    "requestId": "knee-acl-open-chain-extension-90-45",
+    "status": "specified",
+    "execution": "For the supervised early open-chain arm of the hamstring-graft ACL reconstruction trial, sit on the knee-extension machine. Set the machine’s mechanical stop to limit movement to 90°–45° of knee flexion. From the 90° bent-knee position, extend the operated knee until 45° of flexion remains, then bend it back within the same arc. The training apparatus provided the limit. The early group began the restricted exercise in postoperative week four under the study therapists. Selection and timing in an individual surgical plan still depend on the procedure and clinician.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Fukuda et al. (2013), Open kinetic chain exercises in a restricted range of motion after anterior cruciate ligament reconstruction",
+        "url": "https://www.researchgate.net/publication/235669596_Open_Kinetic_Chain_Exercises_in_a_Restricted_Range_of_Motion_After_Anterior_Cruciate_Ligament_Reconstruction_A_Randomized_Controlled_Clinical_Trial",
+        "location": "Authors’ full paper, Methods, Intervention, early open-chain group. The strength-testing dynamometer described separately was not the training equipment.",
+        "access": "full-text"
+      },
+      {
+        "title": "Kotsifaki et al. (2023), Aspetar clinical practice guideline on rehabilitation after anterior cruciate ligament reconstruction",
+        "url": "https://bjsm.bmj.com/content/57/9/500",
+        "location": "Exercise initiation, open kinetic chain exercise, and Box 3. The seated 90°–45° variant is tied to the Fukuda hamstring graft trial.",
+        "access": "full-text"
+      }
+    ],
+    "artBrief": {
+      "start": "Seated at the knee-extension station, operated knee flexed 90° and machine range stop set.",
+      "middle": "Move the lower leg forward against the machine through the restricted arc.",
+      "end": "Stop at 45° of knee flexion, then return toward 90°."
+    }
+  },
+  {
+    "requestId": "knee-mcl-quadriceps-set-unresolved",
+    "status": "partial",
+    "execution": "In the monitored protocol for isolated grade III MCL injury, quadriceps setting began at presentation and continued during the early hinged-brace phase, alongside straight-leg lifts. The lateral brace allowed flexion and extension and was worn day and night for the first three weeks. Seven college students also received electrical stimulation.",
+    "remainingGap": "The paper does not describe the body or knee position for the set, a support or contact to press against, or the target or duration of a contraction. Electrical stimulation was an adjunct for a subset.",
+    "sources": [
+      {
+        "title": "Reider et al. (1994), Treatment of isolated medial collateral ligament injuries in athletes with early functional rehabilitation",
+        "url": "https://citeseerx.ist.psu.edu/document?doi=94a1f3a540f30ad26a76c21d73b633ffcc2baca5&repid=rep1&type=pdf",
+        "location": "Methods and Table 2, printed pp. 471–473. Full paper scan, including brace use, timing, straight-leg positions and resistive progression.",
+        "access": "full-text"
+      }
+    ]
+  },
+  {
+    "requestId": "knee-mcl-leg-raise-unresolved",
+    "status": "program",
+    "execution": "The athletes did straight-knee leg raises in three positions: lying on the back, on the front and on the side. The protocol encouraged three sets of twelve. They wore the hinged lateral brace day and night in the first three weeks. Further resistive work was introduced after 90° of knee flexion was recovered.",
+    "remainingGap": "This parent includes distinct lifts. The paper does not identify the endpoint of each lift or specify which side was down in the lateral version. Combining them would hide the change in movement direction.",
+    "sources": [
+      {
+        "title": "Reider et al. (1994), Treatment of isolated medial collateral ligament injuries in athletes with early functional rehabilitation",
+        "url": "https://citeseerx.ist.psu.edu/document?doi=94a1f3a540f30ad26a76c21d73b633ffcc2baca5&repid=rep1&type=pdf",
+        "location": "Methods and Table 2, printed pp. 471–473. Full paper scan, including brace use, timing, straight-leg positions and resistive progression.",
+        "access": "full-text"
+      }
+    ]
+  },
+  {
+    "requestId": "leap-supine-static-hip-abduction",
+    "status": "specified",
+    "execution": "Lie on the back with a pillow under both knees. Start with knees slightly farther apart than hip width and a belt or scarf around the lower thighs. Gently draw the knees apart only enough to take up slack, around 1–2 mm in the manual. Maintain the very light outward tension without a visible wide opening, then relax.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Mellor et al. (2018), LEAP trial, education and exercise intervention supplement",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5930290/supplementaryFiles",
+        "location": "melr042341.ww.pdf, printed p. 10, Static Abduction, exercise 1 in lying, description and photos.",
+        "access": "supplement"
+      }
+    ],
+    "artBrief": {
+      "start": "Supine with a pillow supporting both knees, belt around lower thighs and knees a little wider than hips.",
+      "middle": "Slow outward effort just tensions the belt.",
+      "end": "Hold in essentially the same posture."
+    }
+  },
+  {
+    "requestId": "adductor-supine-ball-squeeze-feet",
+    "status": "partial",
+    "execution": "Lie on the back with a soccer ball between the feet and press the feet inward without moving the legs through an arc. Both the original treatment program and its replication describe this long-lever contact and a 30-second hold. Hölmich’s subsequent prevention study again specifies a ball between the feet with the toes facing forward. An EMG reproduction illustrates the legs extended but explicitly places its ball between the ankles.",
+    "remainingGap": "Straight legs are visible in the related ankle-contact version. Original treatment sources give foot contact but do not explicitly fix knee position. A straight-leg ankle squeeze and the original feet-contact squeeze must remain distinguishable.",
+    "sources": [
+      {
+        "title": "Hölmich, Groin injuries in athletes",
+        "url": "https://old.ortopaedi.dk/fileadmin/phd/Per_Holmich_56974.pdf",
+        "location": "Author’s doctoral synthesis, Elements of AT, Module 1, printed p. 26. Two different static adduction drills in the original treatment trial.",
+        "access": "full-text"
+      },
+      {
+        "title": "Yousefzadeh et al. (2018), Effect of Holmich protocol exercise therapy on long-standing adductor-related groin pain in athletes",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6045696/",
+        "location": "Table 1, Module 1, drills 1 and 3 in the treatment replication.",
+        "access": "full-text"
+      },
+      {
+        "title": "Hölmich et al. (2010), Exercise program for prevention of groin pain in football players",
+        "url": "https://ctu.dk/wp-content/uploads/2020/11/LyskeII_main2009.pdf",
+        "location": "Intervention, drills 1–2. The authors identify the drills retained from their earlier treatment study. This prevention cohort used different effort and duration.",
+        "access": "full-text"
+      },
+      {
+        "title": "Krommes et al. (2017), Dynamic hip adduction, abduction and abdominal exercises from the Holmich groin-injury prevention program",
+        "url": "https://ijspt.org/wp-content/uploads/2021/01/2017_V12N3.pdf",
+        "location": "Methods and Figure 1, printed pp. 373–374. Top-right photograph shows the straight-leg ball squeeze, top-left the bent-knee squeeze. The printed a/b descriptors are reversed relative to the actual photographs. This is an EMG study of the prevention version.",
+        "access": "figure"
+      }
+    ]
+  },
+  {
+    "requestId": "adductor-supine-ball-squeeze-knees",
+    "status": "specified",
+    "execution": "Lie on the back with both hips and knees flexed, toes pointing forward and feet flat on the surface. Place a soccer ball between the knees. Press both knees into the ball without lifting the pelvis or changing the knee angle, maintain the squeeze, then release. The treatment module reports 30-second holds. The bent-knee setup and flat feet are clarified by Hölmich’s later instructions for the same drill in a prevention program with a different dose.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Hölmich, Groin injuries in athletes",
+        "url": "https://old.ortopaedi.dk/fileadmin/phd/Per_Holmich_56974.pdf",
+        "location": "Author’s doctoral synthesis, Elements of AT, Module 1, printed p. 26. Two different static adduction drills in the original treatment trial.",
+        "access": "full-text"
+      },
+      {
+        "title": "Yousefzadeh et al. (2018), Effect of Holmich protocol exercise therapy on long-standing adductor-related groin pain in athletes",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6045696/",
+        "location": "Table 1, Module 1, drills 1 and 3 in the treatment replication.",
+        "access": "full-text"
+      },
+      {
+        "title": "Hölmich et al. (2010), Exercise program for prevention of groin pain in football players",
+        "url": "https://ctu.dk/wp-content/uploads/2020/11/LyskeII_main2009.pdf",
+        "location": "Intervention, drills 1–2. The authors identify the drills retained from their earlier treatment study. This prevention cohort used different effort and duration.",
+        "access": "full-text"
+      },
+      {
+        "title": "Krommes et al. (2017), Dynamic hip adduction, abduction and abdominal exercises from the Holmich groin-injury prevention program",
+        "url": "https://ijspt.org/wp-content/uploads/2021/01/2017_V12N3.pdf",
+        "location": "Methods and Figure 1, printed pp. 373–374. Top-right photograph shows the straight-leg ball squeeze, top-left the bent-knee squeeze. The printed a/b descriptors are reversed relative to the actual photographs. This is an EMG study of the prevention version.",
+        "access": "figure"
+      }
+    ],
+    "artBrief": {
+      "start": "Supine, feet flat, knees bent with a soccer ball between them.",
+      "middle": "Press inward on both sides of the ball with pelvis and feet still.",
+      "end": "Hold without changing position, then release the inward pressure."
+    }
+  },
+  {
+    "requestId": "pht-isometric-hamstring-bridge",
+    "status": "program",
+    "execution": "Stage 1 uses a supine isometric bridge with the pelvis held level. Figure 3a–b shows one calf supported on a raised box, arms crossed, opposite hip and knee flexed in the air. Lift the pelvis and hold without shaking. In panels c–d only the heel end of the foot rests on the box, reducing support. The program also allows bilateral support, unilateral support and changes in weight.",
+    "remainingGap": "The fixed calf-on-box single-leg demonstration is already a separate staged candidate. There is no single setup for the parent’s support and loading progression.",
+    "sources": [
+      {
+        "title": "Rich et al. (2025), Treatment of proximal hamstring tendinopathy with individualized physiotherapy: a clinical commentary",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12129629/",
+        "location": "Table 1 and stages 1 and 4. Figure 3 panels a–d and Figure 8a were visually inspected. The paper describes a clinical protocol.",
+        "access": "full-text"
+      }
+    ]
+  },
+  {
+    "requestId": "pht-graded-compression-deadlift",
+    "status": "assessment-dependent",
+    "execution": "Stage 4 adds hip flexion progressively during a modified deadlift. Figure 8a shows one example: stand on one leg, hinge forward with the other leg extending behind and hold a bar in both hands below the knees. The protocol offers one- or two-leg deadlifts and can substitute a lunge or elevated bridge. Compression is increased to the hip flexion required for the participant’s activities.",
+    "remainingGap": "The clinician selects stance, load, target depth and progression from symptoms, stage 2 tolerance and functional demands. Figure 8a provides a snapshot of one variant, without a common start height or endpoint for all participants.",
+    "sources": [
+      {
+        "title": "Rich et al. (2025), Treatment of proximal hamstring tendinopathy with individualized physiotherapy: a clinical commentary",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12129629/",
+        "location": "Table 1 and stages 1 and 4. Figure 3 panels a–d and Figure 8a were visually inspected. The paper describes a clinical protocol.",
+        "access": "full-text"
+      }
+    ]
+  },
+  {
+    "requestId": "iliopsoas-side-lying-band-eccentric",
+    "status": "specified",
+    "execution": "In this case the runner lay on her right side with her spine supported against a wall. A band from the left ankle to a sturdy anchor behind her at about knee height pulled the hip toward extension. Begin with the left hip fully flexed and the knee bent. Keep that knee bent and control the backward pull over three counts until the hip reaches its extended position. Without arching the back, bring the thigh forward against the band in one count. The report allowed a handhold for stability.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Rauseo (2017), The rehabilitation of a runner with iliopsoas tendinopathy using an eccentric-biased exercise: a case report",
+        "url": "https://ijspt.org/wp-content/uploads/2021/01/2017_V12N7.pdf",
+        "location": "Printed p. 1155 (PDF p. 151), intervention and Figures 2–3, with continuation on p. 1156. Case-specific end range and setup.",
+        "access": "full-text"
+      }
+    ],
+    "artBrief": {
+      "start": "Right side down with left thigh drawn forward, left knee bent and band attached behind at knee height.",
+      "middle": "Left thigh moves back under control while the band shortens.",
+      "end": "Left hip extended with knee still bent and spine steady against the wall."
+    }
+  },
+  {
+    "requestId": "liftmor-back-squat-variant-unresolved",
+    "status": "specified",
+    "execution": "In the supervised barbell phase, stand with feet shoulder-width apart and the bar across the upper back just above the scapular spines. Hold it with the upper arms out and elbows bent. Move the hips back and bend the knees until the thighs are parallel to the floor. Stand back up with the bar in the same upper-back position. The thesis lists a squat rack, squat stand, Olympic bars and plates among the intervention equipment.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Watson, The LIFTMOR trial: thesis describing supervised HiRIT in postmenopausal women with low bone mass",
+        "url": "https://research-repository.griffith.edu.au/server/api/core/bitstreams/b6b80b27-44f2-4f82-a315-370c13c7e34f/content",
+        "location": "Chapter 3, printed p. 61 (PDF p. 93), back squat. Chapter 4, resources, lists the rack, stand and bars.",
+        "access": "full-text"
+      }
+    ],
+    "artBrief": {
+      "start": "Stand under the loaded bar across the upper back, feet shoulder-width apart.",
+      "middle": "Keep the bar supported as the hips move back and knees bend.",
+      "end": "Thighs parallel to the floor at the bottom, then stand."
+    }
+  },
+  {
+    "requestId": "liftmor-deadlift-variant-unresolved",
+    "status": "specified",
+    "execution": "Stand with the shins at the bar and feet slightly narrower than shoulder width. Bend to a shoulder-width overhand grip. In the thesis setup the torso begins parallel to the ground and the spine retains its natural curves. Stand upright with the bar close and elbows straight. For the descent, hinge the hips to guide the bar down the thighs, then bend the knees once the bar passes them to return to the starting height.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Watson, The LIFTMOR trial: thesis describing supervised HiRIT in postmenopausal women with low bone mass",
+        "url": "https://research-repository.griffith.edu.au/server/api/core/bitstreams/b6b80b27-44f2-4f82-a315-370c13c7e34f/content",
+        "location": "Chapter 3, printed p. 62 (PDF p. 94), deadlift. The start is specified by shin contact and trunk position. No fixed platform or plate height is given.",
+        "access": "full-text"
+      }
+    ],
+    "artBrief": {
+      "start": "Grip the bar in front of the shins, shoulders over the bar and elbows straight.",
+      "middle": "Stand up with the bar close to the legs.",
+      "end": "Upright with elbows extended, then reverse by hinging before bending the knees."
+    }
+  },
+  {
+    "requestId": "liftmor-overhead-press-variant-unresolved",
+    "status": "specified",
+    "execution": "Stand upright with an Olympic bar horizontal at the notch at the top of the sternum. Palms face forward, upper arms are near the sides and the elbows bend in front. Keeping the elbows directed forward, press the bar above the head to full shoulder flexion and straight elbows. Bring it back to the original chest position.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Watson, The LIFTMOR trial: thesis describing supervised HiRIT in postmenopausal women with low bone mass",
+        "url": "https://research-repository.griffith.edu.au/server/api/core/bitstreams/b6b80b27-44f2-4f82-a315-370c13c7e34f/content",
+        "location": "Chapter 3, printed p. 62 (PDF p. 94), overhead press in the loaded phase.",
+        "access": "full-text"
+      }
+    ],
+    "artBrief": {
+      "start": "Stand with the bar horizontal at upper chest, palms forward.",
+      "middle": "Drive the bar upward with elbows pointing forward.",
+      "end": "Finish with straight elbows and the bar directly overhead, then lower to chest."
+    }
+  },
+  {
+    "requestId": "liftmor-jumping-chin-up-drop-landing",
+    "status": "specified",
+    "execution": "Under supervision, stand beneath a fixed overhead bar, palms toward the face and hands shoulder-width apart, shoulders and elbows initially bent about 90°. Jump with both legs and pull with both arms to bring the chin toward or above the bar. At the apex release both hands and drop to the floor. For the early landing shown here the lower limbs bend to absorb the landing. The trial gradually advanced to firmer, flatter-footed landings as tolerated. Drop height and landing intensity were individualized.",
+    "remainingGap": null,
+    "sources": [
+      {
+        "title": "Watson, The LIFTMOR trial: thesis describing supervised HiRIT in postmenopausal women with low bone mass",
+        "url": "https://research-repository.griffith.edu.au/server/api/core/bitstreams/b6b80b27-44f2-4f82-a315-370c13c7e34f/content",
+        "location": "Chapter 3, printed p. 61, starting grip and jump. Chapter 4, HiRIT intervention, release and initial flexed-leg landing. Chapter 5, §5.3.3, starting angles and supervision. Later trial report describes the advanced flat-footed landing.",
+        "access": "full-text"
+      }
+    ],
+    "artBrief": {
+      "start": "Stand under the fixed bar with shoulder-width underhand grip and elbows bent.",
+      "middle": "Jump and pull toward the bar, then open both hands at the top.",
+      "end": "After release land on the floor, bending the lower limbs for the early supervised version."
+    }
+  }
+]

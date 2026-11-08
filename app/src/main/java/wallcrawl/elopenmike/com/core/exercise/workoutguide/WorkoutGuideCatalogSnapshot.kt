@@ -11,7 +11,9 @@ import wallcrawl.elopenmike.com.core.model.ExerciseAttribution
 data class WorkoutGuideCatalogSnapshot(
     val exercises: List<Exercise>,
     val framesByExerciseId: Map<String, List<ExerciseVisual>>,
-    val catalogAttribution: CatalogAttribution
+    val catalogAttribution: CatalogAttribution,
+    val catalogVersion: String = catalogAttribution.commit,
+    val supplementAttribution: SupplementAttribution? = null
 )
 
 /**
@@ -34,3 +36,14 @@ interface WorkoutGuideCatalogSource {
     /** Returns the cached snapshot without performing asset I/O. */
     fun currentSnapshot(): WorkoutGuideCatalogSnapshot?
 }
+
+/** Authored content has its own source version, never an upstream Git commit. */
+data class SupplementAttribution(
+    val catalogId: String,
+    val version: Int,
+    val repository: String,
+    val assetLicense: String,
+    val attribution: ExerciseAttribution,
+    val exerciseCount: Int,
+    val frameCount: Int
+)

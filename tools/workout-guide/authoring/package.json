@@ -1,0 +1,16 @@
+{
+  "name": "wallcrawl-condition-art-authoring",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Isolated offline authoring dependencies; never part of Android",
+  "engines": { "node": ">=20.9.0" },
+  "dependencies": {
+    "potrace": "2.1.8",
+    "sharp": "0.35.5",
+    "svgo": "4.1.0"
+  },
+  "scripts": {
+    "test": "node ../test_trace_condition_art.mjs",
+    "self-test": "node ../trace_condition_art.mjs --self-test"
+  }
+}

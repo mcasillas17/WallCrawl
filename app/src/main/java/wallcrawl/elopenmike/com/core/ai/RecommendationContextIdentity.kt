@@ -2,6 +2,11 @@ package wallcrawl.elopenmike.com.core.ai
 
 import java.security.MessageDigest
 import java.util.Locale
+import java.time.Instant
+import wallcrawl.elopenmike.com.core.model.ConditionExerciseIdentity
+import wallcrawl.elopenmike.com.core.model.ConditionSchedule
+import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
+import wallcrawl.elopenmike.com.core.model.conditionDigest
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.SessionProgramConstraints
 import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
@@ -31,6 +36,9 @@ import wallcrawl.elopenmike.com.core.model.ProgressionReasonCode
  * floor, explicit rest choices, and ledger direct counts/provenance/integrity also participate.
  * Reviewed progression consumes bounded full outcomes and target-continuity provenance,
  * including source identities, timestamps, measurements, feedback and user deload choices.
+ * Condition inputs include exact support/review/art identities, purpose/dose decisions,
+ * current schedule eligibility, calendar/zone, retained exposures and pending reassessment.
+ * The exact schedule checkedAt timestamp belongs only to the frozen session receipt.
  *
  * ## What it deliberately excludes
  *
@@ -51,7 +59,7 @@ import wallcrawl.elopenmike.com.core.model.ProgressionReasonCode
  */
 object RecommendationContextIdentity {
 
-    private const val FORMAT_VERSION = "wallcrawl-recommendation-context-v5"
+    private const val FORMAT_VERSION = "wallcrawl-recommendation-context-v6"
 
     /** ASCII unit separator: it cannot occur in a catalog id, muscle name, or zone id. */
     private const val FIELD_SEPARATOR = "\u001F"
@@ -80,6 +88,10 @@ object RecommendationContextIdentity {
             line("zone", ledger?.timeZoneId ?: "none"),
             line("constraints", context.programConstraints.canonicalForm())
         )
+        lines += line("conditions", conditionFacts(context))
+        if (context.userProfile.reportedConditions.isNotEmpty()) {
+            lines += line("reportedConditions", conditionDigest(context.userProfile.reportedConditions.sorted()))
+        }
         val header = context.programHeader
         lines += line("planningIntent", context.planningIntent.name)
         lines += line("programHeader", header.profileId, header.programId ?: "none", header.revision.toString(),
@@ -126,6 +138,7 @@ object RecommendationContextIdentity {
                 session.exercises.sortedWith(compareBy({ it.exerciseId }, { it.id })).forEach { exercise ->
                     lines += line("progressionExercise", exercise.id, exercise.sessionId,
                         exercise.exerciseId, exercise.prescription.toString())
+                    if (exercise.isLegacyMobility) lines += line("legacyMobility", exercise.id)
                     exercise.sets.sortedWith(compareBy({ it.setNumber }, { it.id })).forEach { set ->
                         lines += line("progressionSet", set.toString())
                     }
@@ -172,6 +185,63 @@ object RecommendationContextIdentity {
             .digest(canonical.toByteArray(Charsets.UTF_8))
             .joinToString("") { byte -> String.format(Locale.ROOT, "%02x", byte) }
     }
+
+    /** Stable consumed facts; checkedAt belongs only to the frozen session receipt. */
+    private fun conditionFacts(context: WorkoutGenerationContext): String = conditionDigest(mapOf(
+        "selected" to context.userProfile.activeConditions.sortedBy { it.conditionId }
+            .map { listOf(it.conditionId, it.contextSchemaVersion, it.answers) },
+        "planning" to conditionPlanningFacts(context.conditionPlanning),
+        "candidateContent" to (context.conditionPlanning as? ConditionPlanningResult.Ready)?.let { ready ->
+            context.allowedExercises.filter { it.id in ready.ordinaryRules }.map { listOf(it.id, ConditionExerciseIdentity.contentSha256(it)) }
+        },
+        "durationBudget" to context.preferredWorkoutDurationMinutes.takeIf { context.conditionPlanning is ConditionPlanningResult.Ready },
+        "history" to context.conditionHistory?.let { history -> listOf(
+            history.sourceDigest, history.zoneId.id,
+            Instant.ofEpochMilli(history.asOfTimestamp).atZone(history.zoneId).toLocalDate().toEpochDay(),
+            context.conditionSupport?.records?.values?.filter { record -> context.userProfile.activeConditions.any { it.conditionId == record.conditionId } }
+                ?.sortedBy { it.conditionId }?.flatMap { record -> record.cases.filter { case ->
+                    val selection = context.userProfile.activeConditions.single { it.conditionId == record.conditionId }
+                    case.requiredAnswers.all { (id, answer) -> selection.answers[id] == answer }
+                }.flatMap { case -> case.rules.mapNotNull { rule -> rule.schedule?.let { schedule ->
+                    listOf(record.conditionId, case.id, rule.id, history.schedule(rule.exerciseIdentity.exerciseId, schedule).toString())
+                } } } }
+        ) },
+        "support" to context.userProfile.activeConditions.sortedBy { it.conditionId }.map { selected ->
+            context.conditionSupport?.records?.get(selected.conditionId)?.let { record -> listOf(
+                record.conditionId, record.contentVersion, record.contentSha256, record.contextSchemaVersion, record.policyVersion,
+                record.sources.sortedBy { it.id }.map { listOf(it.id, it.url, it.contentSha256) },
+                record.review.let { listOf(it.state.name, it.reviewerIdentity, it.reviewerQualification,
+                    it.reviewedAtEpochMillis, it.releaseAuthorization, it.reviewedContentSha256, it.sourceIds.sorted()) },
+                record.cases.map { case -> listOf(case.id, case.requiredAnswers, case.rules.map { rule -> listOf(
+                    rule.id, rule.exerciseIdentity.toString(), rule.executionIdentity, rule.effect.name,
+                    rule.bounds?.toString(), rule.allowOrdinaryProgression, rule.supportivePrescription?.toString(), rule.schedule?.identityFacts()
+                ) }) }
+            ) }
+        }
+    ))
+
+    internal fun conditionPlanningFacts(planning: ConditionPlanningResult): Any = when (planning) {
+        ConditionPlanningResult.NotApplicable -> listOf("not-applicable")
+        is ConditionPlanningResult.Blocked -> listOf("blocked", planning.reasons.map {
+            listOf(it.reason, it.conditionIds.sorted(), it.exerciseIds.sorted())
+        })
+        is ConditionPlanningResult.Ready -> listOf("ready", planning.weightUnit.name,
+            planning.ordinaryRules.toSortedMap().map { (id, rule) -> listOf(id, rule.bounds.toString(),
+                rule.executionIdentity, rule.allowOrdinaryProgression, rule.sourceRuleReferences.map { it.toString() }.sorted(), rule.policyVersions.sorted()) },
+            planning.supportive.map { listOf(it.exerciseId, it.prescription.toString(), it.executionIdentity,
+                it.sourceRuleReferences.map { it.toString() }.sorted(), it.schedule.identityFacts()) },
+            planning.context.let { frozen -> listOf(frozen.formatVersion, frozen.policyVersion,
+                frozen.selectedConditions.sortedBy { it.conditionId }.map { listOf(it.conditionId, it.contextSchemaVersion, it.answers) },
+                frozen.sourceSupportVersions, frozen.appliedRules.map { listOf(it.reference.toString(),
+                    it.exerciseIdentity.toString(), it.executionIdentity, it.purpose.name, it.explanation.en, it.explanation.es) },
+                frozen.consumedScheduleEvidence.map { listOf(it.reference.toString(), it.previousPerformedAtTimestamp) },
+                frozen.consumedReassessmentEventIds.sorted()) }
+        )
+    }
+
+    private fun ConditionSchedule.identityFacts() = listOf(
+        sessionsPerWeek, minimumHoursBetweenSessions, instructions.en, instructions.es
+    )
 
     /** Matches both prescription construction and validation's traceable-load boundary. */
     private fun Double?.usableLoad(): Double? = this?.takeIf { it.isFinite() && it >= 0.0 }

@@ -70,6 +70,22 @@ class ProgressAnalyticsRepositoryTest {
 
     @After fun tearDown() { db.close() }
 
+    @Test fun supportiveSameIdIsVisibleInActivityAndOptionsButNotComparisonSets() = runBlocking<Unit> {
+        insert("ordinary", monday.toEpochMilli(), "approved")
+        insert("support", monday.toEpochMilli() + 1, "approved", weight = 90.0)
+        db.openHelper.writableDatabase.execSQL("UPDATE workout_exercises SET purpose = 'SUPPORTIVE' WHERE sessionId = 'support'")
+        val snapshot = read(AnalyticsSelection(AnalyticsRange.WEEKS_4, AnalyticsScope.Exercise("approved")))
+        assertThat(snapshot.series(AnalyticsMetric.COMPLETED_SETS).buckets.sumOf { it.value }).isEqualTo(2.0)
+        assertThat(snapshot.series(AnalyticsMetric.REVIEWED_PRIMARY_DOSE).buckets.sumOf { it.value }).isEqualTo(1.0)
+        assertThat(snapshot.analytics.performance.single().observations.map { it.sessionId }).containsExactly("ordinary")
+        assertThat(snapshot.exerciseOptions).contains("approved")
+        assertThat(db.workoutSessionDao().selectAnalyticsComparableSetIds(monday.toEpochMilli(), now.toEpochMilli(), "approved"))
+            .containsExactly("ordinary-0")
+        db.openHelper.writableDatabase.execSQL("UPDATE workout_exercises SET purpose = 'FUTURE' WHERE sessionId = 'support'")
+        assertThat(db.workoutSessionDao().selectAnalyticsRangeSize(monday.toEpochMilli(), now.toEpochMilli()).invalidMetadata).isTrue()
+        assertThrows(IllegalArgumentException::class.java) { runBlocking { read(AnalyticsSelection()) } }
+    }
+
     @Test fun anOlderSelectedRangeIsNotCrowdedOutByMoreThan500NewerSessions() = runBlocking {
         listOf(30, 40, 50).forEach { weeksAgo -> insert("old-$weeksAgo", monday.toEpochMilli() - weeksAgo * week + 1, "approved") }
         repeat(600) { insert("recent-$it", monday.toEpochMilli() + it, "draft") }

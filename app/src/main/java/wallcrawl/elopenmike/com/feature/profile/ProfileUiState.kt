@@ -16,7 +16,8 @@ sealed interface ProfileUiState {
         val movementCapabilityError: ProfileCapabilityError? = null,
         val availableEquipmentOptions: List<String> = emptyList(),
         val availableMuscleOptions: List<String> = emptyList(),
-        val availableConstraintOptions: List<TrainingConstraint> = TrainingConstraint.entries
+        val availableConstraintOptions: List<TrainingConstraint> = TrainingConstraint.entries,
+        val exclusionSaveFailed: Boolean = false
     ) : ProfileUiState
 
     data class Error(@StringRes val messageRes: Int = R.string.profile_load_error) : ProfileUiState

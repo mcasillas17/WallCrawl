@@ -75,7 +75,11 @@ data class WorkoutGenerationContext(
     val regenerationIndex: Int? = null,
     val planningIntent: WorkoutPlanningIntent = WorkoutPlanningIntent.ORDINARY,
     val programHeader: ProgramHeader = ProgramHeader.absent(userProfile.id),
-    val programInput: ProgramPlanningInput? = null
+    val programInput: ProgramPlanningInput? = null,
+    val conditionPlanning: ConditionPlanningResult = ConditionPlanningResult.NotApplicable,
+    /** Stable source facts are separate from the checked-time-bearing frozen receipt. */
+    val conditionHistory: wallcrawl.elopenmike.com.core.ai.ConditionHistory? = null,
+    val conditionSupport: ConditionSupportCatalog? = null
 )
 
 enum class WorkoutPlanningIntent { ORDINARY, PROGRAM }

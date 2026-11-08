@@ -12,3 +12,14 @@ planner-fixtures/reviewed-enabled-no-approved.json
 planner-fixtures/reviewed-enabled-uncleared-joint-constraint.json
 planner-fixtures/reviewed-enabled-cleared-joint-constraints.json
 planner-fixtures/concurrent-activity.json
+
+# FICTIONAL condition software scenarios; never clinical release data.
+planner-fixtures/condition-released.json
+planner-fixtures/condition-compatible.json
+planner-fixtures/condition-incompatible.json
+planner-fixtures/condition-missing-context.json
+planner-fixtures/condition-withdrawn.json
+planner-fixtures/condition-duration.json
+planner-fixtures/condition-equipment.json
+planner-fixtures/condition-pain-stop.json
+planner-fixtures/condition-removed-pain-stop.json

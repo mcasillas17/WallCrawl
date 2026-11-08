@@ -1,0 +1,458 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "acromioclavicular-osteoarthritis",
+    "label": "acromioclavicular osteoarthritis",
+    "aliases": [],
+    "distinctions": "Symptomatic primary AC OA distinct from imaging-only change, distal-clavicle osteolysis, traumatic separation, GH OA and cuff-related pain."
+  },
+  "scope": {
+    "population": "Adults with clinical/radiological symptomatic primary AC OA; Harris candidate evidence indirect.",
+    "stage": "Persistent symptoms; irritability and coexisting diagnoses matter.",
+    "operativeStatus": "Nonoperative; distal-clavicle-excision rehabilitation separate.",
+    "exclusions": "No universal bench-press, dip, overhead or cross-body ban established.",
+    "uncertainty": "Very sparse isolated primary-OA exercise evidence; no optimum regimen."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "acromioclavicular osteoarthritis nonoperative systematic review exercise trial",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "acromioclavicular osteoarthritis physiotherapy trial 2023 Welch Lowry",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "Harris 2012 acromioclavicular manual therapy",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Native web search, PubMed/PMC/publisher/society records; Europe PMC XML for accessible PMCID full text",
+      "query": "acromioclavicular osteoarthritis guideline 2025 2026",
+      "decision": "Targeted source inclusion/extraction recorded below; retained contrary findings and population/access limits.",
+      "limitations": "Not exhaustive; no fixed paper quota. Date is UTC (Nov 1 local / Nov 2 UTC). No registry-wide integrity clearance."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Crossref official REST API",
+      "query": "Exact DOI metadata GET /works/{URL-encoded DOI}: 10.1177/1758573220984471, 10.1177/1758573219840673, 10.1177/17585732231157090, 10.2519/jospt.2012.3866, 10.1136/bmjopen-2019-034439, 10.1007/s00167-020-06377-8",
+      "decision": "Metadata returned for bess-2021, farrell-2019, welch-2024, harris-2012, acam-protocol; HTTP429 for soler-2021. PubMed/publisher records remain source of access/extraction.",
+      "limitations": "Only record metadata/relations inspected; not a registry-wide retraction/correction search."
+    },
+    {
+      "date": "2026-11-02",
+      "service": "Europe PMC primary abstract/core records and targeted cited primary sections; official guideline/notice pages",
+      "query": "Bounded accessible-protocol audit of existing sources; exact primary IDs/URLs and inspected sections recorded in shoulder-elbow-fix-report.md. No broad discovery search.",
+      "decision": "Retain only explicitly reported partial-text facts, distinct from complete executable dose, visit schedule, device wear and follow-up. Apply regional F1–F4 corrections and known notice provenance.",
+      "limitations": "Access statuses unchanged; full article inspection not inferred from partial retrieval; unseen fields remain not reported; no clinical release."
+    }
+  ],
+  "sources": [
+    {
+      "id": "bess-2021",
+      "title": "Shoulder Pain Diagnosis, Treatment and Referral Guidelines for Primary, Community and Intermediate Care",
+      "doi": "10.1177/1758573220984471",
+      "pmid": "33747136",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7905504/",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2021-02-23 (online date preferred where supplied).",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-02",
+        "details": "Final primary-care pathway metadata/abstract inspected; no full AC exercise section/protocol reviewed."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1177%2F1758573220984471.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Guideline summary of BESS/BOA care pathways",
+      "population": "Adults presenting with shoulder pain; condition-specific pathways distinct.",
+      "comparator": "No single trial comparator.",
+      "coInterventions": "Conservative care and referral pathways.",
+      "outcomes": "Conservative-care context; no exact AC exercise regimen extracted.",
+      "followUp": "Not applicable as trial follow-up.",
+      "uncertainty": "Broad shoulder summary cannot establish AC-specific exercise efficacy.",
+      "harms": "not reported as exercise-specific harms in accessible abstract.",
+      "limitations": "No exact dose or pressing ban follows from pathway context.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Guideline Summary"
+      ]
+    },
+    {
+      "id": "farrell-2019",
+      "title": "Current evidence for nonpharmacological interventions and criteria for surgical management of persistent acromioclavicular joint osteoarthritis: A systematic review",
+      "doi": "10.1177/1758573219840673",
+      "pmid": "32269599",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32269599/",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2019-04-11 (online date preferred where supplied).",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-02",
+        "details": "Final abstract/indexed methods/results inspected; PMC browser/XML access failed."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1177%2F1758573219840673.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Systematic review, ten surgical studies; searches to Oct2018",
+      "population": "Isolated clinical/radiological AC OA ≥3 months, age≥16.",
+      "comparator": "No direct nonpharmacological-effectiveness or surgical-versus-nonpharmacological comparison.",
+      "coInterventions": "Prior activity modification in eight/PT in four reports.",
+      "outcomes": "No evidence for individual/combined nonpharmacologic effectiveness in included studies.",
+      "followUp": "Varies; prior conservative-care failure usually4–6 months, not therapeutic exercise dose.",
+      "uncertainty": "Prior care is not causal efficacy or contraindication evidence.",
+      "harms": "No quantified exercise harms.",
+      "limitations": "Do not turn failure windows into app progression rules.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Methods; Results; Conclusions"
+      ]
+    },
+    {
+      "id": "welch-2024",
+      "title": "A systematic review of the treatment of primary acromioclavicular joint osteoarthritis",
+      "doi": "10.1177/17585732231157090",
+      "pmid": "38655415",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11034467/",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2023-02-22 (online date preferred where supplied).",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-02",
+        "details": "2023 online/2024 issue final article; abstract and indexed full Results/Discussion sections inspected, not whole article; PMC/XML direct failed."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1177%2F17585732231157090.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Systematic review,48 studies/1902 primary AC OA shoulders",
+      "population": "Clinical/radiological primary AC OA; some concomitant cuff/impingement pathology.",
+      "comparator": "One PT-only cohort; one PT-versus-surgery study with impingement; most injection/surgery studies.",
+      "coInterventions": "Varied multimodal treatments.",
+      "outcomes": "Positive within-study changes; heterogeneity precluded meta-analysis; PT evidence sparse.",
+      "followUp": "Mean approximately28.5 months across heterogeneous studies; PT cohort six months.",
+      "uncertainty": "Single military PT cohort short follow-up; not isolated primary-OA randomized exercise evidence.",
+      "harms": "No specific exercise injury incidence established.",
+      "limitations": "Surgery and injection improvements cannot prescribe a particular strengthening/stretch dose.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Results; indexed Results > Physiotherapy; Discussion > Non-operative management"
+      ]
+    },
+    {
+      "id": "harris-2012",
+      "title": "Manual Physical Therapy for Injection-Confirmed Nonacute Acromioclavicular Joint Pain",
+      "doi": "10.2519/jospt.2012.3866",
+      "pmid": "22030329",
+      "url": "https://doi.org/10.2519/jospt.2012.3866",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2012-02 (online date preferred where supplied).",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-02",
+        "details": "Final full fifteen-page PDF including Appendix B inspected at https://storage.googleapis.com/edcompass/material/AC%20joint%20pain.pdf; Appendix B reopened during serialization."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.2519%2Fjospt.2012.3866.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Prospective uncontrolled single cohort,15 enrolled/13 completed",
+      "population": "Injection-confirmed nonacute AC pain, mean41,85%male, military setting; four normal radiographs.",
+      "comparator": "Baseline versus follow-up, no control.",
+      "coInterventions": "Manual therapy across AC/other joints; later home ROM/resistance exercises.",
+      "outcomes": "SPADI improved25.9 points at4weeks/29.8 at6months; not isolated exercise efficacy.",
+      "followUp": "4weeks and6months.",
+      "uncertainty": "Small uncontrolled mixed-radiographic cohort; primary OA attribution indirect.",
+      "harms": "No formal adverse-event count found; completers no additional care/activity reduction/increased medication.",
+      "limitations": "Study delaying strength to4weeks does not establish early-strength contraindication.",
+      "protocol": {
+        "execution": "Therapist-chosen painless passive/assisted/active flexion, cane IR/chest stretch/horizontal adduction; later tubing strength, wall push-up≤90° elbow flexion, scapular retraction/protraction progression from all fours to incline to regular push-up.",
+        "dose": "Manual sessions30min twice weekly3weeks; no individual exercise repetitions/holds in Appendix B.",
+        "frequency": "Home ROM/strength3/week after four-week assessment.",
+        "supervision": "Experienced therapists; home instruction/pictures and possible booster sessions.",
+        "progression": "No strength/self-mobilization before4week visit in protocol; scapular progression all fours→incline→regular push-up.",
+        "stoppingRules": "Appendix B: well tolerated and painless exercise; no universal pain-damage threshold."
+      },
+      "locations": [
+        "Methods > Treatment (PDF pp. 69–70)",
+        "Results (PDF pp. 70–71)",
+        "Appendix B > List of Therapeutic Exercises (PDF p. 80)"
+      ]
+    },
+    {
+      "id": "acam-protocol",
+      "title": "Management of acromioclavicular joint disease by manual therapy versus corticosteroid injections: the protocol of a non-inferiority study",
+      "doi": "10.1136/bmjopen-2019-034439",
+      "pmid": "33303428",
+      "url": "https://doi.org/10.1136/bmjopen-2019-034439",
+      "publicationStatus": "Published final article; exact version described in access details. Crossref recorded publication/online date 2020-12-10 (online date preferred where supplied).",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-02",
+        "details": "Published final protocol, online2020-12-10; abstract/indexed methods only inspected, not full article; no outcome publication retrieved. Bounded accessible-protocol audit 2026-11-02: only explicitly reported categories/schedules entered; access status unchanged and exact unseen methods remain unreported."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1136%2Fbmjopen-2019-034439.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. DOI/title/publication metadata correspond; this record does not establish absence of notices elsewhere."
+      },
+      "design": "Randomized noninferiority study protocol; planned136",
+      "population": "Radiographic symptomatic AC OA age40–70, symptoms>3months.",
+      "comparator": "Manual therapy versus corticosteroid injection.",
+      "coInterventions": "Analgesic/NSAID use allowed.",
+      "outcomes": "Planned activity-pain endpoint, no outcome results extracted.",
+      "followUp": "Planned3months.",
+      "uncertainty": "Protocol is not an efficacy/safety result or exercise trial.",
+      "harms": "Planned adverse-event collection; no outcome data.",
+      "limitations": "No workout restriction, benefit or noninferiority inferred.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Methods and analysis: manual therapy versus one ultrasound-guided corticosteroid injection; no therapeutic exercise mechanics reported.",
+        "dose": "reported in accessible text: Abstract > Methods and analysis: planned one to three manual-therapy visits versus a single injection. This is a protocol contact schedule, not exercise sets/repetitions or an observed result.",
+        "frequency": "reported in accessible text: Abstract > Methods and analysis: manual-therapy visits at one-week intervals; individual exercise frequency not reported.",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract; indexed Methods > Study design; Inclusion criteria; Sample size",
+        "Abstract > Methods and analysis"
+      ]
+    },
+    {
+      "id": "soler-2021",
+      "title": "No differences between conservative and surgical management of acromioclavicular joint osteoarthritis: a scoping review",
+      "doi": "10.1007/s00167-020-06377-8",
+      "pmid": "33386878",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33386878/",
+      "publicationStatus": "Published final article; exact version described in access details.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-02",
+        "details": "Final2021 abstract/metadata inspected."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-02",
+        "method": "Inspected cited publication/PubMed or society record and retrieved version during targeted search; title/identifier/access cross-check. No registry-wide correction or retraction search performed. Exact-DOI Crossref metadata lookup: https://api.crossref.org/works/10.1007%2Fs00167-020-06377-8.",
+        "result": "Bounded publication/version check only; no claim of comprehensive integrity clearance. Any known notice is recorded in limitations. Crossref lookup returned HTTP429; existing publisher/PubMed metadata retained, no Crossref clearance claimed."
+      },
+      "design": "Scoping review,19studies/861shoulders",
+      "population": "Primary/post-traumatic OA and distal-clavicle osteolysis mixed.",
+      "comparator": "No direct conservative-versus-surgery comparison despite title.",
+      "coInterventions": "Varied conservative and operative approaches.",
+      "outcomes": "All reports improved; no superiority/equivalence established.",
+      "followUp": "Mean43.8months.",
+      "uncertainty": "Very-low methodological quality and diagnostic mixing.",
+      "harms": "Low overall complication rate in abstract, not exercise-specific safety.",
+      "limitations": "Do not transplant distal-clavicle osteolysis or traumatic-separation rules to primary OA.",
+      "protocol": {
+        "execution": "not reported",
+        "dose": "not reported",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Methods; Results; Conclusions"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "acoa-evidence-gap",
+      "kind": "evidence-gap",
+      "statement": "Reviews show sparse, low-quality PT evidence and diagnostic mixing; no universal load/range threshold or blanket exercise ban established.",
+      "citations": [
+        {
+          "sourceId": "farrell-2019",
+          "location": "Abstract > Methods; Results; Conclusions"
+        },
+        {
+          "sourceId": "welch-2024",
+          "location": "Abstract > Results; indexed Results > Physiotherapy; Discussion > Non-operative management"
+        },
+        {
+          "sourceId": "soler-2021",
+          "location": "Abstract > Methods; Results; Conclusions"
+        }
+      ],
+      "applicability": "Persistent primary AC OA; distinguish mixed samples.",
+      "limitations": "Positive within-study changes not causal comparative proof."
+    },
+    {
+      "id": "harris-exercise-components",
+      "kind": "study-result",
+      "statement": "Manual-care cohort improved; Appendix B includes all-fours→incline→regular-push-up scapular motion and later resistance work.",
+      "citations": [
+        {
+          "sourceId": "harris-2012",
+          "location": "Methods > Treatment (PDF pp. 69–70)"
+        },
+        {
+          "sourceId": "harris-2012",
+          "location": "Results (PDF pp. 70–71)"
+        },
+        {
+          "sourceId": "harris-2012",
+          "location": "Appendix B > List of Therapeutic Exercises (PDF p. 80)"
+        }
+      ],
+      "applicability": "Injection-confirmed nonacute AC pain, mean41,85%male, military setting; four normal radiographs.",
+      "limitations": "Not all radiographically primary OA; individual component effects cannot be separated."
+    },
+    {
+      "id": "harris-painless-execution",
+      "kind": "published-recommendation",
+      "statement": "Appendix B instructs exercises in a well-tolerated painless manner.",
+      "citations": [
+        {
+          "sourceId": "harris-2012",
+          "location": "Appendix B > List of Therapeutic Exercises (PDF p. 80)"
+        }
+      ],
+      "applicability": "Injection-confirmed nonacute AC pain, mean41,85%male, military setting; four normal radiographs.",
+      "limitations": "Study protocol, not a universal primary-OA damage threshold."
+    },
+    {
+      "id": "acam-no-results",
+      "kind": "evidence-gap",
+      "statement": "ACAM is a manual-therapy/injection protocol, with no results retrieved; cannot supply an exercise prescription.",
+      "citations": [
+        {
+          "sourceId": "acam-protocol",
+          "location": "Abstract; indexed Methods > Study design; Inclusion criteria; Sample size"
+        }
+      ],
+      "applicability": "Planned AC OA population.",
+      "limitations": "No benefit/noninferiority/safety claim."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "quadruped-scapular-candidate",
+      "exerciseId": null,
+      "requestId": "quadruped-straight-arm-scapular-retraction-protraction",
+      "findingIds": [
+        "harris-exercise-components"
+      ],
+      "matchRationale": "Actual all-fours straight-arm stage; high-plank catalog execution is different support.",
+      "status": "candidate"
+    },
+    {
+      "id": "regular-plank-scapular-candidate",
+      "exerciseId": "scapular-push-up",
+      "requestId": null,
+      "findingIds": [
+        "harris-exercise-components"
+      ],
+      "matchRationale": "Appendix B final scapular-retraction/protraction stage in regular push-up position matches catalog scapular-push-up high-plank straight-arm scapular motion per metadata/audit. It is the later stage, not an initial default; no isolated benefit.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "retain-scapular-stages",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain the quadruped and later high-plank scapular-motion stages for independent review, with no default dose or first-stage progression guarantee.",
+      "findingIds": [
+        "harris-exercise-components"
+      ],
+      "citations": [
+        {
+          "sourceId": "harris-2012",
+          "location": "Methods > Treatment (PDF pp. 69–70)"
+        },
+        {
+          "sourceId": "harris-2012",
+          "location": "Results (PDF pp. 70–71)"
+        },
+        {
+          "sourceId": "harris-2012",
+          "location": "Appendix B > List of Therapeutic Exercises (PDF p. 80)"
+        }
+      ],
+      "applicability": {
+        "population": "Injection-confirmed nonacute AC pain, mean41,85%male, military setting; four normal radiographs.",
+        "stage": "Nonacute nonoperative AC pain; indirect for confirmed primary OA.",
+        "rationale": "Actual cohort exercise stages described in appendix."
+      },
+      "limitations": "Manual co-interventions, normal radiographs in some, no isolated efficacy or all-patient safety.",
+      "mappingIds": [
+        "quadruped-scapular-candidate",
+        "regular-plank-scapular-candidate"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "review-tolerable-execution",
+      "kind": "symptom-response",
+      "basis": "published-recommendation",
+      "statement": "Candidate: retain the study instruction for well-tolerated painless execution when reviewing these stages; do not derive a blanket pressing/cross-body prohibition.",
+      "findingIds": [
+        "harris-painless-execution"
+      ],
+      "citations": [
+        {
+          "sourceId": "harris-2012",
+          "location": "Appendix B > List of Therapeutic Exercises (PDF p. 80)"
+        }
+      ],
+      "applicability": {
+        "population": "Injection-confirmed nonacute AC pain, mean41,85%male, military setting; four normal radiographs.",
+        "stage": "Clinician-selected nonacute program.",
+        "rationale": "Actual published instruction, not trial-proven universal threshold."
+      },
+      "limitations": "No autonomous pain score/ROM cap; symptom benefit does not prove unstudied alternatives harmful.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Independent clinical review absent; mapped Harris candidates remain indirect primary-OA research only.",
+    "No numeric clinical load/ROM/pain threshold or global pressing ban; unsupported restrictions withheld.",
+    "Farrell/Welch full access incomplete; ACAM outcome publication not retrieved.",
+    "Harris wall-push-up elbow limit is not automatically a primary-OA contraindication; not mapped as identical unrestricted catalog execution."
+  ],
+  "disposition": "research-only",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

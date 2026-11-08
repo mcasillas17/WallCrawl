@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,15 +33,19 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.dropUnlessResumed
+import androidx.lifecycle.withResumed
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.key
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -54,10 +58,8 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
-import wallcrawl.elopenmike.com.core.ui.components.WebBackgroundPattern
 import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
 import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
-import wallcrawl.elopenmike.com.core.ui.components.isLargeText
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
@@ -65,7 +67,7 @@ import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 @Composable
 fun WorkoutTemplatesScreen(
     viewModel: WorkoutTemplatesViewModel,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     onCreate: () -> Unit,
     onEdit: (String) -> Unit,
     onWorkoutStarted: (String) -> Unit,
@@ -75,104 +77,93 @@ fun WorkoutTemplatesScreen(
     var pendingDelete by remember { mutableStateOf<WorkoutTemplate?>(null) }
     // While a start is in flight nothing else opens: the start navigates when it returns,
     // and would land on top of whatever was opened meanwhile.
-    val anyStarting = state.startingTemplateId != null
+    val anyStarting by viewModel.navigationLocked.collectAsState()
     // Every action is taken only from the settled list (dropUnlessResumed). A second tap
     // while the list animates away would otherwise stack a second editor, or start a
     // workout that finishes after the list left composition, with nobody to open it until
     // the user comes back here and is sent forward again. A dropped tap changes nothing,
     // so it does not clear a message either.
     // Opening the editor is acting on the last message (for example, confirming a unit).
-    val openCreate = dropUnlessResumed { viewModel.clearError(); onCreate() }
+    val openCreate = dropUnlessResumed {
+        if (!viewModel.navigationLocked.value) {
+            viewModel.clearError()
+            onCreate()
+        }
+    }
     // Leaving would clear this screen's ViewModel and cancel a start that may already have
     // written its session, which then opens nowhere; as the editor does during a save,
     // back waits for the start to finish.
-    BackHandler(enabled = anyStarting) {}
-    LaunchedEffect(state.startedSessionId) {
+    BackHandler(enabled = onBack != null || anyStarting) {
+        if (!viewModel.navigationLocked.value) onBack?.invoke()
+    }
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    LaunchedEffect(state.startedSessionId, lifecycle) {
         val sessionId = state.startedSessionId ?: return@LaunchedEffect
-        viewModel.onStartHandled()
-        onWorkoutStarted(sessionId)
+        lifecycle.withResumed {
+            onWorkoutStarted(sessionId)
+            viewModel.onStartHandled()
+        }
     }
 
     Box(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        WebBackgroundPattern()
         Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
-            val eyebrow = @Composable {
-                Text(
-                    text = stringResource(R.string.templates_eyebrow),
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp,
-                    color = MaterialTheme.colorScheme.tertiary
-                )
-            }
-            // Between the two buttons, a long word in large text would break mid-word.
-            val eyebrowAbove = isLargeText()
-            if (eyebrowAbove) {
-                Spacer(Modifier.height(12.dp))
-                eyebrow()
-            }
-            Row(
-                Modifier.fillMaxWidth().padding(vertical = 12.dp),
+            if (onBack != null || state.templates.isNotEmpty()) Row(
+                Modifier.fillMaxWidth().padding(vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = dropUnlessResumed { onBack() }, enabled = !anyStarting, colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
-                        stringResource(R.string.action_back)
-                    )
+                if (onBack != null) {
+                    IconButton(onClick = dropUnlessResumed { if (!viewModel.navigationLocked.value) onBack() }, enabled = !anyStarting) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.action_back))
+                    }
+                    Text(stringResource(R.string.templates_title), style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.weight(1f).a11yHeading())
+                } else {
+                    Spacer(Modifier.weight(1f))
                 }
-                Column(Modifier.weight(1f)) {
-                    if (!eyebrowAbove) eyebrow()
-                    Text(
-                        modifier = Modifier.a11yHeading(),
-                        text = stringResource(R.string.templates_title),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Black
-                    )
-                }
-                IconButton(onClick = openCreate, enabled = !anyStarting, colors = IconButtonDefaults.iconButtonColors(contentColor = CrimsonRedPrimary)) {
-                    Icon(
-                        Icons.Default.Add,
-                        stringResource(R.string.templates_create_content_description)
-                    )
+                val createLabel = stringResource(R.string.templates_create_content_description)
+                if (state.templates.isNotEmpty()) TextButton(onClick = openCreate, enabled = !anyStarting,
+                    modifier = Modifier.semantics { contentDescription = createLabel }) {
+                    Icon(Icons.Default.Add, null)
+                    Text(stringResource(R.string.templates_action_create))
                 }
             }
 
-            state.error.message?.let { messageRes ->
-                key(state.error.attempt) {
-                    Text(
-                        stringResource(messageRes),
-                        color = MaterialTheme.colorScheme.tertiary,
-                        // Announced: a refused Start leaves the tapped button unchanged.
-                        modifier = Modifier
-                            .padding(bottom = 8.dp)
-                            .a11yAnnounced()
-                    )
+            if (state.isLoading) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { LoadingIndicator() }
+            } else LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                state.conditionRefusal?.let { refusal ->
+                    item { wallcrawl.elopenmike.com.core.ui.components.ConditionRefusal(refusal.reasons) }
                 }
-            }
-
-            when {
-                state.isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    LoadingIndicator()
+                state.error.message?.let { error ->
+                    item {
+                        // Announced, and again on a repeat: a refused Start leaves the tapped button unchanged.
+                        key(state.error.attempt) {
+                            Text(stringResource(error), color = MaterialTheme.colorScheme.error, modifier = Modifier.a11yAnnounced())
+                        }
+                    }
                 }
-                state.templates.isEmpty() -> EmptyTemplates(
-                    onCreate = openCreate,
-                    catalogSize = state.catalogSize
-                )
-                else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                    items(state.templates, key = WorkoutTemplate::id) { template ->
+                when {
+                    state.loadFailed -> item {
+                        Text(stringResource(R.string.guided_workouts_load_error), color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.a11yAnnounced())
+                        TextButton(onClick = viewModel::retryLoad) { Text(stringResource(R.string.history_retry)) }
+                    }
+                    state.templates.isEmpty() -> item { EmptyTemplates(onCreate = openCreate, catalogSize = state.catalogSize) }
+                    else -> items(state.templates, key = WorkoutTemplate::id) { template ->
                         TemplateCard(
-                            template = template,
-                            isStarting = state.startingTemplateId == template.id,
-                            anyStarting = anyStarting,
+                            template = template, isStarting = state.startingTemplateId == template.id, anyStarting = anyStarting,
                             onStart = dropUnlessResumed { viewModel.startTemplate(template) },
-                            onEdit = dropUnlessResumed { viewModel.clearError(); onEdit(template.id) },
-                            onDelete = { pendingDelete = template }
+                            onEdit = dropUnlessResumed {
+                                if (!viewModel.navigationLocked.value) {
+                                    viewModel.clearError()
+                                    onEdit(template.id)
+                                }
+                            },
+                            onDelete = { if (!viewModel.navigationLocked.value) pendingDelete = template }
                         )
                     }
-                    item { Spacer(Modifier.height(24.dp)) }
                 }
+                item { Spacer(Modifier.height(16.dp)) }
             }
         }
     }
@@ -209,7 +200,7 @@ fun WorkoutTemplatesScreen(
                 }) {
                     Text(
                         stringResource(R.string.action_delete),
-                        color = MaterialTheme.colorScheme.tertiary,
+                        color = MaterialTheme.colorScheme.error,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -311,20 +302,14 @@ private fun TemplateCard(
                 )
                 if (template.notes.isNotBlank()) {
                     Spacer(Modifier.height(4.dp))
-                    Text(template.notes, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                    Text(template.notes, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
                 }
             }
             IconButton(onClick = onEdit, enabled = !anyStarting, colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant)) {
-                Icon(
-                    Icons.Default.Edit,
-                    stringResource(R.string.a11y_edit_named, template.name)
-                )
+                Icon(Icons.Default.Edit, stringResource(R.string.a11y_edit_named, template.name))
             }
-            IconButton(onClick = onDelete, enabled = !anyStarting, colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.tertiary)) {
-                Icon(
-                    Icons.Default.Delete,
-                    stringResource(R.string.a11y_delete_named, template.name)
-                )
+            IconButton(onClick = onDelete, enabled = !anyStarting, colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.error)) {
+                Icon(Icons.Default.Delete, stringResource(R.string.a11y_delete_named, template.name))
             }
         }
         Spacer(Modifier.height(12.dp))

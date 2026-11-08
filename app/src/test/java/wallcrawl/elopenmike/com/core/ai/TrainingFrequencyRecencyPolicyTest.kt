@@ -9,6 +9,19 @@ import wallcrawl.elopenmike.com.core.model.*
 
 class TrainingFrequencyRecencyPolicyTest {
     @Test
+    fun supportiveInstanceOfSameIdSuppliesNoPracticeButStillValidatesOutcomes() {
+        val ordinary = practice("ordinary", -4)
+        val supportive = practice("supportive", -3).let { s -> s.copy(exercises = s.exercises.map { ex ->
+            ex.copy(prescription = ex.prescription.copy(purpose = PrescriptionPurpose.SUPPORTIVE))
+        }) }
+        val result = policy.derive(listOf(ordinary, supportive), catalog, now, zone)
+        assertThat(result.practiceDates.getValue("Shoulders")).containsExactly(today.minusDays(4).toEpochDay())
+        assertThrows(IllegalArgumentException::class.java) {
+            policy.derive(listOf(supportive.mapSets { it.copy(stopReason = SetStopReason.PAIN_STOP) }), catalog, now, zone)
+        }
+    }
+
+    @Test
     fun staleFutureOnlyAndOnceSeenAreNeutralAndPathologicalHistoryFailsClosed() {
         val sessions = listOf(practice("old-a", -15), practice("old-b", -14),
             practice("future-a", 1), practice("future-b", 2))

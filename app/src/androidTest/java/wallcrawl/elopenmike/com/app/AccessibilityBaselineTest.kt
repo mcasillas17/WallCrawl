@@ -337,7 +337,7 @@ class AccessibilityBaselineTest {
                     Box(Modifier.requiredWidth(288.dp).verticalScroll(rememberScrollState())) { // 320 dp less the screen padding
                         GymFloorSetRow(
                             set = set, weightUnit = "kg", previousSet = set.copy(completedWeight = 47.5, completedReps = 8),
-                            onValuesChanged = {}, onCompletionChanged = { _, _ -> }, onSkipSet = {},
+                            onCompletionChanged = { _, _ -> }, onSkipSet = { _, _ -> },
                             onRecordEffort = { _, _ -> }, onRecordFeltManageable = {}
                         )
                     }
@@ -525,7 +525,8 @@ class AccessibilityBaselineTest {
         compose.waitUntilAtLeastOneExists(hasText(localized.getString(R.string.today_action_resume)), 10_000)
         scan(AppRoutes.TODAY)
         listOf(
-            AppRoutes.PROGRESS, AppRoutes.EXERCISES, AppRoutes.PROFILE, AppRoutes.CREDITS, AppRoutes.PROGRAM,
+            AppRoutes.PROGRESS, AppRoutes.TRENDS, AppRoutes.MUSCLES, AppRoutes.EXERCISES, AppRoutes.CONDITION_REFERENCE,
+            AppRoutes.PROFILE, AppRoutes.CREDITS, AppRoutes.PROGRAM,
             AppRoutes.HISTORY, AppRoutes.historyDetail("recorded"), AppRoutes.WORKOUT_TEMPLATES,
             AppRoutes.TEMPLATE_NEW, AppRoutes.editTemplate("saved"), AppRoutes.activeWorkout("active"),
             // A finished session's route shows the workout summary.

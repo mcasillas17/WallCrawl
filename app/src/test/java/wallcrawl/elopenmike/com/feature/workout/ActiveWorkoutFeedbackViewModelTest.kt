@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.feature.workout
 
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -10,6 +11,10 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
+import wallcrawl.elopenmike.com.core.database.repository.FakeUserProfileDao
+import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
+import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
+import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.ExercisePrescription
 import wallcrawl.elopenmike.com.core.model.ExerciseType
@@ -227,6 +232,89 @@ class ActiveWorkoutFeedbackViewModelTest {
     }
 
     @Test
+    fun onlySuccessfulPainStopsOfferExclusionAndDecliningChangesNothing() = runTest {
+        val repository = FakeRepository(session())
+        val profiles = OfflineUserProfileRepository(FakeUserProfileDao())
+        val initialProfile = profiles.getProfileOnce()
+        val viewModel = viewModel(repository, profiles)
+        collect(viewModel)
+        advanceUntilIdle()
+
+        repository.failSetUpdates = true
+        viewModel.skipSet("set-1", SetStopReason.PAIN_STOP)
+        advanceUntilIdle()
+        assertThat(active(viewModel).painExclusionOffer).isNull()
+
+        repository.failSetUpdates = false
+        viewModel.skipSet("set-1", SetStopReason.OTHER)
+        advanceUntilIdle()
+        assertThat(active(viewModel).painExclusionOffer).isNull()
+
+        viewModel.skipSet("set-1", SetStopReason.PAIN_STOP)
+        advanceUntilIdle()
+        val exerciseId = "incline-dumbbell-press"
+        assertThat(active(viewModel).painExclusionOffer?.exerciseId).isEqualTo(exerciseId)
+        viewModel.dismissPainExclusionOffer(exerciseId)
+        advanceUntilIdle()
+        assertThat(active(viewModel).painExclusionOffer).isNull()
+        assertThat(profiles.getProfileOnce()).isEqualTo(initialProfile)
+    }
+
+    @Test
+    fun acceptingOnlyExcludesTheStoppedExerciseOnceAndPreservesOtherEdits() = runTest {
+        val base = session(setCount = 2)
+        val other = base.exercises.single().copy(id = "other-row", exerciseId = "goblet-squat", sets = emptyList())
+        val repository = FakeRepository(base.copy(exercises = listOf(other) + base.exercises))
+        val profiles = OfflineUserProfileRepository(FakeUserProfileDao())
+        val viewModel = viewModel(repository, profiles)
+        collect(viewModel)
+        advanceUntilIdle()
+
+        viewModel.skipSet("set-1", SetStopReason.PAIN_STOP)
+        advanceUntilIdle()
+        val exerciseId = "incline-dumbbell-press"
+        assertThat(active(viewModel).currentExercise?.exerciseId).isEqualTo("goblet-squat")
+        assertThat(active(viewModel).painExclusionOffer?.exerciseId).isEqualTo(exerciseId)
+        profiles.updateExcludedExercises(listOf("already-out"))
+        val before = profiles.getProfileOnce()
+        viewModel.acceptPainExclusion("goblet-squat")
+        viewModel.acceptPainExclusion(exerciseId)
+        viewModel.acceptPainExclusion(exerciseId)
+        advanceUntilIdle()
+        assertThat(profiles.getProfileOnce()).isEqualTo(before.copy(
+            excludedExerciseIds = listOf("already-out", exerciseId), revision = before.revision + 1
+        ))
+        assertThat(active(viewModel).painExclusionOffer).isNull()
+
+        viewModel.skipSet("set-2", SetStopReason.PAIN_STOP)
+        advanceUntilIdle()
+        assertThat(active(viewModel).painExclusionOffer).isNull()
+    }
+
+    @Test
+    fun unrepresentableImportedExerciseIdNeverExcludesAnotherExercise() = runTest {
+        val exerciseId = "one|||two"
+        val base = session()
+        val repository = FakeRepository(base.copy(exercises = listOf(base.exercises.single().copy(exerciseId = exerciseId))))
+        val profiles = OfflineUserProfileRepository(FakeUserProfileDao())
+        val initial = profiles.getProfileOnce()
+        val viewModel = viewModel(repository, profiles)
+        collect(viewModel)
+        advanceUntilIdle()
+
+        viewModel.skipSet("set-1", SetStopReason.PAIN_STOP)
+        advanceUntilIdle()
+        viewModel.acceptPainExclusion(exerciseId)
+        advanceUntilIdle()
+        assertThat(repository.persistedInputs.single().stopReason).isEqualTo(SetStopReason.PAIN_STOP)
+        assertThat(active(viewModel).painExclusionOffer?.saveFailed).isTrue()
+        assertThat(profiles.getProfileOnce()).isEqualTo(initial)
+        viewModel.dismissPainExclusionOffer(exerciseId)
+        advanceUntilIdle()
+        assertThat(active(viewModel).painExclusionOffer).isNull()
+    }
+
+    @Test
     fun recordingManageable_keepsTheSetCompletedAndItsValues() = runTest {
         val repository = FakeRepository(session())
         val viewModel = viewModel(repository)
@@ -373,6 +461,47 @@ class ActiveWorkoutFeedbackViewModelTest {
         assertThat(discarded).isTrue()
     }
 
+    @Test
+    fun pendingDiscardAndFinishRejectCompetingSetAndTerminalWrites() = runTest {
+        for (discard in listOf(false, true)) {
+            val stored = FakeRepository(session())
+            val release = CompletableDeferred<Unit>()
+            val repository = object : WorkoutRepository by stored {
+                override suspend fun cancelWorkout(sessionId: String) {
+                    release.await()
+                    stored.cancelWorkout(sessionId)
+                }
+                override suspend fun completeWorkout(sessionId: String, actualDurationMinutes: Int): wallcrawl.elopenmike.com.core.model.WorkoutSummary {
+                    release.await()
+                    return stored.completeWorkout(sessionId, actualDurationMinutes)
+                }
+            }
+            val vm = viewModel(repository)
+            collect(vm)
+            advanceUntilIdle()
+            var returned = 0
+            if (discard) {
+                vm.requestCancel()
+                vm.confirmCancel { returned++ }
+            } else {
+                vm.requestFinish()
+                vm.confirmFinish()
+            }
+            advanceUntilIdle()
+            assertThat(active(vm).isSaving).isTrue()
+            vm.updateSet("set-1", completion(8, 50.0))
+            vm.requestCancel()
+            vm.confirmCancel { returned++ }
+            vm.finishWorkout()
+            release.complete(Unit)
+            advanceUntilIdle()
+            assertThat(stored.persistedInputs).isEmpty()
+            assertThat(stored.cancelCalls).isEqualTo(if (discard) 1 else 0)
+            assertThat(stored.completeCalls).isEqualTo(if (discard) 0 else 1)
+            assertThat(returned).isEqualTo(if (discard) 1 else 0)
+        }
+    }
+
     private fun TestScope.collect(viewModel: ActiveWorkoutViewModel) {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
@@ -389,13 +518,14 @@ class ActiveWorkoutFeedbackViewModelTest {
         isCompleted = true
     )
 
-    private fun viewModel(repository: FakeRepository) = ActiveWorkoutViewModel(
+    private fun viewModel(repository: WorkoutRepository, profiles: UserProfileRepository? = null) = ActiveWorkoutViewModel(
         sessionId = SESSION_ID,
         workoutRepository = repository,
         exerciseCatalog = InMemoryExerciseCatalog(),
         workoutHistoryAnalyzer = WorkoutHistoryAnalyzer(),
         nowMillis = { WALL_CLOCK_MILLIS },
-        elapsedRealtimeClock = clock
+        elapsedRealtimeClock = clock,
+        userProfileRepository = profiles
     )
 
     private fun session(

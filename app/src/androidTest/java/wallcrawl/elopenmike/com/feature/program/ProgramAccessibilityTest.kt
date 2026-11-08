@@ -55,7 +55,7 @@ class ProgramAccessibilityTest {
         // The unavailable row's label dims with its radio, not only the circle.
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val unavailable = renderedContrast(context.getString(R.string.program_session_choice))
-        val available = renderedContrast(context.getString(R.string.program_ordinary_choice))
+        val available = renderedContrast(context.getString(R.string.guided_train_ordinary))
         assertWithMessage("unavailable $unavailable vs available $available").that(unavailable).isLessThan(available / 2)
         compose.onNodeWithTag("planning-ORDINARY").assertIsEnabled().performClick()
         assertThat(choice).isEqualTo(WorkoutPlanningIntent.ORDINARY)

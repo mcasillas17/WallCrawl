@@ -129,7 +129,11 @@ class TimedHoldProgrammingTest {
                                 ))
                                 val prescription = factory.create(exercise, context)
                                 assertThat(prescription.targetWeight).isNull()
-                                add("${exercise.id}|$goal|$breakWeeks|$unit|$prescription")
+                                assertThat(prescription.purpose).isEqualTo(PrescriptionPurpose.ORDINARY)
+                                // Keep the pre-purpose snapshot pinned to its original prescription fields.
+                                val historicalDescription = prescription.toString()
+                                    .removeSuffix(", purpose=ORDINARY)") + ")"
+                                add("${exercise.id}|$goal|$breakWeeks|$unit|$historicalDescription")
                             }
                         }
                     }

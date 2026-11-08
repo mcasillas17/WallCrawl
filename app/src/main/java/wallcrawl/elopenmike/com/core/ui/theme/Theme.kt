@@ -3,10 +3,12 @@ package wallcrawl.elopenmike.com.core.ui.theme
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
@@ -15,8 +17,8 @@ import androidx.core.view.WindowCompat
 import wallcrawl.elopenmike.com.core.model.ThemePreference
 
 private val DarkColorScheme = darkColorScheme(
-    primary = CrimsonRedPrimary,
-    onPrimary = TextWhite,
+    primary = CrimsonRedLight,
+    onPrimary = ObsidianBlack,
     primaryContainer = CrimsonRedDark,
     onPrimaryContainer = TextWhite,
     secondary = WebBlueAccent,
@@ -27,6 +29,9 @@ private val DarkColorScheme = darkColorScheme(
     background = ObsidianBlack,
     onBackground = TextPrimary,
     surface = GraphiteSurface,
+    surfaceContainer = GraphiteSurfaceElevated,
+    surfaceContainerHigh = GraphiteSurfaceElevated,
+    surfaceContainerHighest = GraphiteBorder,
     onSurface = TextPrimary,
     surfaceVariant = GraphiteSurfaceElevated,
     onSurfaceVariant = TextSecondary,
@@ -47,6 +52,9 @@ private val LightColorScheme = lightColorScheme(
     background = LightBackground,
     onBackground = LightTextPrimary,
     surface = LightSurface,
+    surfaceContainer = LightSurfaceCard,
+    surfaceContainerHigh = LightSurfaceCard,
+    surfaceContainerHighest = LightDivider,
     onSurface = LightTextPrimary,
     surfaceVariant = LightSurfaceCard,
     onSurfaceVariant = LightTextSecondary,
@@ -87,7 +95,8 @@ fun WallCrawlTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = WallCrawlTypography,
-        content = content
-    )
+        typography = WallCrawlTypography
+    ) {
+        CompositionLocalProvider(LocalContentColor provides colorScheme.onBackground, content = content)
+    }
 }

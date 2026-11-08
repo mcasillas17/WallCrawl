@@ -1,0 +1,281 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "de-quervain-tenosynovitis",
+    "label": "de Quervain tenosynovitis",
+    "aliases": [],
+    "distinctions": "First extensor-compartment APL/EPB disorder; distinct from CMC arthritis and intersection syndrome. A diagnostic Finkelstein maneuver is not automatically treatment."
+  },
+  "scope": {
+    "population": "Adults with de Quervain tenosynovitis; feasibility trial retained probable/almost-certain diagnoses after lead-in.",
+    "stage": "Nonsurgical. Pregnancy, inflammatory disease and relevant comorbidity exclusions limit trial applicability, not universal eligibility.",
+    "operativeStatus": "Nonsurgical research unless explicitly noted; postoperative progression not established.",
+    "exclusions": "Source-specific trial exclusions are applicability limits,not universal contraindications; no automatic diagnosis-only ban.",
+    "uncertainty": "Draft research only. Side, stage, concurrent conditions, starting load and symptom response require individual clinical decisions."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "Native web search with primary PubMed,publisher,PMC,and guideline retrieval",
+      "query": "de Quervain tenosynovitis systematic review 2023 JAMA network open exercises",
+      "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
+      "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search with primary PubMed,publisher,PMC,and guideline retrieval",
+      "query": "de Quervain eccentric exercise randomized trial 2024 2025 exercise",
+      "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
+      "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Native web search with primary PubMed,publisher,PMC,and guideline retrieval",
+      "query": "\"de Quervain\" \"HANDGUIDE\" \"instructions\" \"2014\"",
+      "decision": "Executed query; included sources and direct extraction retained in this dossier and elbow-hand-source-report.md.",
+      "limitations": "Targeted search, not an exhaustive systematic review. Full-text/abstract boundaries explicit; local November 1 / UTC November 2, 2026."
+    }
+  ],
+  "sources": [
+    {
+      "id": "dqt-s1",
+      "title": "Management of de Quervain Tenosynovitis: A Systematic Review and Network Meta-Analysis",
+      "doi": "10.1001/jamanetworkopen.2023.37001",
+      "pmid": "37889490",
+      "url": "https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2811119",
+      "publicationStatus": "Final systematic review and network meta-analysis, JAMA Network Open, October 27, 2023;6(10):e2337001.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text retrieved and relevant methods/results/limitations inspected; access details in the retained source report."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Systematic review/network meta-analysis of 30 randomized studies and 1,663 participants.",
+      "population": "De Quervain tenosynovitis; mean age 46 years, 80% women.",
+      "comparator": "Mostly injection/immobilization and procedure comparisons",
+      "coInterventions": "Varied splints and injection interventions",
+      "outcomes": "Adding three to four weeks of thumb-spica immobilization to injection yielded statistically significant but not clinically important functional improvement. No exercise dose established.",
+      "followUp": "Short/midterm,study-specific",
+      "uncertainty": "Chronicity, reporting and network certainty limit inference; injection findings are not an app exercise prescription.",
+      "harms": "Procedural harms cannot be assigned to exercise; no generic exercise safety estimate.",
+      "limitations": "30 randomized studies/1,663 participants, mean age 46, 80% female; 19 contributed quantitative analyses. Adding thumb-spica immobilization to corticosteroid injection for 3–4 weeks gave statistically significant but not clinically important functional benefits; injection-related treatments dominate evidence. Heterogeneity and low-certainty networks limit rankings. This does not establish exercise dose or prove repetitive thumb movements invariably injurious. Chronicity was inadequately addressed. Injection/splint findings are background clinical context, not an app exercise prescription; procedural harms cannot be attributed to exercise.",
+      "protocol": {
+        "execution": "Predominantly injection/immobilization comparisons; no single exercise execution established.",
+        "dose": "not reported as an exercise regimen.",
+        "frequency": "not reported as an exercise regimen.",
+        "supervision": "not reported as an exercise model.",
+        "progression": "not reported as an exercise rule.",
+        "stoppingRules": "not reported as an exercise rule."
+      },
+      "locations": [
+        "Results; Discussion; Conclusions"
+      ]
+    },
+    {
+      "id": "dqt-g1",
+      "title": "Consensus on a Multidisciplinary Treatment Guideline for de Quervain Disease: Results From the European HANDGUIDE Study",
+      "doi": "10.2522/ptj.20130069",
+      "pmid": null,
+      "url": "https://www.guideline.care/images-recos/A%20Multidisciplinary%20Treatment%20Guideline%20for%20de%20Quervain%20Disease.pdf",
+      "publicationStatus": "Final HANDGUIDE consensus article, Physical Therapy 2014;94(8):1095–1110.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text retrieved and relevant methods/results/limitations inspected; access details in the retained source report."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Four-round Delphi consensus with 35 participating experts; no randomized intervention comparison.",
+      "population": "People with de Quervain disease, with individual severity, duration and prior treatment considered.",
+      "comparator": "No intervention randomized comparison",
+      "coInterventions": "Instructions alongside clinical treatment",
+      "outcomes": "Expert advice reduces repetitive or forceful thumb/wrist movement, thumb flexion and ulnar deviation. Static-exercise avoidance conflicts with later isometric feasibility testing.",
+      "followUp": "No longitudinal trial",
+      "uncertainty": "Expert consensus supplies no tested numeric thresholds; later feasibility data prevent a blanket static-exercise prohibition.",
+      "harms": "Provocation tests may hurt even healthy people; not evidence that a diagnostic maneuver is a therapeutic stretch.",
+      "limitations": "Consensus advises individualized instruction alongside treatment. Function-level advice includes reducing repetitive thumb/wrist movement, forceful manual movement, thumb flexion and ulnar deviation. It also lists avoiding static exercises. These are expert recommendations without tested load/angle/duration thresholds, not universal contraindications. Pain-provoking Finkelstein/Eichhoff maneuvers are diagnostic provocations and may also hurt healthy individuals; not automatically therapeutic stretches. The older blanket static-exercise advice conflicts with later feasibility testing of isometrics (DQT-P1), so it must remain explicitly unresolved.",
+      "protocol": {
+        "execution": "Individual activity/function/pain education; avoid provoking repetitive/forceful movement as expert advice,not a therapeutic movement manual.",
+        "dose": "not reported as a therapeutic exercise dose.",
+        "frequency": "not reported as a therapeutic exercise frequency.",
+        "supervision": "Clinician-tailored instruction; no trial supervision schedule.",
+        "progression": "not reported as a tested exercise progression.",
+        "stoppingRules": "not reported as a validated threshold."
+      },
+      "locations": [
+        "Table 5 Three Levels of Instructions; Discussion; Appendix 3"
+      ]
+    },
+    {
+      "id": "dqt-p1",
+      "title": "Isometric thumb extension exercise as part of a multimodal intervention for de Quervain’s syndrome: A randomised feasibility trial",
+      "doi": "10.1177/17589983231158499",
+      "pmid": "37904860",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10584067/",
+      "publicationStatus": "Final randomized feasibility trial, Hand Therapy 2023;28(2):72–84.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full article text retrieved and relevant methods/results/limitations inspected; access details in the retained source report."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Title/identifier/publication metadata checked against the linked primary record and access account recorded in elbow-hand-source-report.md. Inspected source/version, not an independent retraction-registry audit.",
+        "result": "Identifiers and published versions retained as verified in this session; no clinical approval inferred. Dedicated correction/retraction search not performed; absence of a notice is not established."
+      },
+      "design": "Randomized high-load versus low-load feasibility trial; 28 participants randomized.",
+      "population": "Adults with probable/almost-certain de Quervain syndrome after two weeks of orthosis, education and ROM. Pregnancy and relevant comorbidities were trial exclusions, not proven universal contraindications.",
+      "comparator": "25% versus 70% clinician-measured maximum voluntary isometric contraction; no nonexercise control.",
+      "coInterventions": "Custom orthosis, individualized education and pain-free active ROM.",
+      "outcomes": "Pain/function improved over time without group differences; strength/ROM did not improve significantly. Exercise adherence 86.7%.",
+      "followUp": "Two-week lead-in plus four weeks of loading.",
+      "uncertainty": "Feasibility does not prove efficacy. No superior load arm; measured force and device calibration matter.",
+      "harms": "Two exercise-pain reports, including one two-day pause; four minor orthosis events; no serious adverse events.",
+      "limitations": "28 adults randomized after 2-week orthosis/education/pain-free-ROM phase to 25% versus 70% maximum voluntary isometric thumb extension, daily for 4 weeks. Five 20-second holds, 1-minute rests; clinician measured force and adjusted weekly. No nonexercise control. Pain/function improved over time, no group superiority; strength/ROM did not improve significantly. Two exercise-pain reports (one paused 2 days); four minor orthosis events, no serious events. Feasibility is not efficacy proof or universal safety. Pregnancy/inflammatory disease and relevant comorbidity exclusions restrict applicability, not establish contraindications. Force-meter/device calibration matters; cannot replace measured MVIC with an invented resistance level.",
+      "protocol": {
+        "execution": "Forearm supported on table, hand over edge, wrist neutral, proximal thumb phalanx under padded spring gauge. Unaffected hand loads/unloads gauge and stabilizes base; maintain thumb position against force.",
+        "dose": "Five 20-second holds with one-minute rest; 25% or 70% clinician-measured MVIC. Neither load arm proved superior.",
+        "frequency": "Once daily for four weeks after two-week lead-in.",
+        "supervision": "Weekly clinical MVIC measurement and resistance adjustment; home spring-gauge device.",
+        "progression": "Recalculate resistance weekly from current MVIC to maintain assigned percentage.",
+        "stoppingRules": "If intolerable, reduce hold duration/increase repetitions; if still intolerable, rest one week then reassess. Repeated intolerance prompted cessation. Trial-specific, not released guidance."
+      },
+      "locations": [
+        "Methods > Exercise intervention; Results > Adverse events"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "dqt-s1-finding",
+      "kind": "study-result",
+      "statement": "Adding three to four weeks of thumb-spica immobilization to injection yielded statistically significant but not clinically important functional improvement. No exercise dose established.",
+      "citations": [
+        {
+          "sourceId": "dqt-s1",
+          "location": "Results; Discussion; Conclusions"
+        }
+      ],
+      "applicability": "De Quervain tenosynovitis; mean age 46 years, 80% women.",
+      "limitations": "Chronicity, reporting and network certainty limit inference; injection findings are not an app exercise prescription. Procedural harms cannot be assigned to exercise; no generic exercise safety estimate."
+    },
+    {
+      "id": "dqt-g1-finding",
+      "kind": "published-recommendation",
+      "statement": "Expert advice reduces repetitive or forceful thumb/wrist movement, thumb flexion and ulnar deviation. Static-exercise avoidance conflicts with later isometric feasibility testing.",
+      "citations": [
+        {
+          "sourceId": "dqt-g1",
+          "location": "Table 5 Three Levels of Instructions; Discussion; Appendix 3"
+        }
+      ],
+      "applicability": "People with de Quervain disease, with individual severity, duration and prior treatment considered.",
+      "limitations": "Expert consensus supplies no tested numeric thresholds; later feasibility data prevent a blanket static-exercise prohibition. Provocation tests may hurt even healthy people; not evidence that a diagnostic maneuver is a therapeutic stretch."
+    },
+    {
+      "id": "dqt-p1-finding",
+      "kind": "study-result",
+      "statement": "Pain/function improved over time without group differences; strength/ROM did not improve significantly. Exercise adherence 86.7%.",
+      "citations": [
+        {
+          "sourceId": "dqt-p1",
+          "location": "Methods > Exercise intervention; Results > Adverse events"
+        }
+      ],
+      "applicability": "Adults with probable/almost-certain de Quervain syndrome after two weeks of orthosis, education and ROM. Pregnancy and relevant comorbidities were trial exclusions, not proven universal contraindications.",
+      "limitations": "Feasibility does not prove efficacy. No superior load arm; measured force and device calibration matter. Two exercise-pain reports, including one two-day pause; four minor orthosis events; no serious adverse events."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "measured-isometric-thumb-extension-spring-gauge-mapping",
+      "exerciseId": null,
+      "requestId": "measured-isometric-thumb-extension-spring-gauge",
+      "findingIds": [
+        "dqt-p1-finding"
+      ],
+      "matchRationale": "No exact catalog thumb-extension gauge identity verified. Support, device and calibrated force distinguish this from band exercise. Dose arms at 25% versus 70% MVIC remain one execution identity.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "dqt-isometric-research",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Measured isometric thumb extension is a feasibility-stage research candidate. Individual assessment, force calibration and cointerventions matter; no superior load arm established.",
+      "findingIds": [
+        "dqt-p1-finding",
+        "dqt-g1-finding"
+      ],
+      "citations": [
+        {
+          "sourceId": "dqt-p1",
+          "location": "Methods > Exercise intervention; Results > Adverse events"
+        },
+        {
+          "sourceId": "dqt-g1",
+          "location": "Table 5 Three Levels of Instructions; Discussion; Appendix 3"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with de Quervain tenosynovitis; feasibility trial retained probable/almost-certain diagnoses after lead-in.",
+        "stage": "Nonsurgical. Pregnancy, inflammatory disease and relevant comorbidity exclusions limit trial applicability, not universal eligibility.",
+        "rationale": "Source-specific draft implication. Preserve indirectness and all concurrent condition, equipment and joint restrictions."
+      },
+      "limitations": "Candidate only, unreviewed, not clinically released. No invented pain/load/ROM cutoff. Benefit does not establish that alternatives are harmful; trial exclusions are applicability limits.",
+      "mappingIds": [
+        "measured-isometric-thumb-extension-spring-gauge-mapping"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "dqt-provocation-modification-hypothesis",
+      "kind": "symptom-response",
+      "basis": "unresolved-hypothesis",
+      "statement": "Consider modifying individually provoking repetitive or forceful thumb/wrist tasks. Older static-exercise avoidance is conflicted, not a hard prohibition.",
+      "findingIds": [
+        "dqt-g1-finding",
+        "dqt-p1-finding"
+      ],
+      "citations": [
+        {
+          "sourceId": "dqt-g1",
+          "location": "Table 5 Three Levels of Instructions; Discussion; Appendix 3"
+        },
+        {
+          "sourceId": "dqt-p1",
+          "location": "Methods > Exercise intervention; Results > Adverse events"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with de Quervain tenosynovitis; feasibility trial retained probable/almost-certain diagnoses after lead-in.",
+        "stage": "Nonsurgical. Pregnancy, inflammatory disease and relevant comorbidity exclusions limit trial applicability, not universal eligibility.",
+        "rationale": "Source-specific draft implication. Preserve indirectness and all concurrent condition, equipment and joint restrictions."
+      },
+      "limitations": "Candidate only, unreviewed, not clinically released. No invented pain/load/ROM cutoff. Benefit does not establish that alternatives are harmful; trial exclusions are applicability limits.",
+      "mappingIds": [],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "2014 consensus static-exercise avoidance conflicts with 2023 isometric feasibility testing.",
+    "Feasibility trial lacks nonexercise control and superior load arm; calibrated force/device required.",
+    "No aggressive Finkelstein-stretch benefit or universal ulnar-deviation/force limit established."
+  ],
+  "disposition": "unresolved",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}

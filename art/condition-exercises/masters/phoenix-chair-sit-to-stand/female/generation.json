@@ -1,0 +1,12 @@
+{
+  "tool": "native-imagegen",
+  "prompt": "Scientific educational line illustration for a workout app. Landscape 3:1 sprite strip with exactly three equally wide square cells next to one another, two generous completely empty gutters, no dividers. One entire figure centered in each cell at the same scale, camera, side, and ground line. Start, middle, end phase in reading order. Each figure and all equipment wholly inside its cell, with margins. Adult woman with tied-back hair wearing a plain short-sleeved athletic T-shirt and knee-length exercise shorts. Base sit-to-stand from a stable, armless four-legged chair. Slightly elevated three-quarter side view. Both feet planted shoulder-width apart in exactly the same position throughout. Same chair, completely stationary, in all three cells. Left: person seated tall with seat supporting pelvis. Center: rising, hips clearly lifted off seat, hips and knees partially bent, upper body naturally forward. Right: standing upright in front of the same chair, hips and knees extended comfortably. Chair and both soles must remain at corresponding floor coordinates. Same scale with room above seated head for standing endpoint. Hands remain free, no pushing from chair. Draw clean thin pure WHITE outlines with sparse interior contour details. See-through body, clothing, equipment and background; all interiors transparent, no areas of solid paint. Flat, neutral instructional drawing composed for display against a dark background. No text, arrows, panel labels, dimensions, numerals, shading, halftone, glow, decorative marks or scenery.",
+  "outputSha256": "9e0840e15a9df4666a4ca82af959a2793dfb18022e50d69873d25642a2d00a82",
+  "layout": "three-panels",
+  "variant": "female",
+  "exerciseId": "phoenix-chair-sit-to-stand",
+  "nativeStrip": {
+    "path": "masters/phoenix-chair-sit-to-stand/female/native-strip.png",
+    "sha256": "9e0840e15a9df4666a4ca82af959a2793dfb18022e50d69873d25642a2d00a82"
+  }
+}

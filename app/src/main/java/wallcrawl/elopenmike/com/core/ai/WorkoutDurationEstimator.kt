@@ -46,13 +46,12 @@ object WorkoutDurationEstimator {
 
     private const val DEFAULT_SET_SECONDS = 45
 
-    fun estimateMinutes(exercises: List<PlannedExercise>): Int {
-        // Long arithmetic so twenty maximal exercises cannot overflow before the clamp.
-        val totalSeconds = exercises.sumOf { exercise ->
+    fun estimateSeconds(exercises: List<PlannedExercise>): Long =
+        exercises.sumOf { exercise ->
             val prescription = exercise.prescription
             val setSeconds = prescription.targetDurationSeconds ?: DEFAULT_SET_SECONDS
             prescription.targetSets.toLong() * (setSeconds.toLong() + prescription.restSeconds)
         }
-        return (totalSeconds / 60L).coerceIn(MIN_MINUTES.toLong(), MAX_MINUTES.toLong()).toInt()
-    }
+    fun estimateMinutes(exercises: List<PlannedExercise>): Int =
+        (estimateSeconds(exercises) / 60L).coerceIn(MIN_MINUTES.toLong(), MAX_MINUTES.toLong()).toInt()
 }

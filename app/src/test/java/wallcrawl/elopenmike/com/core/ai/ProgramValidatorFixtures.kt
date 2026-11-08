@@ -77,7 +77,7 @@ fun validatorContext(
     reviewedPath: Boolean = false,
     adaptationState: AdaptationState = AdaptationState.UNCALIBRATED,
     directPrimarySets: Map<String, Int> = emptyMap(),
-    ledgerPolicyVersion: LedgerPolicyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+    ledgerPolicyVersion: LedgerPolicyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
     ledgerReviewPolicyVersion: Int = 1,
     ledgerCatalogVersion: String = VALIDATOR_CATALOG_VERSION,
     programConstraints: SessionProgramConstraints = SessionProgramConstraints(),

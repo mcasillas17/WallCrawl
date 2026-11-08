@@ -39,9 +39,18 @@ class PlannerFixtureCorpusTest {
             "reviewed-enabled-no-approved",
             "reviewed-enabled-uncleared-joint-constraint",
             "reviewed-enabled-cleared-joint-constraints",
-            "concurrent-activity"
+            "concurrent-activity",
+            "condition-released",
+            "condition-compatible",
+            "condition-incompatible",
+            "condition-missing-context",
+            "condition-withdrawn",
+            "condition-duration",
+            "condition-equipment",
+            "condition-pain-stop",
+            "condition-removed-pain-stop"
         ).inOrder()
-        assertThat(fixtures.map { it.id }.distinct()).hasSize(14)
+        assertThat(fixtures.map { it.id }.distinct()).hasSize(23)
     }
 
     @Test
@@ -100,7 +109,7 @@ class PlannerFixtureCorpusTest {
         val built = contextFactory.create(withCompletedHistory)
         val ledger = checkNotNull(built.context.trainingProgramState).weeklyLedger
 
-        assertThat(ledger.policyVersion).isEqualTo(LedgerPolicyVersion.PRIMARY_ONLY_V1)
+        assertThat(ledger.policyVersion).isEqualTo(LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2)
         assertThat(ledger.weekStartEpochDay).isEqualTo(MONDAY_EPOCH_DAY)
         assertThat(ledger.timeZoneId).isEqualTo("UTC")
         assertThat(ledger.catalogVersion).isEqualTo(base.catalogVersion)
@@ -178,7 +187,7 @@ class PlannerFixtureCorpusTest {
         assertThat(built.context.trainingProgramState?.adaptationState)
             .isEqualTo(reviewedEligibility.adaptationState)
         assertThat(built.context.trainingProgramState?.weeklyLedger?.policyVersion)
-            .isEqualTo(LedgerPolicyVersion.PRIMARY_ONLY_V1)
+            .isEqualTo(LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2)
         assertThat(built.context.trainingProgramState?.weeklyLedger?.directPrimarySets)
             .isEmpty()
         assertThat(built.catalogExercises).hasSize(302)

@@ -230,7 +230,7 @@ class StateBasedTrainingPolicy(
             )
         }
         val ledger = programState.weeklyLedger
-        if (ledger.policyVersion != LedgerPolicyVersion.PRIMARY_ONLY_V1) {
+        if (ledger.policyVersion != LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2) {
             return TrainingPolicyResult.Failure(
                 TrainingPolicyFailureReason.UNSUPPORTED_LEDGER_POLICY
             )

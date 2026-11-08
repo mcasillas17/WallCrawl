@@ -1,5 +1,9 @@
 package wallcrawl.elopenmike.com.feature.exercises
 
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -8,23 +12,26 @@ import wallcrawl.elopenmike.com.core.model.Exercise
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ExercisesViewModel(
-    private val exerciseCatalog: ExerciseCatalog
+    private val exerciseCatalog: ExerciseCatalog,
+    private val savedState: SavedStateHandle = SavedStateHandle()
 ) : ViewModel() {
 
-    private val queryFlow = MutableStateFlow("")
-    private val selectedMuscleFlow = MutableStateFlow<String?>(null)
-    private val selectedEquipmentFlow = MutableStateFlow<String?>(null)
-    private val selectedExerciseDetailFlow = MutableStateFlow<Exercise?>(null)
+    private val queryFlow = savedState.getStateFlow("query", "")
+    private val selectedMuscleFlow = savedState.getStateFlow<String?>("muscle", null)
+    private val selectedEquipmentFlow = savedState.getStateFlow<String?>("equipment", null)
+    private val selectedExerciseDetailFlow = savedState.getStateFlow<String?>("exerciseId", null)
+        .mapLatest { id -> id?.let { exerciseCatalog.getExerciseById(it) } }
 
     private val filterParamsFlow = combine(
         queryFlow,
@@ -38,7 +45,7 @@ class ExercisesViewModel(
         exerciseCatalog.searchExercises(query = query, muscle = muscle, equipment = equipment)
     }
 
-    val uiState: StateFlow<ExercisesUiState> = combine(
+    private val results = combine(
         searchResultsFlow,
         queryFlow,
         selectedMuscleFlow,
@@ -61,40 +68,43 @@ class ExercisesViewModel(
     }.catch { error ->
         if (error is CancellationException) throw error
         emit(ExercisesUiState.Error())
+    }
+    private val loadAttempt = MutableStateFlow(0)
+    val uiState: StateFlow<ExercisesUiState> = loadAttempt.flatMapLatest {
+        results.onStart { emit(ExercisesUiState.Loading) }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = ExercisesUiState.Loading
     )
 
+    fun retryLoad() { loadAttempt.value++ }
+
     fun onQueryChanged(newQuery: String) {
-        queryFlow.value = newQuery
+        savedState["query"] = newQuery.take(256)
     }
 
     fun selectMuscle(muscle: String?) {
-        selectedMuscleFlow.value = if (selectedMuscleFlow.value == muscle) null else muscle
+        savedState["muscle"] = if (selectedMuscleFlow.value == muscle) null else muscle
     }
 
     fun selectEquipment(equipment: String?) {
-        selectedEquipmentFlow.value = if (selectedEquipmentFlow.value == equipment) null else equipment
+        savedState["equipment"] = if (selectedEquipmentFlow.value == equipment) null else equipment
     }
 
     fun openExerciseDetail(exercise: Exercise) {
-        selectedExerciseDetailFlow.value = exercise
+        savedState["exerciseId"] = exercise.id
     }
 
     fun closeExerciseDetail() {
-        selectedExerciseDetailFlow.value = null
+        savedState["exerciseId"] = null
     }
 
     companion object {
         fun provideFactory(
             exerciseCatalog: ExerciseCatalog
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return ExercisesViewModel(exerciseCatalog) as T
-            }
+        ): ViewModelProvider.Factory = viewModelFactory {
+            initializer { ExercisesViewModel(exerciseCatalog, createSavedStateHandle()) }
         }
     }
 }

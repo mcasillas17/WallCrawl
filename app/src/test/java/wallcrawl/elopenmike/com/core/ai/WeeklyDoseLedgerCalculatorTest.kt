@@ -24,6 +24,35 @@ class WeeklyDoseLedgerCalculatorTest {
     private val week = TrainingWeek.startingOn(MONDAY_EPOCH_DAY, ZoneId.of("UTC"))
 
     @Test
+    fun supportiveWorkStillCountsTowardTheInputReconstructionBound() {
+        val support = exerciseInstance("support", listOf(completedNormalSet())).let { it.copy(
+            sets = List(WeeklyDoseLedgerCalculator.MAX_WORK_SETS_PER_WEEK + 1) { index -> completedNormalSet(id = "set-$index") },
+            prescription = it.prescription.copy(purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE)) }
+        assertThrows(IllegalArgumentException::class.java) {
+            calculator.calculate(listOf(completedSession("large", week.startEpochMillis, listOf(support))),
+                emptyMap(), LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2, week, SYNTHETIC_CATALOG_VERSION, 1)
+        }
+    }
+
+    @Test
+    fun sameCatalogIdCreditsOnlyItsOrdinaryInstancesAndSupportDoesNotBecomeAnOmission() {
+        val ordinary = exerciseInstance("press", listOf(completedNormalSet()))
+        val supportive = exerciseInstance("press", listOf(completedNormalSet())).let {
+            it.copy(prescription = it.prescription.copy(purpose = wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.SUPPORTIVE))
+        }
+        val sessions = listOf(completedSession("one", week.startEpochMillis, listOf(ordinary)),
+            completedSession("two", week.startEpochMillis + 1, listOf(supportive, supportive.copy(id = "unknown-support", exerciseId = "unknown"))))
+        val ledger = calculator.calculate(sessions, mapOf("press" to syntheticApprovedExercise("press", "Chest")),
+            LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2, week, SYNTHETIC_CATALOG_VERSION, 1)
+        assertThat(ledger.directPrimarySets).containsExactly("Chest", 1)
+        assertThat(ledger.unattributedWorkSets).isEmpty()
+        assertThrows(IllegalArgumentException::class.java) {
+            calculator.calculate(sessions + sessions.last(), emptyMap(), LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
+                week, SYNTHETIC_CATALOG_VERSION, 1)
+        }
+    }
+
+    @Test
     fun oneCompletedNormalWorkSetCreditsItsDirectPrimaryMuscleExactlyOnce() {
         val session = completedSession(
             id = "session-1",
@@ -45,7 +74,7 @@ class WeeklyDoseLedgerCalculatorTest {
                     descriptiveSecondaryMuscles = setOf("Triceps")
                 )
             ),
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
             week = week,
             catalogVersion = SYNTHETIC_CATALOG_VERSION,
             reviewPolicyVersion = 1
@@ -119,7 +148,7 @@ class WeeklyDoseLedgerCalculatorTest {
                     directPrimaryMuscle = "Back"
                 )
             ),
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
             week = week,
             catalogVersion = SYNTHETIC_CATALOG_VERSION,
             reviewPolicyVersion = 1
@@ -195,7 +224,7 @@ class WeeklyDoseLedgerCalculatorTest {
                     descriptiveSecondaryMuscles = setOf("Glutes")
                 )
             ),
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
             week = week,
             catalogVersion = SYNTHETIC_CATALOG_VERSION,
             reviewPolicyVersion = 1
@@ -230,7 +259,7 @@ class WeeklyDoseLedgerCalculatorTest {
                 "synthetic-draft" to syntheticDraftExercise("synthetic-draft", "Quadriceps"),
                 "synthetic-missing" to syntheticExerciseWithoutReviewedMetadata("synthetic-missing")
             ),
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
             week = week,
             catalogVersion = SYNTHETIC_CATALOG_VERSION,
             reviewPolicyVersion = 1
@@ -340,7 +369,7 @@ class WeeklyDoseLedgerCalculatorTest {
                 calculator.calculate(
                     sessions = emptyList(),
                     exercisesById = emptyMap(),
-                    policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+                    policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
                     week = week,
                     catalogVersion = "  ",
                     reviewPolicyVersion = 1
@@ -353,7 +382,7 @@ class WeeklyDoseLedgerCalculatorTest {
                 calculator.calculate(
                     sessions = emptyList(),
                     exercisesById = emptyMap(),
-                    policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+                    policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
                     week = week,
                     catalogVersion = SYNTHETIC_CATALOG_VERSION,
                     reviewPolicyVersion = -1
@@ -367,7 +396,7 @@ class WeeklyDoseLedgerCalculatorTest {
         val ledger = calculator.calculate(
             sessions = emptyList(),
             exercisesById = emptyMap(),
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
             week = week,
             catalogVersion = SYNTHETIC_CATALOG_VERSION,
             reviewPolicyVersion = 1
@@ -460,7 +489,7 @@ class WeeklyDoseLedgerCalculatorTest {
                 "synthetic-row" to syntheticApprovedExercise("synthetic-row", "Back"),
                 "synthetic-squat" to syntheticApprovedExercise("synthetic-squat", "Quadriceps")
             ),
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
             week = week,
             catalogVersion = SYNTHETIC_CATALOG_VERSION,
             reviewPolicyVersion = 1
@@ -475,7 +504,7 @@ class WeeklyDoseLedgerCalculatorTest {
                     directPrimaryMuscle = "Chest"
                 )
             ),
-            policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+            policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
             week = week,
             catalogVersion = SYNTHETIC_CATALOG_VERSION,
             reviewPolicyVersion = 1
@@ -496,7 +525,7 @@ class WeeklyDoseLedgerCalculatorTest {
                 descriptiveSecondaryMuscles = setOf("Triceps")
             )
         ),
-        policyVersion = LedgerPolicyVersion.PRIMARY_ONLY_V1,
+        policyVersion = LedgerPolicyVersion.ORDINARY_PRIMARY_ONLY_V2,
         week = week,
         catalogVersion = SYNTHETIC_CATALOG_VERSION,
         reviewPolicyVersion = 1

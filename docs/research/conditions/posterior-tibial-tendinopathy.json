@@ -1,0 +1,306 @@
+{
+  "schemaVersion": 1,
+  "condition": {
+    "id": "posterior-tibial-tendinopathy",
+    "label": "posterior tibial tendinopathy",
+    "aliases": [],
+    "distinctions": "Rigid advanced deformity/progressive functional loss is outside early-stage trials; no universal exercise ban follows."
+  },
+  "scope": {
+    "population": "Adults with early stage I/II posterior tibial tendinopathy/dysfunction; mostly women in their 50s in small trials.",
+    "stage": "Early flexible deformity/conservative care; stage and support needs must be established.",
+    "operativeStatus": "Nonoperative evidence unless explicitly stated otherwise; no postoperative protocol proposed.",
+    "exclusions": "Rigid advanced deformity/progressive functional loss is outside early-stage trials; no universal exercise ban follows.",
+    "uncertainty": "Draft research only; diagnosis, individual starting load, stage and clinical review remain unresolved."
+  },
+  "searchLog": [
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "posterior tibial tendon dysfunction exercise systematic review randomized trial Kulig 2009 Houck 2015 dose",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "native web search",
+      "query": "Nonoperative management posterior tibial tendon dysfunction orthoses resistive exercise randomized controlled trial 2009 Kulig",
+      "decision": "Screened for condition-specific primary studies, final guidelines and syntheses; included findings and access boundaries are recorded in sources.",
+      "limitations": "Targeted search, not exhaustive systematic review. Actual local date 2026-11-01 / UTC 2026-11-02. Nonprimary search results were not used as exercise evidence."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1136/bmjsem-2018-000430",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.2522/ptj.20070242",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "DOI:10.1177/1071100715579906",
+      "decision": "Exact title/DOI/PMID, first-publication date, publication type and returned comment/correction links checked; used for this source metadata.",
+      "limitations": "Actual query executed individually with resultType=core. A bounded metadata check, not registry-wide clearance; correction content gaps remain explicit."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "EXT_ID:19022863 AND SRC:MED",
+      "decision": "Bounded accessible-protocol audit: preserve explicitly reported category, program/visit/device schedule or context with the reported-in-accessible-text prefix. No unseen primary mechanics copied from secondary sources.",
+      "limitations": "Local 2026-11-01 / UTC 2026-11-02. Access status unchanged; exact missing exercise mechanics, per-exercise load/dose, and clinical applicability remain unresolved."
+    },
+    {
+      "date": "2026-11-01",
+      "service": "Europe PMC REST core metadata",
+      "query": "EXT_ID:25857939 AND SRC:MED",
+      "decision": "Bounded accessible-protocol audit: preserve explicitly reported category, program/visit/device schedule or context with the reported-in-accessible-text prefix. No unseen primary mechanics copied from secondary sources.",
+      "limitations": "Local 2026-11-01 / UTC 2026-11-02. Access status unchanged; exact missing exercise mechanics, per-exercise load/dose, and clinical applicability remain unresolved."
+    }
+  ],
+  "sources": [
+    {
+      "id": "ptt-s",
+      "title": "Exercise for posterior tibial tendon dysfunction: a systematic review of randomised clinical trials and clinical guidelines.",
+      "doi": "10.1136/bmjsem-2018-000430",
+      "pmid": "30271611",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6157513/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2018-09-19. Version/access details below.",
+      "access": {
+        "status": "full-text",
+        "date": "2026-11-01",
+        "details": "Full Europe PMC XML retrieved and key methods, results and protocol tables inspected. Earlier PMC access was challenged where recorded in lower-leg-source-report.md. https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6157513/fullTextXML"
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1136/bmjsem-2018-000430 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Systematic review of three small RCTs, 93 enrolled participants.",
+      "population": "Mostly women in their 50 s with stage I/II posterior tibial dysfunction/tendinopathy.",
+      "comparator": "Resistance types plus orthoses/stretching versus orthoses/stretching or no intervention.",
+      "coInterventions": "Orthoses and stretching limit attribution to strengthening alone.",
+      "outcomes": "Possible added eccentric benefit, but sparse evidence and poor dose reporting. The moderate home program in Houck showed minimal additional benefit.",
+      "followUp": "Six- to twelve-week trials.",
+      "uncertainty": "Only three small early-stage trials, sparse exercise reporting and multimodal care. Table 3 is an indirect extraction of primary protocols, whose exact apparatus was not independently verified. No generalisation to advanced rigid deformity.",
+      "harms": "No reliable pooled harms estimate.",
+      "limitations": "Only three small early-stage trials, sparse exercise reporting and multimodal care. Table 3 is an indirect extraction of primary protocols, whose exact apparatus was not independently verified. No generalisation to advanced rigid deformity. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "Table 3 describes plantarflexed adduction: concentric neutral to end range or eccentric in reverse. Houck used bilateral/single-leg heel raises and band adduction/inversion in plantarflexion.",
+        "dose": "Kulig review table: 3 × 15 at 15 RM, 5-second contraction, 1–2-minute rests. Houck: 2–3 × 10 progressing toward 30. These are indirect trial extractions.",
+        "frequency": "Twice daily for 12 weeks in the review table.",
+        "supervision": "Not consistently reported.",
+        "progression": "Review table describes load/repetition changes; exact primary apparatus/instructions remain unresolved.",
+        "stoppingRules": "not reported as universal stopping rules."
+      },
+      "locations": [
+        "Results > Interventions; Tables1–2",
+        "Table3 > Exercise descriptors"
+      ]
+    },
+    {
+      "id": "ptt-r1",
+      "title": "Nonsurgical management of posterior tibial tendon dysfunction with orthoses and resistive exercise: a randomized controlled trial.",
+      "doi": "10.2522/ptj.20070242",
+      "pmid": "19022863",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19022863/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2008-11-20. Version/access details below.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed abstract accessed; OUP PDF redirected/500; full primary protocol not inspected. Bounded protocol audit re-read the primary abstract through Europe PMC core metadata; retained only explicitly reported program/category facts, with no full-method access upgrade."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.2522/ptj.20070242 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Randomised controlled trial, n=36.",
+      "population": "Adults with stage I/II posterior tibial tendinopathy.",
+      "comparator": "Orthoses/stretching versus the same care plus concentric or eccentric progressive resistance.",
+      "coInterventions": "All groups used orthoses and stretching.",
+      "outcomes": "FFI improved in all groups; the eccentric group improved most. Pain after the five-minute walk improved across groups.",
+      "followUp": "12 weeks.",
+      "uncertainty": "Small early-stage trial with orthoses/stretching in every arm and no untreated comparator. Full primary exercise protocol and harms not retrieved; review-extracted details must remain attributed to the review.",
+      "harms": "not reported in the accessible abstract.",
+      "limitations": "Small early-stage trial with orthoses/stretching in every arm and no untreated comparator. Full primary exercise protocol and harms not retrieved; review-extracted details must remain attributed to the review. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Methods describes orthoses/stretching alone or with concentric or eccentric progressive resistance. Exact exercise mechanics/apparatus remain unavailable in the primary abstract.",
+        "dose": "reported in accessible text: Abstract > Methods reports a 12-week program. It does not report per-exercise sets, repetitions or loading; twice-daily frequency comes from Ross Table 3 and remains an indirect extraction in PTT-S.",
+        "frequency": "not reported",
+        "supervision": "not reported",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Methods, Results and Conclusion",
+        "Abstract > Methods"
+      ]
+    },
+    {
+      "id": "ptt-r2",
+      "title": "Randomized Controlled Trial Comparing Orthosis Augmented by Either Stretching or Stretching and Strengthening for Stage II Tibialis Posterior Tendon Dysfunction.",
+      "doi": "10.1177/1071100715579906",
+      "pmid": "25857939",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25857939/",
+      "publicationStatus": "Final journal publication; metadata firstPublicationDate 2015-04-09. Version/access details below.",
+      "access": {
+        "status": "abstract-only",
+        "date": "2026-11-01",
+        "details": "PubMed abstract inspected and DOI metadata rechecked; no full primary protocol inspected. Bounded protocol audit re-read the primary abstract through Europe PMC core metadata; retained only explicitly reported program/category facts, with no full-method access upgrade."
+      },
+      "integrity": {
+        "checkedOn": "2026-11-01",
+        "method": "Publisher/PubMed records inspected during research; Europe PMC REST core metadata DOI:10.1177/1071100715579906 rechecked during serialization, including publication type and comment/correction links. Not a registry-wide clearance.",
+        "result": "No correction/retraction link returned in this bounded metadata check. No claim of exhaustive integrity clearance or automatic supersession."
+      },
+      "design": "Randomised trial of stage II dysfunction; 36 participants in analysed groups according to the review.",
+      "population": "Middle-aged adults with stage II dysfunction managed with an orthosis.",
+      "comparator": "Orthosis/stretching versus the same care plus moderate home strengthening.",
+      "coInterventions": "Orthosis and stretching in both groups.",
+      "outcomes": "Both groups improved pain/function; between-group differences were minimal. Deep posterior-compartment isometric strength did not differ.",
+      "followUp": "12 weeks.",
+      "uncertainty": "Moderate home strengthening added little to orthosis/stretching. Full primary methods/harms unavailable; trial cannot establish a universally ineffective or harmful exercise.",
+      "harms": "not reported in the accessible abstract.",
+      "limitations": "Moderate home strengthening added little to orthosis/stretching. Full primary methods/harms unavailable; trial cannot establish a universally ineffective or harmful exercise. Research candidate only; no clinical release.",
+      "protocol": {
+        "execution": "reported in accessible text: Abstract > Methods compares prefabricated orthosis plus stretching with orthosis plus stretching/strengthening. Exact exercise mechanics are not described.",
+        "dose": "reported in accessible text: Abstract > Results reports a 12-week trial period, with Methods assessing outcomes six and twelve weeks after exercise began. These are program/assessment intervals, not per-exercise dose or session frequency.",
+        "frequency": "not reported",
+        "supervision": "reported in accessible text: Abstract > Background and Conclusions identify a moderate-intensity home-based program; direct-supervision arrangements and visit counts are not reported.",
+        "progression": "not reported",
+        "stoppingRules": "not reported"
+      },
+      "locations": [
+        "Abstract > Results and Conclusions",
+        "Abstract > Background, Methods, Results and Conclusions"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "ptt-s-result",
+      "kind": "study-result",
+      "statement": "Possible added eccentric benefit, but sparse evidence and poor dose reporting. The moderate home program in Houck showed minimal additional benefit. Harms: No reliable pooled harms estimate.",
+      "citations": [
+        {
+          "sourceId": "ptt-s",
+          "location": "Results > Interventions; Tables1–2"
+        },
+        {
+          "sourceId": "ptt-s",
+          "location": "Table3 > Exercise descriptors"
+        }
+      ],
+      "applicability": "Mostly women in their 50 s with stage I/II posterior tibial dysfunction/tendinopathy.",
+      "limitations": "Only three small early-stage trials, sparse exercise reporting and multimodal care. Table 3 is an indirect extraction of primary protocols, whose exact apparatus was not independently verified. No generalisation to advanced rigid deformity."
+    },
+    {
+      "id": "ptt-s-execution",
+      "kind": "study-result",
+      "statement": "Reported execution: Table 3 describes plantarflexed adduction: concentric neutral to end range or eccentric in reverse. Houck used bilateral/single-leg heel raises and band adduction/inversion in plantarflexion. Study dose: Kulig review table: 3 × 15 at 15 RM, 5-second contraction, 1–2-minute rests. Houck: 2–3 × 10 progressing toward 30. These are indirect trial extractions. Frequency: Twice daily for 12 weeks in the review table.",
+      "citations": [
+        {
+          "sourceId": "ptt-s",
+          "location": "Results > Interventions; Tables1–2"
+        },
+        {
+          "sourceId": "ptt-s",
+          "location": "Table3 > Exercise descriptors"
+        }
+      ],
+      "applicability": "Mostly women in their 50 s with stage I/II posterior tibial dysfunction/tendinopathy.",
+      "limitations": "Execution identity is independent of dose. Bundle/component and access limits apply; these are research protocols rather than app prescriptions."
+    },
+    {
+      "id": "ptt-r1-result",
+      "kind": "study-result",
+      "statement": "FFI improved in all groups; the eccentric group improved most. Pain after the five-minute walk improved across groups. Harms: not reported in the accessible abstract.",
+      "citations": [
+        {
+          "sourceId": "ptt-r1",
+          "location": "Abstract > Methods, Results and Conclusion"
+        }
+      ],
+      "applicability": "Adults with stage I/II posterior tibial tendinopathy.",
+      "limitations": "Small early-stage trial with orthoses/stretching in every arm and no untreated comparator. Full primary exercise protocol and harms not retrieved; review-extracted details must remain attributed to the review."
+    },
+    {
+      "id": "ptt-r2-result",
+      "kind": "study-result",
+      "statement": "Both groups improved pain/function; between-group differences were minimal. Deep posterior-compartment isometric strength did not differ. Harms: not reported in the accessible abstract.",
+      "citations": [
+        {
+          "sourceId": "ptt-r2",
+          "location": "Abstract > Results and Conclusions"
+        }
+      ],
+      "applicability": "Middle-aged adults with stage II dysfunction managed with an orthosis.",
+      "limitations": "Moderate home strengthening added little to orthosis/stretching. Full primary methods/harms unavailable; trial cannot establish a universally ineffective or harmful exercise."
+    }
+  ],
+  "exerciseMappings": [
+    {
+      "id": "posterior-tibial-plantarflexed-eccentric-adduction-mapping",
+      "exerciseId": null,
+      "requestId": "posterior-tibial-plantarflexed-eccentric-adduction",
+      "findingIds": [
+        "ptt-s-execution"
+      ],
+      "matchRationale": "Review gives execution direction but primary protocol is inaccessible. Keep precise known range/action and apparatus gap rather than asserting catalog inversion equivalence.",
+      "status": "candidate"
+    }
+  ],
+  "proposedRules": [
+    {
+      "id": "posterior-tibial-resistance-candidate",
+      "kind": "supportive-prescription",
+      "basis": "unresolved-hypothesis",
+      "statement": "Retain plantarflexed adduction resistance as a candidate for independently reviewed early-stage care with support management; resolve apparatus and primary execution before prescribing.",
+      "findingIds": [
+        "ptt-s-result",
+        "ptt-s-execution",
+        "ptt-r2-result"
+      ],
+      "citations": [
+        {
+          "sourceId": "ptt-s",
+          "location": "Table3 > Exercise descriptors"
+        },
+        {
+          "sourceId": "ptt-r2",
+          "location": "Abstract > Results and Conclusions"
+        }
+      ],
+      "applicability": {
+        "population": "Adults with early stage I/II posterior tibial tendinopathy/dysfunction; mostly women in their 50s in small trials.",
+        "stage": "Early stage I/II flexible nonoperative dysfunction.",
+        "rationale": "Draft interpretation of the linked condition-specific findings; evidence and product choice are separated by basis. Other conditions, equipment and independent joint limits remain controlling."
+      },
+      "limitations": "Small trials; protocol is indirect review extraction; moderate home strengthening had minimal added benefit. Candidate only; no clinical release.",
+      "mappingIds": [
+        "posterior-tibial-plantarflexed-eccentric-adduction-mapping"
+      ],
+      "status": "candidate"
+    }
+  ],
+  "gaps": [
+    "Clinical content review and individual applicability are not established.",
+    "Primary full trial protocols unavailable; resistance apparatus/execution inferred only from review table.",
+    "Advanced rigid deformity outside early-stage evidence."
+  ],
+  "disposition": "unresolved",
+  "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "reviewedOn": null,
+    "policy": null,
+    "evidence": null
+  }
+}
