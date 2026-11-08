@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
-import wallcrawl.elopenmike.com.core.ui.theme.TextDisabled
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 
 @Composable
@@ -40,7 +39,7 @@ fun WallCrawlPrimaryButton(
             containerColor = CrimsonRedPrimary,
             contentColor = TextWhite,
             disabledContainerColor = CrimsonRedPrimary.copy(alpha = 0.4f),
-            disabledContentColor = TextDisabled
+            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
         contentPadding = PaddingValues(horizontal = 24.dp, vertical = 14.dp)
     ) {
