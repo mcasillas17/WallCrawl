@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.filled.OpenInFull
@@ -21,6 +22,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.liveRegion
@@ -309,7 +314,7 @@ private fun ActiveWorkoutContent(
                     returnFocus = false
                 }
             }
-            Column(Modifier.fillMaxSize().pointerInput(exercise.id, state.isSaving) {
+            WorkoutPage(Modifier.fillMaxSize().pointerInput(exercise.id, state.isSaving) {
                 if (state.isSaving) return@pointerInput
                 var distance = 0f
                 detectHorizontalDragGestures(
@@ -321,7 +326,7 @@ private fun ActiveWorkoutContent(
                         if (distance > threshold) viewModel.previousExercise()
                     }
                 )
-            }.verticalScroll(scroll).padding(bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            }.verticalScroll(scroll).padding(bottom = 8.dp), heading = {
                 Column(Modifier.fillMaxWidth().padding(vertical = 4.dp),
                     verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(position, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -339,16 +344,17 @@ private fun ActiveWorkoutContent(
                     Text(listOfNotNull(prescriptionTarget(exercise.prescription), effort).joinToString("   ·   "),
                         style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
+            }, demonstration = {
                 val expandLabel = stringResource(R.string.guided_expand_demo, name)
-                val artHeight = if (LocalConfiguration.current.screenHeightDp < 650) 120 else 170
-                Box(Modifier.fillMaxWidth().focusRequester(thumbnailFocus)
+                Box(Modifier.fillMaxSize().focusRequester(thumbnailFocus)
                     .clickable(role = Role.Button) { expanded = true }
                     .clearAndSetSemantics { contentDescription = expandLabel }) {
-                    ExerciseIllustration(state.currentCatalogExercise, visualProvider, height = artHeight, showFrameCounter = false)
+                    ExerciseIllustration(state.currentCatalogExercise, visualProvider, Modifier.matchParentSize(), showFrameCounter = false)
                     Icon(Icons.Default.OpenInFull, null, Modifier.align(Alignment.BottomEnd).padding(10.dp)
                         .background(Color.Black.copy(alpha = .65f), RoundedCornerShape(8.dp)).padding(6.dp).size(16.dp),
                         tint = Color.White)
                 }
+            }) {
                 if (exercise.notes.isNotBlank() && exercise.notes != state.currentCatalogExercise?.programming?.coachingSummary) {
                     Text(exercise.notes, style = MaterialTheme.typography.bodyMedium)
                 }
@@ -471,16 +477,55 @@ private fun ActiveWorkoutContent(
             }
             if (expanded) {
                 val dismiss = { returnFocus = true; expanded = false }
-                AlertDialog(onDismissRequest = dismiss, title = { Text(name) }, text = {
-                    Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        ExerciseIllustration(state.currentCatalogExercise, visualProvider, height = 210)
-                        Text(state.currentCatalogExercise?.let(vocabulary::coachingSummary)
-                            ?: stringResource(R.string.exercise_detail_no_programming))
-                        if (state.currentCatalogExercise?.let(vocabulary::hasUntranslatedCoachingSummary) == true)
-                            Text(stringResource(R.string.exercise_detail_original_language), style = MaterialTheme.typography.bodySmall)
+                Dialog(onDismissRequest = dismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+                    Surface(Modifier.fillMaxSize()) {
+                        WorkoutPage(Modifier.fillMaxSize().safeDrawingPadding().verticalScroll(rememberScrollState())
+                            .padding(horizontal = 12.dp, vertical = 8.dp), heading = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(name, Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
+                                TextButton(onClick = dismiss) { Text(stringResource(R.string.action_close)) }
+                            }
+                        }, demonstration = {
+                            ExerciseIllustration(state.currentCatalogExercise, visualProvider, Modifier.fillMaxSize())
+                        }) {
+                            Text(state.currentCatalogExercise?.let(vocabulary::coachingSummary)
+                                ?: stringResource(R.string.exercise_detail_no_programming))
+                            if (state.currentCatalogExercise?.let(vocabulary::hasUntranslatedCoachingSummary) == true)
+                                Text(stringResource(R.string.exercise_detail_original_language), style = MaterialTheme.typography.bodySmall)
+                        }
                     }
-                }, confirmButton = { TextButton(onClick = dismiss) { Text(stringResource(R.string.action_close), color = MaterialTheme.colorScheme.onSurface) } })
+                }
             }
+        }
+    }
+}
+
+/** The scroll viewport supplies its height as a minimum; longer controls can extend the page. */
+@Composable
+private fun WorkoutPage(
+    modifier: Modifier,
+    heading: @Composable () -> Unit,
+    demonstration: @Composable () -> Unit,
+    controls: @Composable () -> Unit
+) {
+    Layout(modifier = modifier, content = {
+        Box { heading() }
+        Box(propagateMinConstraints = true) { demonstration() }
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) { controls() }
+    }) { (headerSlot, demoSlot, controlsSlot), constraints ->
+        val natural = constraints.copy(minHeight = 0)
+        val header = headerSlot.measure(natural)
+        val editor = controlsSlot.measure(natural)
+        val gap = 4.dp.roundToPx()
+        val demoHeight = (constraints.minHeight - header.height - editor.height - 2 * gap)
+            .coerceAtLeast(120.dp.roundToPx())
+        val demo = demoSlot.measure(Constraints.fixed(constraints.maxWidth, demoHeight))
+        val demoY = header.height + gap
+        val editorY = demoY + demo.height + gap
+        layout(constraints.maxWidth, editorY + editor.height) {
+            header.placeRelative(0, 0)
+            demo.placeRelative(0, demoY)
+            editor.placeRelative(0, editorY)
         }
     }
 }

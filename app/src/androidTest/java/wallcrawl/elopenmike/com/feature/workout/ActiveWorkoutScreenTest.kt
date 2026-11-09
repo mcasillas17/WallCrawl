@@ -2,6 +2,11 @@ package wallcrawl.elopenmike.com.feature.workout
 
 import android.graphics.Bitmap
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.height
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -101,6 +106,27 @@ class ActiveWorkoutScreenTest {
         nowMillis = { WALL_CLOCK },
         elapsedRealtimeClock = clock
     )
+
+    @Test fun extraWindowHeightGoesToTheDemonstrationAboveTheEditor() {
+        var height by mutableStateOf(740.dp)
+        composeRule.setContent {
+            WallCrawlTheme {
+                ActiveWorkoutScreen(viewModel, app.container.exerciseVisualProvider, {}, {},
+                    modifier = Modifier.requiredSize(width = 360.dp, height = height))
+            }
+        }
+        val demo = composeRule.onNodeWithContentDescription("Expand ", substring = true)
+        val log = composeRule.onNodeWithText("Log set")
+        val initialDemo = demo.getUnclippedBoundsInRoot()
+        val initialOffset = log.getUnclippedBoundsInRoot().top - initialDemo.top
+        composeRule.runOnIdle { height = 840.dp }
+        val taller = demo.getUnclippedBoundsInRoot()
+        assertThat((taller.height - initialDemo.height).value).isWithin(1f).of(100f)
+        assertThat((log.getUnclippedBoundsInRoot().top - taller.top - initialOffset).value).isWithin(1f).of(100f)
+        composeRule.runOnIdle { height = 410.dp }
+        assertThat(demo.getUnclippedBoundsInRoot().height.value).isAtLeast(119f)
+        log.performScrollTo().assertIsDisplayed()
+    }
 
     @Test fun existingWeightTargetAndPreviousPerformanceAreVisibleTogether() {
         val active = session().let { base ->
