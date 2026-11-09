@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.ai.FirstWeightGuidance
+import wallcrawl.elopenmike.com.core.ai.FirstWeightGuidancePolicy
 import wallcrawl.elopenmike.com.core.ai.CompletedExercisePerformance
 import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
@@ -38,6 +40,7 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -64,7 +67,7 @@ class ActiveWorkoutViewModel(
     private val currentExerciseIndexFlow = savedStateHandle.getStateFlow("exerciseIndex", 0)
     private var catalogRequest: kotlinx.coroutines.Job? = null
     private var requestedExerciseId: String? = null
-    private val currentCatalogExerciseFlow = MutableStateFlow<Exercise?>(null)
+    private val currentCatalogLifts = MutableStateFlow<Map<String, Exercise>>(emptyMap())
     // Every failure the screen can show is a resource id rather than a sentence: an
     // exception message is written for a log and cannot be translated.
     @StringRes
@@ -102,14 +105,15 @@ class ActiveWorkoutViewModel(
                 emitAll(sessions.map { it?.status }.distinctUntilChanged().flatMapLatest { status ->
                     val matchingSessions = sessions.filter { it?.status == status }
                     if (status == SessionStatus.IN_PROGRESS) {
-                        workoutRepository.observeCompletedSessions(MAX_PREVIOUS_PERFORMANCE_SESSIONS).flatMapLatest { history ->
+                        workoutRepository.observeCompletedSessions(MAX_PREVIOUS_PERFORMANCE_SESSIONS + 1).flatMapLatest { history ->
                             val active = sessions.value
                             val startedAt = active?.startedAtTimestamp ?: 0L
-                            val previous = history.filter { session ->
+                            val cutoff = history.getOrNull(MAX_PREVIOUS_PERFORMANCE_SESSIONS)?.completedAtTimestamp
+                            val previous = history.take(MAX_PREVIOUS_PERFORMANCE_SESSIONS).filter { session ->
                                 session.completedAtTimestamp?.let { it < startedAt } == true
                             }
                             val older = if (history.size >= MAX_PREVIOUS_PERFORMANCE_SESSIONS) olderWorkingSets(active, previous) else emptyMap()
-                            matchingSessions.map { session -> SessionHistory(session, previous, olderWorkingSets = older) }
+                            matchingSessions.map { session -> SessionHistory(session, previous, olderWorkingSets = older, oldestUnexaminedSession = cutoff) }
                         }
                     } else {
                         matchingSessions.transformLatest { session ->
@@ -156,13 +160,42 @@ class ActiveWorkoutViewModel(
         ScreenState(error, setUpdateError, restTimerState, confirmations, programFinishUnsupported)
     }
 
+    // An unavailable profile or reassessment read leaves manual logging available.
+    private val guidanceProfile = userProfileRepository?.getUserProfile()?.flatMapLatest { profile ->
+        workoutRepository.observePendingConditionReassessments(profile.id)
+            .map { pending -> profile.takeIf { pending.isEmpty() } }
+            .onStart { emit(null) }
+    }?.onStart { emit(null) }?.catch { error ->
+        if (error is CancellationException) throw error
+        emit(null)
+    } ?: flowOf(null)
+
+    private data class WorkoutRead(
+        val history: SessionHistory,
+        val exerciseIndex: Int,
+        val catalogExercise: Exercise?,
+        val guidance: FirstWeightGuidance
+    )
+
+    private val workoutRead = combine(
+        sessionHistoryFlow, currentExerciseIndexFlow, currentCatalogLifts, guidanceProfile
+    ) { history, index, catalog, profile ->
+        val session = history.session
+        val exercise = session?.exercises?.getOrNull(index.coerceIn(0, session.exercises.lastIndex.coerceAtLeast(0)))
+        val matchingCatalog = exercise?.let { catalog[it.exerciseId] }
+        val guidance = if (session?.status == SessionStatus.IN_PROGRESS && exercise != null &&
+            exercise.sets.any { !it.isResolved && it.exerciseType == ExerciseType.WEIGHT_REPS && it.targetWeight == null }) {
+            FirstWeightGuidancePolicy.evaluate(exercise, session, profile, history.completedSessions, matchingCatalog,
+                hasPendingReassessment = profile == null, comparableCatalog = catalog,
+                oldestUnexaminedSession = history.oldestUnexaminedSession)
+        } else FirstWeightGuidance()
+        WorkoutRead(history, index, matchingCatalog, guidance)
+    }
+
     val uiState: StateFlow<ActiveWorkoutUiState> = combine(
-        sessionHistoryFlow,
-        currentExerciseIndexFlow,
-        currentCatalogExerciseFlow,
-        errorStateFlow,
-        associationFlow
-    ) { sessionHistory, exerciseIndex, catalogEx, screenState, associationState ->
+        workoutRead, errorStateFlow, associationFlow
+    ) { read, screenState, associationState ->
+        val (sessionHistory, exerciseIndex, catalogEx, guidance) = read
         val (session, completedSessions) = sessionHistory
         latestSession = session
         forgetOutcomesObservedIn(session)
@@ -205,7 +238,8 @@ class ActiveWorkoutViewModel(
             ActiveWorkoutUiState.Active(
                 session = session,
                 currentExerciseIndex = safeExerciseIndex,
-                currentCatalogExercise = catalogEx?.takeIf { it.id == currentEx.exerciseId },
+                currentCatalogExercise = catalogEx,
+                firstWeightGuidance = guidance,
                 isSaving = screenState.confirmations.saving || screenState.confirmations.ending || outcomesAwaitingObservation.isNotEmpty(),
                 weightUnit = session.weightUnit,
                 previousSets = previousPerformance?.sets.orEmpty(),
@@ -238,8 +272,22 @@ class ActiveWorkoutViewModel(
         catalogRequest?.cancel()
         catalogRequest = viewModelScope.launch {
             try {
-                val ex = exerciseCatalog.getExerciseById(exerciseId)
-                currentCatalogExerciseFlow.value = ex
+                val current = exerciseCatalog.getExerciseById(exerciseId)
+                val lifts = mutableMapOf<String, Exercise>()
+                if (current != null) {
+                    lifts[exerciseId] = current
+                    for (id in FirstWeightGuidancePolicy.comparableExerciseIds(exerciseId)) {
+                        val related = try {
+                            exerciseCatalog.getExerciseById(id)
+                        } catch (cancelled: CancellationException) {
+                            throw cancelled
+                        } catch (_: Exception) {
+                            null // A missing comparison must leave the current lift available.
+                        }
+                        if (related != null) lifts[id] = related
+                    }
+                }
+                currentCatalogLifts.value = lifts
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -638,6 +686,7 @@ class ActiveWorkoutViewModel(
         val completedSessions: List<WorkoutSession>,
         val summary: WorkoutSummary? = null,
         val olderWorkingSets: Map<String, CompletedExercisePerformance> = emptyMap(),
+        val oldestUnexaminedSession: Long? = null,
         val isLoading: Boolean = false,
         @StringRes val readError: Int? = null
     )

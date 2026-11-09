@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.*
@@ -59,12 +60,14 @@ fun ProfileScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val conditions by viewModel.conditions.collectAsState()
+    val rackEditor by viewModel.dumbbellRackEditor.collectAsState()
     var group by rememberSaveable { mutableStateOf<SettingsGroup?>(null) }
     val profileState = state as? ProfileUiState.Success
-    val saving = conditions.saving || profileState?.isSaving == true
+    val saving = conditions.saving || profileState?.isSaving == true || rackEditor.saving
     val back = {
         if (!saving) {
             when {
+                rackEditor.weights != null -> viewModel.cancelDumbbellRackEditing()
                 conditions.draft != null -> viewModel.cancelConditionEditing()
                 profileState?.movementCapabilityDraft != null -> viewModel.cancelMovementCapabilityEditing()
                 group != null -> group = null
@@ -91,7 +94,7 @@ fun ProfileScreen(
                 val selected = group
                 if (selected == null) {
                     val unknownReports = current.profile.reportedConditions.any { it !in ReportedCondition.ids }
-                    LazyColumn(state = overviewScroll, contentPadding = PaddingValues(vertical = 4.dp)) {
+                    LazyColumn(modifier = Modifier.testTag("profile-settings-list"), state = overviewScroll, contentPadding = PaddingValues(vertical = 4.dp)) {
                         if (current.profile.unresolvedTrainingConstraintsRaw != null || unknownReports ||
                             !conditions.pending.isNullOrEmpty() || conditions.pendingFailed) item {
                             Column(Modifier.padding(horizontal = 16.dp)) {
@@ -172,7 +175,7 @@ private fun SettingsDetail(
     val profile = state.profile
     val vocabulary = LocalExerciseVocabulary.current
     val locale = LocalConfiguration.current.locales[0]
-    LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+    LazyColumn(modifier = Modifier.testTag("profile-settings-list"), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         when (group) {
             SettingsGroup.TRAINING -> {
                 item {
@@ -231,6 +234,9 @@ private fun SettingsDetail(
                     }
                 }
                 item { BandSetupControls(profile.availableEquipment, viewModel::toggleEquipment) }
+                if (StandardEquipment.DUMBBELL in profile.availableEquipment) {
+                    item { DumbbellRackEditor(viewModel, profile.dumbbellRack) }
+                }
             }
             SettingsGroup.MOVEMENT -> {
                 item { ProfileConditions(profile, conditions, viewModel) }

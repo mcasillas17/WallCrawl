@@ -73,7 +73,8 @@ internal fun UserProfileEntity.toUserProfile(): UserProfile {
         illustrationPreference = illustrationPreference,
         activeConditions = ConditionContextCodec.decodeSelections(activeConditionsJson),
         unresolvedTrainingConstraintsRaw = unresolvedConstraints,
-        reportedConditions = ConditionContextCodec.decodeReports(reportedConditionsJson)
+        reportedConditions = ConditionContextCodec.decodeReports(reportedConditionsJson),
+        dumbbellRack = dumbbellRackJson?.let(DumbbellRackCodec::decode)
     )
 }
 
@@ -106,7 +107,8 @@ internal fun UserProfile.toUserProfileEntity(): UserProfileEntity = UserProfileE
     gender = gender,
     illustrationPreference = illustrationPreference,
     activeConditionsJson = ConditionContextCodec.encodeSelections(activeConditions),
-    reportedConditionsJson = ConditionContextCodec.encodeReports(reportedConditions)
+    reportedConditionsJson = ConditionContextCodec.encodeReports(reportedConditions),
+    dumbbellRackJson = dumbbellRack?.let(DumbbellRackCodec::encode)
 )
 
 private fun decodeFitnessGoals(raw: String): Set<FitnessGoal> {

@@ -154,6 +154,103 @@ class ProfileViewModelTest {
             .isEqualTo(wallcrawl.elopenmike.com.core.model.IllustrationVariant.MALE)
     }
 
+    @Test
+    fun rackEditorPreservesSourceUnitAndRefusesStaleSave() = runTest {
+        val original = wallcrawl.elopenmike.com.core.model.DumbbellRack(
+            wallcrawl.elopenmike.com.core.model.WeightUnit.LBS, listOf(7.5, 12.5))
+        val repository = repositoryWith(profile().copy(dumbbellRack = original))
+        val vm = ProfileViewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect {} }
+        advanceUntilIdle()
+        vm.startDumbbellRackEditing()
+        vm.updateUnit(wallcrawl.elopenmike.com.core.model.WeightUnit.KG)
+        advanceUntilIdle()
+        vm.saveDumbbellRack()
+        advanceUntilIdle()
+        assertThat(repository.getProfileOnce().dumbbellRack).isEqualTo(original)
+        vm.startDumbbellRackEditing()
+        repository.updateDumbbellRackIfUnchanged(original, null)
+        vm.clearDumbbellRack()
+        vm.saveDumbbellRack()
+        advanceUntilIdle()
+        assertThat(vm.dumbbellRackEditor.value.error).isEqualTo(wallcrawl.elopenmike.com.R.string.rack_conflict)
+        assertThat(repository.getProfileOnce().dumbbellRack).isNull()
+    }
+
+    @Test
+    fun failedRackSaveRetainsDraftForRetryAndEmptySaveRemovesRack() = runTest {
+        val underlying = repositoryWith(profile())
+        var fail = true
+        val repository = object : UserProfileRepository by underlying {
+            override suspend fun updateDumbbellRackIfUnchanged(
+                expected: wallcrawl.elopenmike.com.core.model.DumbbellRack?,
+                rack: wallcrawl.elopenmike.com.core.model.DumbbellRack?
+            ): Boolean {
+                if (fail) error("Storage unavailable")
+                return underlying.updateDumbbellRackIfUnchanged(expected, rack)
+            }
+        }
+        val vm = ProfileViewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect {} }
+        advanceUntilIdle()
+        vm.startDumbbellRackEditing()
+        vm.updateDumbbellRackInput("2.75")
+        vm.addDumbbellRackWeight()
+        vm.saveDumbbellRack()
+        advanceUntilIdle()
+        assertThat(vm.dumbbellRackEditor.value.weights).containsExactly(2.75)
+        assertThat(vm.dumbbellRackEditor.value.error).isEqualTo(wallcrawl.elopenmike.com.R.string.rack_save_error)
+        fail = false
+        vm.saveDumbbellRack()
+        advanceUntilIdle()
+        assertThat(underlying.getProfileOnce().dumbbellRack?.weights).containsExactly(2.75)
+        vm.startDumbbellRackEditing()
+        vm.clearDumbbellRack()
+        vm.saveDumbbellRack()
+        advanceUntilIdle()
+        assertThat(underlying.getProfileOnce().dumbbellRack).isNull()
+    }
+
+    @Test
+    fun rackUnitCanChangeOnlyWhileDraftIsEmpty() = runTest {
+        val repository = repositoryWith(profile().copy(preferredUnit = wallcrawl.elopenmike.com.core.model.WeightUnit.KG))
+        val vm = ProfileViewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect {} }
+        advanceUntilIdle()
+        vm.startDumbbellRackEditing()
+        vm.updateDumbbellRackUnit(wallcrawl.elopenmike.com.core.model.WeightUnit.LBS)
+        vm.updateDumbbellRackInput("7.5")
+        vm.addDumbbellRackWeight()
+        vm.updateDumbbellRackUnit(wallcrawl.elopenmike.com.core.model.WeightUnit.KG)
+        assertThat(vm.dumbbellRackEditor.value.unit).isEqualTo(wallcrawl.elopenmike.com.core.model.WeightUnit.LBS)
+        vm.saveDumbbellRack()
+        advanceUntilIdle()
+        assertThat(repository.getProfileOnce().dumbbellRack).isEqualTo(
+            wallcrawl.elopenmike.com.core.model.DumbbellRack(wallcrawl.elopenmike.com.core.model.WeightUnit.LBS, listOf(7.5)))
+    }
+
+    @Test
+    fun rackInputAcceptsBothDecimalSeparatorsAndRejectsInvalidPrecisionAndZero() = runTest {
+        val repository = repositoryWith(profile())
+        val vm = ProfileViewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect {} }
+        advanceUntilIdle()
+        vm.startDumbbellRackEditing()
+        for (input in listOf("2.75", "2,75")) {
+            vm.clearDumbbellRack()
+            vm.updateDumbbellRackInput(input)
+            vm.addDumbbellRackWeight()
+            assertThat(vm.dumbbellRackEditor.value.weights).containsExactly(2.75)
+        }
+        for (input in listOf("", "0", "-1", "NaN", "Infinity", "2kg", "1,000", "1.000", "1.234", "1,234.5")) {
+            vm.clearDumbbellRack()
+            vm.updateDumbbellRackInput(input)
+            vm.addDumbbellRackWeight()
+            assertThat(vm.dumbbellRackEditor.value.weights).isEmpty()
+            assertThat(vm.dumbbellRackEditor.value.error).isEqualTo(wallcrawl.elopenmike.com.R.string.rack_invalid)
+        }
+    }
+
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 

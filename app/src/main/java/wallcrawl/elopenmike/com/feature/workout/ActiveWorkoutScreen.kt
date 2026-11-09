@@ -28,6 +28,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import wallcrawl.elopenmike.com.core.ai.FirstWeightGuidance
 import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.convertWeightForEditing
@@ -426,6 +427,9 @@ private fun ActiveWorkoutContent(
                         GymFloorSetRow(
                             set = set, weightUnit = state.weightUnit.symbol, previousSet = comparable,
                             precedingWorkSet = precedingWorkSet,
+                            firstWeightGuidance = if (set.type == SetType.NORMAL) state.firstWeightGuidance else
+                                FirstWeightGuidance(),
+                            prescription = exercise.prescription.takeIf { set.type == SetType.NORMAL },
                             onCompletionChanged = { values, completed ->
                                 if (!set.isResolved && completed) awaitingResolution = set.id
                                 viewModel.setCompletion(set.id, values, completed)

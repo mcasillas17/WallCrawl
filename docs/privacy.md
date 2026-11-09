@@ -101,7 +101,7 @@ from the same local history. It writes nothing, not even the ledger cache. Its s
 holds only the four filter choices, which week is expanded and how many rows are shown,
 never history or chart values. It sends no telemetry and makes no
 network or model call. Package 15 adds the weight unit a template's loads are in.
-Current storage uses Room 18 and archive version 8.
+Current storage uses Room 19 and archive version 9.
 
 The repository's [Room schema JSON](room-schemas.md) is separate build evidence: table
 definitions and compiler metadata, with no user records. It is not a user-data archive,
@@ -123,9 +123,11 @@ it cannot recreate historical profile or catalog inputs that were never stored.
 ### Archive compatibility
 
 The archive format has its own version, separate from the Room schema version. This
-build **writes version 8** and **reads versions 1 through 8**. The schema version, app
+build **writes version 9** and **reads versions 1 through 9**. The schema version, app
 version, creation time, and the bundled catalog commit are recorded as provenance only;
 they never decide whether a file can be restored.
+
+Version 9 includes the optional dumbbell rack in profile exports. Its weights and original unit stay on device and are removed with the rest of the profile by Delete all data. Older archives restore with the rack unset.
 
 Version 2 added the validation record described above. A version 1 file — the only kind
 earlier builds ever wrote — restores exactly as it always did and simply carries none.

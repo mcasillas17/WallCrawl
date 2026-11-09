@@ -62,7 +62,9 @@ import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.SetValuesDraft
 import wallcrawl.elopenmike.com.core.model.asPerformanceInput
-import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.ai.FirstWeightGuidance
+import wallcrawl.elopenmike.com.core.model.ExercisePrescription
+import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
@@ -156,6 +158,12 @@ private fun SetInputField.recorded(set: WorkoutSet): Double? = when (this) {
 internal fun exactMeasurement(value: Double, decimal: Char): String =
     value.toBigDecimal().stripTrailingZeros().toPlainString().replace('.', decimal)
 
+@Composable
+private fun countRange(min: Int, max: Int, locale: java.util.Locale): String {
+    val first = LocaleFormatting.formatCount(min, locale)
+    return if (min == max) first else stringResource(R.string.prescription_rep_range, first, LocaleFormatting.formatCount(max, locale))
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GymFloorSetRow(
@@ -168,7 +176,9 @@ fun GymFloorSetRow(
     onRecordFeltManageable: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     saving: Boolean = false,
-    precedingWorkSet: WorkoutSet? = null
+    precedingWorkSet: WorkoutSet? = null,
+    firstWeightGuidance: FirstWeightGuidance = FirstWeightGuidance(),
+    prescription: ExercisePrescription? = null
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val decimal = DecimalFormatSymbols.getInstance(locale).decimalSeparator.takeIf { it == ',' } ?: '.'
@@ -178,6 +188,9 @@ fun GymFloorSetRow(
     var edits by rememberSaveable(set.id) { mutableStateOf(hashMapOf<String, String>()) }
     var showStopReasons by rememberSaveable(set.id) { mutableStateOf(false) }
     var showFeedback by rememberSaveable(set.id) { mutableStateOf(false) }
+    var useReferenceRack by rememberSaveable(set.id, firstWeightGuidance.reference?.sourceSetId,
+        firstWeightGuidance.reference?.weight, firstWeightGuidance.reference?.unit) { mutableStateOf(false) }
+    var manualWeight by rememberSaveable(set.id) { mutableStateOf(false) }
     var submitted by rememberSaveable(set.id) { mutableStateOf(false) }
 
     val carriedLoad = precedingWorkSet?.completedWeight?.takeIf {
@@ -248,7 +261,27 @@ fun GymFloorSetRow(
                 else R.string.guided_planned_weight, exactMeasurement(targetLoad, decimal), weightUnit),
                 style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         } else if (needsStartingWeight) {
-            Text(stringResource(R.string.guided_choose_starting_weight, weightUnit), style = MaterialTheme.typography.titleMedium)
+            val title = if (firstWeightGuidance.perDumbbell) R.string.guided_choose_per_dumbbell else R.string.guided_choose_starting_weight
+            Text(stringResource(title, weightUnit), style = MaterialTheme.typography.titleMedium)
+            val range = prescription?.repRange
+            val effort = prescription?.effortTarget
+            if (range != null) {
+                val reps = countRange(range.min, range.max, locale)
+                val cue = if (effort == null) stringResource(R.string.guided_weight_for_reps, reps)
+                    else stringResource(R.string.guided_weight_for_effort, reps, countRange(effort.minRir, effort.maxRir, locale))
+                Text(cue, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            firstWeightGuidance.reference?.let { ref ->
+                Text(stringResource(R.string.guided_other_lift_logged,
+                    LocalExerciseVocabulary.current.exerciseName(ref.exerciseId),
+                    LocaleFormatting.formatMeasurement(ref.weight, locale), ref.unit.symbol,
+                    LocaleFormatting.formatCount(ref.reps, locale)), style = MaterialTheme.typography.bodyMedium)
+                if (!useReferenceRack && firstWeightGuidance.confirmedReferenceChoices.isNotEmpty()) {
+                    TextButton(onClick = { useReferenceRack = true; manualWeight = false }, enabled = !saving) {
+                        Text(stringResource(R.string.guided_confirm_per_dumbbell))
+                    }
+                }
+            }
         } else if (carriedLoad != null && SetInputField.LOAD.name !in edits) {
             Text(stringResource(R.string.guided_weight_from_set, LocaleFormatting.formatCount(precedingWorkSet.setNumber, locale)),
                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -256,13 +289,20 @@ fun GymFloorSetRow(
         set.stopReason?.let { Text(stopReasonLabel(it), style = MaterialTheme.typography.labelLarge) }
         fields.forEach { field ->
             val label = stringResource(field.labelRes)
-            val fieldName = if (field == SetInputField.LOAD || field == SetInputField.ASSISTANCE)
-                stringResource(R.string.set_field_with_unit, label, weightUnit) else label
-            if (field == SetInputField.LOAD && needsStartingWeight) {
-                val choices = if (weightUnit == WeightUnit.KG.symbol) listOf(2.5, 5.0, 10.0, 20.0)
-                    else listOf(5.0, 10.0, 15.0, 25.0)
+            val fieldName = when {
+                field == SetInputField.LOAD && firstWeightGuidance.perDumbbell && set.targetWeight == null ->
+                    stringResource(R.string.rack_weight_label, weightUnit)
+                field == SetInputField.LOAD || field == SetInputField.ASSISTANCE ->
+                    stringResource(R.string.set_field_with_unit, label, weightUnit)
+                else -> label
+            }
+            val rackChoices = if (useReferenceRack && firstWeightGuidance.confirmedReferenceChoices.isNotEmpty())
+                firstWeightGuidance.confirmedReferenceChoices else firstWeightGuidance.rackChoices
+            if (field == SetInputField.LOAD && needsStartingWeight && rackChoices.isNotEmpty() && !manualWeight) {
+                Text(stringResource(R.string.guided_from_your_rack), style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
                 FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    choices.forEach { amount ->
+                    rackChoices.forEach { amount ->
                         val number = exactMeasurement(amount, decimal)
                         val choose = stringResource(R.string.guided_choose_weight, number, weightUnit)
                         Box(Modifier.weight(1f).sizeIn(minWidth = 48.dp, minHeight = MIN_TOUCH_TARGET)
@@ -271,6 +311,9 @@ fun GymFloorSetRow(
                             .semantics { contentDescription = choose }, contentAlignment = Alignment.Center) {
                             Text(number, style = MaterialTheme.typography.titleMedium)
                         }
+                    }
+                    TextButton(onClick = { manualWeight = true }, enabled = !saving) {
+                        Text(stringResource(R.string.guided_other_weight))
                     }
                 }
                 return@forEach

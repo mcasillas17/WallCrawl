@@ -2,6 +2,7 @@ package wallcrawl.elopenmike.com.feature.workout
 
 import androidx.annotation.StringRes
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.ai.FirstWeightGuidance
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
@@ -58,7 +59,8 @@ sealed interface ActiveWorkoutUiState {
         val programAssociation: wallcrawl.elopenmike.com.core.model.ProgramHistoryAssociation? = null,
         @StringRes val programReadError: Int? = null,
         val programFinishUnsupported: Boolean = false,
-        val painExclusionOffer: PainExclusionOffer? = null
+        val painExclusionOffer: PainExclusionOffer? = null,
+        val firstWeightGuidance: FirstWeightGuidance = FirstWeightGuidance()
     ) : ActiveWorkoutUiState {
         val currentExercise: WorkoutExercise?
             get() = session.exercises.getOrNull(currentExerciseIndex)

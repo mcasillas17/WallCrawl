@@ -31,4 +31,11 @@
     <string name="guided_show_previous_workout">View last workout</string>
     <string name="guided_hide_previous_workout">Hide last workout</string>
     <string name="guided_last_working_set">Last working set · %1$s</string>
+    <string name="guided_choose_per_dumbbell">Choose weight per dumbbell (%1$s)</string>
+    <string name="guided_weight_for_reps">Choose a weight for %1$s reps.</string>
+    <string name="guided_weight_for_effort">Aim for %1$s reps with %2$s left in reserve.</string>
+    <string name="guided_other_lift_logged">You logged %1$s · %2$s %3$s × %4$s</string>
+    <string name="guided_from_your_rack">From your dumbbell rack</string>
+    <string name="guided_confirm_per_dumbbell">I logged that per dumbbell</string>
+    <string name="guided_other_weight">Other weight</string>
 </resources>
