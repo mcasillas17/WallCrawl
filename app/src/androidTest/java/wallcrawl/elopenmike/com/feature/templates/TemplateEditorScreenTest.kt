@@ -1415,9 +1415,17 @@ class TemplateEditorScreenTest {
     private fun assertLaidOutReadable(text: String, minimum: Double = MIN_READABLE_CONTRAST) {
         val node = composeRule.onNodeWithText(text)
         val layouts = mutableListOf<TextLayoutResult>()
-        node.fetchSemanticsNode().config[SemanticsActions.GetTextLayoutResult].action!!.invoke(layouts)
+        val semanticsNode = node.fetchSemanticsNode()
+        semanticsNode.config[SemanticsActions.GetTextLayoutResult].action!!.invoke(layouts)
         val textColor = layouts.single().layoutInput.style.color.toArgb()
-        val surface = node.captureToImage().asAndroidBitmap().pixelCounts().maxBy { it.value }.key
+        val bounds = semanticsNode.boundsInRoot
+        val root = composeRule.onRoot().captureToImage().asAndroidBitmap()
+        val surface = root.pixelCounts(
+            bounds.left.toInt().coerceIn(0, root.width - 1),
+            bounds.top.toInt().coerceIn(0, root.height - 1),
+            bounds.right.toInt().coerceIn(1, root.width),
+            bounds.bottom.toInt().coerceIn(1, root.height)
+        ).filterKeys { android.graphics.Color.alpha(it) == 255 }.maxBy { it.value }.key
         // calculateContrast draws a translucent text colour over the opaque surface first.
         val ratio = ColorUtils.calculateContrast(textColor, surface)
         assertWithMessage("\"$text\" is laid out at ${"%.2f".format(ratio)}:1 against what is behind it")
@@ -1425,10 +1433,15 @@ class TemplateEditorScreenTest {
     }
 
     /** How often each colour occurs; the commonest is the surface behind what a node draws. */
-    private fun android.graphics.Bitmap.pixelCounts(): Map<Int, Int> {
+    private fun android.graphics.Bitmap.pixelCounts(
+        left: Int = 0,
+        top: Int = 0,
+        right: Int = width,
+        bottom: Int = height
+    ): Map<Int, Int> {
         val counts = mutableMapOf<Int, Int>()
-        for (y in 0 until height) {
-            for (x in 0 until width) {
+        for (y in top until bottom) {
+            for (x in left until right) {
                 val pixel = getPixel(x, y)
                 counts[pixel] = (counts[pixel] ?: 0) + 1
             }

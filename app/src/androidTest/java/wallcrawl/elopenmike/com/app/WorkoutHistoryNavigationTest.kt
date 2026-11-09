@@ -641,10 +641,16 @@ class WorkoutHistoryNavigationTest {
         compose.waitUntil(10_000) {
             compose.onAllNodes(hasText("Recorded workout 0")).fetchSemanticsNodes().isNotEmpty()
         }
-        container.localDataBackupRepository.deleteAllLocalData()
+        compose.runOnUiThread {
+            runBlocking { container.localDataBackupRepository.deleteAllLocalData() }
+        }
         compose.waitUntil(10_000) { navigation.currentDestination?.route == AppRoutes.ONBOARDING }
         assertThat(compose.onAllNodes(hasText("Recorded workout 0")).fetchSemanticsNodes()).isEmpty()
-        container.localDataBackupRepository.restoreFrom(ByteArrayInputStream(archive.toByteArray()))
+        compose.runOnUiThread {
+            runBlocking {
+                container.localDataBackupRepository.restoreFrom(ByteArrayInputStream(archive.toByteArray()))
+            }
+        }
         compose.waitForIdle()
         assertThat(navigation.currentDestination?.route).isNotEqualTo("history/{sessionId}")
     }
