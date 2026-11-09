@@ -79,7 +79,9 @@ data class WorkoutGenerationContext(
     val conditionPlanning: ConditionPlanningResult = ConditionPlanningResult.NotApplicable,
     /** Stable source facts are separate from the checked-time-bearing frozen receipt. */
     val conditionHistory: wallcrawl.elopenmike.com.core.ai.ConditionHistory? = null,
-    val conditionSupport: ConditionSupportCatalog? = null
+    val conditionSupport: ConditionSupportCatalog? = null,
+    /** Completed working weights in preferred units for weighted exercises outside the recent sample. */
+    val rememberedWorkingWeights: Map<String, Double> = emptyMap()
 )
 
 enum class WorkoutPlanningIntent { ORDINARY, PROGRAM }

@@ -288,7 +288,7 @@ class ProgramNavigationTest {
         waitText(R.string.program_finish_unsupported)
         assertThat(container.workoutRepository.getActiveSessionOnce()?.id).isEqualTo(session.id)
         capture("program-unsupported-finish-en")
-        compose.onNodeWithText(text(R.string.guided_leave_workout)).performClick()
+        compose.onNodeWithContentDescription(text(R.string.guided_leave_workout)).performClick()
         click(R.string.guided_discard_workout)
         waitText(R.string.discard_confirm_action)
         compose.onNodeWithText(text(R.string.discard_confirm_action)).performClick()
@@ -313,7 +313,7 @@ class ProgramNavigationTest {
         waitText(R.string.finish_confirm_action)
         compose.onNodeWithText(text(R.string.program_partial_finish), substring = true).assertDoesNotExist()
         compose.onNodeWithText(text(R.string.finish_confirm_keep_going)).performClick()
-        compose.onNodeWithText(text(R.string.guided_leave_workout)).assertHasClickAction()
+        compose.onNodeWithContentDescription(text(R.string.guided_leave_workout)).assertHasClickAction()
         assertThat(container.workoutRepository.getActiveSessionOnce()?.id).isEqualTo(session.id)
     }
 

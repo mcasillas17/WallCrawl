@@ -18,6 +18,7 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.hasText
@@ -190,15 +191,21 @@ class WorkoutHistoryNavigationTest {
         tap(resume)
         compose.waitUntil(10_000) { compose.onAllNodes(hasText(log)).fetchSemanticsNodes().isNotEmpty() }
         val demo = context.getString(R.string.guided_expand_demo, "Dumbbell Bench Press")
-        compose.onNodeWithContentDescription(demo).performClick()
+        val inline = compose.onNodeWithContentDescription(demo)
+        val inlineHeight = inline.fetchSemanticsNode().size.height
+        val windowWidth = compose.onRoot().fetchSemanticsNode().size.width
+        inline.performClick()
         compose.waitUntil(10_000) {
             compose.onAllNodes(hasText("Frame", substring = true)).fetchSemanticsNodes().isNotEmpty()
         }
+        assertThat(compose.onNode(isDialog()).fetchSemanticsNode().size.width).isEqualTo(windowWidth)
+        val expanded = context.getString(R.string.illustration_content_description, "Dumbbell Bench Press")
+        assertThat(compose.onNodeWithContentDescription(expanded).fetchSemanticsNode().size.height).isGreaterThan(inlineHeight)
         tap(context.getString(R.string.action_close))
         capture("guided-session")
         val plus = context.getString(R.string.set_field_increase_accessibility, context.getString(R.string.set_field_reps), "1")
         compose.onNodeWithContentDescription(plus).performScrollTo().performClick()
-        tap(context.getString(R.string.guided_leave_workout))
+        compose.onNodeWithContentDescription(context.getString(R.string.guided_leave_workout)).performClick()
         tap(context.getString(R.string.guided_resume_later))
         compose.waitUntil { navigation.currentDestination?.route == AppRoutes.TODAY }
         restoration.emulateSavedInstanceStateRestore()

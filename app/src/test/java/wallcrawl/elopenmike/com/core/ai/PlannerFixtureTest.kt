@@ -686,6 +686,9 @@ class PlannerFixtureTest {
         assertThat(snapshotRestPreferences).isEqualTo(context.priorUserRestPreferences)
         assertThat(snapshotRestPreferences)
             .isNotSameInstanceAs(context.priorUserRestPreferences)
+        val rememberedWeights = readField(snapshot, "rememberedWorkingWeights")
+        assertThat(rememberedWeights).isEqualTo(context.rememberedWorkingWeights)
+        assertThat(rememberedWeights).isNotSameInstanceAs(context.rememberedWorkingWeights)
 
         // The reconstructed weekly ledger is this corpus's headline planner input, and
         // `WeeklyDoseLedger` stores its three count maps by reference, so the snapshot has to
@@ -1232,6 +1235,7 @@ class PlannerFixtureTest {
                     )
                 )
             ),
+            rememberedWorkingWeights = linkedMapOf("probe" to 25.0),
             priorUserRestPreferences = linkedMapOf(
                 allowedExercise.id to UserRestPreference(
                     restClass = wallcrawl.elopenmike.com.core.model.RestClass.LONG,

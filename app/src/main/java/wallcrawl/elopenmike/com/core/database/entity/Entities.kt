@@ -57,7 +57,8 @@ data class UserProfileEntity(
     @ColumnInfo(defaultValue = "'[]'")
     val activeConditionsJson: String = "[]",
     @ColumnInfo(defaultValue = "''")
-    val reportedConditionsJson: String = ""
+    val reportedConditionsJson: String = "",
+    val dumbbellRackJson: String? = null
 )
 
 @Entity(

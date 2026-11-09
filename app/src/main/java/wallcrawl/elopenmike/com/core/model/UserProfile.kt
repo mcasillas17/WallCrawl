@@ -44,7 +44,8 @@ data class UserProfile(
     /** Exact legacy text whose meaning this build cannot safely use for planning. */
     val unresolvedTrainingConstraintsRaw: String? = null,
     /** Self-reported conditions use stable IDs and carry no reviewed answers. Keep unrecognized IDs. */
-    val reportedConditions: Set<String> = emptySet()
+    val reportedConditions: Set<String> = emptySet(),
+    val dumbbellRack: DumbbellRack? = null
 ) {
     internal val demandRestrictions = ExerciseDemandRestrictions.forProfile(this)
     val planningExclusions: List<String> get() = when {

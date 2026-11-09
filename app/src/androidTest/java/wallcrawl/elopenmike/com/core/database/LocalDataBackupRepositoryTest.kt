@@ -56,6 +56,19 @@ import wallcrawl.elopenmike.com.core.database.entity.ConditionReassessmentPendin
  */
 @RunWith(AndroidJUnit4::class)
 class LocalDataBackupRepositoryTest {
+    @Test fun dumbbellRackSurvivesExportDeleteRestoreInItsSourceUnit() = runBlocking<Unit> {
+        val profiles = OfflineUserProfileRepository(database.userProfileDao())
+        val rack = wallcrawl.elopenmike.com.core.model.DumbbellRack(
+            wallcrawl.elopenmike.com.core.model.WeightUnit.LBS, listOf(5.0, 12.5, 20.0))
+        profiles.updateDumbbellRackIfUnchanged(null, rack)
+        profiles.updateUnit(wallcrawl.elopenmike.com.core.model.WeightUnit.KG)
+        val bytes = ByteArrayOutputStream().also { repository.exportTo { it } }.toByteArray()
+        repository.deleteAllLocalData()
+        repository.restoreFrom(bytes.inputStream())
+        assertThat(profiles.getProfileOnce().dumbbellRack).isEqualTo(rack)
+        assertThat(profiles.getProfileOnce().preferredUnit).isEqualTo(wallcrawl.elopenmike.com.core.model.WeightUnit.KG)
+    }
+
     @Test fun historicalMobilityPreservesRepetitionsHoldAndOpaqueIdsAcrossRoom() = runBlocking<Unit> {
         val assets = InstrumentationRegistry.getInstrumentation().context.assets
         val bytes = assets.open("archives/v7-reported.json").use { it.readBytes() }
@@ -64,7 +77,7 @@ class LocalDataBackupRepositoryTest {
         assertThat(database.completedWorkoutHistoryDao().getCompletedTimestamps()).isEmpty()
         val output = ByteArrayOutputStream().also { repository.exportTo { it } }
         val exported = LocalDataArchiveCodec.read(output.toByteArray().inputStream())
-        assertThat(exported.metadata.archiveVersion).isEqualTo(8)
+        assertThat(exported.metadata.archiveVersion).isEqualTo(9)
         assertThat(exported.snapshot).isEqualTo(expected)
 
         // Version 8 also permits the old Room separator inside an opaque ID.

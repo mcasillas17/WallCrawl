@@ -27,6 +27,18 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 
 class DefaultExercisePrescriptionFactoryTest {
 
+    @Test fun rememberedWeightRespectsExplicitBaselineAndCurrentConditionBound() {
+        val exercise = syntheticApprovedExercise("press", "Chest")
+        val context = ConditionPlannerFixtures.context(ordinaryExercises = listOf(exercise),
+            bounds = ConditionPrescriptionBounds(maxLoadKg = 15.0)).copy(
+            trainingProgramState = programState(AdaptationState.UNCALIBRATED),
+            rememberedWorkingWeights = mapOf(exercise.id to 20.0))
+        assertThat(factory.create(exercise, context).targetWeight).isEqualTo(15.0)
+        val explicit = context.copy(userProfile = context.userProfile.copy(
+            confirmedStartingLoads = mapOf(exercise.id to 12.0)))
+        assertThat(factory.create(exercise, explicit).targetWeight).isEqualTo(12.0)
+    }
+
     @Test
     fun supportiveRecommendationCannotReplaceOrdinaryProgressionReference() {
         val exercise = syntheticApprovedExercise("press", "Chest")

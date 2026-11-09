@@ -2,6 +2,8 @@ package wallcrawl.elopenmike.com.core.ai
 
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.ExercisePerformanceHistory
+import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -110,8 +112,17 @@ class WorkoutHistoryAnalyzer {
             .mapNotNull { session ->
                 val completedSets = session.exercises
                     .firstOrNull { it.exerciseId == exerciseId && it.prescription.purpose == purpose && it.isLegacyMobility == isLegacyMobility }
-                    ?.sets
-                    ?.completedPerformanceSets()
+                    ?.let { instance ->
+                        val completed = instance.sets.completedPerformanceSets()
+                        if (instance.prescription.exerciseType == ExerciseType.WEIGHT_REPS &&
+                            purpose == PrescriptionPurpose.ORDINARY && !isLegacyMobility) {
+                            completed.filter { set ->
+                                set.exerciseType == ExerciseType.WEIGHT_REPS && set.type != SetType.WARMUP &&
+                                    set.stopReason == null && set.stoppedAtTimestamp == null && (set.completedWeight ?: 0.0) > 0.0 &&
+                                    set.completedAssistanceWeight == null && set.completedDistanceMeters == null && set.completedDurationSeconds == null
+                            }
+                        } else completed
+                    }
                     ?.sortedBy { it.setNumber }
                     .orEmpty()
                 if (completedSets.isEmpty()) {

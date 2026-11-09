@@ -23,4 +23,19 @@
     <string name="guided_set_need_distance_duration">Introduce una distancia o duración mayor que cero.</string>
     <string name="guided_summary_partial">Tu programa avanzó una sesión. Solo las series registradas cuentan para el rendimiento.</string>
     <string name="guided_view_workout">Ver entrenamiento</string>
+    <string name="guided_choose_starting_weight">Elige el peso inicial (%1$s)</string>
+    <string name="guided_weight_from_set">Peso de la serie %1$s</string>
+    <string name="guided_last_time">Última vez · %1$s</string>
+    <string name="guided_planned_weight">Peso previsto · %1$s %2$s</string>
+    <string name="guided_choose_weight">Elegir %1$s %2$s</string>
+    <string name="guided_show_previous_workout">Ver entrenamiento anterior</string>
+    <string name="guided_hide_previous_workout">Ocultar entrenamiento anterior</string>
+    <string name="guided_last_working_set">Última serie de trabajo · %1$s</string>
+    <string name="guided_choose_per_dumbbell">Elige el peso por mancuerna (%1$s)</string>
+    <string name="guided_weight_for_reps">Elige un peso para %1$s repeticiones.</string>
+    <string name="guided_weight_for_effort">Haz %1$s repeticiones y deja %2$s en reserva.</string>
+    <string name="guided_other_lift_logged">Registraste %1$s · %2$s %3$s × %4$s</string>
+    <string name="guided_from_your_rack">De tu juego de mancuernas</string>
+    <string name="guided_confirm_per_dumbbell">Registré ese peso por mancuerna</string>
+    <string name="guided_other_weight">Otro peso</string>
 </resources>

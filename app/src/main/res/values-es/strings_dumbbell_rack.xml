@@ -1,0 +1,18 @@
+<resources>
+    <string name="rack_title">Mancuernas disponibles (opcional)</string>
+    <string name="rack_hint">Peso por mancuerna, no por par.</string>
+    <string name="rack_unset">Sin mancuernas configuradas</string>
+    <string name="rack_edit">Editar mancuernas</string>
+    <string name="rack_unit">Unidad de las mancuernas: %1$s</string>
+    <string name="rack_remove_weight">Quitar %1$s %2$s</string>
+    <string name="rack_weight_label">Peso por mancuerna (%1$s)</string>
+    <string name="rack_add">Añadir peso</string>
+    <string name="rack_clear">Vaciar lista</string>
+    <string name="rack_cancel">Cancelar</string>
+    <string name="rack_save">Guardar</string>
+    <string name="rack_invalid">Usa un peso positivo y único de hasta %1$s %2$s con un máximo de 2 decimales. Máximo 64 pesos.</string>
+    <string name="rack_pending">Añade el peso introducido o vacía el campo antes de guardar.</string>
+    <string name="rack_conflict">La lista guardada ha cambiado. Cancela y vuelve a abrir el editor antes de guardar.</string>
+    <string name="rack_save_error">No se pudo guardar. Pulsa Guardar para reintentarlo.</string>
+    <string name="rack_summary">%1$s pesos · %2$s–%3$s %4$s</string>
+</resources>

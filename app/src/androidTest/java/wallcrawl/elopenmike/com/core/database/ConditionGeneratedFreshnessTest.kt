@@ -135,6 +135,7 @@ class ConditionGeneratedFreshnessTest {
                 workouts.logSetCompletion(it.id, SetPerformanceInput(isCompleted = true, reps = 10, completedAtTimestamp = now))
             }
             workouts.completeWorkout(manual.id, 1)
+            assertEquals(now, workouts.getSessionById(manual.id)!!.completedAtTimestamp)
             val after = builder.build(intent, 0)
             assertEquals(before.conditionHistory!!.sourceDigest, after.conditionHistory!!.sourceDigest)
             assertNotEquals(RecommendationContextIdentity.of(before), RecommendationContextIdentity.of(after))

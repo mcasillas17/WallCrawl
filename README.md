@@ -876,9 +876,12 @@ These checks do not certify physical-device behavior or manual TalkBack use.
   from equipment, exclusions, and hard limitations.
 - Generated recommendations are structured and validated before display and again
   before starting a session.
-- No unconfirmed starting load is ever prescribed: a `WEIGHT_REPS` target
-  weight comes only from bounded history or a load the user explicitly
-  confirmed, never a sample or catalog default.
+- A weighted exercise starts from recent working sets for that exercise, an
+  explicitly confirmed load, or its last recorded working weight from an older
+  workout. On first use, the lifter chooses a weight inline using today’s reps and
+  effort. Save available dumbbell weights under Profile → Equipment to see rack
+  choices for eligible lifts. When a comparable lift is available, its logged
+  weight and reps appear for reference. Logging fills in the next unprescribed work set.
 - Recommendation and performed values are both retained for future progression.
 - Each session retains its weight unit; mixed-unit history is converted only for
   planner and analytics calculations, never silently relabeled.

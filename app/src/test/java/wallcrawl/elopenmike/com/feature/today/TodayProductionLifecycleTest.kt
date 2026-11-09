@@ -1617,6 +1617,7 @@ class TodayProductionLifecycleTest {
                 sets = (1..completedSets).map { setNumber ->
                     completedNormalSet(id = "$sessionId-set-$setNumber").copy(
                         setNumber = setNumber,
+                        completedAtTimestamp = completedAtEpochMillis,
                         exerciseType = exercise.type
                     )
                 }

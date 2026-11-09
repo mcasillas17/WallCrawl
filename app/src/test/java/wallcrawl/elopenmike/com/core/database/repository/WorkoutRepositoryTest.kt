@@ -529,6 +529,8 @@ private class EmptyWorkoutSessionDao(
     private val rangeRows: List<WorkoutSessionWithExercisesAndSets> = emptyList(),
     private val records: List<WorkoutRecommendationRecordEntity> = emptyList()
 ) : WorkoutSessionDao {
+    override suspend fun selectLatestWorkingSets(exerciseIds: List<String>, asOf: Long):
+        List<wallcrawl.elopenmike.com.core.database.dao.WorkingSetRow> = emptyList()
     override suspend fun conditionOutcomeProbe(exerciseIds: List<String>, start: Long, limit: Int): List<wallcrawl.elopenmike.com.core.database.dao.ConditionOutcomeRow> = error("Not used")
     override fun observeConditionPendingProbe(profileId: String, limit: Int) = kotlinx.coroutines.flow.flow {
         emit(conditionPendingProbe(profileId, limit))
