@@ -596,9 +596,3 @@ private fun <T> SegmentedPill(
         }
     }
 }
-
-/** A chip in a single-choice group: a radio with a 48 dp target, optionally with a spoken label. */
-private fun Modifier.radioChip(description: String? = null) = heightIn(min = 48.dp).semantics {
-    role = Role.RadioButton
-    if (description != null) contentDescription = description
-}

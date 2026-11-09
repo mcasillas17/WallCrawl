@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -14,9 +15,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
@@ -25,6 +28,12 @@ import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 
 /** A screen title or section label a screen-reader user can jump to. */
 fun Modifier.a11yHeading(): Modifier = semantics { heading() }
+
+/** A chip in a single-choice group: a radio with a 48 dp target, optionally with a spoken label. */
+fun Modifier.radioChip(description: String? = null): Modifier = heightIn(min = 48.dp).semantics {
+    role = Role.RadioButton
+    if (description != null) contentDescription = description
+}
 
 /** Text that appears on its own, such as an error, read out without moving the reader's focus. */
 fun Modifier.a11yAnnounced(): Modifier = semantics { liveRegion = LiveRegionMode.Polite }

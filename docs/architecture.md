@@ -1450,8 +1450,9 @@ UserProfile.themePreference (SYSTEM | DARK | LIGHT)
   contrast.
 - **Visual Contrast & Exercise Art**: Vector SVG illustrations use a dedicated
   dark graphite elevation backing so anatomical illustration lines remain crisp
-  and visible against light and dark background themes alike. Light theme card
-  and field outlines use `LightBorder` (`0xFF9B9A9F`), and dividers `LightDivider` (`0xFFDEDCDF`).
+  and visible against light and dark background themes alike. Light theme field
+  outlines use `LightBorder` (`0xFF9B9A9F`), as do the cards that pass `outline` as their
+  border; other cards have no border. Dividers use `LightDivider` (`0xFFDEDCDF`).
 - **Wordmark & Typography**: Brand elements like `WallCrawlWordmark` dynamically
   render primary brand lettering in the theme's `onSurface` color,
   preserving high contrast on all screen densities.

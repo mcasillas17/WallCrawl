@@ -11,6 +11,14 @@ class HyphenBreakTest {
     }
 
     @Test
+    fun aLinkLabelBreaksButItsTargetDoesNot() {
+        assertEquals(
+            "[Non-\u200Bcommercial use](https://example.org/non-commercial)",
+            allowBreaksAfterHyphens("[Non-commercial use](https://example.org/non-commercial)")
+        )
+    }
+
+    @Test
     fun linksPathsAndNumbersAreLeftAlone() {
         val text = "[CC BY-SA](https://creativecommons.org/licenses/by-sa/4.0/) assets/body-front.png 2020-2024"
         assertEquals(text, allowBreaksAfterHyphens(text))

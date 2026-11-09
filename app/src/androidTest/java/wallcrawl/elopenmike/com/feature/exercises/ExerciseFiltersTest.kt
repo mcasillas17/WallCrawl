@@ -1,5 +1,7 @@
 package wallcrawl.elopenmike.com.feature.exercises
 
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
@@ -40,5 +42,22 @@ class ExerciseFiltersTest {
         compose.onNodeWithText(exercises.first().name).assertIsDisplayed()
         compose.onNodeWithText(exercises.last().name).assertDoesNotExist()
         compose.onNode(hasSetTextAction()).assertTextContains("Incline")
+    }
+
+    /** Each filter group keeps one value, so its chips are radios in a group, not checkboxes. */
+    @Test fun filterChipsAreRadiosInAGroup() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val vm = ExercisesViewModel(InMemoryExerciseCatalog(InMemoryExerciseCatalog.SAMPLE_EXERCISES.take(2)))
+        val visuals = object : ExerciseVisualProvider {
+            override fun framesFor(exerciseId: String): List<ExerciseVisual> = emptyList()
+        }
+        compose.setContent { WallCrawlTheme { ExercisesScreen(vm, visuals) } }
+        compose.waitUntil { compose.onAllNodes(hasSetTextAction()).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithText(context.getString(R.string.guided_filters)).performClick()
+        val chest = compose.onNode(hasText(StandardMuscles.CHEST) and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton))
+        chest.assert(hasParent(SemanticsMatcher.keyIsDefined(SemanticsProperties.SelectableGroup))).assertIsNotSelected()
+        chest.performClick().assertIsSelected()
+        compose.onNode(hasText(StandardEquipment.BARBELL) and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton))
+            .assert(hasParent(SemanticsMatcher.keyIsDefined(SemanticsProperties.SelectableGroup)))
     }
 }

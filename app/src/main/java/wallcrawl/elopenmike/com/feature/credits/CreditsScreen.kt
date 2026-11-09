@@ -333,7 +333,8 @@ private fun rememberNoticeText(
 
 /**
  * Android keeps a long hyphenated compound together and then splits it mid-letter at large text,
- * so each hyphen between letters gets an invisible break opportunity. Links and paths are left alone.
+ * so each hyphen between letters gets an invisible break opportunity, link labels included.
+ * Any token containing '/', such as a link target or a path, is left alone.
  */
 internal fun allowBreaksAfterHyphens(text: String): String = text.replace(NON_SPACE) { token ->
     if ('/' in token.value) token.value else token.value.replace(LETTER_HYPHEN, "-\u200B")

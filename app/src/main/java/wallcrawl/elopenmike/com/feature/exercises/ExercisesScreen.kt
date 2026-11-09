@@ -18,6 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.pluralStringResource
@@ -36,6 +37,7 @@ import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.components.a11yAnnounced
 import wallcrawl.elopenmike.com.core.ui.components.a11yExpanded
 import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
+import wallcrawl.elopenmike.com.core.ui.components.radioChip
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
@@ -204,9 +206,11 @@ private fun FilterOptions(
     title: String, keys: List<String>, selected: String?, label: (String) -> String, onSelect: (String) -> Unit
 ) {
     Text(title, Modifier.a11yHeading(), style = MaterialTheme.typography.titleMedium)
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+    // One value per group, so the chips are radios, not FilterChip's default checkboxes.
+    FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         keys.forEach { key ->
-            FilterChip(selected = key == selected, onClick = { onSelect(key) }, label = { Text(label(key)) })
+            FilterChip(selected = key == selected, onClick = { onSelect(key) }, label = { Text(label(key)) },
+                modifier = Modifier.radioChip())
         }
     }
 }
