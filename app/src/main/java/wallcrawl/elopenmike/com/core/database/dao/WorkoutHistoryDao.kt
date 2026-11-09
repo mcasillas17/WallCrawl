@@ -11,6 +11,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutRecommendationRecord
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.progress.PersonalRecordBaseline
 import wallcrawl.elopenmike.com.core.model.WorkoutHistoryEntry
 
@@ -91,9 +92,37 @@ private const val ANALYTICS_RANGE_SESSION = """
     AND s.completedAtTimestamp >= :startEpochMillis AND s.completedAtTimestamp < :endEpochMillisExclusive
 """
 
+private const val COMPLETED_WEIGHTED_WORK = """
+    FROM workout_sessions s
+    JOIN workout_exercises e ON e.sessionId = s.id
+    JOIN workout_sets w ON w.workoutExerciseId = e.id
+    WHERE e.exerciseType = 'WEIGHT_REPS' AND e.purpose = 'ORDINARY' AND e.role = 'MAIN'
+      AND s.status = 'COMPLETED' AND s.weightUnit IN ('LBS', 'KG')
+      AND s.startedAtTimestamp > 0 AND s.completedAtTimestamp >= s.startedAtTimestamp
+      AND ($ELIGIBLE_PREVIOUS_SET)
+"""
+
 /** Bounded read projections; no cache, catalog, profile, or policy is involved. */
 @Dao
 interface WorkoutHistoryDao {
+    /** One completed working set per requested catalog ID, including history outside recent sessions. */
+    @Query("""
+        SELECT latest.exerciseId, latest.finished AS sessionCompletedAtTimestamp, source.weightUnit, chosen.*
+        FROM (
+            SELECT e.exerciseId, MAX(s.completedAtTimestamp) AS finished
+            $COMPLETED_WEIGHTED_WORK AND e.exerciseId IN (:exerciseIds) AND s.completedAtTimestamp <= :asOf
+            GROUP BY e.exerciseId
+        ) latest
+        JOIN workout_sets chosen ON chosen.id = (
+            SELECT w.id $COMPLETED_WEIGHTED_WORK
+              AND e.exerciseId = latest.exerciseId AND s.completedAtTimestamp = latest.finished
+            ORDER BY s.id ASC, w.setNumber DESC, e.orderIndex ASC, w.id ASC
+            LIMIT 1)
+        JOIN workout_exercises instance ON instance.id = chosen.workoutExerciseId
+        JOIN workout_sessions source ON source.id = instance.sessionId
+    """)
+    suspend fun selectLatestWorkingSets(exerciseIds: List<String>, asOf: Long): List<WorkingSetRow>
+
     @Query("""
         SELECT id, name, completedAtTimestamp, actualDurationMinutes
         FROM workout_sessions WHERE status = 'COMPLETED'
@@ -336,6 +365,11 @@ interface WorkoutHistoryDao {
     """)
     suspend fun selectAnalyticsExerciseIds(limit: Int): List<String>
 }
+
+data class WorkingSetRow(
+    val exerciseId: String, val sessionCompletedAtTimestamp: Long, val weightUnit: WeightUnit,
+    @Embedded val set: WorkoutSet
+)
 
 data class AnalyticsRangeSize(
     val sessionCount: Long,

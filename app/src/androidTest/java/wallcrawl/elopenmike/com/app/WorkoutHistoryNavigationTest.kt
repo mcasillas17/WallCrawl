@@ -198,7 +198,7 @@ class WorkoutHistoryNavigationTest {
         capture("guided-session")
         val plus = context.getString(R.string.set_field_increase_accessibility, context.getString(R.string.set_field_reps), "1")
         compose.onNodeWithContentDescription(plus).performScrollTo().performClick()
-        tap(context.getString(R.string.guided_leave_workout))
+        compose.onNodeWithContentDescription(context.getString(R.string.guided_leave_workout)).performClick()
         tap(context.getString(R.string.guided_resume_later))
         compose.waitUntil { navigation.currentDestination?.route == AppRoutes.TODAY }
         restoration.emulateSavedInstanceStateRestore()

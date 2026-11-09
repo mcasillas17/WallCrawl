@@ -67,11 +67,12 @@ fun ExerciseIllustration(
     visualProvider: ExerciseVisualProvider,
     modifier: Modifier = Modifier,
     height: Int = 180,
-    thumbnail: Boolean = false
+    thumbnail: Boolean = false,
+    showFrameCounter: Boolean = true
 ) {
     val variant = LocalIllustrationVariant.current
     key(exercise?.id, visualProvider, variant) {
-        ExerciseIllustrationContent(exercise, visualProvider, variant, modifier, height, thumbnail)
+        ExerciseIllustrationContent(exercise, visualProvider, variant, modifier, height, thumbnail, showFrameCounter)
     }
 }
 
@@ -82,7 +83,8 @@ private fun ExerciseIllustrationContent(
     variant: IllustrationVariant,
     modifier: Modifier,
     height: Int,
-    thumbnail: Boolean
+    thumbnail: Boolean,
+    showFrameCounter: Boolean
 ) {
     var useOriginals by remember { mutableStateOf(false) }
     val frames by produceState<List<ExerciseVisual>>(emptyList(), useOriginals) {
@@ -147,7 +149,7 @@ private fun ExerciseIllustrationContent(
             IllustrationPlaceholder(exercise = exercise)
         }
 
-        if (frames.size > 1 && height > 100 && !thumbnail) {
+        if (showFrameCounter && frames.size > 1 && height > 100 && !thumbnail) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)

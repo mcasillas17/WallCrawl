@@ -62,6 +62,7 @@ import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.SetStopReason
 import wallcrawl.elopenmike.com.core.model.SetValuesDraft
 import wallcrawl.elopenmike.com.core.model.asPerformanceInput
+import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
@@ -166,7 +167,8 @@ fun GymFloorSetRow(
     onRecordEffort: (rpe: Float?, rir: Int?) -> Unit,
     onRecordFeltManageable: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    saving: Boolean = false
+    saving: Boolean = false,
+    precedingWorkSet: WorkoutSet? = null
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val decimal = DecimalFormatSymbols.getInstance(locale).decimalSeparator.takeIf { it == ',' } ?: '.'
@@ -178,7 +180,12 @@ fun GymFloorSetRow(
     var showFeedback by rememberSaveable(set.id) { mutableStateOf(false) }
     var submitted by rememberSaveable(set.id) { mutableStateOf(false) }
 
-    fun initial(field: SetInputField) = field.recorded(set) ?: field.target(set).takeUnless { set.isResolved }
+    val carriedLoad = precedingWorkSet?.completedWeight?.takeIf {
+        !set.isResolved && set.exerciseType == ExerciseType.WEIGHT_REPS && set.targetWeight == null &&
+            it.isFinite() && it > 0.0 && it <= SetInputField.LOAD.maximum
+    }
+    fun initial(field: SetInputField) = field.recorded(set) ?: if (set.isResolved) null
+        else field.target(set) ?: carriedLoad.takeIf { field == SetInputField.LOAD }
     fun textFor(field: SetInputField) = edits[field.name]?.replace('.', decimal)?.replace(',', decimal)
         ?: initial(field)?.let { exactMeasurement(it, decimal) }.orEmpty()
     fun parsed(field: SetInputField): Double? {
@@ -232,16 +239,42 @@ fun GymFloorSetRow(
         }
     }
 
-    Column(modifier.fillMaxWidth()
-        .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
-        .padding(horizontal = 8.dp, vertical = 4.dp),
-        verticalArrangement = Arrangement.spacedBy(2.dp)
-    ) {
+    val needsStartingWeight = set.exerciseType == ExerciseType.WEIGHT_REPS && !set.isResolved &&
+        textFor(SetInputField.LOAD).isBlank()
+    Column(modifier.fillMaxWidth().padding(vertical = 6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        val targetLoad = if (set.exerciseType == ExerciseType.ASSISTED_BODYWEIGHT) set.targetAssistanceWeight else set.targetWeight
+        if (!set.isResolved && targetLoad != null) {
+            Text(stringResource(if (set.exerciseType == ExerciseType.ASSISTED_BODYWEIGHT) R.string.workout_assistance
+                else R.string.guided_planned_weight, exactMeasurement(targetLoad, decimal), weightUnit),
+                style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        } else if (needsStartingWeight) {
+            Text(stringResource(R.string.guided_choose_starting_weight, weightUnit), style = MaterialTheme.typography.titleMedium)
+        } else if (carriedLoad != null && SetInputField.LOAD.name !in edits) {
+            Text(stringResource(R.string.guided_weight_from_set, LocaleFormatting.formatCount(precedingWorkSet.setNumber, locale)),
+                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
         set.stopReason?.let { Text(stopReasonLabel(it), style = MaterialTheme.typography.labelLarge) }
         fields.forEach { field ->
             val label = stringResource(field.labelRes)
             val fieldName = if (field == SetInputField.LOAD || field == SetInputField.ASSISTANCE)
                 stringResource(R.string.set_field_with_unit, label, weightUnit) else label
+            if (field == SetInputField.LOAD && needsStartingWeight) {
+                val choices = if (weightUnit == WeightUnit.KG.symbol) listOf(2.5, 5.0, 10.0, 20.0)
+                    else listOf(5.0, 10.0, 15.0, 25.0)
+                FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    choices.forEach { amount ->
+                        val number = exactMeasurement(amount, decimal)
+                        val choose = stringResource(R.string.guided_choose_weight, number, weightUnit)
+                        Box(Modifier.weight(1f).sizeIn(minWidth = 48.dp, minHeight = MIN_TOUCH_TARGET)
+                            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(10.dp))
+                            .clickable(enabled = !saving, role = Role.Button) { edit(field, number) }
+                            .semantics { contentDescription = choose }, contentAlignment = Alignment.Center) {
+                            Text(number, style = MaterialTheme.typography.titleMedium)
+                        }
+                    }
+                }
+                return@forEach
+            }
             val description = stringResource(R.string.set_field_value_accessibility, fieldName, setNumber)
             var stepIndex by rememberSaveable(set.id, field) { mutableStateOf(0) }
             val increment = field.increments[stepIndex]
@@ -293,7 +326,9 @@ fun GymFloorSetRow(
                 }
             }
         }
-        error?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error) }
+        if (error != null && !needsStartingWeight) {
+            Text(error, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+        }
         WallCrawlPrimaryButton(
             text = stringResource(if (set.isCompleted) R.string.guided_save_changes else R.string.guided_log_set),
             onClick = { submitted = true; onCompletionChanged(draft(), true) },
@@ -407,7 +442,7 @@ private fun StepButton(
                 }
             })
         } else Modifier
-        Box(Modifier.size(MIN_TOUCH_TARGET).then(gesture), contentAlignment = Alignment.Center) {
+        Box(Modifier.size(MIN_TOUCH_TARGET).background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp)).then(gesture), contentAlignment = Alignment.Center) {
             Icon(
                 imageVector = if (increase) Icons.Default.Add else Icons.Default.Remove,
                 contentDescription = contentDescription,

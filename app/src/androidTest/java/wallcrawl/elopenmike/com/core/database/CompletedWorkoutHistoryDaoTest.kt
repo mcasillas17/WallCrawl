@@ -17,9 +17,12 @@ import org.junit.runner.RunWith
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
+import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepository
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetType
+import wallcrawl.elopenmike.com.core.model.SetStopReason
+import wallcrawl.elopenmike.com.core.model.WeightUnit
 
 /**
  * The weekly range query has to return the *whole* week, in a stable order.
@@ -94,6 +97,52 @@ class CompletedWorkoutHistoryDaoTest {
     }
 
     @Test
+    fun latestWorkingWeightSurvivesUnrelatedSessionsAndRestore(): Unit = runBlocking {
+        val id = "goblet-squat"
+        val sets = database.workoutSetDao()
+        insertSession("lighter", 110L, setCount = 2, unit = WeightUnit.KG)
+        val chosen = requireNotNull(sets.getSetById("lighter-set-2"))
+        sets.insertOrUpdateSet(chosen.copy(completedWeight = 17.5, completedAtTimestamp = null))
+        repeat(9) { insertSession("intervening-$it", 200L + it, exerciseId = "other") }
+        val backup = database.localDataBackupDao()
+        val rows = backup.readAll()
+        insertSession("cancelled", 300L, SessionStatus.CANCELLED)
+        insertSession("active", null, SessionStatus.IN_PROGRESS)
+        insertSession("supportive", 310L, purpose = "SUPPORTIVE")
+        insertSession("future", 401L)
+        val invalid: List<(WorkoutSetEntity) -> WorkoutSetEntity> = listOf(
+            { it.copy(isCompleted = false) },
+            { it.copy(type = SetType.WARMUP) },
+            { it.copy(completedWeight = 0.0) },
+            { it.copy(completedReps = 0) },
+            { it.copy(completedWeight = null) },
+            { it.copy(completedAssistanceWeight = 5.0) },
+            { it.copy(stopReason = SetStopReason.PAIN_STOP, stoppedAtTimestamp = it.completedAtTimestamp) },
+            { it.copy(completedAtTimestamp = 1L) },
+            { it.copy(completedAtTimestamp = 400L) }
+        )
+        invalid.forEachIndexed { index, change ->
+            insertSession("invalid-$index", 320L + index)
+            sets.insertOrUpdateSet(change(requireNotNull(sets.getSetById("invalid-$index-set-1"))))
+        }
+
+        val repository = OfflineWorkoutRepository(database.workoutSessionDao(), sets)
+        suspend fun recall() = repository.getLatestWorkingSets(listOf(id, "unseen"), 400L)
+        val expected = recall()
+        assertThat(expected.keys).containsExactly(id)
+        val performance = expected.getValue(id)
+        assertThat(performance.weightUnit).isEqualTo(WeightUnit.KG)
+        assertThat(performance.sessionCompletedAtTimestamp).isEqualTo(110L)
+        assertThat(performance.sets.single().completedWeight).isEqualTo(17.5)
+        assertThat(performance.sets.single().completedAtTimestamp).isNull()
+        assertThat(performance.sets.single().completedReps).isEqualTo(10)
+        backup.deleteAll()
+        assertThat(recall()).isEmpty()
+        backup.restoreIntoEmptyDestination(rows)
+        assertThat(recall()).isEqualTo(expected)
+    }
+
+    @Test
     fun sessionsAreOrderedByCompletionThenBySessionIdAsAStableTieBreak(): Unit = runBlocking {
         insertSession(id = "zzz-same-instant", completedAt = 5_000L)
         insertSession(id = "aaa-same-instant", completedAt = 5_000L)
@@ -165,7 +214,10 @@ class CompletedWorkoutHistoryDaoTest {
         id: String,
         completedAt: Long?,
         status: SessionStatus = SessionStatus.COMPLETED,
-        setCount: Int = 1
+        setCount: Int = 1,
+        exerciseId: String = "goblet-squat",
+        unit: WeightUnit = WeightUnit.LBS,
+        purpose: String = "ORDINARY"
     ) {
         database.workoutSessionDao().insertWorkout(
             session = WorkoutSessionEntity(
@@ -175,6 +227,7 @@ class CompletedWorkoutHistoryDaoTest {
                 completedAtTimestamp = completedAt,
                 targetDurationMinutes = 45,
                 actualDurationMinutes = 44,
+                weightUnit = unit,
                 status = status,
                 focusMusclesJson = "",
                 notes = ""
@@ -183,7 +236,8 @@ class CompletedWorkoutHistoryDaoTest {
                 WorkoutExerciseEntity(
                     id = "$id-exercise",
                     sessionId = id,
-                    exerciseId = "goblet-squat",
+                    exerciseId = exerciseId,
+                    purpose = purpose,
                     orderIndex = 0,
                     exerciseType = ExerciseType.WEIGHT_REPS,
                     targetSets = setCount,

@@ -9,11 +9,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.ai.CompletedExercisePerformance
+import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
-import wallcrawl.elopenmike.com.core.ai.WorkoutHistoryAnalyzer
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
 import wallcrawl.elopenmike.com.core.model.SetStopReason
@@ -99,9 +102,15 @@ class ActiveWorkoutViewModel(
                 emitAll(sessions.map { it?.status }.distinctUntilChanged().flatMapLatest { status ->
                     val matchingSessions = sessions.filter { it?.status == status }
                     if (status == SessionStatus.IN_PROGRESS) {
-                        combine(matchingSessions, workoutRepository.observeCompletedSessions(
-                            limit = MAX_PREVIOUS_PERFORMANCE_SESSIONS
-                        )) { session, history -> SessionHistory(session, history) }
+                        workoutRepository.observeCompletedSessions(MAX_PREVIOUS_PERFORMANCE_SESSIONS).flatMapLatest { history ->
+                            val active = sessions.value
+                            val startedAt = active?.startedAtTimestamp ?: 0L
+                            val previous = history.filter { session ->
+                                session.completedAtTimestamp?.let { it < startedAt } == true
+                            }
+                            val older = if (history.size >= MAX_PREVIOUS_PERFORMANCE_SESSIONS) olderWorkingSets(active, previous) else emptyMap()
+                            matchingSessions.map { session -> SessionHistory(session, previous, olderWorkingSets = older) }
+                        }
                     } else {
                         matchingSessions.transformLatest { session ->
                             if (session?.status == SessionStatus.COMPLETED) {
@@ -188,7 +197,10 @@ class ActiveWorkoutViewModel(
                 exerciseId = currentEx.exerciseId,
                 purpose = currentEx.prescription.purpose,
                 isLegacyMobility = currentEx.isLegacyMobility
-            )
+            ) ?: sessionHistory.olderWorkingSets[currentEx.exerciseId]?.takeIf {
+                currentEx.prescription.purpose == PrescriptionPurpose.ORDINARY && !currentEx.isLegacyMobility &&
+                    currentEx.prescription.exerciseType == ExerciseType.WEIGHT_REPS
+            }
 
             ActiveWorkoutUiState.Active(
                 session = session,
@@ -610,10 +622,22 @@ class ActiveWorkoutViewModel(
         }
     }
 
+    private suspend fun olderWorkingSets(
+        active: WorkoutSession?, recent: List<WorkoutSession>
+    ): Map<String, CompletedExercisePerformance> {
+        if (active == null || active.startedAtTimestamp <= 0) return emptyMap()
+        val missing = active.exercises.filter { exercise ->
+            exercise.prescription.exerciseType == ExerciseType.WEIGHT_REPS && exercise.prescription.purpose == PrescriptionPurpose.ORDINARY &&
+                !exercise.isLegacyMobility && workoutHistoryAnalyzer.latestCompletedExercisePerformance(recent, exercise.exerciseId) == null
+        }.map { it.exerciseId }.distinct()
+        return if (missing.isEmpty()) emptyMap() else workoutRepository.getLatestWorkingSets(missing, active.startedAtTimestamp - 1)
+    }
+
     private data class SessionHistory(
         val session: WorkoutSession?,
         val completedSessions: List<WorkoutSession>,
         val summary: WorkoutSummary? = null,
+        val olderWorkingSets: Map<String, CompletedExercisePerformance> = emptyMap(),
         val isLoading: Boolean = false,
         @StringRes val readError: Int? = null
     )

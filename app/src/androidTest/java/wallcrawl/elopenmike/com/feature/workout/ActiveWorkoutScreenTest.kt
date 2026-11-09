@@ -22,6 +22,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.performTouchInput
@@ -99,6 +100,55 @@ class ActiveWorkoutScreenTest {
         nowMillis = { WALL_CLOCK },
         elapsedRealtimeClock = clock
     )
+
+    @Test fun existingWeightTargetAndPreviousPerformanceAreVisibleTogether() {
+        val active = session().let { base ->
+            base.copy(name = "Push · Athletic conditioning", exercises = base.exercises.map {
+                it.copy(exerciseId = "dumbbell-bench-press")
+            })
+        }
+        val prior = active.copy(id = "earlier", status = SessionStatus.COMPLETED, completedAtTimestamp = WALL_CLOCK - 1,
+            exercises = active.exercises.map { ex -> ex.copy(sets = ex.sets.map { it.copy(isCompleted = true,
+                completedWeight = 35.0, completedReps = 8) }) })
+        val repo = ScreenTestRepository(active, listOf(prior))
+        val vm = ActiveWorkoutViewModel(SESSION_ID, repo, app.container.exerciseCatalog, WorkoutHistoryAnalyzer())
+        composeRule.setContent { WallCrawlTheme(themePreference = ThemePreference.DARK) {
+            ActiveWorkoutScreen(vm, app.container.exerciseVisualProvider, {}, {})
+        } }
+        composeRule.onNodeWithText("Planned weight · 40 lb").assertIsDisplayed()
+        composeRule.onNodeWithText("Last time · 35 lb × 8").assertIsDisplayed()
+        composeRule.onNodeWithText("Log set").assertIsEnabled()
+        capture("set-with-history")
+        composeRule.onNodeWithText("Log set").performClick()
+        composeRule.waitForIdle()
+        assertThat(runBlocking { repo.getActiveSessionOnce() }!!.exercises.single().sets.first().completedWeight).isEqualTo(40.0)
+    }
+
+    @Test fun firstWorkingWeightCarriesIntoTheNextSetOnlyAfterLogging() {
+        val base = session()
+        val exercise = base.exercises.single().let { ex ->
+            ex.copy(exerciseId = "dumbbell-bench-press", prescription = ex.prescription.copy(targetWeight = null),
+                sets = ex.sets.map { it.copy(targetWeight = null) })
+        }
+        val repo = ScreenTestRepository(base.copy(name = "Push · Athletic conditioning", exercises = listOf(exercise)))
+        val vm = ActiveWorkoutViewModel(SESSION_ID, repo, app.container.exerciseCatalog, WorkoutHistoryAnalyzer())
+        composeRule.setContent { WallCrawlTheme(themePreference = ThemePreference.DARK) {
+            ActiveWorkoutScreen(vm, app.container.exerciseVisualProvider, {}, {})
+        } }
+        composeRule.onNodeWithText("Choose starting weight (lb)").assertIsDisplayed()
+        composeRule.onNodeWithText(text(R.string.guided_set_need_load_reps)).assertDoesNotExist()
+        composeRule.onNodeWithText("Log set").assertIsNotEnabled()
+        capture("first-working-set")
+        composeRule.onNodeWithContentDescription("Choose 15 lb").performClick()
+        composeRule.onNodeWithContentDescription("Increase Load for set 1").performClick()
+        composeRule.onNodeWithText("Log set").performClick()
+        composeRule.onNodeWithText("Weight from set 1").performScrollTo().assertIsDisplayed()
+        assertThat(runBlocking { repo.getActiveSessionOnce() }!!.exercises.single().sets.last().completedWeight).isNull()
+        composeRule.onNodeWithText("Log set").performClick()
+        composeRule.waitForIdle()
+        assertThat(runBlocking { repo.getActiveSessionOnce() }!!.exercises.single().sets.map { it.completedWeight })
+            .containsExactly(17.5, 17.5).inOrder()
+    }
 
     @Test fun supportiveLoggingShowsFrozenExecutionAndKeepsFinishReachable() {
         val selected = SelectedCondition("withdrawn", 1, mapOf("side" to "recorded-left"))
@@ -337,7 +387,7 @@ class ActiveWorkoutScreenTest {
     fun closingTheWorkout_requiresAnExplicitDiscardConfirmation() {
         showScreen()
 
-        composeRule.onNodeWithText(text(R.string.guided_leave_workout)).performClick()
+        composeRule.onNodeWithContentDescription(text(R.string.guided_leave_workout)).performClick()
         composeRule.onNodeWithText(text(R.string.guided_discard_workout)).performClick()
         composeRule.waitForIdle()
 
@@ -346,7 +396,7 @@ class ActiveWorkoutScreenTest {
         composeRule.waitForIdle()
         assertThat(repository.cancelCalls).isEqualTo(0)
 
-        composeRule.onNodeWithText(text(R.string.guided_leave_workout)).performClick()
+        composeRule.onNodeWithContentDescription(text(R.string.guided_leave_workout)).performClick()
         composeRule.onNodeWithText(text(R.string.guided_discard_workout)).performClick()
         composeRule.waitForIdle()
         composeRule.onNodeWithText("Discard").performClick()
@@ -365,7 +415,7 @@ class ActiveWorkoutScreenTest {
         composeRule.onNodeWithText("Keep going").assertDoesNotContainColor(destructive)
         composeRule.onNodeWithText("Keep going").performClick()
 
-        composeRule.onNodeWithText(text(R.string.guided_leave_workout)).performClick()
+        composeRule.onNodeWithContentDescription(text(R.string.guided_leave_workout)).performClick()
         composeRule.onNodeWithText(text(R.string.guided_discard_workout)).performClick()
         composeRule.waitForIdle()
         composeRule.onNodeWithText("Discard").assertContainsColor(destructive)
@@ -478,7 +528,7 @@ private object NoVisualProvider : ExerciseVisualProvider {
     override fun framesFor(exerciseId: String) = emptyList<ExerciseVisual>()
 }
 
-private class ScreenTestRepository(initial: WorkoutSession) : WorkoutRepository {
+private class ScreenTestRepository(initial: WorkoutSession, private val history: List<WorkoutSession> = emptyList()) : WorkoutRepository {
     override suspend fun hasPendingConditionReassessment(profileId: String) = false
 
     override suspend fun getCompletedSessionsInRange(startTimestamp: Long, endTimestampExclusive: Long): List<WorkoutSession> = emptyList()
@@ -499,7 +549,7 @@ private class ScreenTestRepository(initial: WorkoutSession) : WorkoutRepository 
     override fun observeCompletedSessions(limit: Int): Flow<List<WorkoutSession>> = flow {
         historySubscriptions++
         historyReady.first { it }
-        emit(emptyList())
+        emit(history.take(limit))
         awaitCancellation()
     }
 

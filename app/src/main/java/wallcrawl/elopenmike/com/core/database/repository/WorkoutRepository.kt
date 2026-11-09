@@ -61,6 +61,8 @@ interface WorkoutRepository {
     fun observeCompletedWorkoutCount(): Flow<Int>
     fun observeCompletedWorkoutCountInRange(startTimestamp: Long, endTimestampExclusive: Long): Flow<Int>
     suspend fun getRecentCompletedSessions(limit: Int = 8): List<WorkoutSession>
+    /** The latest completed ordinary weighted-rep set per catalog ID, in its original session unit. */
+    suspend fun getLatestWorkingSets(exerciseIds: List<String>, asOf: Long): Map<String, CompletedExercisePerformance> = emptyMap()
     /** Latest attempts of every status; an incomplete attempt must not be skipped. */
     suspend fun getRecentSessions(limit: Int = 8): List<WorkoutSession>
     suspend fun getRecommendationRecords(sessionIds: List<String>): List<RecommendationRecord>
@@ -186,6 +188,12 @@ class OfflineWorkoutRepository(
         require(limit > 0) { "limit must be greater than zero." }
         return sessionDao.getRecentCompletedSessions(limit).map { it.toWorkoutSession() }
     }
+
+    override suspend fun getLatestWorkingSets(
+        exerciseIds: List<String>, asOf: Long
+    ): Map<String, CompletedExercisePerformance> = exerciseIds.distinct().chunked(500).flatMap { ids ->
+        sessionDao.selectLatestWorkingSets(ids, asOf)
+    }.associate { it.exerciseId to CompletedExercisePerformance(it.sessionCompletedAtTimestamp, it.weightUnit, listOf(it.set)) }
 
     override suspend fun getRecentSessions(limit: Int): List<WorkoutSession> {
         require(limit in 1..8) { "Recent attempt history is bounded to eight sessions." }

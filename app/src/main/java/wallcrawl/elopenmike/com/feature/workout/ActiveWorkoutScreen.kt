@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
@@ -26,6 +27,8 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.convertWeightForEditing
 import wallcrawl.elopenmike.com.core.ui.components.stopReasonLabel
@@ -47,6 +50,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.AlertDialog
@@ -260,31 +264,15 @@ private fun ActiveWorkoutContent(
         LocaleFormatting.formatCount(state.currentExerciseIndex + 1, locale),
         LocaleFormatting.formatCount(state.totalExercises, locale))
     val exerciseState = rememberSaveableStateHolder()
-    Column(Modifier.fillMaxSize().padding(horizontal = 12.dp)) {
-        val largeText = LocalConfiguration.current.fontScale >= 1.4f
-        val contextLabel = @Composable { modifier: Modifier ->
-            Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(state.session.name, style = MaterialTheme.typography.labelLarge, textAlign = TextAlign.Center)
-                Text(position, style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center,
-                    modifier = Modifier.clearAndSetSemantics {
-                        liveRegion = LiveRegionMode.Polite
-                        contentDescription = "$position, $name"
-                    })
+    Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = onLeave, enabled = !state.isSaving) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.guided_leave_workout))
             }
-        }
-        if (largeText) contextLabel(Modifier.fillMaxWidth())
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically) {
-            val leaveLabel = stringResource(R.string.guided_leave_workout)
-            TextButton(onClick = onLeave, enabled = !state.isSaving,
-                modifier = if (largeText) Modifier.semantics { contentDescription = leaveLabel } else Modifier.weight(1f),
-                contentPadding = PaddingValues(horizontal = 8.dp)) {
-                Text(if (largeText) stringResource(R.string.guided_leave_short) else leaveLabel, color = MaterialTheme.colorScheme.onSurface)
-            }
-            if (!largeText) contextLabel(Modifier.weight(1.25f))
-            TextButton(onClick = viewModel::requestFinish, enabled = !state.isSaving,
-                modifier = if (largeText) Modifier else Modifier.weight(.8f),
-                contentPadding = PaddingValues(horizontal = 8.dp)) {
+            Text(state.session.name, Modifier.weight(1f), style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center,
+                maxLines = 2, overflow = TextOverflow.Ellipsis)
+            TextButton(onClick = viewModel::requestFinish, enabled = !state.isSaving) {
                 Text(stringResource(R.string.workout_action_finish), color = MaterialTheme.colorScheme.onSurface)
             }
         }
@@ -333,33 +321,36 @@ private fun ActiveWorkoutContent(
                     }
                 )
             }.verticalScroll(scroll).padding(bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Column(Modifier.weight(1f)) {
-                        Text(name, style = MaterialTheme.typography.titleLarge)
-                        Text(prescriptionTarget(exercise.prescription), style = MaterialTheme.typography.bodyMedium)
-                        exercise.prescription.effortTarget?.let {
-                            val min = LocaleFormatting.formatCount(it.minRir, locale)
-                            val range = if (it.minRir == it.maxRir) min else stringResource(R.string.prescription_rep_range,
-                                min, LocaleFormatting.formatCount(it.maxRir, locale))
-                            Text(stringResource(R.string.editor_summary_effort, range), style = MaterialTheme.typography.bodySmall)
-                        }
-                        exercise.targetWeight?.let { Text(stringResource(R.string.workout_suggested_load,
-                            LocaleFormatting.formatMeasurement(it, locale), state.weightUnit.symbol)) }
-                        exercise.prescription.targetAssistanceWeight?.let { Text(stringResource(R.string.workout_assistance,
-                            LocaleFormatting.formatMeasurement(it, locale), state.weightUnit.symbol)) }
+                Column(Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(position, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.clearAndSetSemantics {
+                            liveRegion = LiveRegionMode.Polite
+                            contentDescription = "$position, $name"
+                        })
+                    Text(name, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                    val effort = exercise.prescription.effortTarget?.let {
+                        val min = LocaleFormatting.formatCount(it.minRir, locale)
+                        val range = if (it.minRir == it.maxRir) min else stringResource(R.string.prescription_rep_range,
+                            min, LocaleFormatting.formatCount(it.maxRir, locale))
+                        stringResource(R.string.editor_summary_effort, range)
                     }
-                    val expandLabel = stringResource(R.string.guided_expand_demo, name)
-                    Box(Modifier.size(88.dp).focusRequester(thumbnailFocus)
-                        .clickable(role = Role.Button) { expanded = true }
-                        .clearAndSetSemantics { contentDescription = expandLabel }) {
-                        ExerciseIllustration(state.currentCatalogExercise, visualProvider, height = 88)
-                        Icon(Icons.Default.OpenInFull, null,
-                            Modifier.align(Alignment.TopEnd).padding(5.dp).size(16.dp),
-                            tint = androidx.compose.ui.graphics.Color.White)
-                    }
+                    Text(listOfNotNull(prescriptionTarget(exercise.prescription), effort).joinToString("   ·   "),
+                        style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-                if (exercise.notes.isNotBlank()) Text(exercise.notes, style = MaterialTheme.typography.bodyMedium)
+                val expandLabel = stringResource(R.string.guided_expand_demo, name)
+                val artHeight = if (LocalConfiguration.current.screenHeightDp < 650) 120 else 170
+                Box(Modifier.fillMaxWidth().focusRequester(thumbnailFocus)
+                    .clickable(role = Role.Button) { expanded = true }
+                    .clearAndSetSemantics { contentDescription = expandLabel }) {
+                    ExerciseIllustration(state.currentCatalogExercise, visualProvider, height = artHeight, showFrameCounter = false)
+                    Icon(Icons.Default.OpenInFull, null, Modifier.align(Alignment.BottomEnd).padding(10.dp)
+                        .background(Color.Black.copy(alpha = .65f), RoundedCornerShape(8.dp)).padding(6.dp).size(16.dp),
+                        tint = Color.White)
+                }
+                if (exercise.notes.isNotBlank() && exercise.notes != state.currentCatalogExercise?.programming?.coachingSummary) {
+                    Text(exercise.notes, style = MaterialTheme.typography.bodyMedium)
+                }
                 wallcrawl.elopenmike.com.core.ui.components.ConditionExecution(
                     state.session.conditionContext, exercise.exerciseId, exercise.prescription.purpose)
                 state.programAssociation?.let { association ->
@@ -377,9 +368,9 @@ private fun ActiveWorkoutContent(
                 if (state.restTimer.isVisible) {
                     RestTimerBar(state.restTimer, viewModel::addRestTime, viewModel::skipRest, viewModel::cancelRest)
                 }
-                FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(stringResource(R.string.guided_sets), Modifier.align(Alignment.CenterVertically).padding(end = 4.dp),
-                        style = MaterialTheme.typography.labelLarge)
+                FlowRow(Modifier.fillMaxWidth().padding(top = 6.dp).selectableGroup()
+                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
+                    .padding(4.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     sets.forEach { set ->
                         val number = LocaleFormatting.formatCount(set.setNumber, locale)
                         val setLabel = stringResource(R.string.set_number, number)
@@ -390,24 +381,31 @@ private fun ActiveWorkoutContent(
                             else -> stringResource(R.string.guided_unlogged)
                         }, result).joinToString(", ")
                         val isSelected = set.id == selectedId
-                        Box(Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+                        Box(Modifier.weight(1f).sizeIn(minWidth = 64.dp, minHeight = 48.dp)
+                            .background(if (isSelected) MaterialTheme.colorScheme.surface else Color.Transparent,
+                                RoundedCornerShape(8.dp))
                             .selectable(isSelected, enabled = !state.isSaving, role = Role.RadioButton, onClick = {
                                 selectedId = set.id
                                 awaitingResolution = null
                             }).semantics { contentDescription = setLabel; stateDescription = status },
                             contentAlignment = Alignment.Center) {
-                            val background = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
-                            Text(when { set.isCompleted -> "$number ✓"; set.isResolved -> "$number −"; else -> number },
-                                Modifier.background(background, RoundedCornerShape(8.dp)).padding(horizontal = 9.dp, vertical = 4.dp),
+                            Text(when { set.isCompleted -> "✓ $setLabel"; set.isResolved -> "− $setLabel"; else -> setLabel },
                                 style = MaterialTheme.typography.labelLarge,
-                                color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface)
+                                color = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
                 selected?.let { set ->
                     if (set.type == SetType.WARMUP) Text(stringResource(R.string.history_warmup), style = MaterialTheme.typography.labelLarge)
                     draftState.SaveableStateProvider(set.id) {
-                        val prior = state.previousSets.getOrNull(sets.indexOf(set))
+                        val matchedSet = state.previousSets.firstOrNull {
+                            it.setNumber == set.setNumber && it.type == set.type && it.exerciseType == set.exerciseType &&
+                                it.isCompleted && it.stopReason == null && it.stoppedAtTimestamp == null
+                        }
+                        val prior = matchedSet ?: state.previousSets.lastOrNull {
+                            set.type == SetType.NORMAL && it.type == SetType.NORMAL && it.exerciseType == set.exerciseType &&
+                                it.isCompleted && it.stopReason == null && it.stoppedAtTimestamp == null
+                        }
                         val comparable = if (prior != null && state.previousWeightUnit != state.weightUnit) {
                             prior.copy(completedWeight = prior.completedWeight?.let {
                                 convertWeightForEditing(it, state.previousWeightUnit, state.weightUnit)
@@ -415,8 +413,19 @@ private fun ActiveWorkoutContent(
                                 convertWeightForEditing(it, state.previousWeightUnit, state.weightUnit)
                             })
                         } else prior
+                        comparable?.let { recordedResult(it, state.weightUnit.symbol) }?.let { result ->
+                            Text(stringResource(if (matchedSet == null) R.string.guided_last_working_set else R.string.guided_last_time, result), style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        val precedingWorkSet = if (exercise.prescription.purpose == PrescriptionPurpose.ORDINARY &&
+                            !exercise.isLegacyMobility && set.type == SetType.NORMAL) {
+                            sets.lastOrNull { it.setNumber < set.setNumber && it.type != SetType.WARMUP }
+                                ?.takeIf { it.type == SetType.NORMAL && it.isCompleted && it.stopReason == null &&
+                                    it.exerciseType == set.exerciseType && (it.completedReps ?: 0) > 0 }
+                        } else null
                         GymFloorSetRow(
                             set = set, weightUnit = state.weightUnit.symbol, previousSet = comparable,
+                            precedingWorkSet = precedingWorkSet,
                             onCompletionChanged = { values, completed ->
                                 if (!set.isResolved && completed) awaitingResolution = set.id
                                 viewModel.setCompletion(set.id, values, completed)
@@ -447,7 +456,13 @@ private fun ActiveWorkoutContent(
                     }
                 }
                 if (state.previousSets.isNotEmpty()) {
-                    PreviousPerformanceCard(state.previousSets, state.previousSessionTimestamp, state.previousWeightUnit.symbol)
+                    var showHistory by rememberSaveable { mutableStateOf(false) }
+                    TextButton(onClick = { showHistory = !showHistory }) {
+                        Icon(Icons.Default.History, null, Modifier.size(16.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text(stringResource(if (showHistory) R.string.guided_hide_previous_workout else R.string.guided_show_previous_workout))
+                    }
+                    if (showHistory) PreviousPerformanceCard(state.previousSets, state.previousSessionTimestamp, state.previousWeightUnit.symbol)
                 }
             }
             if (expanded) {

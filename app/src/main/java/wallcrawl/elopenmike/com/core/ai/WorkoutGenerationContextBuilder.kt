@@ -17,6 +17,8 @@ import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
 import wallcrawl.elopenmike.com.core.database.repository.ProgramRepository
 import wallcrawl.elopenmike.com.core.model.ConditionViolation
+import wallcrawl.elopenmike.com.core.model.ExerciseType
+import wallcrawl.elopenmike.com.core.model.convertWeight
 import wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog
 import wallcrawl.elopenmike.com.core.model.ConditionPlanningResult
 import wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent
@@ -250,7 +252,7 @@ class WorkoutGenerationContextBuilder(
             ConditionPlanningResult.NotApplicable -> allowedExercises
         }
 
-        return WorkoutGenerationContext(
+        val context = WorkoutGenerationContext(
             userProfile = profile,
             fitnessGoals = programInput?.enrollment?.configuration?.goals?.toSet() ?: profile.goals,
             fitnessGoal = programInput?.enrollment?.configuration?.primaryGoal ?: profile.primaryGoal,
@@ -289,6 +291,15 @@ class WorkoutGenerationContextBuilder(
             conditionHistory = conditionRead?.history?.takeIf { profile.activeConditions.isNotEmpty() || it.pending.isNotEmpty() },
             conditionSupport = support
         ).also { it.validatedProgramSession() }
+        if (trainingProgramState == null || recentCompletedSessions.size < MAX_RECENT_SESSIONS) return context
+        val missingWeights = conditionCandidates.filter {
+            it.type == ExerciseType.WEIGHT_REPS && context.guidedLoadSource(it.id, it.type) == null
+        }.map { it.id }
+        if (missingWeights.isEmpty()) return context
+        val previous = workoutRepository.getLatestWorkingSets(missingWeights, context.historyAsOfTimestamp)
+        return context.copy(rememberedWorkingWeights = previous.mapValues { (_, performance) ->
+            convertWeight(requireNotNull(performance.sets.single().completedWeight), performance.weightUnit, context.preferredUnits)
+        })
     }
 
     private fun priorUserRestPreferences(

@@ -61,6 +61,38 @@ class ProductionPlannerCompositionTest {
         bundledExercises.filter { it.acceptedMetadata() != null }.map(Exercise::id).toSet()
 
     @Test
+    fun rememberedWorkingWeightReachesValidatedPlanWithoutGrantingProgression() = runTest {
+        val id = "dumbbell-bench-press"
+        val profile = fullGymProfile().copy(preferredUnit = WeightUnit.KG,
+            excludedExerciseIds = bundledExercises.map { it.id }.filterNot { it == id })
+        val history = (1..9).map { completedSession("unrelated-$it", schedulingNow() - it * DAY_MILLIS, emptyList()) }
+        var weight = 100.0
+        val repository = object : WorkoutRepository by StaticWorkoutRepository(history) {
+            override suspend fun getLatestWorkingSets(exerciseIds: List<String>, asOf: Long): Map<String, CompletedExercisePerformance> {
+                assertThat(exerciseIds).containsExactly(id)
+                assertThat(asOf).isEqualTo(schedulingNow())
+                return mapOf(id to CompletedExercisePerformance(asOf - 15 * DAY_MILLIS, WeightUnit.LBS,
+                    listOf(completedNormalSet().copy(completedWeight = weight))))
+            }
+        }
+        val builder = productionContextBuilder(profile, history, workoutRepository = repository)
+        val context = builder.build()
+        val plan = FakeWorkoutPlanner().generateWorkout(context)
+        assertThat(context.userProfile.confirmedStartingLoads).isEmpty()
+        assertThat(plan.exercises.single().targetWeight)
+            .isEqualTo(wallcrawl.elopenmike.com.core.model.convertWeight(weight, WeightUnit.LBS, WeightUnit.KG))
+        assertThat(plan.progressionDecisions.single().reason)
+            .isEqualTo(wallcrawl.elopenmike.com.core.model.ProgressionReason.HOLD_INSUFFICIENT_HISTORY)
+        val validator = ProgramValidator(GeneratedWorkoutValidator(InMemoryExerciseCatalog(bundledExercises)))
+        assertThat(validator.validate(plan, context)).isInstanceOf(ProgramValidationResult.Valid::class.java)
+        weight = 22.5
+        val changed = builder.build()
+        assertThat(RecommendationContextIdentity.of(changed)).isNotEqualTo(RecommendationContextIdentity.of(context))
+        val stale = validator.validate(plan, changed) as ProgramValidationResult.Invalid
+        assertThat(stale.violations.map { it.code }).contains(ProgramViolationCode.UNTRACEABLE_LOAD)
+    }
+
+    @Test
     fun unrepresentableWorkingLoadsProduceAnExplicitHoldAfterUnitConversion() = runTest {
         for (id in listOf("assisted-chin-up", "dumbbell-bench-press")) {
             val exercise = bundledExercises.single { it.id == id }
@@ -243,7 +275,13 @@ class ProductionPlannerCompositionTest {
             ex.copy(sets = ex.sets.map { it.copy(type = wallcrawl.elopenmike.com.core.model.SetType.WARMUP) })
         })
         val future = progressionSession("future", id, reference, schedulingNow() + DAY_MILLIS)
-        for (history in listOf(listOf(warmup), listOf(future))) {
+        val zero = normal.copy(exercises = normal.exercises.map { ex ->
+            ex.copy(sets = ex.sets.map { it.copy(completedWeight = 0.0) })
+        })
+        val outsideSession = normal.copy(exercises = normal.exercises.map { ex ->
+            ex.copy(sets = ex.sets.map { it.copy(completedAtTimestamp = normal.startedAtTimestamp - 1) })
+        })
+        for (history in listOf(listOf(warmup), listOf(future), listOf(zero), listOf(outsideSession))) {
             val context = productionContextBuilder(profile, history).build()
             assertThat(FakeWorkoutPlanner().generateWorkout(context).exercises.single().prescription.targetWeight).isNull()
         }
@@ -917,10 +955,11 @@ class ProductionPlannerCompositionTest {
         history: List<WorkoutSession> = emptyList(),
         week: TrainingWeek = TrainingWeek.startingOn(MONDAY_EPOCH_DAY, LEDGER_ZONE),
         deload: wallcrawl.elopenmike.com.core.model.DeloadPreferences? = null,
-        records: List<RecommendationRecord> = emptyList()
+        records: List<RecommendationRecord> = emptyList(),
+        workoutRepository: WorkoutRepository = StaticWorkoutRepository(history, records)
     ) = WorkoutGenerationContextBuilder(
         userProfileRepository = StaticUserProfileRepository(profile),
-        workoutRepository = StaticWorkoutRepository(history, records),
+        workoutRepository = workoutRepository,
         exerciseCatalog = InMemoryExerciseCatalog(bundledExercises),
         exerciseFilter = ExerciseFilter(),
         historyAnalyzer = WorkoutHistoryAnalyzer(),
@@ -994,6 +1033,7 @@ class ProductionPlannerCompositionTest {
                 sets = (1..completedSets).map { setNumber ->
                     completedNormalSet(id = "$sessionId-set-$setNumber").copy(
                         setNumber = setNumber,
+                        completedAtTimestamp = completedAtEpochMillis,
                         exerciseType = exercise.type
                     )
                 }

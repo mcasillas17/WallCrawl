@@ -23,4 +23,12 @@
     <string name="guided_set_need_distance_duration">Introduce una distancia o duración mayor que cero.</string>
     <string name="guided_summary_partial">Tu programa avanzó una sesión. Solo las series registradas cuentan para el rendimiento.</string>
     <string name="guided_view_workout">Ver entrenamiento</string>
+    <string name="guided_choose_starting_weight">Elige el peso inicial (%1$s)</string>
+    <string name="guided_weight_from_set">Peso de la serie %1$s</string>
+    <string name="guided_last_time">Última vez · %1$s</string>
+    <string name="guided_planned_weight">Peso previsto · %1$s %2$s</string>
+    <string name="guided_choose_weight">Elegir %1$s %2$s</string>
+    <string name="guided_show_previous_workout">Ver entrenamiento anterior</string>
+    <string name="guided_hide_previous_workout">Ocultar entrenamiento anterior</string>
+    <string name="guided_last_working_set">Última serie de trabajo · %1$s</string>
 </resources>
