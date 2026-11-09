@@ -183,11 +183,13 @@ private fun SettingsDetail(
                     FitnessGoal.entries.forEach { goal ->
                         // At least one goal stays: the last one is announced as unavailable and dimmed.
                         val canToggle = !(goal in profile.goals && profile.goals.size == 1)
+                        // The text dims; the checkbox already shows Material's disabled look, so it is not dimmed twice.
+                        val textAlpha = Modifier.alpha(if (canToggle) 1f else 0.6f)
                         ListItem(
-                            headlineContent = { Text(stringResource(goal.labelRes)) },
-                            supportingContent = { Text(stringResource(goal.descriptionRes)) },
+                            headlineContent = { Text(stringResource(goal.labelRes), textAlpha) },
+                            supportingContent = { Text(stringResource(goal.descriptionRes), textAlpha) },
                             trailingContent = { Checkbox(checked = goal in profile.goals, onCheckedChange = null, enabled = canToggle) },
-                            modifier = Modifier.alpha(if (canToggle) 1f else 0.6f)
+                            modifier = Modifier
                                 .toggleable(value = goal in profile.goals, enabled = canToggle, role = Role.Checkbox) { viewModel.toggleGoal(goal) }
                         )
                     }

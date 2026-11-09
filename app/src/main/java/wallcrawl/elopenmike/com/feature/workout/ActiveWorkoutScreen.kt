@@ -277,18 +277,15 @@ private fun ActiveWorkoutContent(
     FollowAnimationSetting(animationsEnabled, illustrationPlayback)
     Column(Modifier.fillMaxSize().padding(horizontal = 12.dp)) {
         val largeText = isLargeText()
-        val contextLabel = @Composable { modifier: Modifier ->
-            Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(state.session.name, Modifier.a11yHeading(), style = MaterialTheme.typography.labelLarge, textAlign = TextAlign.Center)
-                Text(position, style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center,
-                    modifier = Modifier.clearAndSetSemantics {
-                        liveRegion = LiveRegionMode.Polite
-                        contentDescription = "$position, $name"
-                    })
-            }
-        }
         // The name gets its own line at every size: sharing a row by fixed fractions broke long words at 320 dp.
-        contextLabel(Modifier.fillMaxWidth())
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(state.session.name, Modifier.a11yHeading(), style = MaterialTheme.typography.labelLarge, textAlign = TextAlign.Center)
+            Text(position, style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center,
+                modifier = Modifier.clearAndSetSemantics {
+                    liveRegion = LiveRegionMode.Polite
+                    contentDescription = "$position, $name"
+                })
+        }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {
             val leaveLabel = stringResource(R.string.guided_leave_workout)
@@ -498,7 +495,7 @@ private fun RestTimerBar(restTimer: RestTimerUiState, onAddRest: () -> Unit, onS
     val spoken = if (restTimer.isRunning) stringResource(R.string.rest_remaining_accessibility, countdown) else label
     FlowRow(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp))
         .padding(horizontal = 4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-        // Polite only once it is over: the running text changes four times a second.
+        // Polite only once it is over: the bar updates four times a second and its text every second.
         Column(Modifier.align(Alignment.CenterVertically).clearAndSetSemantics {
             contentDescription = spoken
             if (!isRunning && sawRunning) liveRegion = LiveRegionMode.Polite
