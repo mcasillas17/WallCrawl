@@ -507,7 +507,7 @@ class OfflineWorkoutRepository(
         require(actualDurationMinutes > 0) { "actualDurationMinutes must be greater than zero." }
         return localDataWriteGate.withLock { sessionDao.completeWorkoutAndReadSummary(
             sessionId = sessionId,
-            completedAt = System.currentTimeMillis(),
+            completedAt = nowTimestamp(),
             actualDuration = actualDurationMinutes,
             calculator = progressCalculator
         ) }
