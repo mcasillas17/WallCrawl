@@ -40,7 +40,6 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTitleSpec
 import wallcrawl.elopenmike.com.core.ui.localization.ExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutRationale
-import wallcrawl.elopenmike.com.core.ui.localization.generatedWorkoutTitle
 import wallcrawl.elopenmike.com.core.ui.localization.unavailableFocusNotice
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
 import wallcrawl.elopenmike.com.feature.today.TodayContent
@@ -309,7 +308,6 @@ class GeneratedWorkoutFocusNoticeTest {
                         userProfile = UserProfile(),
                         suggestedWorkout = workout
                     ),
-                    workoutName = generatedWorkoutTitle(workout.title),
                     onStartWorkout = {},
                     onResumeWorkout = {},
                     onRegenerate = {},

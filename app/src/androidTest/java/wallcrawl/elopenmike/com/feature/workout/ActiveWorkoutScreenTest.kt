@@ -151,10 +151,10 @@ class ActiveWorkoutScreenTest {
         assertThat(runBlocking { repo.getActiveSessionOnce() }!!.exercises.single().sets.first().completedWeight).isEqualTo(40.0)
     }
 
-    private fun firstPress(): WorkoutSession {
+    private fun firstPress(exerciseId: String = "dumbbell-bench-press"): WorkoutSession {
         val base = session()
         val exercise = base.exercises.single().let { ex ->
-            ex.copy(exerciseId = "dumbbell-bench-press",
+            ex.copy(exerciseId = exerciseId,
                 prescription = ex.prescription.copy(targetWeight = null, effortTarget = EffortTarget(2, 4)),
                 sets = ex.sets.map { it.copy(targetWeight = null) })
         }
@@ -171,6 +171,28 @@ class ActiveWorkoutScreenTest {
             ActiveWorkoutScreen(vm, app.container.exerciseVisualProvider, {}, {})
         } }
         composeRule.onNodeWithText("Aim for 8–10 reps with 2–4 left in reserve.").assertExists()
+    }
+
+    @Test fun selectingAndLoggingSetsKeepsTheDemonstrationInPlace() {
+        showFirstPress(ScreenTestRepository(firstPress("arnold-press")), UserProfile())
+        composeRule.onNodeWithContentDescription("Increase Load for set 1").performClick()
+        val guidance = composeRule.onNodeWithText("Aim for 8–10 reps with 2–4 left in reserve.")
+        guidance.assertDoesNotExist()
+        val demo = composeRule.onNodeWithContentDescription("Expand ", substring = true)
+        val set2 = composeRule.onNodeWithContentDescription("Set 2")
+        val demoBounds = demo.getUnclippedBoundsInRoot()
+        val setBounds = set2.getUnclippedBoundsInRoot()
+
+        set2.performClick()
+        guidance.assertExists()
+        assertThat(demo.getUnclippedBoundsInRoot()).isEqualTo(demoBounds)
+        assertThat(set2.getUnclippedBoundsInRoot()).isEqualTo(setBounds)
+
+        composeRule.onNodeWithContentDescription("Set 1").performClick()
+        composeRule.onNodeWithText("Log set").performClick()
+        composeRule.onNodeWithText("Weight from set 1").assertExists()
+        composeRule.onNodeWithContentDescription("Rest remaining", substring = true).assertExists()
+        assertThat(demo.getUnclippedBoundsInRoot()).isEqualTo(demoBounds)
     }
 
     @Test fun firstWorkingWeightCarriesIntoTheNextSetOnlyAfterLogging() {

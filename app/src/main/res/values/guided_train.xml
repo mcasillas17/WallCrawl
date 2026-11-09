@@ -1,4 +1,5 @@
 <resources>
+    <string name="train_reentry_label">Re-entry</string>
     <string name="guided_train_change">Change</string>
     <string name="guided_train_source">Choose your workout</string>
     <string name="guided_train_ordinary">Today\'s workout</string>

@@ -5,9 +5,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -26,6 +30,7 @@ fun WallCrawlPrimaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    showForwardArrow: Boolean = false,
     leadingIcon: (@Composable () -> Unit)? = null
 ) {
     Button(
@@ -48,10 +53,14 @@ fun WallCrawlPrimaryButton(
         }
         Text(
             text = text,
+            modifier = if (showForwardArrow) Modifier.weight(1f).padding(end = 8.dp) else Modifier,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.3.sp
         )
+        if (showForwardArrow) {
+            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
+        }
     }
 }
 

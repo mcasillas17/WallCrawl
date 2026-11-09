@@ -65,7 +65,7 @@ The order is a quiet header, a short calendar-week progress summary, the next ac
 
 ### Ready state
 
-Show a concise workout title, focus, estimated duration, exercise count, and relevant adjustment summary. Estimates retain their approximation marker. Show the source explicitly as **Today's workout** or the existing **Program session** and position. A secondary **Change** action opens a chooser for the currently supported source choices, saved routines, and program management. It does not silently switch the planner or enroll a program.
+The selected poster design pairs the localized split and emphasis with a still from the actual first exercise. A compact weekly goal sits above it. Show the re-entry label when applicable, focus, estimated duration, exercise count, set count, and relevant adjustment summary. Estimates retain their approximation marker. Show the source explicitly as **Today's workout** or the existing **Program session** and position. A secondary **Change** action opens a chooser for the currently supported source choices, saved routines, and program management. It does not silently switch the planner or enroll a program.
 
 Start workout is the dominant button. View exercises opens a preview with the complete exercise order, targets, warm-up/supportive roles, and existing cues. Back or closing the preview returns to the same recommendation; no regeneration occurs as a side effect.
 
@@ -92,7 +92,7 @@ Non-blocking coverage limitations use concise, accurate summaries with Details f
 The screen answers “What do I do now?” in this order:
 
 1. Compact header with workout position, a **Leave workout** action, and secondary **Finish**.
-2. Exercise name and prescribed target above a full-width animated demonstration. The demonstration takes the vertical space left by the header and set controls, bringing the editor toward the bottom of taller windows. It retains a 120 dp minimum when the controls need to scroll. A small expand icon sits in the corner of the artwork. Tapping anywhere on the artwork opens a full-screen view of the same demonstration with catalog guidance and a Close action. Give the whole thumbnail a single accessible action named “Expand [exercise name] demonstration.” Playback runs automatically in both sizes and shows a still frame when reduced motion is enabled. Static illustrations and unavailable artwork keep their existing fallback behavior.
+2. Exercise name and prescribed target above a full-width animated demonstration. The inline demonstration grows with the available window height and stays the same size when selecting sets, logging, or showing guidance and rest controls. It retains a 120 dp minimum when the controls need to scroll. A small expand icon sits in the corner of the artwork. Tapping anywhere on the artwork opens a full-screen view of the same demonstration with catalog guidance and a Close action. Give the whole thumbnail a single accessible action named “Expand [exercise name] demonstration.” Playback runs automatically in both sizes and shows a still frame when reduced motion is enabled. Static illustrations and unavailable artwork keep their existing fallback behavior.
 3. Any applicable execution/stop cues and errors, visible before logging.
 4. A compact rest strip when applicable, using the existing deadline and rest states.
 5. A strip of numbered set buttons above one editor. Each button selects its set, indicates logged or skipped status, and exposes the recorded result to accessibility services. Let long lists of sets wrap or scroll accessibly.
