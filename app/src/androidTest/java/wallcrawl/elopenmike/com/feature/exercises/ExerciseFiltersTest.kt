@@ -44,8 +44,8 @@ class ExerciseFiltersTest {
         compose.onNode(hasSetTextAction()).assertTextContains("Incline")
     }
 
-    /** Each filter group keeps one value, so its chips are radios in a group, not checkboxes. */
-    @Test fun filterChipsAreRadiosInAGroup() {
+    /** A second tap clears a filter, which a radio cannot do, so the chips stay checkboxes, as the RIR chips do. */
+    @Test fun filterChipsAreCheckboxesThatASecondTapClears() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val vm = ExercisesViewModel(InMemoryExerciseCatalog(InMemoryExerciseCatalog.SAMPLE_EXERCISES.take(2)))
         val visuals = object : ExerciseVisualProvider {
@@ -54,10 +54,10 @@ class ExerciseFiltersTest {
         compose.setContent { WallCrawlTheme { ExercisesScreen(vm, visuals) } }
         compose.waitUntil { compose.onAllNodes(hasSetTextAction()).fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText(context.getString(R.string.guided_filters)).performClick()
-        val chest = compose.onNode(hasText(StandardMuscles.CHEST) and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton))
-        chest.assert(hasParent(SemanticsMatcher.keyIsDefined(SemanticsProperties.SelectableGroup))).assertIsNotSelected()
-        chest.performClick().assertIsSelected()
-        compose.onNode(hasText(StandardEquipment.BARBELL) and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton))
-            .assert(hasParent(SemanticsMatcher.keyIsDefined(SemanticsProperties.SelectableGroup)))
+        val checkbox = SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Checkbox)
+        val chest = compose.onNode(hasText(StandardMuscles.CHEST) and checkbox)
+        chest.assertIsNotSelected().performClick().assertIsSelected()
+        chest.performClick().assertIsNotSelected()
+        compose.onNode(hasText(StandardEquipment.BARBELL) and checkbox).assertExists()
     }
 }

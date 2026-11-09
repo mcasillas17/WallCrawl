@@ -16,11 +16,15 @@ class HyphenBreakTest {
             "[Non-\u200Bcommercial use](https://example.org/non-commercial)",
             allowBreaksAfterHyphens("[Non-commercial use](https://example.org/non-commercial)")
         )
+        assertEquals(
+            "a 12-month follow-\u200Bup.](https://example.org/x-y/)",
+            allowBreaksAfterHyphens("a 12-month follow-up.](https://example.org/x-y/)")
+        )
     }
 
     @Test
     fun linksPathsAndNumbersAreLeftAlone() {
-        val text = "[CC BY-SA](https://creativecommons.org/licenses/by-sa/4.0/) assets/body-front.png 2020-2024"
+        val text = "[CC BY 4.0](https://creativecommons.org/licenses/by-sa/4.0/) assets/body-front.png 2020-2024"
         assertEquals(text, allowBreaksAfterHyphens(text))
     }
 }
