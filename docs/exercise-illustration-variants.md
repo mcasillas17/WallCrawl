@@ -26,12 +26,14 @@ Gender is persisted locally in Room and user-requested backups. It does not
 participate in exercise eligibility, loads, prescriptions, or workout selection.
 Profile changes still advance the existing profile revision.
 
-Every exercise surface shares the preference through `ExerciseIllustration`.
-Changing profile gender replaces the whole sequence and restarts its 1–2–3–2 playback. All three
-selected frames play with the review status and remaining visual limitations
-recorded in the distribution provenance. No still-frame substitution is applied.
-If a variant is absent, malformed, or fails to load, the complete pinned original
-sequence is used; the renderer never combines male and female frames in one sequence.
+Train uses the first frame of the first prescribed exercise for the workout poster.
+It uses the profile's illustration variant, then tries the original artwork if the
+variant is unavailable. If both are unavailable, the title uses the available width.
+
+The active workout uses `ExerciseIllustration` for the inline and full-screen
+demonstrations. Animated exercises play their 1–2–3–2 sequence. With reduced
+motion enabled they show a still. Changing the profile's illustration variant resets
+playback. An unavailable variant falls back to the original sequence.
 
 The following captures show the real bundled SVGs in the exercise component after
 changing the profile gender in the test harness. The component itself contains no

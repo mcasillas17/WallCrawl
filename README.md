@@ -23,10 +23,14 @@ direction; the app's existing deterministic planner remains the foundation.
 
 ## Screenshots & App Experience
 
-**Train** opens your next workout or resumes one in progress. Use **Change** to choose a workout source. **Progress** opens your weekly activity and recent workouts. **Library** holds exercises, saved workouts and the educational condition guide. The profile icon on each tab opens settings.
+During setup, choose **LB** or **KG** on **Experience and units**. Each tile centers the abbreviation above the full unit name. Tap anywhere on the tile to select it. TalkBack announces the selected unit.
+
+After setup, **Train** shows your weekly workout count above today's workout poster. The poster pairs the workout split and focus with a still of the first planned exercise when its artwork is available. Check the estimated time, exercise count and sets, then tap **Start workout**. Use **Change** to switch workout sources. If you already have a session in progress, tap **Resume workout** to continue it.
+
+**Progress** opens your weekly activity and recent workouts. **Library** holds exercises, saved workouts and the educational condition guide. The profile icon on each tab opens settings.
 
 <p align="center">
-  <img src="art/screenshots/today-screen.png" width="24%" alt="Train with a workout ready to start" />
+  <img src="art/screenshots/today-screen.png" width="24%" alt="Train in dark mode with a Push workout poster, a still of its opening dumbbell press, and Start workout" />
   <img src="art/screenshots/active-workout.png" width="24%" alt="Exercise demonstration and compact set logger" />
   <img src="art/screenshots/exercises-screen.png" width="24%" alt="Library search, filters and exercise illustrations" />
   <img src="art/screenshots/profile-screen.png" width="24%" alt="Profile and settings" />
@@ -35,7 +39,7 @@ direction; the app's existing deterministic planner remains the foundation.
 - **My Workouts & Templates**: Manage and launch saved custom routines with total sets, exercise counts, and quick-start actions.
 - **Custom Workout Builder**: Interactive routine editor with full 327-exercise bottom sheet picker, move controls for ordering, type-aware editing of every prescription target, unit-safe loads, and unsaved drafts recovered after configuration change or background process death.
 - **Exercise Library**: Searchable catalog of 327 exercises across all muscle groups and equipment types.
-- **Active workout.** Swipe between exercises, tap the demonstration to expand it, and select a numbered set to review or edit it. Tap − or + once, or hold to change the value continuously. Tap the step size under the measurement label for finer adjustments. **Log set** saves the result and starts rest. [View the fine adjustment during rest](art/screenshots/active-workout-fine.png).
+- **Active workout.** Swipe between exercises and tap the artwork for a full-screen demonstration. Select a numbered set to review or edit it. Tap − or + once, or hold to adjust continuously. **Log set** saves the result and starts rest. [View the fine adjustment during rest](art/screenshots/active-workout-fine.png).
 - **Workout Summary**: The existing Finish flow shows recorded duration, external-load volume, completed sets, and records against genuinely earlier performance. View workout details opens the read-only record; Done returns to Progress.
 - **Progress Tracking & History**: Calendar-week activity and separately labelled reviewed dose, weekly streaks, and strength trends, plus an Over time card that charts 4–52 calendar weeks for all exercises, one exercise or one muscle, whose week rows list the workouts behind each week and whose data points open their workout. Tap a completed-workout card to reopen its frozen targets, performed sets, feedback and recorded decision reasons. View all workouts browses older sessions in fixed 20-workout pages.
 - **Profile and settings**: Full local customization of app language (System default / English / Español) and theme preference (Auto System / Dark Mode / Light Mode) with compact switchers, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, muscle priorities, and seven movement preferences.
@@ -74,12 +78,12 @@ History shows recorded membership independently of the latest run. Older and man
 sessions retain honestly absent membership.
 
 <p align="center">
-  <img src="art/screenshots/program-today-en.png" width="24%" alt="Today with a program session selected and the Manage program action" />
+  <img src="art/screenshots/program-today-en.png" width="24%" alt="Train showing the first program session, its position in block one, and Start program session" />
   <img src="art/screenshots/program-completed-en.png" width="24%" alt="Completed eight-slot program with recorded-workout links and no invented next slot" />
   <img src="art/screenshots/program-partial-finish-en.png" width="24%" alt="Partial Finish confirmation distinguishing program advancement from actual completed-set credit" />
 </p>
 <p align="center">
-  <em>Today was captured on API 37. The other program screens were captured on API 36. All use disposable test profiles. See
+  <em>These program screens were captured on API 36 using disposable test profiles. See
   <a href="docs/localization.md#program-controls-and-large-text-evidence">Spanish management, confirmation and large-text evidence</a>
   and the <a href="docs/architecture.md#optional-multi-week-programs">persistence and recovery contract</a>.</em>
 </p>
@@ -209,7 +213,7 @@ restoring an archive never changes it.
   <img src="art/screenshots/onboarding-welcome-language-es.png" width="24%" alt="Spanish onboarding step 1 of 8 with the language chip in the header reading ES, the codename field, and a quiet Restaurar perfil desde archivo button under Continuar" />
   <img src="art/screenshots/profile-language-es.png" width="24%" alt="Spanish Training Profile App preferences card holding the interface theme and language as two compact segmented controls, with ES selected" />
   <img src="art/screenshots/onboarding-restore-sheet-es.png" width="24%" alt="The Spanish restore sheet opened from the onboarding wizard, stating that the file holds the profile, routines, and every logged workout" />
-  <img src="art/screenshots/today-screen-es.png" width="24%" alt="Spanish Today screen with the workout summary, start button and expandable exercise list" />
+  <img src="art/screenshots/today-screen-es.png" width="24%" alt="Train in Spanish with an Empuje workout poster, a push-up illustration and an adjustment above Empezar entrenamiento" />
 </p>
 <p align="center">
   <img src="art/screenshots/exercises-screen-es.png" width="24%" alt="Spanish exercise library showing 302 exercises with Spanish names, muscle chips, and equipment chips" />
@@ -446,8 +450,10 @@ for the complete automatic and manual data flows.
 
 ## Gym-floor logging and rest timer
 
-Logging a set is meant to survive a noisy gym floor, so the active workout screen
-keeps every control large, explicit, and local.
+Tap **Set 1**, **Set 2**, or another numbered set to switch editors. The exercise
+demonstration keeps the same size as you switch sets, choose a starting weight, log
+a set, or enter rest. Extra controls and guidance scroll with the page. Rotating
+the phone or resizing the window lets the demonstration fit the new space.
 
 - **One-tap completion.** Log set records the values shown. Save changes confirms
   a correction to a logged set.

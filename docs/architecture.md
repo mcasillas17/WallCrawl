@@ -1457,10 +1457,14 @@ UserProfile.themePreference (SYSTEM | DARK | LIGHT)
 - **Wordmark & Typography**: Brand elements like `WallCrawlWordmark` dynamically
   render primary brand lettering in theme-aware typography tokens (`onSurface`),
   preserving high contrast on all screen densities.
-- **Gym-Floor Ergonomics**: Active workout sets incorporate tactile Material 3
-  `AssistChip` rest-timer controls, bottom padding clearance above sticky
-  actions, and prominent constructive vs destructive confirmation dialog
-  hierarchies.
+- **Train.** `WorkoutPoster` takes the title and first exercise ID from the displayed
+  recommendation. Its still uses the same local artwork provider as the active workout.
+  Applicable condition instructions and adjustment summaries appear before Start.
+- **Active workout layout.** `WorkoutPage` sizes the inline demonstration from the
+  window and exercise heading, reserving 344 dp for set controls. A longer editor
+  increases the scrollable page height. Switching sets or starting rest leaves the
+  illustration bounds steady. The expanded dialog measures its own coaching text and
+  uses the rest of the window for the demonstration.
 
 ## Verification boundaries
 
@@ -1512,8 +1516,8 @@ is retained only for database/archive compatibility and cannot affect artwork.
 Room migration 12 → 13 preserves old rows with conservative defaults. Archive
 version 3 preserves the legacy field; versions 1 and 2 retain their checksums.
 
-The app supplies `LocalIllustrationVariant` from the observed profile to every
-`ExerciseIllustration`. `WorkoutGuideVisualProvider` reads the separate variant index
+The app supplies `LocalIllustrationVariant` from the observed profile to the Train
+poster's `ExerciseStill` and the animated `ExerciseIllustration`. `WorkoutGuideVisualProvider` reads the separate variant index
 off the main thread and returns complete three-frame sequences. A missing variant or
 image-load error falls back to the complete pinned original sequence. A change of
 exercise or variant resets playback and cancels the old load. No frame-by-frame mixing
