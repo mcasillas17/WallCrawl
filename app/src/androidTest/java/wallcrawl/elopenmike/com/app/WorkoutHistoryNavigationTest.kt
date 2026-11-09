@@ -111,6 +111,7 @@ class WorkoutHistoryNavigationTest {
     })
 
     @Before fun setup() = runBlocking {
+        context.getSharedPreferences(wallcrawl.elopenmike.com.app.TODAY_PREFS, android.content.Context.MODE_PRIVATE).edit().clear().commit()
         database = Room.inMemoryDatabaseBuilder(context, WallCrawlDatabase::class.java).build()
         val gate = Mutex()
         val assets = DefaultAppContainer(context)
