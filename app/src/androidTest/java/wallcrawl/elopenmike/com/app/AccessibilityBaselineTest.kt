@@ -13,6 +13,8 @@ import androidx.test.filters.SdkSuppress
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasAnyAncestor
+import wallcrawl.elopenmike.com.core.ui.components.SELECTED_CHECK_TAG
 import wallcrawl.elopenmike.com.core.ui.components.GymFloorSetRow
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
@@ -470,6 +472,10 @@ class AccessibilityBaselineTest {
         }
         compose.onNodeWithContentDescription("4 days per week").assertIsSelected()
         compose.onNodeWithContentDescription("2 days per week").assertIsNotSelected()
+        // Material's selected fill is close to the page, so the check is what shows the choice.
+        fun check(days: String) = compose.onNode(hasTestTag(SELECTED_CHECK_TAG) and hasAnyAncestor(hasContentDescription(days)), useUnmergedTree = true)
+        check("4 days per week").assertExists()
+        check("2 days per week").assertDoesNotExist()
         // A multi-select reads as checkboxes that reflect and change the saved goals; the slider speaks minutes.
         val checkbox = SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Checkbox)
         val current = hasText(localized.getString(FitnessGoal.GENERAL_FITNESS.labelRes), substring = true) and checkbox

@@ -4,12 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -37,9 +32,7 @@ fun ReportedConditionPicker(selected: Set<String>, enabled: Boolean, onChange: (
                     onClick = { onChange(condition.id, !checked) },
                     enabled = enabled,
                     label = { Text(stringResource(condition.labelRes)) },
-                    leadingIcon = if (checked) {
-                        { Icon(Icons.Default.Check, null, Modifier.size(FilterChipDefaults.IconSize)) }
-                    } else null,
+                    leadingIcon = selectedCheck(checked),
                     modifier = Modifier.testTag("reported-condition-${condition.id}")
                 )
             }

@@ -16,6 +16,7 @@ import androidx.compose.ui.MotionDurationScale
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -35,8 +36,12 @@ fun Modifier.a11yHeading(): Modifier = semantics { heading() }
  * A FilterChip's leading check while it is selected. Material's default selected fill is close to the
  * page colour, so without it only the unselected chips' outline would show which one is chosen.
  */
-fun selectedCheck(selected: Boolean): (@Composable () -> Unit)? =
-    if (selected) { { Icon(Icons.Default.Check, null, Modifier.size(FilterChipDefaults.IconSize)) } } else null
+fun selectedCheck(selected: Boolean): (@Composable () -> Unit)? = if (selected) {
+    { Icon(Icons.Default.Check, null, Modifier.size(FilterChipDefaults.IconSize).testTag(SELECTED_CHECK_TAG)) }
+} else null
+
+/** Lets tests find the check, which has no description of its own. */
+const val SELECTED_CHECK_TAG = "selected-check"
 
 /** Text that appears on its own, such as an error, read out without moving the reader's focus. */
 fun Modifier.a11yAnnounced(): Modifier = semantics { liveRegion = LiveRegionMode.Polite }

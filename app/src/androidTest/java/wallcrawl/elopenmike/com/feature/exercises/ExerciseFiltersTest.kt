@@ -5,6 +5,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import wallcrawl.elopenmike.com.R
@@ -13,6 +14,7 @@ import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisual
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.StandardMuscles
+import wallcrawl.elopenmike.com.core.ui.components.SELECTED_CHECK_TAG
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
 
 class ExerciseFiltersTest {
@@ -56,8 +58,13 @@ class ExerciseFiltersTest {
         compose.onNodeWithText(context.getString(R.string.guided_filters)).performClick()
         val checkbox = SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Checkbox)
         val chest = compose.onNode(hasText(StandardMuscles.CHEST) and checkbox)
-        chest.assertIsNotSelected().performClick().assertIsSelected()
+        val checks = { compose.onAllNodesWithTag(SELECTED_CHECK_TAG, useUnmergedTree = true).fetchSemanticsNodes().size }
+        chest.assertIsNotSelected()
+        assertEquals(0, checks())
+        chest.performClick().assertIsSelected()
+        assertEquals(1, checks())
         chest.performClick().assertIsNotSelected()
+        assertEquals(0, checks())
         compose.onNode(hasText(StandardEquipment.BARBELL) and checkbox).assertExists()
     }
 }

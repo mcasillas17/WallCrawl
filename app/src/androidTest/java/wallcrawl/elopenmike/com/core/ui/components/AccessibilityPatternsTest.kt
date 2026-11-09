@@ -34,6 +34,7 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -268,6 +269,32 @@ class AccessibilityPatternsTest {
         compose.mainClock.advanceTimeBy(2_000)
         assertThat(compact().sameAs(held)).isTrue()
         assertThat(playback.value).isFalse()
+    }
+
+    /** A list thumbnail stays on one frame with no controls, while a full-size demo of the same frames moves. */
+    @Test fun aThumbnailNeverAnimates() {
+        val app = context.applicationContext as WallCrawlApplication
+        val exercise = runBlocking { app.container.exerciseCatalog.getExerciseById("incline-dumbbell-press")!! }
+        compose.setContent {
+            WallCrawlTheme {
+                Column {
+                    ExerciseIllustration(exercise, app.container.exerciseVisualProvider, Modifier.width(64.dp).testTag("thumb"),
+                        height = 64, thumbnail = true, animationsEnabled = true)
+                    ExerciseIllustration(exercise, app.container.exerciseVisualProvider, Modifier.testTag("full"),
+                        height = 210, animationsEnabled = true)
+                }
+            }
+        }
+        fun shot(tag: String) = compose.onNodeWithTag(tag).captureToImage().asAndroidBitmap()
+        // The frames load and play: the full-size demo moves.
+        compose.waitUntil(15_000) { shot("full").let { a -> compose.mainClock.advanceTimeBy(900); !a.sameAs(shot("full")) } }
+        val still = shot("thumb")
+        repeat(4) {
+            compose.mainClock.advanceTimeBy(900)
+            assertThat(shot("thumb").sameAs(still)).isTrue()
+        }
+        compose.onNode(hasAnyAncestor(hasTestTag("thumb")) and hasContentDescription(context.getString(R.string.illustration_pause)))
+            .assertDoesNotExist()
     }
 
     /** Turning animations off while away stops a loop that had been playing. */
