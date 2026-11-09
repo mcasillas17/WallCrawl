@@ -240,6 +240,48 @@ class TodayProductionLifecycleTest {
     }
 
     @Test
+    fun relaunchShowsTheSameOrdinaryWorkoutInsteadOfANewOne() = runTest {
+        val prefs = mapBackedPrefs()
+        val workouts = LifecycleWorkoutRepository()
+        val first = todayViewModel(LifecycleProfileRepository(freshlyOnboardedProfile()), workouts, prefs = prefs)
+        val firstCollector = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { first.uiState.collect {} }
+        advanceUntilIdle()
+        first.regenerateWorkout(); advanceUntilIdle()
+        first.regenerateWorkout(); advanceUntilIdle()
+        val shown = (first.uiState.value as TodayUiState.Success).suggestedWorkout
+        firstCollector.cancel()
+
+        // New process: fresh planner counter, fresh SavedStateHandle, same disk.
+        val relaunched = todayViewModel(LifecycleProfileRepository(freshlyOnboardedProfile()), workouts,
+            planner = FakeWorkoutPlanner(), prefs = prefs)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { relaunched.uiState.collect {} }
+        advanceUntilIdle()
+        assertThat((relaunched.uiState.value as TodayUiState.Success).suggestedWorkout.copy(id = shown.id)).isEqualTo(shown)
+        relaunched.regenerateWorkout(); advanceUntilIdle()
+        assertThat((relaunched.uiState.value as TodayUiState.Success).suggestedWorkout.generationIndex)
+            .isEqualTo(shown.generationIndex!! + 1)
+    }
+
+    private fun mapBackedPrefs(): android.content.SharedPreferences {
+        val map = mutableMapOf<String, Any?>()
+        val editor = java.lang.reflect.Proxy.newProxyInstance(javaClass.classLoader,
+            arrayOf(android.content.SharedPreferences.Editor::class.java)) { proxy, method, args ->
+            when {
+                method.name.startsWith("put") -> { map[args[0] as String] = args[1]; proxy }
+                else -> null
+            }
+        }
+        return java.lang.reflect.Proxy.newProxyInstance(javaClass.classLoader,
+            arrayOf(android.content.SharedPreferences::class.java)) { _, method, _ ->
+            when (method.name) {
+                "getAll" -> map.toMap()
+                "edit" -> editor
+                else -> throw UnsupportedOperationException(method.name)
+            }
+        } as android.content.SharedPreferences
+    }
+
+    @Test
     fun restoredProgramChoiceUsesTheSameRunSlotVariationAndExplicitMembership() = runTest {
         val profile = LifecycleProfileRepository(freshlyOnboardedProfile())
         val captured = freshlyOnboardedProfile()
@@ -1550,7 +1592,8 @@ class TodayProductionLifecycleTest {
         zone: () -> ZoneId = { LEDGER_ZONE },
         deloadRepository: DeloadRepository? = LifecycleDeloadRepository(),
         programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null,
-        savedStateHandle: androidx.lifecycle.SavedStateHandle = androidx.lifecycle.SavedStateHandle()
+        savedStateHandle: androidx.lifecycle.SavedStateHandle = androidx.lifecycle.SavedStateHandle(),
+        prefs: android.content.SharedPreferences? = null
     ): TodayViewModel {
         val catalog = InMemoryExerciseCatalog(bundledExercises)
         return TodayViewModel(
@@ -1580,7 +1623,8 @@ class TodayProductionLifecycleTest {
             zoneId = zone,
             deloadRepository = deloadRepository,
             programRepository = programRepository,
-            savedStateHandle = savedStateHandle
+            savedStateHandle = savedStateHandle,
+            prefs = prefs
         )
     }
 

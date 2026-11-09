@@ -312,7 +312,9 @@ private fun WallCrawlAppContent(
                         workoutPlanner = container.workoutPlanner,
                         programValidator = container.programValidator,
                         deloadRepository = container.deloadRepository,
-                        programRepository = container.programRepository
+                        programRepository = container.programRepository,
+                        prefs = LocalContext.current.applicationContext
+                            .getSharedPreferences("today", android.content.Context.MODE_PRIVATE)
                     )
                 )
                 val programViewModel: ProgramViewModel = viewModel(factory = ProgramViewModel.provideFactory(

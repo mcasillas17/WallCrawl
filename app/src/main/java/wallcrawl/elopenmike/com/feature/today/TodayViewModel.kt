@@ -1,5 +1,6 @@
 package wallcrawl.elopenmike.com.feature.today
 
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.createSavedStateHandle
@@ -72,7 +73,9 @@ class TodayViewModel(
     zoneId: () -> ZoneId = ZoneId::systemDefault,
     private val deloadRepository: DeloadRepository? = null,
     private val programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null,
-    private val savedStateHandle: androidx.lifecycle.SavedStateHandle = androidx.lifecycle.SavedStateHandle()
+    private val savedStateHandle: androidx.lifecycle.SavedStateHandle = androidx.lifecycle.SavedStateHandle(),
+    /** Disk copy of the Today keys, so a relaunch shows the same plan instead of a new one. */
+    private val prefs: SharedPreferences? = null
 ) : ViewModel() {
 
     val pendingConditions = workoutRepository.observePendingConditionReassessments(UserProfile.DEFAULT_PROFILE_ID)
@@ -81,6 +84,22 @@ class TodayViewModel(
             if (error is CancellationException) throw error
             emit(wallcrawl.elopenmike.com.core.ui.ConditionUiState(pendingFailed = true))
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), wallcrawl.elopenmike.com.core.ui.ConditionUiState())
+
+    init {
+        prefs?.all?.forEach { (key, value) ->
+            if (key.startsWith("today.") && !savedStateHandle.contains(key)) savedStateHandle[key] = value
+        }
+    }
+
+    private fun remember(key: String, value: Any) {
+        savedStateHandle[key] = value
+        prefs?.edit()?.apply {
+            when (value) {
+                is Int -> putInt(key, value)
+                is String -> putString(key, value)
+            }
+        }?.apply()
+    }
 
     private val selectedIntentFlow = MutableStateFlow(
         savedStateHandle.get<String>("today.intent")?.let { name -> WorkoutPlanningIntent.entries.firstOrNull { it.name == name } }
@@ -237,7 +256,7 @@ class TodayViewModel(
     fun selectPlanningIntent(intent: WorkoutPlanningIntent) {
         if (isStartingFlow.value || selectedIntentFlow.value == intent) return
         selectedIntentFlow.value = intent
-        savedStateHandle["today.intent"] = intent.name
+        remember("today.intent", intent.name)
         selectionRevision++
         lastSettledContextIdentity = null
         conditionRefusalFlow.value = null
@@ -264,7 +283,7 @@ class TodayViewModel(
     fun regenerateWorkout() {
         if (selectedIntentFlow.value == WorkoutPlanningIntent.PROGRAM) {
             val variation = savedStateHandle.get<Int>("today.program.variation") ?: 0
-            if (variation < Int.MAX_VALUE) savedStateHandle["today.program.variation"] = variation + 1
+            if (variation < Int.MAX_VALUE) remember("today.program.variation", variation + 1)
         }
         ensureProgramObservation()
         ensureSchedulingObservation()
@@ -398,15 +417,19 @@ class TodayViewModel(
                 val input = requireNotNull(current.programInput)
                 val positionKey = "${input.enrollment.programId}:${input.position.slotOrdinal}"
                 if (savedStateHandle.get<String>("today.program.position") != positionKey) {
-                    savedStateHandle["today.program.position"] = positionKey
-                    savedStateHandle["today.program.variation"] = 0
+                    remember("today.program.position", positionKey)
+                    remember("today.program.variation", 0)
                     current.copy(regenerationIndex = 0)
                 } else current
             } else
             // Freshness rebuilds the displayed variant; only an explicit variation request
-            // advances the planner counter. Completed history already advances the split.
-            if (forceGeneration) current
-            else current.copy(regenerationIndex = recommendationFlow.value?.workout?.generationIndex)
+            // advances to the next variant. Completed history already advances the split.
+            run {
+                // The first load is also forced; it restores the saved variant rather than advancing.
+                val displayed = recommendationFlow.value?.workout?.generationIndex
+                if (forceGeneration && displayed != null) current.copy(regenerationIndex = displayed.takeIf { it < Int.MAX_VALUE }?.plus(1))
+                else current.copy(regenerationIndex = displayed ?: savedStateHandle.get<Int>("today.generation"))
+            }
         }
         if (requestedSelectionRevision != selectionRevision) {
             hasPendingFreshnessCheck = true
@@ -454,6 +477,7 @@ class TodayViewModel(
                 recommendationFlow.value = PublishedRecommendation(
                     result.workout, result.snapshot, context.userProfile.preferredUnit, intent
                 )
+                if (intent != WorkoutPlanningIntent.PROGRAM) result.workout.generationIndex?.let { remember("today.generation", it) }
                 conditionRefusalFlow.value = null
                 errorFlow.value = null
             }
@@ -635,7 +659,8 @@ class TodayViewModel(
             workoutPlanner: WorkoutPlanner,
             programValidator: ProgramValidator,
             deloadRepository: DeloadRepository? = null,
-            programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null
+            programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null,
+            prefs: SharedPreferences? = null
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 TodayViewModel(
@@ -646,7 +671,8 @@ class TodayViewModel(
                     programValidator,
                     deloadRepository = deloadRepository,
                     programRepository = programRepository,
-                    savedStateHandle = createSavedStateHandle()
+                    savedStateHandle = createSavedStateHandle(),
+                    prefs = prefs
                 )
             }
         }
