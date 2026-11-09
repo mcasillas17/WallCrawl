@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
@@ -63,7 +64,7 @@ class LocalDataControlsTest {
     fun busyStatus_isAnnounced() {
         composeRule.setContent { WallCrawlTheme { BusyIndicator(visible = true) } }
         composeRule.onNodeWithText(context.getString(R.string.local_data_busy))
-            .assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.LiveRegion))
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Polite))
     }
 
     @Test
