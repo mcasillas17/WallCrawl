@@ -199,6 +199,22 @@ class TemplateEditorViewModelTest {
         assertThat(viewModel.rows().single()).isEqualTo(original)
     }
 
+    /** The sheet's error card is keyed on submitAttempt, so a second refused Apply must count as a new attempt. */
+    @Test
+    fun aRepeatedRefusedApplyCountsAsANewAttempt() = runTest {
+        val viewModel = loadedEditor()
+        viewModel.addExercise(squat)
+        viewModel.editExercise(viewModel.rows().single().rowId)
+        viewModel.updateDraftField(DraftField.REP_MAX, "2")
+        viewModel.updateDraftField(DraftField.REP_MIN, "12")
+        viewModel.applyDraft()
+        val first = viewModel.uiState.value
+        viewModel.applyDraft()
+
+        assertThat(viewModel.uiState.value.errorMessage).isEqualTo(first.errorMessage)
+        assertThat(viewModel.uiState.value.submitAttempt).isEqualTo(first.submitAttempt + 1)
+    }
+
     @Test
     fun aRestoredRowThatIsNotAValidPrescriptionIsReportedRatherThanSaved() = runTest {
         // Applying an edit already validates, so a row can only be invalid if it came back

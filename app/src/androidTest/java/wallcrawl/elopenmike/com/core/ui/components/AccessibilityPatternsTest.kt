@@ -282,6 +282,9 @@ class AccessibilityPatternsTest {
                         height = 64, thumbnail = true, animationsEnabled = true)
                     ExerciseIllustration(exercise, app.container.exerciseVisualProvider, Modifier.testTag("full"),
                         height = 210, animationsEnabled = true)
+                    // No exercise: the thumbnail's placeholder, which a thumbnail showing a frame must not match.
+                    ExerciseIllustration(null, app.container.exerciseVisualProvider, Modifier.width(64.dp).testTag("empty"),
+                        height = 64, thumbnail = true, animationsEnabled = true)
                 }
             }
         }
@@ -289,6 +292,7 @@ class AccessibilityPatternsTest {
         // The frames load and play: the full-size demo moves.
         compose.waitUntil(15_000) { shot("full").let { a -> compose.mainClock.advanceTimeBy(900); !a.sameAs(shot("full")) } }
         val still = shot("thumb")
+        assertThat(still.sameAs(shot("empty"))).isFalse()
         repeat(4) {
             compose.mainClock.advanceTimeBy(900)
             assertThat(shot("thumb").sameAs(still)).isTrue()
