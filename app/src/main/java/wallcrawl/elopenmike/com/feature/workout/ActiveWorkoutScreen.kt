@@ -24,6 +24,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -326,7 +327,7 @@ private fun ActiveWorkoutContent(
                         if (distance > threshold) viewModel.previousExercise()
                     }
                 )
-            }.verticalScroll(scroll).padding(bottom = 8.dp), heading = {
+            }.verticalScroll(scroll).padding(bottom = 8.dp), reservedControlsHeight = 344.dp, heading = {
                 Column(Modifier.fillMaxWidth().padding(vertical = 4.dp),
                     verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(position, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -504,6 +505,7 @@ private fun ActiveWorkoutContent(
 @Composable
 private fun WorkoutPage(
     modifier: Modifier,
+    reservedControlsHeight: Dp? = null,
     heading: @Composable () -> Unit,
     demonstration: @Composable () -> Unit,
     controls: @Composable () -> Unit
@@ -517,12 +519,13 @@ private fun WorkoutPage(
         val header = headerSlot.measure(natural)
         val editor = controlsSlot.measure(natural)
         val gap = 4.dp.roundToPx()
-        val demoHeight = (constraints.minHeight - header.height - editor.height - 2 * gap)
+        val controlsHeight = reservedControlsHeight?.roundToPx() ?: editor.height
+        val demoHeight = (constraints.minHeight - header.height - controlsHeight - 2 * gap)
             .coerceAtLeast(120.dp.roundToPx())
         val demo = demoSlot.measure(Constraints.fixed(constraints.maxWidth, demoHeight))
         val demoY = header.height + gap
         val editorY = demoY + demo.height + gap
-        layout(constraints.maxWidth, editorY + editor.height) {
+        layout(constraints.maxWidth, maxOf(constraints.minHeight, editorY + editor.height)) {
             header.placeRelative(0, 0)
             demo.placeRelative(0, demoY)
             editor.placeRelative(0, editorY)

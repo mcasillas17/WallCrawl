@@ -319,6 +319,7 @@ private fun WallCrawlAppContent(
                     container.programRepository, container.workoutRepository.observeActiveSession()))
                 val programState = rememberProgramState(programViewModel)
                 TodayScreen(
+                    visualProvider = container.exerciseVisualProvider,
                     onOpenProfile = { navController.navigate(AppRoutes.PROFILE) },
                     viewModel = todayViewModel,
                     onStartWorkout = ::openWorkout,

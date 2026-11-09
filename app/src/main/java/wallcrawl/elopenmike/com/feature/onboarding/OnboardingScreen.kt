@@ -21,8 +21,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,6 +34,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -67,6 +71,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import wallcrawl.elopenmike.com.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -456,34 +461,36 @@ private fun ExperienceAndUnitStep(
             )
             Spacer(modifier = Modifier.height(14.dp))
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min).selectableGroup(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 WeightUnit.entries.forEach { unit ->
                     val isSelected = state.unit == unit
-                    Box(
+                    Column(
                         modifier = Modifier
                             .weight(1f)
+                            .fillMaxHeight()
                             .clip(RoundedCornerShape(12.dp))
                             .background(if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.surface)
                             .border(1.dp, if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
-                            .clickable { viewModel.updateUnit(unit) }
-                            .padding(vertical = 14.dp),
-                        contentAlignment = Alignment.TopStart
+                            .selectable(selected = isSelected, role = Role.RadioButton) { viewModel.updateUnit(unit) }
+                            .padding(horizontal = 8.dp, vertical = 14.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = stringResource(unit.shortLabelRes),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = stringResource(unit.longLabelRes),
-                                fontSize = 11.sp,
-                                color = if (isSelected) TextWhite.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                        Text(
+                            text = stringResource(unit.shortLabelRes),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = stringResource(unit.longLabelRes),
+                            fontSize = 11.sp,
+                            textAlign = TextAlign.Center,
+                            color = if (isSelected) TextWhite.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             }

@@ -203,7 +203,7 @@ class TodayDeloadScreenTest {
         val active = WorkoutSession(name = "Recorded session", status = SessionStatus.IN_PROGRESS)
         compose.setContent { WallCrawlTheme {
             TodayContent(
-                TodayUiState.Error(TodayError.PROGRAM_UNAVAILABLE, activeSession = active), "",
+                TodayUiState.Error(TodayError.PROGRAM_UNAVAILABLE, activeSession = active),
                 onStartWorkout = { error("unavailable") }, onResumeWorkout = { resumed = true },
                 onRegenerate = {}, onOpenTemplates = {},
                 programState = ProgramUiState(loading = false, error = R.string.program_read_failed)
@@ -219,7 +219,7 @@ class TodayDeloadScreenTest {
         var selection: WorkoutPlanningIntent? = null
         compose.setContent { WallCrawlTheme {
             TodayContent(
-                TodayUiState.Error(TodayError.PROGRAM_INACTIVE), "",
+                TodayUiState.Error(TodayError.PROGRAM_INACTIVE),
                 onStartWorkout = { error("unavailable") }, onResumeWorkout = {},
                 onRegenerate = {}, onOpenTemplates = {}, selected = WorkoutPlanningIntent.PROGRAM,
                 onSelect = { selection = it }
@@ -236,7 +236,7 @@ class TodayDeloadScreenTest {
         var openedRoutines = false
         compose.setContent { WallCrawlTheme {
             TodayContent(
-                TodayUiState.Error(TodayError.REVIEWED_CONSTRAINTS_REMOVED_ALL), "",
+                TodayUiState.Error(TodayError.REVIEWED_CONSTRAINTS_REMOVED_ALL),
                 onStartWorkout = { error("no eligible workout") }, onResumeWorkout = {},
                 onRegenerate = { error("same restrictions") }, onOpenTemplates = { openedRoutines = true },
                 onOpenProfile = { openedProfile = true }
@@ -444,7 +444,6 @@ class TodayDeloadScreenTest {
                                     prescriptionUnit = prescriptionUnit,
                                     deload = TodayDeloadState(profile.revision, stored,
                                         DeloadOfferPolicy.offer(profile, stored), DeloadOfferPolicy.accepted(stored), isSaving = saving)),
-                                workoutName = "Workout",
                                 onStartWorkout = {}, onResumeWorkout = {}, onRegenerate = {}, onOpenTemplates = {},
                                 onDeloadAction = { action ->
                                     scope.launch {

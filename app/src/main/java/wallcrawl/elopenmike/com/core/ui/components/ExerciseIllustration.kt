@@ -129,15 +129,12 @@ private fun ExerciseIllustrationContent(
     ) {
         val vocabulary = LocalExerciseVocabulary.current
         if (activeFrame != null && !imageFailed) {
-            AsyncImage(
-                model = "$ANDROID_ASSET_URI_PREFIX${activeFrame.assetPath}",
-                contentDescription = exercise?.let {
-                    stringResource(R.string.illustration_content_description, vocabulary.exerciseName(it))
-                },
+            ExerciseFrame(
+                frame = activeFrame,
+                exerciseName = exercise?.let(vocabulary::exerciseName),
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(8.dp),
-                contentScale = ContentScale.Fit,
                 onError = {
                     imageFailed = true
                     useOriginals = true
@@ -172,6 +169,38 @@ private fun ExerciseIllustrationContent(
             }
         }
     }
+}
+
+@Composable
+internal fun ExerciseStill(exerciseId: String, visualProvider: ExerciseVisualProvider, modifier: Modifier) {
+    val variant = LocalIllustrationVariant.current
+    key(exerciseId, visualProvider, variant) {
+        var frame by remember { mutableStateOf<ExerciseVisual?>(null) }
+        var loading by remember { mutableStateOf(true) }
+        LaunchedEffect(Unit) {
+            frame = visualProvider.framesFor(exerciseId, variant).firstOrNull()
+                ?: visualProvider.framesFor(exerciseId).firstOrNull()
+            loading = false
+        }
+        if (loading) Spacer(modifier)
+        frame?.let { current ->
+            ExerciseFrame(current, LocalExerciseVocabulary.current.exerciseName(exerciseId), modifier) {
+                frame = visualProvider.framesFor(exerciseId).firstOrNull()
+                    ?.takeUnless { it.assetPath == current.assetPath }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExerciseFrame(frame: ExerciseVisual, exerciseName: String?, modifier: Modifier, onError: () -> Unit) {
+    AsyncImage(
+        model = "$ANDROID_ASSET_URI_PREFIX${frame.assetPath}",
+        contentDescription = exerciseName?.let { stringResource(R.string.illustration_content_description, it) },
+        modifier = modifier,
+        contentScale = ContentScale.Fit,
+        onError = { onError() }
+    )
 }
 
 @Composable

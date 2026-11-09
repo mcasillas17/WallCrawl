@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.*
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -90,6 +92,32 @@ class ProgramNavigationTest {
 
     @Test fun returningUserCanInspectTheRoutineAndAdjustmentInSpanish() = returningUserFirstViewport(Locale.forLanguageTag("es-MX"))
 
+    @Test fun trainPosterShowsTheFirstExerciseThatStarts(): Unit = runBlocking {
+        val profiles = container.userProfileRepository
+        profiles.saveProfile(profiles.getProfileOnce().copy(name = "Alex", daysPerWeek = 4,
+            goals = setOf(FitnessGoal.ATHLETIC_PERFORMANCE), returningAfterBreakWeeks = 4,
+            availableEquipment = listOf(StandardEquipment.BODYWEIGHT, StandardEquipment.DUMBBELL, StandardEquipment.BENCH)))
+        show()
+        val art = hasContentDescription(" demonstration", substring = true)
+        compose.waitUntil(10_000) { compose.onAllNodes(art).fetchSemanticsNodes().isNotEmpty() }
+        val heading = SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading) and hasAnyAncestor(hasTestTag("today-list"))
+        val titleBounds = compose.onNode(heading).getUnclippedBoundsInRoot()
+        val artBounds = compose.onNode(art).getUnclippedBoundsInRoot()
+        assertThat(artBounds.left).isAtLeast(titleBounds.right)
+        assertThat(artBounds.top).isLessThan(titleBounds.bottom)
+        capture("train-workout-poster")
+        click(R.string.today_view_exercises)
+        val first = compose.onNode(SemanticsMatcher("first exercise in preview") { node ->
+            node.config.getOrNull(SemanticsProperties.Text)?.any { it.text.startsWith("1. ") } == true
+        }).fetchSemanticsNode().config[SemanticsProperties.Text].first().text.removePrefix("1. ")
+        click(R.string.action_close)
+        val picture = hasContentDescription(localized.getString(R.string.illustration_content_description, first))
+        compose.waitUntil(10_000) { compose.onAllNodes(picture).fetchSemanticsNodes().isNotEmpty() }
+        click(R.string.today_action_start)
+        awaitActiveWorkout()
+        compose.onNodeWithContentDescription(localized.getString(R.string.guided_expand_demo, first)).assertExists()
+    }
+
     private fun returningUserFirstViewport(locale: Locale): Unit = runBlocking {
         val repo = container.userProfileRepository
         repo.saveProfile(repo.getProfileOnce().copy(name = "Miguel", daysPerWeek = 5, returningAfterBreakWeeks = 4))
@@ -100,12 +128,12 @@ class ProgramNavigationTest {
         show(locale)
         awaitTodayList()
         val start = compose.onNodeWithText(text(R.string.today_action_start))
+        capture("today-returning-first-viewport-${locale.language}")
         start.assertIsDisplayed().assertIsEnabled()
         val viewport = compose.onNodeWithTag("today-list").getUnclippedBoundsInRoot()
         val button = start.getUnclippedBoundsInRoot()
         assertThat(button.top.value).isAtLeast(viewport.top.value)
         assertThat(button.bottom.value).isAtMost(viewport.bottom.value)
-        capture("today-returning-first-viewport-${locale.language}")
         compose.onNodeWithTag("planning-PROGRAM").assertDoesNotExist()
         click(R.string.today_view_exercises)
         click(R.string.action_close)
@@ -429,7 +457,8 @@ class ProgramNavigationTest {
         }
         compose.onNodeWithTag("planning-PROGRAM").performClick()
         compose.onNodeWithTag("today-list").performScrollToNode(hasText(text(R.string.program_start_session)))
-        waitText(R.string.program_start_session)
+        val start = hasText(text(R.string.program_start_session)) and hasClickAction() and isEnabled()
+        compose.waitUntil(15_000) { compose.onAllNodes(start).fetchSemanticsNodes().isNotEmpty() }
     }
     private fun text(id: Int) = localized.getString(id)
     private fun waitText(id: Int) { compose.waitUntil(15_000) { compose.onAllNodesWithText(text(id), substring = true).fetchSemanticsNodes().isNotEmpty() } }

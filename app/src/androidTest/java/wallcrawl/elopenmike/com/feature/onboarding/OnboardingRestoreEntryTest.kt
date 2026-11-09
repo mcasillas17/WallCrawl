@@ -9,9 +9,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertIsNotSelected
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -31,6 +34,8 @@ import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
+import wallcrawl.elopenmike.com.core.ui.localization.longLabelRes
+import wallcrawl.elopenmike.com.core.ui.localization.shortLabelRes
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
 
 /**
@@ -52,6 +57,37 @@ class OnboardingRestoreEntryTest {
 
     private fun text(@StringRes id: Int): String =
         InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
+
+    @Test
+    fun weightUnitTilesCenterBothLabelsAndSwitchSelection() {
+        val viewModel = showWizard()
+        composeRule.runOnIdle {
+            viewModel.updateName("Alex")
+            viewModel.nextStep()
+            viewModel.nextStep()
+        }
+
+        val bounds = WeightUnit.entries.map { unit ->
+            val tile = composeRule.onNodeWithText(text(unit.shortLabelRes)).performScrollTo()
+            val tileBounds = tile.fetchSemanticsNode().boundsInRoot
+            for (label in listOf(unit.shortLabelRes, unit.longLabelRes)) {
+                val labelBounds = composeRule.onNodeWithText(text(label), useUnmergedTree = true)
+                    .fetchSemanticsNode().boundsInRoot
+                assertThat(labelBounds.center.x).isWithin(1f).of(tileBounds.center.x)
+            }
+            tileBounds
+        }
+        assertThat(bounds.first().width).isWithin(1f).of(bounds.last().width)
+        assertThat(bounds.first().height).isEqualTo(bounds.last().height)
+
+        val pounds = composeRule.onNodeWithText(text(WeightUnit.LBS.shortLabelRes))
+        val kilograms = composeRule.onNodeWithText(text(WeightUnit.KG.shortLabelRes))
+        pounds.assertIsSelected()
+        kilograms.assertIsNotSelected().performClick()
+        kilograms.assertIsSelected()
+        pounds.assertIsNotSelected()
+        assertThat(viewModel.uiState.value.unit).isEqualTo(WeightUnit.KG)
+    }
 
     @Test
     fun genderDropdownKeepsTheNameAndDraftWhenReturningToWelcome() {

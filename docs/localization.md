@@ -117,9 +117,8 @@ Everything numeric goes through `core/ui/format/LocaleFormatting.kt`.
 - **Parsing accepts both `.` and `,`** as the decimal mark, but only one separator per
   value. `2,5` and `2.5` are both 2.5; `1.234,5` and `2.` are refused rather than guessed
   at. A decimal comma is never read as a different magnitude.
-- **A half-typed value is not a value.** Set logging submits on every keystroke, so
-  `47.` — what a reader types on the way to `47.5` — is held back rather than submitted
-  as a null. Only a blank field clears a stored value.
+- **Set logging** uses inline controls. Tap or hold − or + to adjust a value in the
+  session's unit. **Log set** records the displayed values for an open set.
 - **Editable numbers use ASCII digits** and a `.` or `,` mark, whatever digits the device
   locale reads by default, because those are the only ones the parser accepts. That
   covers text in a field, the template editor's row summaries (which repeat that text)

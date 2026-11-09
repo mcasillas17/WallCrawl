@@ -197,7 +197,7 @@ class ConditionControlsTest {
             Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             wallcrawl.elopenmike.com.feature.today.TodayContent(
                 wallcrawl.elopenmike.com.feature.today.TodayUiState.Success(UserProfile(), workout, conditionContext = frozen),
-                "Fictional preview", {}, {}, {}, {})
+                {}, {}, {}, {})
             }
         } }
         compose.onNodeWithTag("today-list").performScrollToNode(hasText(instruction.en))
