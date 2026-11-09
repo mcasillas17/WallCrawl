@@ -130,6 +130,79 @@ class ProfileViewModel(
         }
     }
 
+    private val rackEditor = MutableStateFlow(DumbbellRackEditorState())
+    internal val dumbbellRackEditor: StateFlow<DumbbellRackEditorState> = rackEditor
+
+    fun startDumbbellRackEditing() {
+        if (rackEditor.value.weights != null) return
+        val profile = (uiState.value as? ProfileUiState.Success)?.profile ?: return
+        val rack = profile.dumbbellRack
+        rackEditor.value = DumbbellRackEditorState(unit = rack?.unit ?: profile.preferredUnit,
+            weights = rack?.weights ?: emptyList(), original = rack)
+    }
+
+    fun updateDumbbellRackUnit(unit: WeightUnit) {
+        val state = rackEditor.value
+        if (!state.saving && state.weights?.isEmpty() == true) {
+            rackEditor.value = state.copy(unit = unit, error = null)
+        }
+    }
+
+    fun updateDumbbellRackInput(input: String) {
+        if (!rackEditor.value.saving) rackEditor.value = rackEditor.value.copy(input = input, error = null)
+    }
+
+    fun addDumbbellRackWeight() {
+        val state = rackEditor.value
+        val weights = state.weights ?: return
+        if (state.saving) return
+        val input = state.input.trim()
+        val separator = input.indexOfFirst { it == '.' || it == ',' }
+        val weight = if (separator >= 0 && input.length - separator - 1 > 2) null
+            else wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting.parseDecimalInput(input)
+        if (weight == null || weights.size >= DumbbellRack.MAX_WEIGHTS || weight in weights ||
+            runCatching { DumbbellRack(state.unit, (weights + weight).sorted()) }.isFailure) {
+            rackEditor.value = state.copy(error = wallcrawl.elopenmike.com.R.string.rack_invalid)
+        } else rackEditor.value = state.copy(weights = (weights + weight).sorted(), input = "", error = null)
+    }
+
+    fun removeDumbbellRackWeight(weight: Double) {
+        val state = rackEditor.value
+        if (!state.saving) rackEditor.value = state.copy(weights = state.weights?.minus(weight), error = null)
+    }
+
+    fun clearDumbbellRack() {
+        if (!rackEditor.value.saving) rackEditor.value = rackEditor.value.copy(weights = emptyList(), input = "", error = null)
+    }
+
+    fun cancelDumbbellRackEditing() {
+        if (!rackEditor.value.saving) rackEditor.value = DumbbellRackEditorState()
+    }
+
+    fun saveDumbbellRack() {
+        val state = rackEditor.value
+        val weights = state.weights ?: return
+        if (state.saving) return
+        if (state.input.isNotBlank()) {
+            rackEditor.value = state.copy(error = wallcrawl.elopenmike.com.R.string.rack_pending)
+            return
+        }
+        rackEditor.value = state.copy(saving = true, error = null)
+        viewModelScope.launch {
+            try {
+                profileEdits.withLock {
+                    if (!userProfileRepository.updateDumbbellRackIfUnchanged(
+                            state.original, if (weights.isEmpty()) null else DumbbellRack(state.unit, weights))) {
+                        rackEditor.value = state.copy(error = wallcrawl.elopenmike.com.R.string.rack_conflict)
+                        return@launch
+                    }
+                }
+                rackEditor.value = DumbbellRackEditorState()
+            } catch (error: CancellationException) { throw error
+            } catch (_: Exception) { rackEditor.value = state.copy(error = wallcrawl.elopenmike.com.R.string.rack_save_error) }
+        }
+    }
+
     private val capabilityEditorFlow = MutableStateFlow(CapabilityEditorState())
     // A whole-profile capability save must serialize with individual equipment and report edits.
     private val profileEdits = Mutex()

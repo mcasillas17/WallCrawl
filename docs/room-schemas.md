@@ -1,12 +1,14 @@
 # Room schema artifacts
 
 Room's compiler exports the current annotated `WallCrawlDatabase` to
-`app/schemas/wallcrawl.elopenmike.com.core.database.WallCrawlDatabase/16.json`.
+`app/schemas/wallcrawl.elopenmike.com.core.database.WallCrawlDatabase/19.json`.
 This is build evidence containing table definitions, fields, affinities, nullability,
 declared SQL defaults, primary keys, indexes, foreign keys, and Room's identity hash.
 It contains no user records and is not a backup or restore format.
 
-The current database uses Room schema **18**. Archive format **8** reads versions **1–8**, including the two historical v7 writers. The database upgrade recognizes both v17 layouts and retains original reported conditions, workout roles and holds. [PR 105 integration](research/conditions/movements/pr-105.md)
+The current database uses Room schema **19**. Archive format **9** reads versions **1–9**, including the two historical v7 writers. The database upgrade recognizes both v17 layouts and retains original reported conditions, workout roles and holds. [PR 105 integration](research/conditions/movements/pr-105.md)
+
+Schema 19 adds nullable `user_profiles.dumbbellRackJson`; existing profiles retain unknown racks. Archive 9 preserves rack source units and validates bounded, sorted, unique editable loads. Versions 1–8 read with no rack, and writing racks to older versions is refused.
 
 ## Generate and check
 
@@ -63,7 +65,7 @@ as compiler output. The historical baseline remains:
 | 12–15 | Existing suites construct schema 11, run the actual migrations to the chosen start, then open through the remaining migrations |
 | 16 and released 17 | Authentic compiler exports. Migration fixtures exercise real workouts and reported conditions. |
 | Local preview 17 | Its historical generated SQL creates the alternative layout with frozen condition context. |
-| Current (18) | The compiler export is checked against a fresh database and upgraded databases. |
+| Current (19) | The compiler export is checked against a fresh database and upgraded databases. |
 
 `MigrationChainToCurrentTest` was previously named `MigrationChainTo12Test`. Its new
 method is `everyLegacyFixtureSchemaMigratesToCurrentVersion`; its 1–11 starting fixtures

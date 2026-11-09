@@ -217,7 +217,7 @@ part of the current profile model.
 state:
 
 - the current profile and preferences;
-- at most eight recent completed sessions;
+- at most eight recent completed sessions for building ordinary prescriptions, with one older observed working set per eligible weighted exercise still lacking a load;
 - at most eight recent attempts of every status, plus a bounded batch of their
   recommendation records and the current durable deload choice;
 - normalized exercise history and recently trained muscles;
@@ -490,6 +490,8 @@ Capability evidence stays separate. Defaults propose one axis only: external
 load +2.5 kg, bodyweight rep range +1, assistance -2.5 kg, or duration +5 seconds.
 Distance shapes are domain-tested, not admitted to automatic strength planning.
 These are versioned product rules, not physiology.
+
+For a weighted exercise, the planner uses a recorded working load for that exercise in the recent window. With no such result, it uses an explicit starting load or retrieves the latest eligible working set from completed history, converting the source unit when necessary. A recalled load establishes a starting point. Progression still requires the recent comparable attempts and feedback described above. With no source, the active workout asks the lifter to choose a weight. The first-use picker reads the optional saved dumbbell rack and current prescription. For comparable dumbbell lifts it can display a recent logged set in its original unit. A lifter can confirm that a prior entry meant weight per dumbbell to see nearby rack weights. A comparison never becomes the new lift’s automatic target. Logging the first normal work set makes that weight available to the next unprescribed work set in the same exercise.
 
 The factory retains compatible earned targets using stored base-configuration
 digests. Dynamic set/rest/effort changes can suppress progression without resetting
@@ -1053,7 +1055,7 @@ diagram, OEM limitations, and the lack of any previous-backup erasure guarantee.
 
 ### User-owned export, restore, and deletion
 
-`core/backup` writes archive format **version 8** and reads versions 1 through 8. Each JSON
+`core/backup` writes archive format **version 9** and reads versions 1 through 9. Each JSON
 document holds the profile, templates, every session with its exercises and sets, and
 the whole-program validation record for each session started from a recommendation. That
 version is independent of the Room schema version, which travels alongside the app

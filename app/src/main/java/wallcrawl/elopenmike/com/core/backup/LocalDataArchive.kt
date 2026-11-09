@@ -41,6 +41,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
  * per-repetition holds. The other recorded condition selections, frozen session context,
  * prescription purpose, receipt binding, unresolved restrictions and reassessment markers.
  * Version 8 preserves both sets of facts, including the historical mobility role.
+ * Version 9 preserves optional dumbbell racks in their source unit.
  *
  * ## What it contains
  *
@@ -64,7 +65,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutTemplate
 object LocalDataArchiveFormat {
 
     /** The only archive format this build writes. */
-    const val ARCHIVE_VERSION: Int = 8
+    const val ARCHIVE_VERSION: Int = 9
 
     /** Every archive format this build can read. */
     val SUPPORTED_ARCHIVE_VERSIONS: IntRange = 1..ARCHIVE_VERSION

@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.core.ai
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.model.SessionStatus
+import wallcrawl.elopenmike.com.core.model.SetType
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
@@ -172,6 +173,19 @@ class WorkoutHistoryAnalyzerTest {
         )
 
         assertThat(muscles).containsExactly("Chest", "Triceps").inOrder()
+    }
+
+    @Test
+    fun warmupAndStoppedSetsDoNotReplaceTheLastWorkingLoad() {
+        val work = completedSet("work", 1, weight = 20.0, reps = 8)
+        val prior = completedSession("working", 1_000, "press", listOf(work))
+        val later = completedSession("warmup", 2_000, "press", listOf(
+            work.copy(id = "warmup", type = SetType.WARMUP),
+            work.copy(id = "stopped", stoppedAtTimestamp = 2_000),
+            work.copy(id = "unloaded", completedWeight = 0.0)
+        ))
+        val performance = analyzer.latestCompletedExercisePerformance(listOf(prior, later), "press")
+        assertThat(performance?.sets?.map { it.id }).containsExactly(work.id)
     }
 
     @Test

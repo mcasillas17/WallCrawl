@@ -252,6 +252,7 @@ class ProductionEnabledInvarianceTest {
                         exerciseType = exercise.type,
                         targetWeight = completedWeight,
                         completedWeight = completedWeight,
+                        completedAtTimestamp = WEEK.startEpochMillis + HOUR_MILLIS,
                         targetReps = completedReps,
                         completedReps = completedReps
                     )

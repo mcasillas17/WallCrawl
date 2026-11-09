@@ -24,6 +24,7 @@ import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.ai.CompletedExercisePerformance
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
@@ -36,6 +37,31 @@ class ActiveWorkoutViewModelTest {
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
+
+    @Test
+    fun lastWorkingSetStillDisplaysAfterFiftyOtherWorkouts() = runTest {
+        val active = workoutSession(SessionStatus.IN_PROGRESS).copy(startedAtTimestamp = 10_000)
+        val exercise = active.exercises.single()
+        val old = CompletedExercisePerformance(500, WeightUnit.KG, listOf(exercise.sets.single().copy(completedWeight = 16.0)))
+        val stored = FakeRepository(active)
+        val repository = object : WorkoutRepository by stored {
+            override fun observeCompletedSessions(limit: Int) = flowOf(List(limit) { i ->
+                WorkoutSession(id = "other-$i", name = "Other", status = SessionStatus.COMPLETED,
+                    startedAtTimestamp = 600L + i, completedAtTimestamp = 700L + i)
+            })
+            override suspend fun getLatestWorkingSets(exerciseIds: List<String>, asOf: Long): Map<String, CompletedExercisePerformance> {
+                assertThat(exerciseIds).containsExactly(exercise.exerciseId)
+                assertThat(asOf).isEqualTo(9_999)
+                return mapOf(exercise.exerciseId to old)
+            }
+        }
+        val vm = viewModel(repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect {} }
+        advanceUntilIdle()
+        val state = vm.uiState.value as ActiveWorkoutUiState.Active
+        assertThat(state.previousSets).isEqualTo(old.sets)
+        assertThat(state.previousWeightUnit).isEqualTo(WeightUnit.KG)
+    }
 
     @Test
     fun previousSetsMatchTheActiveInstancePurposeForTheSameCatalogId() = runTest {

@@ -1,0 +1,18 @@
+<resources>
+    <string name="rack_title">Dumbbell rack (optional)</string>
+    <string name="rack_hint">Weight per dumbbell, not per pair.</string>
+    <string name="rack_unset">No rack configured</string>
+    <string name="rack_edit">Edit rack</string>
+    <string name="rack_unit">Rack unit: %1$s</string>
+    <string name="rack_remove_weight">Remove %1$s %2$s</string>
+    <string name="rack_weight_label">Weight per dumbbell (%1$s)</string>
+    <string name="rack_add">Add weight</string>
+    <string name="rack_clear">Clear rack</string>
+    <string name="rack_cancel">Cancel</string>
+    <string name="rack_save">Save</string>
+    <string name="rack_invalid">Use a positive, unique weight up to %1$s %2$s with at most 2 decimal places. Maximum 64 weights.</string>
+    <string name="rack_pending">Add the entered weight or clear the field before saving.</string>
+    <string name="rack_conflict">The saved rack changed. Cancel and reopen the editor before saving.</string>
+    <string name="rack_save_error">Could not save the rack. Try Save again.</string>
+    <string name="rack_summary">%1$s weights · %2$s–%3$s %4$s</string>
+</resources>

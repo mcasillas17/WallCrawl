@@ -25,6 +25,21 @@ class Migration17To18Test {
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
     private val context = instrumentation.targetContext
 
+    @Test fun released18AddsUnknownRackAndPreservesProfileAndHistory() = runBlocking {
+        withMigratedDatabase("released-18", { db ->
+            createFromRoomExport(db, 18)
+            seedProfileAndHistory(db)
+        }, version = 18) { database ->
+            val profile = database.userProfileDao().getProfile("default_user")!!.toUserProfile()
+            assertNull(profile.dumbbellRack)
+            assertNotNull(database.workoutSessionDao().getSessionWithDetails("session-7"))
+            val rack = wallcrawl.elopenmike.com.core.model.DumbbellRack(
+                wallcrawl.elopenmike.com.core.model.WeightUnit.LBS, listOf(5.0, 10.0))
+            database.userProfileDao().insertOrUpdate(profile.copy(dumbbellRack = rack).toUserProfileEntity())
+            assertEquals(rack, database.userProfileDao().getProfile("default_user")!!.toUserProfile().dumbbellRack)
+        }
+    }
+
     @Test fun released16ExportRetainsItsHistoryAndAcquiresOnlyEmptyConditionDefaults() = runBlocking {
         withMigratedDatabase("released-16", { db ->
             createFromRoomExport(db, 16)

@@ -669,7 +669,7 @@ uninstall loses it.
 
 Each exercise resolves to three bundled frames that animate in a lightweight
 `1 → 2 → 3 → 2` loop using Coil 3 with SVG support. The loop starts paused when
-system animations are off, and full-size illustrations with more than one frame have a Pause/Play button; in a workout it also holds the compact demo. The compact normalized
+system animations are off, and full-size illustrations with more than one frame have a Pause/Play button; in a workout it also holds the inline demo. The compact normalized
 `catalog.json` derives those paths from validated source slugs and a catalog
 visual specification. The exact pinned upstream metadata and per-frame
 attribution remain unmodified in `upstream-manifest.json` beside the SVGs.
@@ -881,9 +881,12 @@ These checks do not certify physical-device behavior or manual TalkBack use.
   from equipment, exclusions, and hard limitations.
 - Generated recommendations are structured and validated before display and again
   before starting a session.
-- No unconfirmed starting load is ever prescribed: a `WEIGHT_REPS` target
-  weight comes only from bounded history or a load the user explicitly
-  confirmed, never a sample or catalog default.
+- A weighted exercise starts from recent working sets for that exercise, an
+  explicitly confirmed load, or its last recorded working weight from an older
+  workout. On first use, the lifter chooses a weight inline using today’s reps and
+  effort. Save available dumbbell weights under Profile → Equipment to see rack
+  choices for eligible lifts. When a comparable lift is available, its logged
+  weight and reps appear for reference. Logging fills in the next unprescribed work set.
 - Recommendation and performed values are both retained for future progression.
 - Each session retains its weight unit; mixed-unit history is converted only for
   planner and analytics calculations, never silently relabeled.

@@ -25,6 +25,23 @@ import wallcrawl.elopenmike.com.core.model.hasRequiredEquipment
  */
 @RunWith(AndroidJUnit4::class)
 class LocalDataArchiveCodecTest {
+    @Test fun dumbbellRackRoundTripsAndOldArchivesRemainUnknown() {
+        val rack = wallcrawl.elopenmike.com.core.model.DumbbellRack(WeightUnit.LBS, listOf(5.0, 12.5, 20.0))
+        val original = LocalDataArchiveFixtures.archive(snapshot = LocalDataArchiveFixtures.snapshot(
+            profile = LocalDataArchiveFixtures.profile().copy(dumbbellRack = rack)))
+        val document = original.toText()
+        assertThat(LocalDataArchiveCodec.read(document.byteInputStream()).snapshot.profile?.dumbbellRack).isEqualTo(rack)
+        val malformed = document.replace("[5.0,12.5,20.0]", "[5.0,5.0,20.0]")
+        assertThat(malformed).isNotEqualTo(document)
+        val failure = assertThrows(LocalDataArchiveException::class.java) { LocalDataArchiveCodec.read(malformed.byteInputStream()) }
+        assertThat(failure.rejection).isEqualTo(ArchiveRejection.INVALID_VALUE)
+        val old = LocalDataArchiveFixtures.archive(metadata = LocalDataArchiveFixtures.metadata(archiveVersion = 8))
+        assertThat(LocalDataArchiveCodec.read(old.toText().byteInputStream()).snapshot.profile?.dumbbellRack).isNull()
+        assertThrows(IllegalArgumentException::class.java) {
+            original.copy(metadata = original.metadata.copy(archiveVersion = 8)).toText()
+        }
+    }
+
 
     @Test
     fun versionOneAndTwo_keepOldInventoryWithoutInventingBandConfirmations() {

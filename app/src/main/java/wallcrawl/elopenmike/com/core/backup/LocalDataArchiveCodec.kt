@@ -79,6 +79,7 @@ import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.ProfileGender
 import wallcrawl.elopenmike.com.core.model.IllustrationPreference
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
+import wallcrawl.elopenmike.com.core.model.DumbbellRack
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.WorkoutExercise
@@ -142,6 +143,9 @@ object LocalDataArchiveCodec {
     fun write(archive: LocalDataArchive, openOutput: () -> OutputStream) {
         val format = ArchiveFields(archive.metadata.archiveVersion, archive.version7Layout)
         val snapshot = archive.snapshot
+        require(format.version >= 9 || snapshot.profile?.dumbbellRack == null) {
+            "Dumbbell racks require archive version 9."
+        }
         require(format.supportsContext || (snapshot.profile?.unresolvedTrainingConstraintsRaw == null &&
             snapshot.profile?.activeConditions.isNullOrEmpty() && snapshot.pendingConditionReassessments.isEmpty() &&
             snapshot.sessions.all { it.conditionContext == null } &&
@@ -660,6 +664,19 @@ object LocalDataArchiveCodec {
         name("daysPerWeek").value(profile.daysPerWeek.toLong())
         name("availableEquipment").writeStringArray(profile.availableEquipment)
         name("preferredUnit").value(profile.preferredUnit.name)
+        if (format.version >= 9) {
+            name("dumbbellRack")
+            val rack = profile.dumbbellRack
+            if (rack == null) nullValue() else {
+                rack.validate()
+                beginObject()
+                name("unit").value(rack.unit.name)
+                name("weights").beginArray()
+                rack.weights.forEach { value(it) }
+                endArray()
+                endObject()
+            }
+        }
         name("musclePriorities")
         beginObject()
         // Written in the profile's own order, not sorted. The persistence layer stores these
@@ -1237,6 +1254,7 @@ object LocalDataArchiveCodec {
         var daysPerWeek: Int? = null
         var availableEquipment: List<String>? = null
         var preferredUnit: WeightUnit? = null
+        var dumbbellRack: DumbbellRack? = null
         var musclePriorities: Map<String, PriorityLevel>? = null
         var excludedExerciseIds: List<String>? = null
         var onboardingCompleted: Boolean? = null
@@ -1336,6 +1354,26 @@ object LocalDataArchiveCodec {
                     movementCapabilities = MovementCapabilities.from(answers)
                 }
 
+                "dumbbellRack" -> {
+                    if (format.version < 9) malformed("Dumbbell racks require archive version 9.")
+                    if (peek() == JsonToken.NULL) nextNull() else {
+                        var rackUnit: WeightUnit? = null
+                        var rackWeights: List<Double>? = null
+                        readObject("profile.dumbbellRack") { rackField ->
+                            when (rackField) {
+                                "unit" -> rackUnit = nextEnum<WeightUnit>("dumbbellRack.unit")
+                                "weights" -> rackWeights = readArray("dumbbellRack.weights", DumbbellRack.MAX_WEIGHTS) {
+                                    nextBoundedDouble("dumbbellRack.weights", 0.0, MAX_WEIGHT)
+                                }
+                                else -> malformed("Unknown dumbbell rack field: $rackField")
+                            }
+                        }
+                        dumbbellRack = DumbbellRack(
+                            rackUnit ?: malformed("Dumbbell rack unit is missing."),
+                            rackWeights ?: malformed("Dumbbell rack weights are missing.")
+                        )
+                    }
+                }
                 "reportedConditions" -> {
                     format.observe(ArchiveV7Layout.REPORTED_CONDITIONS)
                     reportedConditions = readArray("profile.reportedConditions", MAX_COLLECTION_ITEMS) {
@@ -1413,6 +1451,7 @@ object LocalDataArchiveCodec {
             illustrationPreference = illustrationPreference ?: if (format.version < 3) IllustrationPreference.AUTOMATIC
                 else malformed("The archived profile is missing 'illustrationPreference'."),
             reportedConditions = reportedConditions.toSet(),
+            dumbbellRack = dumbbellRack,
             activeConditions = activeConditions,
             unresolvedTrainingConstraintsRaw = unresolvedRaw
         )
@@ -2031,6 +2070,7 @@ object LocalDataArchiveCodec {
     }
 
     private fun validateProfile(profile: UserProfile, format: ArchiveFields) {
+        profile.dumbbellRack?.validate()
         if (profile.id != UserProfile.DEFAULT_PROFILE_ID) {
             inconsistent("The archived profile does not use the identifier this app reads.")
         }

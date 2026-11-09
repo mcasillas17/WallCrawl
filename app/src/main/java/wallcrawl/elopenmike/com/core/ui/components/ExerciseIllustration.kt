@@ -74,7 +74,12 @@ fun ExerciseIllustration(
     thumbnail: Boolean = false,
     animationsEnabled: Boolean = rememberAnimationsEnabled(),
     /** Shared by a screen that shows one exercise twice, so a Pause in one holds the other. */
-    playback: MutableState<Boolean>? = null
+    playback: MutableState<Boolean>? = null,
+    /**
+     * False inside a larger control, such as a button that opens the full demo: there the counter and Pause
+     * would be out of a screen reader's reach, so the caller pairs it with a full demo sharing [playback].
+     */
+    showControls: Boolean = true
 ) {
     val variant = LocalIllustrationVariant.current
     // Above the key: pausing holds across the exercises of a workout.
@@ -86,7 +91,7 @@ fun ExerciseIllustration(
     // A shared playback is owned by its caller, which follows the setting once for every illustration it serves.
     if (playback == null && !thumbnail) FollowAnimationSetting(animationsEnabled, ownPlayback)
     key(exercise?.id, visualProvider, variant) {
-        ExerciseIllustrationContent(exercise, visualProvider, variant, modifier, height, thumbnail, animationsEnabled, playing) {
+        ExerciseIllustrationContent(exercise, visualProvider, variant, modifier, height, thumbnail, showControls, animationsEnabled, playing) {
             playing = !playing
         }
     }
@@ -110,6 +115,7 @@ private fun ExerciseIllustrationContent(
     modifier: Modifier,
     height: Int,
     thumbnail: Boolean,
+    showControls: Boolean,
     animationsEnabled: Boolean,
     playing: Boolean,
     onTogglePlaying: () -> Unit
@@ -174,7 +180,7 @@ private fun ExerciseIllustrationContent(
             IllustrationPlaceholder(exercise = exercise)
         }
 
-        if (frames.size > 1 && height > 100 && !thumbnail) {
+        if (showControls && frames.size > 1 && height > 100 && !thumbnail) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)

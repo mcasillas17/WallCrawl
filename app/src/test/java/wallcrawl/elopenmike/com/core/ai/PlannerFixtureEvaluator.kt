@@ -149,6 +149,7 @@ internal data class PlannerFixtureInputSnapshot(
      */
     val trainingProgramState: TrainingProgramState?,
     val priorUserRestPreferences: Map<String, UserRestPreference>,
+    val rememberedWorkingWeights: Map<String, Double>,
     val preferredUnits: WeightUnit,
     val catalogVersion: String?,
     val reviewPolicyVersion: Int,
@@ -330,6 +331,7 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         regenerationIndex = regenerationIndex,
         trainingProgramState = trainingProgramState?.deepCopy(),
         priorUserRestPreferences = LinkedHashMap(priorUserRestPreferences),
+        rememberedWorkingWeights = LinkedHashMap(rememberedWorkingWeights),
         preferredUnits = preferredUnits,
         catalogVersion = catalogVersion,
         reviewPolicyVersion = reviewPolicyVersion,

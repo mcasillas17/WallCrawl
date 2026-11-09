@@ -175,7 +175,7 @@ object RecommendationContextIdentity {
                 context.userProfile.confirmedStartingLoads[exercise.id].usableLoad()?.toString() ?: "none"
             )
             if (programState != null) {
-                lines += line("reviewedWorkLoad", exercise.id, context.recordedWorkLoad(exercise.id, exercise.type).toString())
+                lines += line("reviewedWorkLoad", exercise.id, context.guidedLoadSource(exercise.id, exercise.type).toString())
             }
             if (context.automaticEligibilityResult != null) {
                 lines += line("capabilityEvidence", exercise.id, context.capabilityEvidence.appliesTo(exercise.id).toString())

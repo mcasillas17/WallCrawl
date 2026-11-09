@@ -23,6 +23,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutGenerationContext
 import wallcrawl.elopenmike.com.core.model.WorkoutOrigin
 import wallcrawl.elopenmike.com.core.model.conditionDigest
 import wallcrawl.elopenmike.com.core.model.convertWeight
+import wallcrawl.elopenmike.com.core.model.hasValidCompletedChronology
 
 /**
  * Sufficient history for the factory's all-completed-sets comparison, shared with identity.
@@ -33,32 +34,41 @@ internal fun ExercisePerformanceHistory.minimumCompletedReps(): Int? =
 
 /** A recorded working value is a source, not permission to add a progression step. */
 internal fun WorkoutGenerationContext.recordedWorkLoad(exerciseId: String, type: ExerciseType): Double? {
-    if (type != ExerciseType.WEIGHT_REPS && type != ExerciseType.ASSISTED_BODYWEIGHT) return null
+    val weighted = type == ExerciseType.WEIGHT_REPS
+    if (!weighted && type != ExerciseType.ASSISTED_BODYWEIGHT) return null
     val sessions = recentWorkoutHistory.ifEmpty { progressionHistory }
     ProgressionEngine.requireBounded(sessions)
     return sessions.asSequence()
-        .filter { it.status == SessionStatus.COMPLETED &&
+        .filter { it.status == SessionStatus.COMPLETED && (!weighted || it.hasValidCompletedChronology()) &&
             it.completedAtTimestamp?.let { time -> time > 0 && time <= historyAsOfTimestamp } == true }
         .sortedWith(compareByDescending<wallcrawl.elopenmike.com.core.model.WorkoutSession> {
             it.completedAtTimestamp
         }.thenBy { it.id })
         .flatMap { session ->
+            val earliest = if (weighted) session.startedAtTimestamp else 1L
+            val latest = if (weighted) requireNotNull(session.completedAtTimestamp) else historyAsOfTimestamp
             session.exercises.filter { it.exerciseId == exerciseId && it.prescription.exerciseType == type &&
                 it.prescription.purpose == PrescriptionPurpose.ORDINARY }
                 .flatMap { it.sets }.sortedByDescending { it.setNumber }.asSequence()
                 .filter { it.isCompleted && it.type != SetType.WARMUP && it.exerciseType == type &&
                     (it.completedReps ?: 0) > 0 && it.stopReason == null && it.stoppedAtTimestamp == null &&
-                    (it.completedAtTimestamp?.let { time -> time > 0 && time <= historyAsOfTimestamp } ?: true) &&
+                    (it.completedAtTimestamp?.let { time -> time in earliest..latest } ?: true) &&
                     it.completedDurationSeconds == null && it.completedDistanceMeters == null &&
-                    (if (type == ExerciseType.WEIGHT_REPS) it.completedAssistanceWeight == null else it.completedWeight == null)
+                    (if (weighted) it.completedAssistanceWeight == null else it.completedWeight == null)
                 }
                 .mapNotNull { set ->
-                    (if (type == ExerciseType.WEIGHT_REPS) set.completedWeight else set.completedAssistanceWeight)
-                        ?.takeIf { it.isFinite() && it >= 0.0 }
+                    (if (weighted) set.completedWeight else set.completedAssistanceWeight)
+                        ?.takeIf { it.isFinite() && (it > 0.0 || !weighted && it == 0.0) }
                         ?.let { convertWeight(it, session.weightUnit, preferredUnits) }
                 }
         }.firstOrNull()
 }
+
+internal fun WorkoutGenerationContext.guidedLoadSource(exerciseId: String, type: ExerciseType): Double? =
+    recordedWorkLoad(exerciseId, type) ?: if (type == ExerciseType.WEIGHT_REPS) {
+        userProfile.confirmedStartingLoads[exerciseId]?.takeIf { it.isFinite() && it >= 0.0 }
+            ?: rememberedWorkingWeights[exerciseId]?.takeIf { it.isFinite() && it > 0.0 }
+    } else null
 
 private fun Double?.representableTargetLoad(): Double? =
     this?.takeIf { it.isFinite() && it in 0.0..ExercisePrescription.MAX_WEIGHT }
@@ -117,10 +127,7 @@ class DefaultExercisePrescriptionFactory(
             ProgressionDecision(exercise.id, reason, null, reference, result, emptyList(), basis)
         if (context.trainingProgramState == null) return hold(ordinary, ProgressionReason.HOLD_LEGACY_PATH)
         ProgressionEngine.requireBounded(context.progressionHistory)
-        val sourceLoad = context.recordedWorkLoad(exercise.id, exercise.type)
-            ?: context.userProfile.confirmedStartingLoads[exercise.id].takeIf {
-                exercise.type == ExerciseType.WEIGHT_REPS
-            }
+        val sourceLoad = context.guidedLoadSource(exercise.id, exercise.type)
         val sourceOutsideTargetBounds = sourceLoad != null && sourceLoad.representableTargetLoad() == null
         val latest = context.progressionHistory
             .filter { it.status == SessionStatus.COMPLETED &&
@@ -346,12 +353,11 @@ class DefaultExercisePrescriptionFactory(
         context: WorkoutGenerationContext,
         targetRepMaximum: Int
     ): Double? {
+        if (context.trainingProgramState != null) {
+            return context.guidedLoadSource(exercise.id, ExerciseType.WEIGHT_REPS).representableTargetLoad()
+        }
         val confirmed = context.userProfile.confirmedStartingLoads[exercise.id]
             ?.takeIf { it.isFinite() && it >= 0.0 }
-        if (context.trainingProgramState != null) {
-            val recorded = context.recordedWorkLoad(exercise.id, ExerciseType.WEIGHT_REPS)
-            return if (recorded != null) recorded.representableTargetLoad() else confirmed.representableTargetLoad()
-        }
         val priorPerformance = context.exerciseHistory[exercise.id]
         val priorWeight = priorPerformance?.lastWeight
         if (priorWeight != null && priorWeight.isFinite() && priorWeight >= 0.0) {

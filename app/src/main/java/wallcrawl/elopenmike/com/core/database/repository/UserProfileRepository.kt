@@ -19,6 +19,7 @@ import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.ReportedCondition
 import wallcrawl.elopenmike.com.core.model.ProfileGender
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
+import wallcrawl.elopenmike.com.core.model.DumbbellRack
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.SelectedCondition
 import wallcrawl.elopenmike.com.core.model.WeightUnit
@@ -45,6 +46,9 @@ interface UserProfileRepository {
     suspend fun updatePreferredDuration(minutes: Int)
     suspend fun updateDaysPerWeek(days: Int)
     suspend fun updateEquipment(equipment: List<String>)
+    suspend fun updateDumbbellRackIfUnchanged(expected: DumbbellRack?, rack: DumbbellRack?): Boolean {
+        throw UnsupportedOperationException("Dumbbell rack editing is unavailable.")
+    }
     suspend fun updateUnit(unit: WeightUnit)
     suspend fun updateMusclePriorities(priorities: Map<String, PriorityLevel>)
     suspend fun updateExcludedExercises(excludedIds: List<String>)
@@ -153,6 +157,17 @@ class OfflineUserProfileRepository(
 
     override suspend fun updateEquipment(equipment: List<String>) {
         mutateProfile { current -> current.copy(availableEquipment = equipment) }
+    }
+
+    override suspend fun updateDumbbellRackIfUnchanged(expected: DumbbellRack?, rack: DumbbellRack?): Boolean {
+        val captured = rack?.copy(weights = rack.weights.toList())
+        return localDataWriteGate.withLock {
+            val current = readOrBootstrapProfile()
+            if (current.dumbbellRack != expected) false else {
+                if (current.dumbbellRack != captured) writeProfile(current.copy(dumbbellRack = captured))
+                true
+            }
+        }
     }
 
     override suspend fun updateUnit(unit: WeightUnit) {
