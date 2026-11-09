@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_chart_exercise">Exercise</string>
+    <string name="history_chart_week">Week</string>
+    <string name="history_chart_month">Month</string>
+    <string name="history_chart_year">Year</string>
+    <string name="history_chart_all">All time</string>
+    <string name="history_chart_custom">Custom</string>
+    <string name="history_chart_from">From</string>
+    <string name="history_chart_through">Through</string>
+    <string name="history_chart_date_order">Choose an end date on or after the start date.</string>
+    <string name="history_chart_empty">No logged sets in this range.</string>
+    <string name="history_chart_no_sets">Complete a workout with a logged working set to see it here.</string>
+    <string name="history_chart_weight">Weight</string>
+    <string name="history_chart_distance">Distance</string>
+    <string name="history_chart_previous">Previous session</string>
+    <string name="history_chart_next">Next session</string>
+    <string name="history_chart_period_dates">%1$s – %2$s</string>
+    <string name="history_chart_selected_point">%1$s · %2$s</string>
+    <plurals name="history_chart_sessions">
+        <item quantity="one">%1$s session completed</item>
+        <item quantity="other">%1$s sessions completed</item>
+    </plurals>
+</resources>

@@ -183,7 +183,7 @@ private fun Filters(
                 vocabulary.exerciseIdsByLabel(exerciseOptions.orEmpty(), catalogNames)
                     .map { it to vocabulary.exerciseName(it, catalogNames[it]) }
             }
-            Menu(exerciseMenu, { exerciseMenu = false }, labelled, (selection.scope as? AnalyticsScope.Exercise)?.exerciseId,
+            ProgressSelectionMenu(exerciseMenu, { exerciseMenu = false }, labelled, (selection.scope as? AnalyticsScope.Exercise)?.exerciseId,
                 stringResource(if (exerciseOptions != null) R.string.analytics_no_exercise_options else unavailableRes)
             ) { actions.onSelectScope(AnalyticsScope.Exercise(it)) }
         }
@@ -193,7 +193,7 @@ private fun Filters(
             val labelled = remember(vocabulary) {
                 vocabulary.musclesByLabel(StandardMuscles.TRAINABLE).map { it to vocabulary.muscle(it) }
             }
-            Menu(muscleMenu, { muscleMenu = false }, labelled, (selection.scope as? AnalyticsScope.Muscle)?.muscle, null) {
+            ProgressSelectionMenu(muscleMenu, { muscleMenu = false }, labelled, (selection.scope as? AnalyticsScope.Muscle)?.muscle, null) {
                 actions.onSelectScope(AnalyticsScope.Muscle(it))
             }
         }
@@ -487,7 +487,7 @@ private fun Chip(label: String, selected: Boolean, opensMenu: Boolean? = null, o
 }
 
 @Composable
-private fun Menu(
+internal fun ProgressSelectionMenu(
     expanded: Boolean,
     onDismiss: () -> Unit,
     options: List<Pair<String, String>>,
@@ -577,7 +577,7 @@ private fun metricValue(metric: AnalyticsMetric, value: Double, unit: WeightUnit
 }
 
 @Composable
-private fun observationValue(shape: PerformanceShape, observation: PerformanceObservation, unit: WeightUnit): String {
+internal fun observationValue(shape: PerformanceShape, observation: PerformanceObservation, unit: WeightUnit): String {
     val locale = LocalConfiguration.current.locales[0]
     fun reps(value: Int) = LocaleFormatting.formatCount(value, locale)
     return when (shape) {

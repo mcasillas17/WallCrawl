@@ -17,6 +17,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import wallcrawl.elopenmike.com.core.progress.AnalyticsRangeTooLargeException
+import wallcrawl.elopenmike.com.core.database.repository.ExerciseHistorySnapshot
 import wallcrawl.elopenmike.com.core.database.repository.ProgressAnalyticsSnapshot
 import wallcrawl.elopenmike.com.core.database.repository.ProgressRepository
 import wallcrawl.elopenmike.com.core.database.repository.ProgressSnapshot
@@ -229,6 +230,10 @@ class ProgressAnalyticsViewModelTest {
             analyticsDispatcher = kotlinx.coroutines.Dispatchers.Main)
 
     private class FakeRepository : ProgressRepository {
+        override fun observeExerciseHistory(
+            exerciseId: String?, now: () -> Instant
+        ): Flow<ExerciseHistorySnapshot?> = emptyFlow()
+
         val requests = mutableListOf<AnalyticsSelection>()
         val zones = mutableListOf<ZoneId>()
         var overviewReads = 0

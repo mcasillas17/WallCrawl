@@ -173,17 +173,17 @@ class ProgressAnalyticsCalculator(
         val observations = sessions
             .sortedWith(compareBy({ it.completedAtTimestamp }, { it.startedAtTimestamp }, { it.id }))
             .flatMap { session ->
-                session.exercises
+                val sets = session.exercises
                     .filter { it.exerciseId == exerciseId && it.prescription.purpose == PrescriptionPurpose.ORDINARY }
                     .sortedWith(compareBy({ it.orderIndex }, { it.id }))
-                    .groupBy { it.shape() }
-                    .mapNotNull { (shape, instances) ->
-                        val contributing = instances.filter { instance -> instance.sets.any { it.id in comparableSetIds } }
-                        val sets = contributing.flatMap { it.sets }.filter { it.id in comparableSetIds }
-                        observe(shape, session, contributing.map { it.id }, sets, unit)?.let { shape to it }
-                    }
+                    .flatMap { instance -> instance.sets.filter { it.id in comparableSetIds } }
+                sessionPerformance(session.id, session.name, requireNotNull(session.completedAtTimestamp), session.weightUnit, sets, unit)
             }
-        return observations.groupBy({ it.first }, { it.second })
+        return performanceSeries(observations)
+    }
+
+    internal fun performanceSeries(observations: List<Pair<PerformanceShape, PerformanceObservation>>): List<PerformanceSeries> =
+        observations.groupBy({ it.first }, { it.second })
             .toSortedMap()
             .map { (shape, points) ->
                 val comparison = if (shape.charted && points.size >= 2) {
@@ -191,46 +191,46 @@ class ProgressAnalyticsCalculator(
                 } else null
                 PerformanceSeries(shape, points, comparison)
             }
-    }
-
-    private fun observe(
-        shape: PerformanceShape,
-        session: WorkoutSession,
-        instanceIds: List<String>,
+    /** Callers supply only sets accepted by the shared SQL comparison predicate, in exercise order. */
+    internal fun sessionPerformance(
+        sessionId: String,
+        sessionName: String,
+        completedAt: Long,
+        recordedUnit: WeightUnit,
         sets: List<WorkoutSet>,
         unit: WeightUnit
-    ): PerformanceObservation? {
+    ): List<Pair<PerformanceShape, PerformanceObservation>> = sets.groupBy { it.performanceShape() }.map { (shape, group) ->
         fun point(value: Double, reps: Int? = null, secondary: Double? = null) = PerformanceObservation(
-            session.id, session.name, session.completedAtTimestamp!!, instanceIds, value, reps, secondary
+            sessionId, sessionName, completedAt, group.map { it.workoutExerciseId }.distinct(), value, reps, secondary
         )
-        fun Double.inUnit() = convertWeight(this, session.weightUnit, unit)
-        return when (shape) {
-            PerformanceShape.WEIGHTED_REPS -> sets
-                .maxWithOrNull(compareBy<WorkoutSet>({ it.completedWeight }, { it.completedReps }, { it.id }))
-                ?.let { point(it.completedWeight!!.inUnit(), it.completedReps) }
-            PerformanceShape.BODYWEIGHT_REPS -> sets.maxOfOrNull { it.completedReps!! }?.let { point(it.toDouble()) }
+        fun Double.inUnit() = convertWeight(this, recordedUnit, unit)
+        shape to when (shape) {
+            PerformanceShape.WEIGHTED_REPS -> group
+                .maxWith(compareBy<WorkoutSet>({ it.completedWeight }, { it.completedReps }, { it.id }))
+                .let { point(it.completedWeight!!.inUnit(), it.completedReps) }
+            PerformanceShape.BODYWEIGHT_REPS -> point(group.maxOf { it.completedReps!! }.toDouble())
             // Ties resolve by set ID, never by stored order or by preferring less assistance.
-            PerformanceShape.ASSISTED_REPS -> sets.maxWithOrNull(compareBy<WorkoutSet>({ it.completedReps }, { it.id }))
-                ?.let { point(it.completedReps!!.toDouble(), it.completedReps, it.completedAssistanceWeight?.inUnit()) }
+            PerformanceShape.ASSISTED_REPS -> group.maxWith(compareBy<WorkoutSet>({ it.completedReps }, { it.id }))
+                .let { point(it.completedReps!!.toDouble(), it.completedReps, it.completedAssistanceWeight?.inUnit()) }
             PerformanceShape.HOLD_DURATION, PerformanceShape.TIME_ONLY ->
-                sets.maxOfOrNull { it.completedDurationSeconds!! }?.let { point(it.toDouble()) }
-            PerformanceShape.DISTANCE_ONLY -> sets.maxOfOrNull { it.completedDistanceMeters!! }?.let { point(it) }
-            PerformanceShape.DISTANCE_AND_TIME -> sets
-                .maxWithOrNull(compareBy<WorkoutSet>({ it.completedDistanceMeters }, { it.id }))
-                ?.let { point(it.completedDistanceMeters!!, secondary = it.completedDurationSeconds!!.toDouble()) }
+                point(group.maxOf { it.completedDurationSeconds!! }.toDouble())
+            PerformanceShape.DISTANCE_ONLY -> point(group.maxOf { it.completedDistanceMeters!! })
+            PerformanceShape.DISTANCE_AND_TIME -> group
+                .maxWith(compareBy<WorkoutSet>({ it.completedDistanceMeters }, { it.id }))
+                .let { point(it.completedDistanceMeters!!, secondary = it.completedDurationSeconds!!.toDouble()) }
         }
     }
 
-    /** Distance/time shapes follow the stored targets, the rule history comparisons use. */
-    private fun WorkoutExercise.shape(): PerformanceShape = when (prescription.exerciseType) {
+    /** Eligible sets have exactly the persisted exercise's target dimensions, including time/distance. */
+    private fun WorkoutSet.performanceShape(): PerformanceShape = when (exerciseType) {
         ExerciseType.WEIGHT_REPS -> PerformanceShape.WEIGHTED_REPS
         ExerciseType.BODYWEIGHT_REPS -> PerformanceShape.BODYWEIGHT_REPS
         ExerciseType.ASSISTED_BODYWEIGHT -> PerformanceShape.ASSISTED_REPS
         ExerciseType.DURATION -> PerformanceShape.HOLD_DURATION
         ExerciseType.DISTANCE_DURATION -> when {
-            prescription.targetDistanceMeters != null && prescription.targetDurationSeconds != null ->
+            completedDistanceMeters != null && completedDurationSeconds != null ->
                 PerformanceShape.DISTANCE_AND_TIME
-            prescription.targetDistanceMeters != null -> PerformanceShape.DISTANCE_ONLY
+            completedDistanceMeters != null -> PerformanceShape.DISTANCE_ONLY
             else -> PerformanceShape.TIME_ONLY
         }
     }

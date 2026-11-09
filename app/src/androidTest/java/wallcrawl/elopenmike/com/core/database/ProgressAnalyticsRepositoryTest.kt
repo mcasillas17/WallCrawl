@@ -24,6 +24,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutExerciseEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSessionEntity
 import wallcrawl.elopenmike.com.core.database.entity.WorkoutSetEntity
 import wallcrawl.elopenmike.com.core.progress.AnalyticsRangeTooLargeException
+import wallcrawl.elopenmike.com.core.database.repository.ExerciseHistorySnapshot
 import wallcrawl.elopenmike.com.core.database.repository.OfflineLocalDataBackupRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineProgressRepository
 import wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository
@@ -69,6 +70,64 @@ class ProgressAnalyticsRepositoryTest {
     }
 
     @After fun tearDown() { db.close() }
+
+    @Test fun exerciseHistoryUsesAllEligibleRecordedSessionsAndTheirOriginalUnits() = runBlocking {
+        val day = monday.toEpochMilli()
+        insert("old", day - 104 * week, "archived", unit = WeightUnit.KG, weight = 15.0)
+        insert("new", day, "archived", weight = 25.0, extraSets = listOf(
+            set("heaviest", SetType.NORMAL, weight = 35.0),
+            set("warm", SetType.WARMUP, weight = 80.0),
+            set("stopped", SetType.NORMAL, weight = 90.0, stop = SetStopReason.PAIN_STOP)
+        ))
+        insert("recent", day + 1, "approved")
+        insert("unstarted", day + 2, "in-progress", status = SessionStatus.IN_PROGRESS)
+        insert("support", day + 3, "only-support")
+        insert("future", now.toEpochMilli() + 1, "after-now")
+        val sql = db.openHelper.writableDatabase
+        sql.execSQL("UPDATE workout_exercises SET purpose = 'SUPPORTIVE' WHERE sessionId = 'support'")
+        sql.execSQL("UPDATE workout_sets SET completedAtTimestamp = NULL WHERE id = 'old-0'")
+
+        suspend fun history(id: String?) = requireNotNull(repository().observeExerciseHistory(id) { now }.first())
+        val default = history(null)
+        assertThat(default.exerciseOptions).containsExactly("approved", "archived").inOrder()
+        assertThat(default.exerciseId).isEqualTo("approved")
+        assertThat(history("missing").exerciseId).isEqualTo("approved")
+        val archived = history("archived")
+        val points = archived.performance.single().observations
+        assertThat(points.map { it.sessionId }).containsExactly("old", "new").inOrder()
+        assertThat(points.first().value).isWithin(1e-8).of(15.0 / 0.45359237)
+        assertThat(points.last().value).isEqualTo(35.0)
+        assertThat(points.last().reps).isEqualTo(5)
+        assertThat(archived.catalogNames).containsEntry("approved", "Synthetic approved")
+        backup().deleteAllLocalData()
+        assertThat(repository().observeExerciseHistory(null) { now }.first()).isNull()
+    }
+
+    @Test fun anOpenExerciseChartReflectsWorkingSetChangesAndPreferredUnitChanges() = runBlocking {
+        insert("logged", monday.toEpochMilli(), "approved", weight = 100.0)
+        val values = Channel<ExerciseHistorySnapshot?>(Channel.UNLIMITED)
+        val collector = launch { repository().observeExerciseHistory("approved") { now }.collect { values.send(it) } }
+        try {
+            withTimeout(10_000) {
+                val lbs = requireNotNull(values.receive()).performance.single().observations.single()
+                assertThat(lbs.value).isEqualTo(100.0)
+                val profiles = OfflineUserProfileRepository(db.userProfileDao(), gate)
+                profiles.saveProfile(profiles.getProfileOnce().copy(preferredUnit = WeightUnit.KG))
+                var snapshot = values.receive()
+                while (snapshot?.preferredUnit != WeightUnit.KG) snapshot = values.receive()
+                assertThat(snapshot.performance.single().observations.single().value).isWithin(1e-9).of(45.359237)
+                // Resolution can make both the selected point and its last remaining option disappear.
+                val logged = requireNotNull(db.workoutSetDao().getSetById("logged-0"))
+                db.workoutSetDao().insertOrUpdateSet(logged.copy(type = SetType.WARMUP))
+                do { snapshot = values.receive() } while (snapshot == null || snapshot.exerciseOptions.isNotEmpty())
+                assertThat(snapshot.performance).isEmpty()
+                assertThat(snapshot.exerciseId).isNull()
+            }
+        } finally {
+            collector.cancel()
+            values.close()
+        }
+    }
 
     @Test fun supportiveSameIdIsVisibleInActivityAndOptionsButNotComparisonSets() = runBlocking<Unit> {
         insert("ordinary", monday.toEpochMilli(), "approved")

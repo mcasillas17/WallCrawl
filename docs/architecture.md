@@ -1178,7 +1178,11 @@ derives current progress from completed sessions rather than sample metrics, and
 `WorkoutHistoryAnalyzer` converts bounded history into structured input for the
 next recommendation.
 
-Progress answers two different questions without combining their totals:
+The Progress tab reads the exercise chart separately from weekly accounting. `OfflineProgressRepository.observeExerciseHistory` observes profile, session, exercise and set changes. One Room transaction selects eligible exercise IDs across completed history, resolves the selected exercise (defaulting to the most recently trained), and reads only its eligible sets in session batches. It retains archived IDs and converts the recorded load from each session's unit to the user's current preference. Multiple instances within a workout pool into one observation per measurement shape. A completed session counts once even if it contributes to more than one shape.
+
+`ProgressViewModel.exerciseHistoryState` combines that snapshot with a saved date selection off the UI thread. Changing the calendar range reuses the current exercise read. Local day boundaries handle daylight-saving changes, and a midnight wakeup refreshes an open chart. The chart lets users inspect each session directly. Assisted reps and distance plus time retain their paired values. History detail and the workout planner continue using their own existing entry points.
+
+The secondary training activity and muscle screens expose two accounting measures:
 
 - **Logged activity:** completed workouts and sets, including warm-ups and timed work;
   positive repetitions from rep-based sets; external-load volume from completed
@@ -1263,7 +1267,7 @@ is a grouped SQL aggregate over all eligible earlier observations for the viewed
 exercise IDs and stored types, in their recorded units before explicit load
 conversion. It is not a global recent-200/500-session sample. The established
 record types, warm-up treatment and volume semantics remain; an initial
-observation is not a record. The Progress overview's separate record/trend
+observation is not a record. The weekly activity and performance trends screens’ separate record/trend
 window remains bounded at 500 sessions and is not the authority for an older
 workout's achievement.
 
@@ -1296,11 +1300,10 @@ See the [design](superpowers/specs/2026-10-31-progress-analytics-design.md).
 ### Immutable history detail
 
 Completion remains `ActiveWorkoutScreen`'s completed state. The unused summary
-route is removed. Progress cards and the completion summary open
+route is removed. Workout history and the completion summary open
 `history/{sessionId}`; `history` browses completed sessions in fixed pages of 20
 with older/newer controls. The route carries an encoded persisted ID, not a
-serialized workout. The direct lookup is independent of the overview's recent
-ten. Back returns to the caller, and completion Done retains its Progress flow.
+serialized workout. The direct lookup uses the recorded session ID. Back returns to the caller, and completion Done retains its Progress flow.
 
 The detail read in `OfflineWorkoutHistoryRepository` observes session, exercise,
 set and recommendation-table invalidations. Under the existing local-data gate, one Room

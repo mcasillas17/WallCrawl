@@ -27,7 +27,7 @@ During setup, choose **LB** or **KG** on **Experience and units**. Each tile cen
 
 After setup, **Train** shows your weekly workout count above today's workout poster. The poster pairs the workout split and focus with a still of the first planned exercise when its artwork is available. Check the estimated time, exercise count and sets, then tap **Start workout**. Use **Change** to switch workout sources. If you already have a session in progress, tap **Resume workout** to continue it.
 
-**Progress** opens your weekly activity and recent workouts. **Library** holds exercises, saved workouts and the educational condition guide. The profile icon on each tab opens settings.
+**Progress** opens the recorded history of one exercise. Pick an exercise and a date range to see its working sets. **Library** holds exercises, saved workouts and the educational condition guide. The profile icon on each tab opens settings.
 
 <p align="center">
   <img src="art/screenshots/today-screen.png" width="24%" alt="Train in dark mode with a Push workout poster, a still of its opening dumbbell press, and Start workout" />
@@ -41,7 +41,7 @@ After setup, **Train** shows your weekly workout count above today's workout pos
 - **Exercise Library**: Searchable catalog of 327 exercises across all muscle groups and equipment types.
 - **Active workout.** Swipe between exercises and tap the artwork for a full-screen demonstration. Select a numbered set to review or edit it. Tap − or + once, or hold to adjust continuously. **Log set** saves the result and starts rest. [View the fine adjustment during rest](art/screenshots/active-workout-fine.png).
 - **Workout Summary**: The existing Finish flow shows recorded duration, external-load volume, completed sets, and records against genuinely earlier performance. View workout details opens the read-only record; Done returns to Progress.
-- **Progress Tracking & History**: Calendar-week activity and separately labelled reviewed dose, weekly streaks, and strength trends, plus an Over time card that charts 4–52 calendar weeks for all exercises, one exercise or one muscle, whose week rows list the workouts behind each week and whose data points open their workout. Tap a completed-workout card to reopen its frozen targets, performed sets, feedback and recorded decision reasons. View all workouts browses older sessions in fixed 20-workout pages.
+- **Progress and history.** Choose a lift and tap a point to see the reps and, for weighted lifts, the weight you recorded. The menu opens workout history, weekly activity, performance trends and muscle details.
 - **Profile and settings**: Full local customization of app language (System default / English / Español) and theme preference (Auto System / Dark Mode / Light Mode) with compact switchers, multi-select fitness goals, preferred weight units (LBS/KG), session duration targets, available gym equipment, return-after-break calibration, muscle priorities, and seven movement preferences.
 - **Your Data**: Export everything stored on the device to one versioned, checksummed file you choose the destination for; restore it onto a fresh start; or delete every local record behind an explicit destructive confirmation. Restore is also offered on the first onboarding step — a quiet button under Continue opens the whole flow in a sheet — so a reinstall does not have to build a throwaway profile first.
 - **Language**: English and neutral Latin American Spanish across the whole app, following the device by default, switchable from a chip in the onboarding wizard's header before any details are entered and from Profile and settings → App preferences, and stored as a device setting rather than as part of the profile or the export archive.
@@ -88,9 +88,28 @@ sessions retain honestly absent membership.
   and the <a href="docs/architecture.md#optional-multi-week-programs">persistence and recovery contract</a>.</em>
 </p>
 
-### Progress: activity and reviewed dose
+### See how an exercise has changed
 
-Progress and the Train workout counter use **Monday-to-Monday calendar weeks in the
+Open **Progress** and choose an **Exercise** from your completed workouts. The picker initially selects the most recently trained exercise with an eligible working set. **Month** opens the current calendar month through today. **Week** begins on Monday, **Year** begins on January 1, **All time** includes the exercise's full recorded history, and **Custom** includes both dates you choose. Dates follow the time zone on your device.
+
+For weighted lifts, the two plots show the heaviest eligible set in each session and the reps you did on that set. When weights tie, the higher rep count wins. For bodyweight lifts, the plot shows the most reps in a working set. Tap either plot or use the arrows to select a session. Weight uses your current lb/kg preference. Historical dumbbell entries display their recorded load because older logs do not specify whether the number was per hand.
+
+The count includes each finished workout once if you logged a qualifying working set for this exercise. Warm-ups, skipped sets and supportive exercises are excluded. A single session appears as one point. If the range is empty, select another range. If you are new, tap **Go to Train** to start your first workout.
+
+<p align="center">
+  <img src="art/screenshots/progress-screen.png" width="24%" alt="English dark theme, bench press weight and rep charts from six completed workouts" />
+  <img src="art/screenshots/progress-screen-light.png" width="24%" alt="English light theme, All time selected with the latest bench press session highlighted" />
+  <img src="art/screenshots/progress-screen-es.png" width="24%" alt="Spanish dark theme, exercise and date filters above the weight and rep charts" />
+  <img src="art/screenshots/progress-screen-es-light.png" width="24%" alt="Spanish light theme, recorded bench press sets over the full history" />
+</p>
+
+The screenshots show six workouts saved to a disposable Room database on an Android emulator.
+
+### Weekly activity and reviewed dose
+
+From the Progress menu, open **Training activity** for weekly totals or **Muscle details** for involvement and reviewed dose.
+
+Weekly activity and the Train workout counter use **Monday-to-Monday calendar weeks in the
 device's time zone**, including daylight-saving changes. A streak needs at least one
 completed workout per week; an unfinished, empty current week does not erase a streak
 through last week.
@@ -112,19 +131,9 @@ exercises still surface as unattributed. Neither an empty allocation nor this ac
 convention measures physiological stimulus or diagnoses readiness. See the
 [exact metric and read contracts](docs/weekly-dose-ledger.md#progress-metric-contract).
 
-<p align="center">
-  <img src="art/screenshots/progress-screen.png" width="24%" alt="English Progress in dark mode: logged activity stays visible with no approved muscle allocation" />
-  <img src="art/screenshots/progress-screen-light.png" width="24%" alt="English Progress in light mode, with separate activity and reviewed-dose sections" />
-  <img src="art/screenshots/progress-screen-es.png" width="24%" alt="Spanish Progress in dark mode: actividad registrada and dosis primaria revisada are distinct" />
-  <img src="art/screenshots/progress-screen-es-light.png" width="24%" alt="Spanish Progress in light mode with readable, expandable accounting explanations" />
-</p>
-<p align="center">
-  <em>Disposable example logs from exercises outside the accepted cohort; production metadata (182 `AI_ACCEPTED`, 0 `APPROVED`) is unchanged by these captures.</em>
-</p>
-
 ### See progress over time
 
-Below the weekly cards, **Over time** charts the last 4, 12, 26 or 52 calendar weeks
+Open **Performance trends** from the Progress menu. **Over time** charts the last 4, 12, 26 or 52 calendar weeks
 (Monday to Sunday in your time zone) for all exercises, one exercise or one muscle. Its
 filters change only that card. Measures are workouts, completed sets, reps, load volume
 (load × reps, converted to your unit before adding) and reviewed dose. Each one counts only
@@ -154,9 +163,7 @@ for every formula and limit.
 
 ### Reopen a recorded workout
 
-From **Progress**, tap a completed workout or choose **View all workouts** and use
-**Older workouts / Newer workouts**. Every completed session is reachable, not just
-the ten shown on the overview. Back returns to the list or summary you came from.
+From the Progress menu, open **Workout history**. Choose a completed workout to see its saved targets, sets and feedback. Use **Older workouts** and **Newer workouts** to page through your history. Back returns to the list or summary you came from.
 History has no logging, editing, deletion, re-planning or repeat-workout action.
 
 Detail reads the persisted session: original title and notes, recorded units and
@@ -177,14 +184,13 @@ prescription or growth percentage.
 
 An earlier comparison must have completed **strictly before this workout started**;
 timestamp ties and overlapping workouts do not establish that baseline. Summary
-records use all eligible earlier evidence through bounded SQL aggregates rather
-than the overview's recent-history sample. Later stronger workouts cannot rewrite
+records use all eligible earlier evidence through bounded SQL aggregates. Later stronger workouts cannot rewrite
 an old achievement. See the [design contract](docs/superpowers/specs/2026-09-21-workout-history-detail-design.md)
 and [metric contract](docs/weekly-dose-ledger.md#individual-workout-history-and-records).
 
 <p align="center">
   <img src="art/screenshots/history-detail-en.png" width="24%" alt="English read-only workout detail with original notes, recorded kilogram units and persisted summary metrics" />
-  <img src="art/screenshots/history-older-en.png" width="24%" alt="Second history page exposing older completed workouts beyond the ten-entry Progress overview" />
+  <img src="art/screenshots/history-older-en.png" width="24%" alt="Second history page showing older completed workouts" />
   <img src="art/screenshots/history-detail-es-dark.png" width="24%" alt="Spanish dark-theme history labels around the original English session title and notes" />
   <img src="art/screenshots/history-exercise-es-large-light.png" width="24%" alt="Spanish light-theme detail at 320 dp and 1.8 font scale, preserving a missing catalog ID and original exercise notes" />
 </p>
@@ -317,7 +323,7 @@ Bundled catalog ─────────┤  profile + bounded history
                                           │
                                           ▼
                               set logging → completed history
-                                   ├─ ProgressRepository → logged activity + reviewed ledger
+                                   ├─ ProgressRepository → exercise history, logged activity and reviewed ledger
                                    ├─ read-only history → stored targets, outcomes and reasons
                                    └─ next generation context
 ```

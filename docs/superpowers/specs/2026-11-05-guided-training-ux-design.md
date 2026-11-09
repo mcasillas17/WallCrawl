@@ -53,7 +53,7 @@ Root navigation restores each tab's existing state. Full-screen workouts, onboar
 | Destination | First view | Secondary destinations |
 | --- | --- | --- |
 | Train | Next workout or active-session Resume | Workout preview, workout source chooser, My workouts, Program, workout options |
-| Progress | Weekly activity and recent workouts | All history, performance trends, muscle and dose details, existing analytics drill-downs |
+| Progress | Selected exercise’s recorded sets over a calendar range | Workout history, training activity, performance trends, muscle and dose details |
 | Library | Searchable exercises, with Exercises / My workouts switch | Exercise detail, existing routine editor, clearly labelled Condition guide entry |
 | Profile and settings | Short rows with current-value summaries | Training preferences, Equipment, Movement and restrictions, App preferences, Your data, Credits |
 
@@ -120,9 +120,9 @@ The rest strip has a visible countdown and direct +30 s / Skip rest actions. The
 
 The completion screen shows the recorded workout, duration, completed sets, and applicable achievements compactly. It distinguishes logged work from program advancement on a partial finish. It never celebrates an unperformed set or invents a record. **Done** retains the existing return to Progress; **View workout** opens the frozen history detail.
 
-Progress opens with the current week's workout count and goal, a compact consistency summary, and the most recent completed workouts with an obvious **All workouts** link. History is reachable without scrolling through analytical explanations. A new user sees an honest empty state and an action to Train; no fake chart or trend.
+Progress opens with an exercise picker, calendar filters and session charts. Month is the default. Week, Year, All time and inclusive Custom dates are available. Weight and reps share a session selection. A bodyweight exercise shows reps. A small count sits alongside the range. Tapping a point or using the arrows displays that session’s recorded performance. A new user can go straight to Train.
 
-Below the overview, **Performance trends** opens the existing range, scope, measure, and drill-down controls; **Muscle details** exposes existing muscle involvement and separately labelled reviewed primary dose. Preserve their distinct accounting, partial-week labels, unavailable comparisons, provenance, and accessible chart alternatives. Do not relabel credited work as physiological readiness or silently combine metrics. The existing Program destination is reached from Train rather than occupying the top of Progress.
+The overflow menu opens **Workout history**, **Training activity**, **Performance trends** and **Muscle details**. These screens retain weekly accounting, the established Over time filters, history drill-downs and reviewed dose.
 
 All historical names, targets, measurements, units, timestamps, and reasons remain frozen records. UX simplification must not re-run the planner to populate history. Existing pagination and older-session access remain.
 

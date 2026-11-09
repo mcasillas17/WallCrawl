@@ -17,6 +17,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.database.repository.ExerciseHistorySnapshot
 import wallcrawl.elopenmike.com.core.database.repository.ProgressAnalyticsSnapshot
 import wallcrawl.elopenmike.com.core.database.repository.ProgressRepository
 import wallcrawl.elopenmike.com.core.database.repository.ProgressSnapshot
@@ -125,6 +126,10 @@ class ProgressViewModelTest {
     }
 
     private class FakeProgressRepository : ProgressRepository {
+        override fun observeExerciseHistory(
+            exerciseId: String?, now: () -> Instant
+        ): Flow<ExerciseHistorySnapshot?> = emptyFlow()
+
         val snapshot = MutableStateFlow<ProgressSnapshot?>(snapshot())
         val requests = mutableListOf<Pair<Instant, ZoneId>>()
         var failure = false

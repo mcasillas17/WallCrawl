@@ -17,6 +17,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.assertCountEquals
@@ -415,13 +417,14 @@ class WorkoutHistoryNavigationTest {
         compose.onAllNodes(hasText(message)).assertCountEquals(0)
     }
 
-    @Test fun progressCardOpensPersistedDetailAndBackReturnsToProgress() {
+    @Test fun progressMenuOpensFullHistoryAndBackReturnsToCharts() {
         show()
         compose.runOnIdle { navigation.navigate(AppRoutes.PROGRESS) }
+        openProgressMenu(context)
+        compose.onNodeWithText(context.getString(R.string.history_title)).performClick()
         val name = "Recorded workout 24"
         compose.waitUntil(10_000) {
-            compose.onAllNodes(hasText(context.getString(R.string.progress_activity_heading)))
-                .fetchSemanticsNodes().isNotEmpty()
+            compose.onAllNodes(hasText(name)).fetchSemanticsNodes().isNotEmpty()
         }
         compose.onNode(hasScrollAction()).performScrollToNode(hasText(name))
         capture("history-progress-en")
@@ -434,13 +437,47 @@ class WorkoutHistoryNavigationTest {
         }
         capture("history-detail-en")
         compose.runOnIdle { navigation.popBackStack() }
+        assertThat(navigation.currentDestination?.route).isEqualTo(AppRoutes.HISTORY)
+        compose.runOnIdle { navigation.popBackStack() }
         assertThat(navigation.currentDestination?.route).isEqualTo(AppRoutes.PROGRESS)
+    }
+
+    @Test fun progressChartDisplaysRecordedWorkingSets(): Unit = runBlocking {
+        val arguments = InstrumentationRegistry.getArguments()
+        val locale = if (arguments.getString("progressChartLocale") == "es") Locale.forLanguageTag("es-MX") else Locale.ENGLISH
+        val theme = if (arguments.getString("progressChartTheme") == "light") ThemePreference.LIGHT else ThemePreference.DARK
+        val localized = context.createConfigurationContext(Configuration(context.resources.configuration).apply {
+            setLocales(LocaleList(locale))
+        })
+        val today = System.currentTimeMillis() - 60_000L
+        // An all-time read includes an old session beyond the legacy Trends screen's 52 weeks.
+        listOf(490 to 60.0, 340 to 65.0, 185 to 65.0, 90 to 70.0, 30 to 75.0, 0 to 80.0)
+            .forEachIndexed { index, (daysAgo, pounds) ->
+                seedWorkingSet("bench-$index", "Bench workout $index", today - daysAgo * DAY,
+                    listOf(8, 8, 10, 9, 8, 10)[index], pounds)
+            }
+        show(locale, theme)
+        compose.runOnIdle { navigation.navigate(AppRoutes.PROGRESS) }
+        val chart = hasTestTag("exercise-history-chart")
+        val allTime = localized.getString(R.string.history_chart_all)
+        compose.waitUntil(10_000) { compose.onAllNodes(hasText(allTime)).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithText(allTime).performClick()
+        val count = localized.resources.getQuantityString(R.plurals.history_chart_sessions, 6, "6")
+        compose.waitUntil(10_000) { compose.onAllNodes(hasText(count)).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNode(hasText("80 lb") and hasAnyAncestor(chart)).assertExists()
+        capture("progress-chart-${locale.language}-${theme.name.lowercase(Locale.ROOT)}")
+        compose.onNodeWithContentDescription(localized.getString(R.string.history_chart_previous)).performClick()
+        compose.onNode(hasText("75 lb") and hasAnyAncestor(chart)).assertExists()
+        restoration.emulateSavedInstanceStateRestore()
+        compose.waitUntil(10_000) {
+            compose.onAllNodes(hasText("75 lb") and hasAnyAncestor(chart)).fetchSemanticsNodes().isNotEmpty()
+        }
     }
 
     @Test fun anAnalyticsObservationOpensThatExactWorkoutAndTheFilterSurvivesRecreation() = runBlocking {
         val now = System.currentTimeMillis()
-        seedPushUps("analytics-older", "Analytics push older", now - 9 * DAY, 10)
-        seedPushUps("analytics-newer", "Analytics push newer", now - 60_000L, 12)
+        seedWorkingSet("analytics-older", "Analytics push older", now - 9 * DAY, 10)
+        seedWorkingSet("analytics-newer", "Analytics push newer", now - 60_000L, 12)
         show()
         compose.runOnIdle { navigation.navigate(AppRoutes.PROGRESS) }
         openTrends(context)
@@ -460,9 +497,9 @@ class WorkoutHistoryNavigationTest {
     @Test fun anAnalyticsWeekListsItsContributorsAndEachOpensItsOwnWorkout() = runBlocking {
         // Earlier weeks give the documentation screenshot a real chart; only this week is asserted.
         listOf(3 to 8, 2 to 10, 1 to 9).forEach { (weeksAgo, reps) ->
-            seedPushUps("analytics-week-$weeksAgo", "Push-ups week $weeksAgo", insideWeek(weeksAgo), reps)
+            seedWorkingSet("analytics-week-$weeksAgo", "Push-ups week $weeksAgo", insideWeek(weeksAgo), reps)
         }
-        seedPushUps("analytics-this-week", "Analytics push this week", insideWeek(0), 12)
+        seedWorkingSet("analytics-this-week", "Analytics push this week", insideWeek(0), 12)
         show(theme = ThemePreference.LIGHT)
         compose.runOnIdle { navigation.navigate(AppRoutes.PROGRESS) }
         openTrends(context)
@@ -480,9 +517,9 @@ class WorkoutHistoryNavigationTest {
 
     @Test fun spanishDarkExercisePerformanceComparesRecordedWorkoutsFromRoom() = runBlocking {
         listOf(3 to 8, 2 to 10, 1 to 11).forEach { (weeksAgo, reps) ->
-            seedPushUps("es-week-$weeksAgo", "Flexiones semana $weeksAgo", insideWeek(weeksAgo), reps)
+            seedWorkingSet("es-week-$weeksAgo", "Flexiones semana $weeksAgo", insideWeek(weeksAgo), reps)
         }
-        seedPushUps("es-this-week", "Flexiones de hoy", insideWeek(0), 12)
+        seedWorkingSet("es-this-week", "Flexiones de hoy", insideWeek(0), 12)
         show(locale = Locale.forLanguageTag("es-MX"), theme = ThemePreference.DARK)
         compose.runOnIdle { navigation.navigate(AppRoutes.PROGRESS) }
         val spanish = context.createConfigurationContext(Configuration(context.resources.configuration).apply {
@@ -515,10 +552,17 @@ class WorkoutHistoryNavigationTest {
             .startingOn(current.startEpochDay - 7L * weeksAgo, zone).startEpochMillis + 12 * 3_600_000L
     }
 
+    private fun openProgressMenu(localized: android.content.Context) {
+        val label = localized.getString(R.string.progress_more_options)
+        compose.waitUntil(10_000) {
+            compose.onAllNodes(hasContentDescription(label)).fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithContentDescription(label).performClick()
+    }
+
     private fun openTrends(localized: android.content.Context) {
-        val label = localized.getString(R.string.guided_progress_trends)
-        scrollProgressTo(hasText(label))
-        compose.onNodeWithText(label).performClick()
+        openProgressMenu(localized)
+        compose.onNodeWithText(localized.getString(R.string.guided_progress_trends)).performClick()
         compose.waitUntil { navigation.currentDestination?.route == AppRoutes.TRENDS }
     }
 
@@ -538,21 +582,22 @@ class WorkoutHistoryNavigationTest {
         }
     }
 
-    private suspend fun seedPushUps(id: String, name: String, completedAt: Long, reps: Int) {
+    private suspend fun seedWorkingSet(id: String, name: String, completedAt: Long, reps: Int, pounds: Double? = null) {
+        val type = if (pounds == null) ExerciseType.BODYWEIGHT_REPS else ExerciseType.WEIGHT_REPS
         database.workoutSessionDao().insertWorkout(
             WorkoutSessionEntity(
-                id, name, completedAt - 600_000L, completedAt, 15, 10, WeightUnit.KG,
+                id, name, completedAt - 600_000L, completedAt, 15, 10, WeightUnit.LBS,
                 SessionStatus.COMPLETED, WorkoutOrigin.CUSTOM_TEMPLATE, null, "", ""
             ),
             listOf(WorkoutExerciseEntity(
-                id = "$id-exercise", sessionId = id, exerciseId = "push-up", orderIndex = 0,
-                exerciseType = wallcrawl.elopenmike.com.core.model.ExerciseType.BODYWEIGHT_REPS,
+                id = "$id-exercise", sessionId = id, exerciseId = if (pounds == null) "push-up" else "barbell-bench-press", orderIndex = 0,
+                exerciseType = type,
                 targetSets = 1, targetRepMin = 8, targetRepMax = 12, targetWeight = null, notes = ""
             )),
             listOf(WorkoutSetEntity(
                 id = "$id-set", workoutExerciseId = "$id-exercise", setNumber = 1,
-                exerciseType = wallcrawl.elopenmike.com.core.model.ExerciseType.BODYWEIGHT_REPS,
-                targetReps = reps, completedReps = reps, targetWeight = null, completedWeight = null,
+                exerciseType = type,
+                targetReps = reps, completedReps = reps, targetWeight = pounds, completedWeight = pounds,
                 isCompleted = true, rpe = null, rir = null, completedAtTimestamp = completedAt - 60_000L,
                 type = SetType.NORMAL
             ))

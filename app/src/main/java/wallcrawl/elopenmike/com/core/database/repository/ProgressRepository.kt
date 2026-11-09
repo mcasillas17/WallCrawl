@@ -17,6 +17,7 @@ import wallcrawl.elopenmike.com.core.ai.acceptedReviewPolicyVersion
 import wallcrawl.elopenmike.com.core.exercise.workoutguide.WorkoutGuideCatalogSource
 import wallcrawl.elopenmike.com.core.model.AnalyticsScope
 import wallcrawl.elopenmike.com.core.model.AnalyticsRange
+import wallcrawl.elopenmike.com.core.model.PerformanceSeries
 import wallcrawl.elopenmike.com.core.model.ProgressAnalytics
 import wallcrawl.elopenmike.com.core.model.RecommendationRecord
 import wallcrawl.elopenmike.com.core.model.ProgressOverview
@@ -34,6 +35,14 @@ data class ProgressSnapshot(
     val week: TrainingWeek,
     val reviewedDose: WeeklyDoseLedger,
     val previousReviewedDose: WeeklyDoseLedger
+)
+
+data class ExerciseHistorySnapshot(
+    val exerciseOptions: List<String>,
+    val catalogNames: Map<String, String>,
+    val exerciseId: String?,
+    val preferredUnit: WeightUnit,
+    val performance: List<PerformanceSeries>
 )
 
 /** A recommendation recorded by one range session, kept for decoding by the history presenter. */
@@ -59,6 +68,9 @@ data class ProgressAnalyticsSnapshot(
 )
 
 interface ProgressRepository {
+    /** Complete recorded history for one exercise, ordered oldest to newest within each measurement shape. */
+    fun observeExerciseHistory(exerciseId: String?, now: () -> Instant): Flow<ExerciseHistorySnapshot?>
+
     /** Null means the local profile was deleted or has not been created, not a read failure. */
     fun observeProgress(now: () -> Instant, zoneId: ZoneId): Flow<ProgressSnapshot?>
 
@@ -89,6 +101,36 @@ class OfflineProgressRepository(
     private val calculator: ProgressCalculator = ProgressCalculator(),
     private val analyticsCalculator: ProgressAnalyticsCalculator = ProgressAnalyticsCalculator()
 ) : ProgressRepository {
+    override fun observeExerciseHistory(
+        exerciseId: String?, now: () -> Instant
+    ): Flow<ExerciseHistorySnapshot?> = database.invalidationTracker.createFlow(
+        "user_profiles", "workout_sessions", "workout_exercises", "workout_sets"
+    ).map {
+        database.withTransaction {
+            val profile = database.userProfileDao().getProfile(UserProfile.DEFAULT_PROFILE_ID) ?: return@withTransaction null
+            val asOf = now().toEpochMilli()
+            val dao = database.workoutSessionDao()
+            val options = dao.selectChartExerciseIds(asOf)
+            val selected = exerciseId?.takeIf { it in options } ?: options.firstOrNull()
+            val recordedIds = options.toHashSet()
+            val names = catalogSource.snapshot().exercises.filter { it.id in recordedIds }.associate { it.id to it.name }
+            // Chunk by session so repeated instances are pooled together. Only the requested
+            // exercise's eligible sets are materialized, and each batch reduces to chart points.
+            val points = selected?.let { id ->
+                dao.selectChartSessionIds(id, asOf).chunked(100).flatMap { batch ->
+                    dao.selectChartWorkingSets(id, batch, asOf).groupBy { it.sessionId }.values.flatMap { rows ->
+                        val session = rows.first()
+                        analyticsCalculator.sessionPerformance(
+                            session.sessionId, session.sessionName, session.sessionCompletedAt,
+                            session.weightUnit, rows.map { it.set }, profile.preferredUnit
+                        )
+                    }
+                }
+            }.orEmpty()
+            ExerciseHistorySnapshot(options, names, selected, profile.preferredUnit, analyticsCalculator.performanceSeries(points))
+        }
+    }.flowOn(Dispatchers.Default)
+
     override fun observeProgress(now: () -> Instant, zoneId: ZoneId): Flow<ProgressSnapshot?> {
         return database.invalidationTracker.createFlow(
             "user_profiles", "workout_sessions", "workout_exercises", "workout_sets"
