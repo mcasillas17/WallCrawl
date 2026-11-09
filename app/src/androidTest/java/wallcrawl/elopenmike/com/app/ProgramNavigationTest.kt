@@ -457,7 +457,8 @@ class ProgramNavigationTest {
         }
         compose.onNodeWithTag("planning-PROGRAM").performClick()
         compose.onNodeWithTag("today-list").performScrollToNode(hasText(text(R.string.program_start_session)))
-        waitText(R.string.program_start_session)
+        val start = hasText(text(R.string.program_start_session)) and hasClickAction() and isEnabled()
+        compose.waitUntil(15_000) { compose.onAllNodes(start).fetchSemanticsNodes().isNotEmpty() }
     }
     private fun text(id: Int) = localized.getString(id)
     private fun waitText(id: Int) { compose.waitUntil(15_000) { compose.onAllNodesWithText(text(id), substring = true).fetchSemanticsNodes().isNotEmpty() } }

@@ -176,10 +176,13 @@ internal fun ExerciseStill(exerciseId: String, visualProvider: ExerciseVisualPro
     val variant = LocalIllustrationVariant.current
     key(exerciseId, visualProvider, variant) {
         var frame by remember { mutableStateOf<ExerciseVisual?>(null) }
+        var loading by remember { mutableStateOf(true) }
         LaunchedEffect(Unit) {
             frame = visualProvider.framesFor(exerciseId, variant).firstOrNull()
                 ?: visualProvider.framesFor(exerciseId).firstOrNull()
+            loading = false
         }
+        if (loading) Spacer(modifier)
         frame?.let { current ->
             ExerciseFrame(current, LocalExerciseVocabulary.current.exerciseName(exerciseId), modifier) {
                 frame = visualProvider.framesFor(exerciseId).firstOrNull()

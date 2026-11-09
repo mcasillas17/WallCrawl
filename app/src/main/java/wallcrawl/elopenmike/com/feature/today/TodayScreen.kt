@@ -160,11 +160,12 @@ internal fun TodayContent(
             if (name.isNotBlank()) Text(stringResource(R.string.today_greeting, name),
                 style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
             val goal = ready.userProfile.daysPerWeek
-            Row(Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            FlowRow(Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween, verticalArrangement = Arrangement.spacedBy(4.dp),
+                itemVerticalAlignment = Alignment.CenterVertically) {
                 Text(pluralStringResource(R.plurals.today_weekly_progress, goal,
                     LocaleFormatting.formatCount(ready.completedThisWeek, locale), LocaleFormatting.formatCount(goal, locale)),
-                    Modifier.weight(1f), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 if (goal in 1..7) Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
                     repeat(goal) { index ->
                         Spacer(Modifier.size(width = 15.dp, height = 4.dp).background(
