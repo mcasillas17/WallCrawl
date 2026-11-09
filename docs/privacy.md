@@ -256,6 +256,12 @@ already cover. Either way it is device-local: it is not in the profile, not in R
 not in the export archive, so an archive exported under one language restores unchanged
 under the other. See [Localization](localization.md).
 
+The Today screen's chosen source (Today's workout or Program session) and the variation
+it is showing are also kept in SharedPreferences (a file named `today`), so reopening the
+app shows the same proposal. They hold no profile, history or condition data, are not in
+the export archive, are covered by the same backup exclusions, and are cleared by Delete
+all local data and by a restore.
+
 | Android branch | Manifest attribute | Resource and exclusions |
 | --- | --- | --- |
 | API 26-30 | `android:fullBackupContent` | `res/xml/backup_rules.xml`: `<full-backup-content>` excludes all nine domains |

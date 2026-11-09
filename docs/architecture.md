@@ -584,8 +584,11 @@ transactions. Expected profile/run/revision guards reject stale confirmations an
 prevent post-deletion resurrection. The gate is never held over document I/O.
 Lifecycle-aware observations refresh on invalidation/resume/retry without polling.
 Today publishes proposal/unit/snapshot/program facts together; the actual navigation
-factory supplies `SavedStateHandle` for selection/variation restoration. Run/slot
-changes reset the relevant saved variation, and restore/delete clear protected routes.
+factory supplies `SavedStateHandle` for selection/variation restoration, and every
+`today.*` key it writes (intent, program position and variation, ordinary generation
+ordinal) is mirrored to the `today` SharedPreferences file so a force-stop, removal from
+Recents, or reboot shows the same proposal. Run/slot changes reset the relevant saved
+variation, and restore/delete clear protected routes together with that file.
 Obsolete generation success or failure cannot settle a later selection's identity.
 
 Typed program failures retain Retry, profile editing and explicit ordinary/manual
@@ -686,8 +689,10 @@ and lifecycle teardown is not treated as new history. Start still revalidates th
 recommendation against a fresh context with no repair.
 
 Equal-input replay includes the generation ordinal as well as the same canonical context.
-`regenerationIndex` supplies it explicitly; null retains the existing in-memory counter and
-completed-workout-count split rotation. `PLANNER_GENERATION_V1:<index>` and the scheduling
+`regenerationIndex` supplies it explicitly. Today passes the displayed ordinal (or, on the
+first load after a relaunch, the saved one) and an explicit regeneration passes that plus
+one; null, used only when nothing has been shown or saved, falls back to the planner's
+in-memory counter. Completed-workout count still rotates the split. `PLANNER_GENERATION_V1:<index>` and the scheduling
 policy travel in the existing record reason-code channel, including neutral scheduling.
 The ordinal is separate from freshness so advancing a counter cannot invalidate its own
 displayed recommendation. Restart/restore reconstructs evidence from immutable completed

@@ -147,6 +147,10 @@ private fun WallCrawlAppContent(
     // The application context's resolver outlives any single screen, so an export or a
     // restore keeps running across a rotation instead of losing the document it opened.
     val contentResolver = LocalContext.current.applicationContext.contentResolver
+    // Today's chosen mode and workout variant, kept across relaunches. It describes the
+    // local data, so it is forgotten whenever that data is deleted or replaced.
+    val appContext = LocalContext.current.applicationContext
+    val todayPrefs = remember(appContext) { appContext.getSharedPreferences(TODAY_PREFS, android.content.Context.MODE_PRIVATE) }
 
     var savedWorkoutId by rememberSaveable { mutableStateOf<String?>(null) }
 
@@ -164,6 +168,7 @@ private fun WallCrawlAppContent(
         (Screen.bottomNavItems + Screen.Profile).forEach { navController.clearBackStack(it.route) }
         navController.clearBackStack(AppRoutes.ACTIVE_WORKOUT)
         savedWorkoutId = null
+        todayPrefs.edit().clear().apply()
     }
 
     fun openRoot(screen: Screen) {
@@ -312,7 +317,8 @@ private fun WallCrawlAppContent(
                         workoutPlanner = container.workoutPlanner,
                         programValidator = container.programValidator,
                         deloadRepository = container.deloadRepository,
-                        programRepository = container.programRepository
+                        programRepository = container.programRepository,
+                        prefs = todayPrefs
                     )
                 )
                 val programViewModel: ProgramViewModel = viewModel(factory = ProgramViewModel.provideFactory(
@@ -594,3 +600,6 @@ internal fun WallCrawlBottomBar(
         }
     }
 }
+
+/** SharedPreferences file holding the Today screen's remembered mode and workout variant. */
+const val TODAY_PREFS = "today"

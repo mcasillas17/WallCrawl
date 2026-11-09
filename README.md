@@ -25,7 +25,7 @@ direction; the app's existing deterministic planner remains the foundation.
 
 During setup, choose **LB** or **KG** on **Experience and units**. Each tile centers the abbreviation above the full unit name. Tap anywhere on the tile to select it. TalkBack announces the selected unit.
 
-After setup, **Train** shows your weekly workout count above today's workout poster. The poster pairs the workout split and focus with a still of the first planned exercise when its artwork is available. Check the estimated time, exercise count and sets, then tap **Start workout**. Use **Change** to switch workout sources. If you already have a session in progress, tap **Resume workout** to continue it.
+After setup, **Train** shows your weekly workout count above today's workout poster. The poster pairs the workout split and focus with a still of the first planned exercise when its artwork is available. Check the estimated time, exercise count and sets, then tap **Start workout**. Use **Change** to switch workout sources. If you already have a session in progress, tap **Resume workout** to continue it. Closing and reopening the app shows the same workout and source you left, including one picked with **Generate another workout**; it changes only when your history or settings do, or when you ask for another.
 
 **Progress** opens your weekly activity and recent workouts. **Library** holds exercises, saved workouts and the educational condition guide. The profile icon on each tab opens settings.
 

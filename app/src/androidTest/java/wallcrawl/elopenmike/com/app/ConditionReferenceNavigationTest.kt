@@ -48,6 +48,10 @@ class ConditionReferenceNavigationTest {
         override fun after() { if (::database.isInitialized) database.close() }
     }).around(compose)
 
+    @org.junit.Before fun clearTodayPrefs() {
+        context.getSharedPreferences(wallcrawl.elopenmike.com.app.TODAY_PREFS, android.content.Context.MODE_PRIVATE).edit().clear().commit()
+    }
+
     @Test fun exerciseTabOpensReferenceAndPublicationThenBackRestoresSearch() = checkReference("en")
     @Test fun spanishNamesAndLabelsSurviveRestorationAndReadOnlyBrowsing() = checkReference("es")
 
