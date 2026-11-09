@@ -67,7 +67,8 @@ internal fun DumbbellRackEditor(viewModel: ProfileViewModel, rack: DumbbellRack?
                     val remove = stringResource(R.string.rack_remove_weight, number.format(weight), state.unit.symbol)
                     InputChip(selected = false, enabled = !state.saving,
                         onClick = { viewModel.removeDumbbellRackWeight(weight) },
-                        label = { Text(number.format(weight) + " " + state.unit.symbol) },
+                        // The description already names the weight it removes.
+                        label = { Text(number.format(weight) + " " + state.unit.symbol, Modifier.clearAndSetSemantics {}) },
                         trailingIcon = { Icon(Icons.Default.Close, contentDescription = null) },
                         modifier = Modifier.heightIn(min = 48.dp).semantics { contentDescription = remove })
                 }

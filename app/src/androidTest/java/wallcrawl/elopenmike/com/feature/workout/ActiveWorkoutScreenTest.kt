@@ -616,6 +616,28 @@ class ActiveWorkoutScreenTest {
         composeRule.onNodeWithContentDescription(text(R.string.illustration_play)).assertExists()
     }
 
+    /** The inline demo has no control of its own, so the full-screen Pause is what stops it. */
+    @Test
+    fun aPauseInTheExpandedDemoStopsTheInlineDemo() {
+        showScreen()
+        fun inline() = composeRule.onNode(expandDemo).performScrollTo().captureToImage().asAndroidBitmap()
+        // It moves before the pause, so a still image afterwards is the pause's doing.
+        composeRule.waitUntil(15_000) { inline().let { a -> composeRule.mainClock.advanceTimeBy(900); !a.sameAs(inline()) } }
+        composeRule.onNode(expandDemo).performClick()
+        composeRule.onNodeWithContentDescription(text(R.string.illustration_pause)).performClick()
+        composeRule.onNodeWithText(text(R.string.action_close)).performClick()
+        // Closing the dialog returns focus to the demo and changes it once; wait for a settled pair first.
+        var held = inline()
+        composeRule.waitUntil(15_000) { composeRule.mainClock.advanceTimeBy(900); inline().let { now -> now.sameAs(held).also { held = now } } }
+        // A running loop changes the frame on most steps; a held one never does.
+        repeat(4) {
+            composeRule.mainClock.advanceTimeBy(900)
+            val now = inline()
+            assertThat(now.sameAs(held)).isTrue()
+            held = now
+        }
+    }
+
     /** Turning animations off during a workout stops the shared demo: the expanded demo then offers Play. */
     @Test
     fun turningAnimationsOffStopsTheWorkoutsDemo() {

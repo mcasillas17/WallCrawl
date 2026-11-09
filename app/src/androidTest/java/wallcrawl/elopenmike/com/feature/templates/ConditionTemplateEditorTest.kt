@@ -191,6 +191,11 @@ class ConditionTemplateEditorTest {
         } else {
             assertEquals(before, editor.uiState.value.selectedExercises)
             assertEquals(R.string.editor_support_precision, editor.uiState.value.errorMessage)
+            // The same refusal again is a new attempt, so its keyed error card is announced again.
+            val attempt = editor.uiState.value.submitAttempt
+            adopt()
+            assertEquals(R.string.editor_support_precision, editor.uiState.value.errorMessage)
+            assertEquals(attempt + 1, editor.uiState.value.submitAttempt)
         }
     }
 

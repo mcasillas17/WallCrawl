@@ -395,7 +395,7 @@ class TemplateEditorViewModel(
             try {
                 val current = refreshSupport()
                 if (current == null || RecommendationContextIdentity.of(current) != RecommendationContextIdentity.of(shown)) {
-                    settle { it.copy(errorMessage = R.string.editor_support_changed) }
+                    settle { it.copy(errorMessage = R.string.editor_support_changed, submitAttempt = it.submitAttempt + 1) }
                     return@launch
                 }
                 val latest = mutableState.value
@@ -403,7 +403,7 @@ class TemplateEditorViewModel(
                     latest.weightUnit != state.weightUnit || latest.editorDraft != null) return@launch
                 val unit = state.weightUnit
                 if (unit == null) {
-                    settle { it.copy(errorMessage = R.string.editor_error_unit_unconfirmed) }
+                    settle { it.copy(errorMessage = R.string.editor_error_unit_unconfirmed, submitAttempt = it.submitAttempt + 1) }
                     return@launch
                 }
                 val rows = ready.supportive.map { support ->
@@ -415,7 +415,7 @@ class TemplateEditorViewModel(
                 val ids = rows.map { it.exerciseId }.toSet()
                 val retained = state.selectedExercises.filterNot { it.exerciseId in ids }
                 if (retained.size + rows.size > WorkoutTemplate.MAX_EXERCISES) {
-                    settle { it.copy(errorMessage = R.string.editor_error_exercise_limit) }
+                    settle { it.copy(errorMessage = R.string.editor_error_exercise_limit, submitAttempt = it.submitAttempt + 1) }
                     return@launch
                 }
                 val parsed = rows.map { it.validate(unit) }
@@ -424,7 +424,7 @@ class TemplateEditorViewModel(
                         exercises = parsed.map { (it as DraftValidation.Valid).exercise })
                         .exercisesIn(current.preferredUnits).all { ConditionPlanningPolicy().validate(it, ready).isEmpty() }
                 if (!exact) {
-                    settle { it.copy(errorMessage = R.string.editor_support_precision) }
+                    settle { it.copy(errorMessage = R.string.editor_support_precision, submitAttempt = it.submitAttempt + 1) }
                     return@launch
                 }
                 edit { it.copy(selectedExercises = retained + rows, errorMessage = null) }
