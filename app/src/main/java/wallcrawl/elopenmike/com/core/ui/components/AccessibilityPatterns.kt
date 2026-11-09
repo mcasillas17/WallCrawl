@@ -4,7 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.MotionDurationScale
@@ -25,6 +30,13 @@ import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 
 /** A screen title or section label a screen-reader user can jump to. */
 fun Modifier.a11yHeading(): Modifier = semantics { heading() }
+
+/**
+ * A FilterChip's leading check while it is selected. Material's default selected fill is close to the
+ * page colour, so without it only the unselected chips' outline would show which one is chosen.
+ */
+fun selectedCheck(selected: Boolean): (@Composable () -> Unit)? =
+    if (selected) { { Icon(Icons.Default.Check, null, Modifier.size(FilterChipDefaults.IconSize)) } } else null
 
 /** Text that appears on its own, such as an error, read out without moving the reader's focus. */
 fun Modifier.a11yAnnounced(): Modifier = semantics { liveRegion = LiveRegionMode.Polite }

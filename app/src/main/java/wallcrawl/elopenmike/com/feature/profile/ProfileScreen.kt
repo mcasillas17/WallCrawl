@@ -199,7 +199,7 @@ private fun SettingsDetail(
                     FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         ExperienceLevel.entries.forEach { level ->
                             FilterChip(selected = profile.experienceLevel == level, onClick = { viewModel.updateExperience(level) },
-                                label = { Text(stringResource(level.labelRes)) }, modifier = Modifier.radioChip())
+                                leadingIcon = selectedCheck(profile.experienceLevel == level), label = { Text(stringResource(level.labelRes)) }, modifier = Modifier.radioChip())
                         }
                     }
                 }
@@ -210,7 +210,7 @@ private fun SettingsDetail(
                             // A bare digit says nothing; the plural says what it counts.
                             val daysLabel = pluralStringResource(R.plurals.a11y_days_per_week, days, LocaleFormatting.formatCount(days, locale))
                             FilterChip(selected = days == profile.daysPerWeek, onClick = { viewModel.updateDaysPerWeek(days) },
-                                label = { Text(LocaleFormatting.formatCount(days, locale)) }, modifier = Modifier.radioChip(daysLabel))
+                                leadingIcon = selectedCheck(days == profile.daysPerWeek), label = { Text(LocaleFormatting.formatCount(days, locale)) }, modifier = Modifier.radioChip(daysLabel))
                         }
                     }
                 }
@@ -233,7 +233,8 @@ private fun SettingsDetail(
                         PriorityLevel.entries.forEach { level ->
                             // Each option names its muscle, so one heard out of context still makes sense.
                             val levelLabel = stringResource(R.string.a11y_muscle_priority, vocabulary.muscle(muscle), stringResource(level.labelRes))
-                            FilterChip(selected = level == (profile.musclePriorities[muscle] ?: PriorityLevel.NORMAL),
+                            val chosen = level == (profile.musclePriorities[muscle] ?: PriorityLevel.NORMAL)
+                            FilterChip(selected = chosen, leadingIcon = selectedCheck(chosen),
                                 onClick = { viewModel.setMusclePriority(muscle, level) }, label = { Text(stringResource(level.labelRes)) },
                                 modifier = Modifier.radioChip(levelLabel))
                         }
@@ -245,7 +246,7 @@ private fun SettingsDetail(
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         state.availableEquipmentOptions.filterNot { it in StandardEquipment.BAND_SETUPS }.forEach { equipment ->
                             FilterChip(selected = equipment in profile.availableEquipment, onClick = { viewModel.toggleEquipment(equipment) },
-                                label = { Text(vocabulary.equipment(equipment)) })
+                                leadingIcon = selectedCheck(equipment in profile.availableEquipment), label = { Text(vocabulary.equipment(equipment)) })
                         }
                     }
                 }
@@ -282,7 +283,7 @@ private fun SettingsDetail(
                     Text(stringResource(R.string.profile_safety_description))
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         state.availableConstraintOptions.forEach { constraint ->
-                            FilterChip(selected = constraint in profile.trainingConstraints,
+                            FilterChip(selected = constraint in profile.trainingConstraints, leadingIcon = selectedCheck(constraint in profile.trainingConstraints),
                                 enabled = profile.unresolvedTrainingConstraintsRaw == null, onClick = { viewModel.toggleTrainingConstraint(constraint) }, label = { Text(stringResource(constraint.labelRes)) })
                         }
                     }
@@ -301,7 +302,7 @@ private fun SettingsDetail(
                     FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         WeightUnit.entries.forEach { unit ->
                             FilterChip(selected = unit == profile.preferredUnit, onClick = { viewModel.updateUnit(unit) },
-                                label = { Text(stringResource(unit.shortLabelRes)) }, modifier = Modifier.radioChip())
+                                leadingIcon = selectedCheck(unit == profile.preferredUnit), label = { Text(stringResource(unit.shortLabelRes)) }, modifier = Modifier.radioChip())
                         }
                     }
                 }
