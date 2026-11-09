@@ -58,7 +58,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -209,7 +208,7 @@ fun ProgressScreen(
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.action_back))
                 }
                 Text(stringResource(if (section == ProgressSection.TRENDS) R.string.guided_progress_trends else R.string.guided_progress_muscles),
-                    style = MaterialTheme.typography.titleLarge, modifier = Modifier.semantics { heading() })
+                    style = MaterialTheme.typography.titleLarge, modifier = Modifier.a11yHeading())
             }
         }
         when (val state = uiState) {

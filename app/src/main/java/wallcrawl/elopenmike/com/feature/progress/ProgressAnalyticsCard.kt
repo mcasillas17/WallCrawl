@@ -136,7 +136,7 @@ internal fun ProgressAnalyticsCard(
 private fun AnalyticsLoading() {
     Box(Modifier.fillMaxWidth().padding(16.dp)) {
         // Beside its own text: hidden, so the row is read once.
-        CircularProgressIndicator(Modifier.size(24.dp).semantics { hideFromAccessibility() })
+        CircularProgressIndicator(Modifier.size(24.dp).semantics { hideFromAccessibility() }, color = CrimsonRedPrimary)
         Text(stringResource(R.string.analytics_loading), color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 13.sp, modifier = Modifier.padding(start = 36.dp))
     }

@@ -310,11 +310,7 @@ private fun rememberNoticeText(
                         .filter(String::isNotEmpty)
                         .joinToString(" ")
                 }
-                // Android keeps a long hyphenated compound together and then splits it mid-letter at large text,
-                // so each hyphen between letters gets an invisible break opportunity. Links and paths are left alone.
-                .replace(NON_SPACE) { token ->
-                    if ('/' in token.value) token.value else token.value.replace(LETTER_HYPHEN, "-\u200B")
-                }
+                .let(::allowBreaksAfterHyphens)
             while (cursor < text.length) {
                 val match = MARKDOWN_LINK.find(text, cursor)
                 if (match == null) {
@@ -333,6 +329,14 @@ private fun rememberNoticeText(
             }
         }
     }
+}
+
+/**
+ * Android keeps a long hyphenated compound together and then splits it mid-letter at large text,
+ * so each hyphen between letters gets an invisible break opportunity. Links and paths are left alone.
+ */
+internal fun allowBreaksAfterHyphens(text: String): String = text.replace(NON_SPACE) { token ->
+    if ('/' in token.value) token.value else token.value.replace(LETTER_HYPHEN, "-\u200B")
 }
 
 private val NON_SPACE = Regex("""\S+""")

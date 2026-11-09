@@ -13,8 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import wallcrawl.elopenmike.com.feature.progress.ProgressSection
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -60,6 +58,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import wallcrawl.elopenmike.com.AppContainer
 import wallcrawl.elopenmike.com.core.ui.components.LoadingIndicator
+import wallcrawl.elopenmike.com.core.ui.components.a11yHeading
 import wallcrawl.elopenmike.com.feature.backup.LocalDataOutcomeEffect
 import wallcrawl.elopenmike.com.feature.backup.LocalDataSection
 import wallcrawl.elopenmike.com.feature.backup.LocalDataViewModel
@@ -249,7 +248,7 @@ private fun WallCrawlAppContent(
                         Text(
                             stringResource(rootScreen.titleRes),
                             style = MaterialTheme.typography.headlineMedium,
-                            modifier = Modifier.weight(1f).semantics { heading() }
+                            modifier = Modifier.weight(1f).a11yHeading()
                         )
                     }
                     IconButton(

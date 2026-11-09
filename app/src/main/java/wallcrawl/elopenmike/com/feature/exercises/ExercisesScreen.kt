@@ -24,8 +24,6 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
 import wallcrawl.elopenmike.com.R
@@ -228,7 +226,7 @@ internal fun ExerciseDetailSheet(
         Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(vocabulary.exerciseName(exercise), style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.semantics { heading() })
+                modifier = Modifier.a11yHeading())
             ExerciseIllustration(exercise, visualProvider, height = 200)
             vocabulary.coachingSummary(exercise)?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
             if (vocabulary.hasUntranslatedCoachingSummary(exercise)) Text(stringResource(R.string.exercise_detail_original_language),

@@ -81,7 +81,7 @@ fun ProfileScreen(
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.action_back))
             }
             Text(stringResource(group?.title ?: R.string.guided_profile_settings),
-                style = MaterialTheme.typography.titleLarge, modifier = Modifier.semantics { heading() })
+                style = MaterialTheme.typography.titleLarge, modifier = Modifier.a11yHeading())
         }
         val overviewScroll = rememberLazyListState()
         when (val current = state) {
@@ -316,7 +316,7 @@ private fun SettingsDetail(
 
 @Composable
 private fun SettingsHeading(title: Int) {
-    Text(stringResource(title), style = MaterialTheme.typography.titleMedium, modifier = Modifier.semantics { heading() })
+    Text(stringResource(title), style = MaterialTheme.typography.titleMedium, modifier = Modifier.a11yHeading())
 }
 
 @Composable
