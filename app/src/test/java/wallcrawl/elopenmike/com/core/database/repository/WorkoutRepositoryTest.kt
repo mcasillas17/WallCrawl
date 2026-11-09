@@ -559,6 +559,12 @@ private class EmptyWorkoutSessionDao(
     ): List<WorkoutRecommendationRecordEntity> = error("This fake does not model analytics.")
     override suspend fun selectAnalyticsExerciseIds(limit: Int): List<String> =
         error("This fake does not model analytics.")
+    override suspend fun selectChartExerciseIds(asOf: Long): List<String> =
+        error("This fake does not model chart history.")
+    override suspend fun selectChartSessionIds(exerciseId: String, asOf: Long): List<String> =
+        error("This fake does not model chart history.")
+    override suspend fun selectChartWorkingSets(exerciseId: String, sessionIds: List<String>, asOf: Long):
+        List<wallcrawl.elopenmike.com.core.database.dao.ChartWorkingSet> = error("This fake does not model chart history.")
     override suspend fun selectPreviousPerformanceIds(sessionId: String):
         List<wallcrawl.elopenmike.com.core.database.dao.PreviousPerformanceIds> =
         error("This fake does not model previous performance.")

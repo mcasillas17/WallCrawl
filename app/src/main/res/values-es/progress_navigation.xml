@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="progress_more_options">Más opciones de progreso</string>
+    <string name="progress_training_activity">Actividad de entrenamiento</string>
+</resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_chart_exercise">Ejercicio</string>
+    <string name="history_chart_week">Semana</string>
+    <string name="history_chart_month">Mes</string>
+    <string name="history_chart_year">Año</string>
+    <string name="history_chart_all">Todo</string>
+    <string name="history_chart_custom">Personalizado</string>
+    <string name="history_chart_from">Desde</string>
+    <string name="history_chart_through">Hasta</string>
+    <string name="history_chart_date_order">Elige una fecha final igual o posterior a la inicial.</string>
+    <string name="history_chart_empty">No hay series registradas en este periodo.</string>
+    <string name="history_chart_no_sets">Completa un entrenamiento con una serie de trabajo registrada para verla aquí.</string>
+    <string name="history_chart_weight">Peso</string>
+    <string name="history_chart_distance">Distancia</string>
+    <string name="history_chart_previous">Sesión anterior</string>
+    <string name="history_chart_next">Sesión siguiente</string>
+    <string name="history_chart_period_dates">%1$s – %2$s</string>
+    <string name="history_chart_selected_point">%1$s · %2$s</string>
+    <plurals name="history_chart_sessions">
+        <item quantity="one">%1$s sesión completada</item>
+        <item quantity="other">%1$s sesiones completadas</item>
+    </plurals>
+</resources>

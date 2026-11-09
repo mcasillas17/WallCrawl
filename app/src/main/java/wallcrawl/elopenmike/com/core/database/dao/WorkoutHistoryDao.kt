@@ -102,6 +102,21 @@ private const val COMPLETED_WEIGHTED_WORK = """
       AND ($ELIGIBLE_PREVIOUS_SET)
 """
 
+private const val CHART_ELIGIBILITY = """
+    e.purpose = 'ORDINARY' AND e.role = 'MAIN' AND s.status = 'COMPLETED'
+      AND s.startedAtTimestamp > 0 AND s.completedAtTimestamp BETWEEN s.startedAtTimestamp AND :asOf
+      AND s.weightUnit IN ('LBS', 'KG')
+      AND (e.exerciseType != 'DISTANCE_DURATION' OR e.targetDurationSeconds IS NOT NULL OR e.targetDistanceMeters IS NOT NULL)
+      AND ($ELIGIBLE_PREVIOUS_SET)
+"""
+
+private const val CHART_WORK_SETS = """
+    FROM workout_exercises e
+    JOIN workout_sessions s ON s.id = e.sessionId
+    JOIN workout_sets w ON w.workoutExerciseId = e.id
+    WHERE $CHART_ELIGIBILITY
+"""
+
 /** Bounded read projections; no cache, catalog, profile, or policy is involved. */
 @Dao
 interface WorkoutHistoryDao {
@@ -364,7 +379,37 @@ interface WorkoutHistoryDao {
         ORDER BY e.exerciseId ASC LIMIT :limit
     """)
     suspend fun selectAnalyticsExerciseIds(limit: Int): List<String>
+
+    @Query("""
+        SELECT e.exerciseId $CHART_WORK_SETS
+        GROUP BY e.exerciseId ORDER BY MAX(s.completedAtTimestamp) DESC, e.exerciseId
+    """)
+    suspend fun selectChartExerciseIds(asOf: Long): List<String>
+
+    @Query("""
+        SELECT s.id $CHART_WORK_SETS AND e.exerciseId = :exerciseId
+        GROUP BY s.id ORDER BY s.completedAtTimestamp, s.startedAtTimestamp, s.id
+    """)
+    suspend fun selectChartSessionIds(exerciseId: String, asOf: Long): List<String>
+
+    // CROSS JOIN keeps SQLite on the batch's sessionId index instead of rescanning every
+    // completed session through the status/date index for each batch.
+    @Query("""
+        SELECT s.id AS sessionId, s.name AS sessionName, s.completedAtTimestamp AS sessionCompletedAt,
+               s.weightUnit, w.*
+        FROM workout_exercises e
+        CROSS JOIN workout_sessions s ON s.id = e.sessionId
+        CROSS JOIN workout_sets w ON w.workoutExerciseId = e.id
+        WHERE e.sessionId IN (:sessionIds) AND e.exerciseId = :exerciseId AND ($CHART_ELIGIBILITY)
+        ORDER BY s.completedAtTimestamp, s.startedAtTimestamp, s.id, e.orderIndex, e.id, w.setNumber, w.id
+    """)
+    suspend fun selectChartWorkingSets(exerciseId: String, sessionIds: List<String>, asOf: Long): List<ChartWorkingSet>
 }
+
+data class ChartWorkingSet(
+    val sessionId: String, val sessionName: String, val sessionCompletedAt: Long, val weightUnit: WeightUnit,
+    @Embedded val set: WorkoutSet
+)
 
 data class WorkingSetRow(
     val exerciseId: String, val sessionCompletedAtTimestamp: Long, val weightUnit: WeightUnit,

@@ -66,6 +66,7 @@ import wallcrawl.elopenmike.com.feature.onboarding.OnboardingScreen
 import wallcrawl.elopenmike.com.feature.onboarding.OnboardingViewModel
 import wallcrawl.elopenmike.com.feature.profile.ProfileScreen
 import wallcrawl.elopenmike.com.feature.profile.ProfileViewModel
+import wallcrawl.elopenmike.com.feature.progress.ExerciseProgressRoute
 import wallcrawl.elopenmike.com.feature.progress.ProgressScreen
 import wallcrawl.elopenmike.com.feature.progress.ProgressViewModel
 import wallcrawl.elopenmike.com.feature.today.TodayScreen
@@ -235,7 +236,7 @@ private fun WallCrawlAppContent(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            if (rootScreen != null) {
+            if (rootScreen != null && rootScreen != Screen.Progress) {
                 Row(
                     modifier = Modifier.fillMaxWidth().statusBarsPadding().padding(start = 20.dp, end = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -337,8 +338,24 @@ private fun WallCrawlAppContent(
                 )
             }
 
+            composable(AppRoutes.PROGRESS) { entry ->
+                val progressViewModel: ProgressViewModel = viewModel(
+                    viewModelStoreOwner = entry,
+                    factory = ProgressViewModel.provideFactory(container.progressRepository)
+                )
+                ExerciseProgressRoute(
+                    viewModel = progressViewModel,
+                    onOpenProfile = { navController.navigate(AppRoutes.PROFILE) { launchSingleTop = true } },
+                    onOpenTrain = { openRoot(Screen.Today) },
+                    onOpenHistory = { navController.navigate(AppRoutes.HISTORY) },
+                    onOpenTrends = { navController.navigate(AppRoutes.TRENDS) },
+                    onOpenMuscles = { navController.navigate(AppRoutes.MUSCLES) },
+                    onOpenActivity = { navController.navigate(AppRoutes.PROGRESS_ACTIVITY) }
+                )
+            }
+
             listOf(
-                AppRoutes.PROGRESS to ProgressSection.OVERVIEW,
+                AppRoutes.PROGRESS_ACTIVITY to ProgressSection.ACTIVITY,
                 AppRoutes.TRENDS to ProgressSection.TRENDS,
                 AppRoutes.MUSCLES to ProgressSection.MUSCLES
             ).forEach { (route, section) ->

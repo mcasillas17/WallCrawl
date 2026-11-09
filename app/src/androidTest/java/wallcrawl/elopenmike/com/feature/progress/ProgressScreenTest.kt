@@ -480,12 +480,12 @@ class ProgressScreenTest {
                 LocalExerciseVocabulary provides vocabulary
             ) {
                 WallCrawlTheme(themePreference = theme) {
-                    val destination = remember { mutableStateOf(ProgressSection.OVERVIEW) }
+                    val destination = remember { mutableStateOf(ProgressSection.ACTIVITY) }
                     key(destination.value) {
                         ProgressScreen(uiState = state, onRetry = onRetry, onOpenSession = onOpenSession, onOpenTrain = onOpenTrain,
                             onOpenMuscles = { destination.value = ProgressSection.MUSCLES },
                             onOpenTrends = { destination.value = ProgressSection.TRENDS },
-                            section = destination.value, onBack = { destination.value = ProgressSection.OVERVIEW })
+                            section = destination.value, onBack = { destination.value = ProgressSection.ACTIVITY })
                     }
                 }
             }

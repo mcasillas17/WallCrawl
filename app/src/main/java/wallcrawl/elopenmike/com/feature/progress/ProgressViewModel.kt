@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeParseException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -59,20 +61,22 @@ class ProgressViewModel(
     val analyticsSelection: StateFlow<AnalyticsSelection> = selection
 
     /** Calendar inputs: resume, clock/zone change, Retry and one boundary wakeup while subscribed. */
-    private val calendarZones: Flow<ZoneId> = refreshRequests.flatMapLatest {
+    private fun calendarZones(daily: Boolean = false): Flow<ZoneId> = refreshRequests.flatMapLatest {
         flow {
             while (true) {
                 val instant = Instant.ofEpochMilli(nowTimestamp())
                 val zone = zoneId()
-                val week = TrainingWeek.containing(instant, zone)
+                val boundary = if (daily) {
+                    instant.atZone(zone).toLocalDate().plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli()
+                } else TrainingWeek.containing(instant, zone).endEpochMillisExclusive
                 emit(zone)
                 // One boundary wakeup while subscribed, not a timer that repeatedly queries.
-                delay((week.endEpochMillisExclusive - nowTimestamp()).coerceAtLeast(1L))
+                delay((boundary - nowTimestamp()).coerceAtLeast(1L))
             }
         }
     }
 
-    val uiState: StateFlow<ProgressUiState> = calendarZones.flatMapLatest { zone ->
+    val uiState: StateFlow<ProgressUiState> = calendarZones().flatMapLatest { zone ->
         flow {
             emitAll(progressRepository.observeProgress({ Instant.ofEpochMilli(nowTimestamp()) }, zone))
         }.map { snapshot ->
@@ -105,7 +109,7 @@ class ProgressViewModel(
      * flatMapLatest cancels an obsolete read, so a slow earlier filter cannot overwrite a newer one.
      */
     val analyticsState: StateFlow<ProgressAnalyticsUiState> = combine(
-        selection.map { it.range to it.scope }.distinctUntilChanged(), calendarZones, analyticsRetries
+        selection.map { it.range to it.scope }.distinctUntilChanged(), calendarZones(), analyticsRetries
     ) { read, zone, _ -> read to zone }.flatMapLatest { (read, zone) ->
             val (range, scope) = read
             flow {
@@ -124,6 +128,61 @@ class ProgressViewModel(
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 0, replayExpirationMillis = 0),
             initialValue = ProgressAnalyticsUiState.Loading
         )
+
+    private val historyExercise = MutableStateFlow(savedStateHandle.get<String>(HISTORY_EXERCISE)?.takeIf {
+        AnalyticsScope.Exercise(it).isValid()
+    })
+    private val historyRange = MutableStateFlow(restoreHistoryRange())
+
+    val exerciseHistoryState: StateFlow<ExerciseHistoryUiState> =
+        combine(historyExercise, calendarZones(daily = true)) { id, zone -> id to zone }
+            .flatMapLatest { (id, zone) ->
+                flow { emitAll(progressRepository.observeExerciseHistory(id) { Instant.ofEpochMilli(nowTimestamp()) }) }
+                    .combine(historyRange) { snapshot, range ->
+                        snapshot?.let { range.apply(it, Instant.ofEpochMilli(nowTimestamp()), zone) }
+                            ?: ExerciseHistoryUiState.NoProfile
+                    }
+                    .onStart { emit(ExerciseHistoryUiState.Loading) }
+                    .catch { error ->
+                        if (error is CancellationException) throw error
+                        emit(ExerciseHistoryUiState.Error)
+                    }
+            }.flowOn(analyticsDispatcher).stateIn(
+                viewModelScope, SharingStarted.WhileSubscribed(0, 0), ExerciseHistoryUiState.Loading
+            )
+
+    fun selectHistoryExercise(id: String) {
+        if (!AnalyticsScope.Exercise(id).isValid()) return
+        savedStateHandle[HISTORY_EXERCISE] = id
+        historyExercise.value = id
+    }
+
+    fun selectHistoryPeriod(period: ProgressPeriod) {
+        savedStateHandle[HISTORY_PERIOD] = period.name
+        historyRange.update { it.copy(period = period) }
+    }
+
+    fun selectHistoryCustom(start: LocalDate, end: LocalDate) {
+        val today = Instant.ofEpochMilli(nowTimestamp()).atZone(zoneId()).toLocalDate()
+        if (end < start || end > today) return
+        savedStateHandle[HISTORY_START] = start.toString()
+        savedStateHandle[HISTORY_END] = end.toString()
+        savedStateHandle[HISTORY_PERIOD] = ProgressPeriod.CUSTOM.name
+        historyRange.value = HistoryRange(ProgressPeriod.CUSTOM, start..end)
+    }
+
+    private fun restoreHistoryRange(): HistoryRange {
+        fun date(key: String): LocalDate? = try {
+            savedStateHandle.get<String>(key)?.let(LocalDate::parse)
+        } catch (_: DateTimeParseException) {
+            null
+        }
+        val start = date(HISTORY_START)
+        val end = date(HISTORY_END)
+        val custom = if (start != null && end != null && start <= end) start..end else null
+        val period = ProgressPeriod.entries.find { it.name == savedStateHandle.get<String>(HISTORY_PERIOD) }
+        return HistoryRange(period ?: ProgressPeriod.MONTH, custom)
+    }
 
     /** Resume, a clock/zone change, and explicit Retry all request fresh calendar inputs. */
     fun refresh() {
@@ -202,6 +261,10 @@ class ProgressViewModel(
     }
 
     companion object {
+        private const val HISTORY_EXERCISE = "history_chart_exercise"
+        private const val HISTORY_PERIOD = "history_chart_period"
+        private const val HISTORY_START = "history_chart_start"
+        private const val HISTORY_END = "history_chart_end"
         private const val RANGE_KEY = "analytics_range"
         private const val SCOPE_KIND_KEY = "analytics_scope_kind"
         private const val SCOPE_ID_KEY = "analytics_scope_id"

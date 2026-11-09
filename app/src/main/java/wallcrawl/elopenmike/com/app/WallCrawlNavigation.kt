@@ -33,6 +33,7 @@ object AppRoutes {
     const val TODAY = "today"
     const val PROGRAM = "program"
     const val PROGRESS = "progress"
+    const val PROGRESS_ACTIVITY = "progress/activity"
     const val TRENDS = "progress/trends"
     const val MUSCLES = "progress/muscles"
     const val EXERCISES = "exercises"

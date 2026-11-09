@@ -140,8 +140,7 @@ control it rather than reading the wall clock implicitly.
 
 ## Progress metric contract
 
-The Progress screen is activity-first. **Activity reports what was logged; reviewed primary
-dose reports what can be attributed under `PRIMARY_ONLY_V1`.** They are not interchangeable.
+Open **Training activity** or **Muscle details** in the Progress menu for weekly accounting. Activity reports the work logged. Reviewed primary dose measures what the `PRIMARY_ONLY_V1` policy attributes. The exercise chart on the Progress tab counts completed sessions with an eligible working set for the selected exercise and range.
 
 All weekly rows below use the same `TrainingWeek` and session `completedAtTimestamp`:
 Monday local start-of-day through the following Monday, `[start, end)`, in an explicit

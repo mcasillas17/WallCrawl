@@ -446,7 +446,7 @@ acceptance and package 7), and this package's own accounting logic did not need 
 
 **References:** [Metric and repository contract](docs/weekly-dose-ledger.md#progress-metric-contract),
 [architecture](docs/architecture.md#feedback-loop-and-progress), and
-[Progress screenshots](README.md#progress-activity-and-reviewed-dose).
+[Progress screenshots](README.md#see-how-an-exercise-has-changed).
 
 History drill-down and deeper analytics were delivered later by Packages 13 and 14. Schema, archives,
 recommendation snapshots, validation policies and planner behavior are unchanged.

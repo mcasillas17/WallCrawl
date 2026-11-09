@@ -1,13 +1,8 @@
 package wallcrawl.elopenmike.com.feature.progress
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,8 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.Icons
@@ -35,26 +28,21 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -67,9 +55,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import java.text.DateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -91,7 +76,7 @@ import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.SuccessGreen
 
-enum class ProgressSection { OVERVIEW, TRENDS, MUSCLES }
+enum class ProgressSection { ACTIVITY, TRENDS, MUSCLES }
 
 internal const val PROGRESS_REVIEWED_DOSE_TEST_TAG = "progress-reviewed-dose"
 
@@ -112,31 +97,13 @@ fun ProgressScreen(
     onOpenTrain: () -> Unit = {},
     onOpenTrends: () -> Unit = {},
     onOpenMuscles: () -> Unit = {},
-    section: ProgressSection = ProgressSection.OVERVIEW,
+    section: ProgressSection = ProgressSection.ACTIVITY,
     onBack: () -> Unit = {}
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val context = LocalContext.current
-
-    // collectAsStateWithLifecycle is not on the classpath, so this is the same contract by
-    // hand: collect on the RESUMED lifecycle and stop when it is not. The initial value is a
-    // plain Loading rather than the flow's current value, which both satisfies lint and
-    // avoids briefly showing a stale snapshot read off the composition thread.
-    val uiState by produceState<ProgressUiState>(
-        initialValue = ProgressUiState.Loading,
-        viewModel,
-        lifecycleOwner
-    ) {
-        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            viewModel.uiState.collect { value = it }
-        }
-    }
+    RefreshProgressOnClockChange(viewModel)
+    val uiState by viewModel.uiState.collectWhileResumed(ProgressUiState.Loading)
     val analyticsState = if (section == ProgressSection.TRENDS) {
-        produceState<ProgressAnalyticsUiState>(ProgressAnalyticsUiState.Loading, viewModel, lifecycleOwner) {
-            lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.analyticsState.collect { value = it }
-            }
-        }.value
+        viewModel.analyticsState.collectWhileResumed(ProgressAnalyticsUiState.Loading).value
     } else null
     val analyticsSelection by viewModel.analyticsSelection.collectAsState()
     val analyticsActions = remember(viewModel) {
@@ -147,28 +114,6 @@ fun ProgressScreen(
             onReset = viewModel::resetAnalytics,
             onRetry = viewModel::retryAnalytics
         )
-    }
-
-    DisposableEffect(viewModel, context) {
-        val clockChangeReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                viewModel.refresh()
-            }
-        }
-        val filter = IntentFilter().apply {
-            addAction(Intent.ACTION_TIMEZONE_CHANGED)
-            addAction(Intent.ACTION_TIME_CHANGED)
-        }
-        ContextCompat.registerReceiver(
-            context,
-            clockChangeReceiver,
-            filter,
-            ContextCompat.RECEIVER_NOT_EXPORTED
-        )
-
-        onDispose {
-            context.unregisterReceiver(clockChangeReceiver)
-        }
     }
 
     ProgressScreen(
@@ -195,7 +140,7 @@ fun ProgressScreen(
     onOpenTrain: () -> Unit = {},
     onOpenTrends: () -> Unit = {},
     onOpenMuscles: () -> Unit = {},
-    section: ProgressSection = ProgressSection.OVERVIEW,
+    section: ProgressSection = ProgressSection.ACTIVITY,
     onBack: () -> Unit = {},
     analyticsState: ProgressAnalyticsUiState? = null,
     analyticsSelection: AnalyticsSelection = AnalyticsSelection(),
@@ -203,56 +148,30 @@ fun ProgressScreen(
 ) {
     val listState = rememberLazyListState()
     Column(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        if (section != ProgressSection.OVERVIEW) {
-            Row(Modifier.fillMaxWidth().statusBarsPadding().heightIn(min = 56.dp).padding(end = 16.dp),
-                verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.action_back))
-                }
-                Text(stringResource(if (section == ProgressSection.TRENDS) R.string.guided_progress_trends else R.string.guided_progress_muscles),
-                    style = MaterialTheme.typography.titleLarge, modifier = Modifier.semantics { heading() })
+        Row(Modifier.fillMaxWidth().statusBarsPadding().heightIn(min = 56.dp).padding(end = 16.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = onBack) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.action_back))
             }
+            val title = when (section) {
+                ProgressSection.ACTIVITY -> R.string.progress_training_activity
+                ProgressSection.TRENDS -> R.string.guided_progress_trends
+                ProgressSection.MUSCLES -> R.string.guided_progress_muscles
+            }
+            Text(stringResource(title), style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.semantics { heading() })
         }
         when (val state = uiState) {
-            is ProgressUiState.Loading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = CrimsonRedPrimary)
-                }
-            }
-
-            is ProgressUiState.NoProfile -> {
-                Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                    Text(stringResource(R.string.progress_no_profile), color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Button(onClick = onOpenTrain) { Text(stringResource(R.string.guided_progress_train)) }
-                }
-            }
-
-            is ProgressUiState.Error -> {
-                Column(
-                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = stringResource(state.messageRes),
-                        color = MaterialTheme.colorScheme.error,
-                        fontSize = 14.sp
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = onRetry) {
-                        Text(stringResource(R.string.action_try_again))
-                    }
-                }
-            }
-
+            ProgressUiState.Loading -> ProgressLoading()
+            ProgressUiState.NoProfile -> ProgressAction(R.string.progress_no_profile, R.string.guided_progress_train, onOpenTrain)
+            is ProgressUiState.Error -> ProgressAction(state.messageRes, R.string.action_try_again, onRetry, isError = true)
             is ProgressUiState.Success -> LazyColumn(
                 Modifier.fillMaxSize(), state = listState,
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 when (section) {
-                    ProgressSection.OVERVIEW -> {
+                    ProgressSection.ACTIVITY -> {
                         item { LoggedActivityCard(state) }
                         item {
                             val allWorkouts: @Composable () -> Unit = {
