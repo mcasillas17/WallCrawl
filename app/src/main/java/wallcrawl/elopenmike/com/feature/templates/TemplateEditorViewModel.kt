@@ -77,7 +77,7 @@ data class TemplateEditorUiState(
      */
     val hasLoadFailed: Boolean = false,
     @StringRes val errorMessage: Int? = null,
-    /** Counts Save taps and refused Apply taps, so the same message is announced again on a repeat. */
+    /** Counts Save taps, refused Apply taps and condition-support refusals, so the same message is announced again on a repeat. */
     val submitAttempt: Int = 0,
     /** The sheet's working copy of one row, or null when no row is being edited. */
     val editorDraft: TemplateExerciseDraft? = null,
