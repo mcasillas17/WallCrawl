@@ -49,8 +49,24 @@ android {
         }
     }
 
+    // Play upload key. Supplied as Gradle properties (~/.gradle/gradle.properties locally,
+    // ORG_GRADLE_PROJECT_* in CI) and never committed. Without them a release build is
+    // unsigned and Play rejects it; Play App Signing holds the real app-signing key.
+    val uploadStoreFile = providers.gradleProperty("wallcrawlUploadStoreFile").orNull
+    signingConfigs {
+        if (uploadStoreFile != null) {
+            create("upload") {
+                storeFile = file(uploadStoreFile)
+                storePassword = providers.gradleProperty("wallcrawlUploadStorePassword").get()
+                keyAlias = providers.gradleProperty("wallcrawlUploadKeyAlias").get()
+                keyPassword = providers.gradleProperty("wallcrawlUploadKeyPassword").get()
+            }
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.findByName("upload")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

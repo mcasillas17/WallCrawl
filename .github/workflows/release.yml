@@ -161,6 +161,42 @@ jobs:
             --run-number "$RUN_NUMBER" \
             --metadata app/build/outputs/apk/debug/output-metadata.json
 
+      # Play only accepts upload-key-signed App Bundles. The keystore lives in repository
+      # secrets (base64) and is written to the runner's temp dir, never the workspace.
+      - name: Build signed Play bundle
+        env:
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
+          VERSION_NAME: ${{ steps.version.outputs.version_name }}
+          UPLOAD_KEYSTORE_BASE64: ${{ secrets.WALLCRAWL_UPLOAD_KEYSTORE_BASE64 }}
+          ORG_GRADLE_PROJECT_wallcrawlUploadStorePassword: ${{ secrets.WALLCRAWL_UPLOAD_STORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_wallcrawlUploadKeyAlias: ${{ secrets.WALLCRAWL_UPLOAD_KEY_ALIAS }}
+          ORG_GRADLE_PROJECT_wallcrawlUploadKeyPassword: ${{ secrets.WALLCRAWL_UPLOAD_KEY_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$UPLOAD_KEYSTORE_BASE64" ]]; then
+            echo "WALLCRAWL_UPLOAD_KEYSTORE_BASE64 secret is not set" >&2
+            exit 1
+          fi
+          keystore="$RUNNER_TEMP/wallcrawl-upload-key.jks"
+          base64 --decode <<< "$UPLOAD_KEYSTORE_BASE64" > "$keystore"
+          ./gradlew bundleRelease \
+            "-Pwallcrawl.versionCode=$VERSION_CODE" \
+            "-Pwallcrawl.versionName=$VERSION_NAME" \
+            "-PwallcrawlUploadStoreFile=$keystore" \
+            --stacktrace \
+            --no-daemon
+          rm -f "$keystore"
+          test -s app/build/outputs/bundle/release/app-release.aab
+
+      - name: Upload Play bundle
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: wallcrawl-${{ github.ref_name }}-play-bundle
+          path: app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Stage release asset
         shell: bash
         env:

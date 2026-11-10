@@ -827,6 +827,26 @@ That uninstall removes local workout/profile data. Export first and restore afte
 installing the new build: a fresh install is exactly the empty destination a restore
 needs. See the [privacy policy](docs/privacy.md#restore-prerequisites).
 
+### Google Play bundle
+
+Each tag also builds `bundleRelease` signed with the Play upload key and attaches the
+`.aab` to the workflow run as the `wallcrawl-<tag>-play-bundle` artifact; upload that file
+in the Play Console. Play App Signing holds the app-signing key, so a lost upload key can
+be reset there. The workflow fails if these repository secrets are missing:
+
+| Secret | Value |
+| --- | --- |
+| `WALLCRAWL_UPLOAD_KEYSTORE_BASE64` | `base64 -i <upload-key>.jks` |
+| `WALLCRAWL_UPLOAD_STORE_PASSWORD` | keystore password |
+| `WALLCRAWL_UPLOAD_KEY_ALIAS` | key alias |
+| `WALLCRAWL_UPLOAD_KEY_PASSWORD` | key password |
+
+Locally, put `wallcrawlUploadStoreFile`, `wallcrawlUploadStorePassword`,
+`wallcrawlUploadKeyAlias` and `wallcrawlUploadKeyPassword` in `~/.gradle/gradle.properties`
+and run `./gradlew bundleRelease -Pwallcrawl.versionCode=<n> -Pwallcrawl.versionName=<name>`.
+Without them the release build is unsigned and Play rejects it. `art/playstore-icon-512.png`
+is the full-bleed store icon; Play applies its own corner mask.
+
 The unit suite covers catalog filtering, context construction, capability
 normalization and persistence, onboarding/Profile drafts, planner invariance,
 bounded history
