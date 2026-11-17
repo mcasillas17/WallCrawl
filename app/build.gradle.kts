@@ -141,6 +141,8 @@ dependencies {
     // language screen always report the same choice.
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
+    // System splash on every launch (docs/launch-animation.md), with a consistent API back to 26.
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)

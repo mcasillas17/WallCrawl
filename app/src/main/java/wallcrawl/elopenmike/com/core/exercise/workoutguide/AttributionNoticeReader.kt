@@ -71,7 +71,10 @@ class AssetAttributionNoticeReader(
             R.string.credits_notice_attribution to "workout-guide/ATTRIBUTION.md",
             R.string.credits_notice_artwork to "workout-guide/NOTICE.md",
             R.string.credits_notice_asset_license to "workout-guide/LICENSE-ASSETS",
-            R.string.credits_notice_upstream_license to "workout-guide/LICENSE"
+            R.string.credits_notice_upstream_license to "workout-guide/LICENSE",
+            // The wordmark on the first-launch intro is set in a bundled Roboto Condensed
+            // Black instance, distributed under SIL OFL 1.1.
+            R.string.credits_notice_font to "fonts/RobotoCondensed-OFL.txt"
         )
     }
 }

@@ -29,6 +29,7 @@ sealed class Screen(val route: String, @StringRes val titleRes: Int, val icon: I
 }
 
 object AppRoutes {
+    const val WELCOME = "welcome"
     const val ONBOARDING = "onboarding"
     const val TODAY = "today"
     const val PROGRAM = "program"

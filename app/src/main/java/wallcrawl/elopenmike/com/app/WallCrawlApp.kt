@@ -64,6 +64,8 @@ import wallcrawl.elopenmike.com.feature.exercises.ExercisesScreen
 import wallcrawl.elopenmike.com.feature.exercises.ExercisesViewModel
 import wallcrawl.elopenmike.com.feature.onboarding.OnboardingScreen
 import wallcrawl.elopenmike.com.feature.onboarding.OnboardingViewModel
+import wallcrawl.elopenmike.com.feature.welcome.SplashHandoff
+import wallcrawl.elopenmike.com.feature.welcome.WelcomeScreen
 import wallcrawl.elopenmike.com.feature.profile.ProfileScreen
 import wallcrawl.elopenmike.com.feature.profile.ProfileViewModel
 import wallcrawl.elopenmike.com.feature.progress.ExerciseProgressRoute
@@ -94,7 +96,8 @@ import wallcrawl.elopenmike.com.core.ui.localization.rememberExerciseVocabulary
 fun WallCrawlApp(
     container: AppContainer,
     navController: NavHostController = rememberNavController(),
-    profile: UserProfile? = null
+    profile: UserProfile? = null,
+    splashHandoff: SplashHandoff? = null
 ) {
     // The profile's onboarding status decides the start destination, so Today is never
     // reachable - and TodayViewModel is never constructed - until onboarding is confirmed
@@ -105,6 +108,21 @@ fun WallCrawlApp(
     // Catalog text is looked up by canonical id, so the vocabulary is provided once here and
     // re-derived whenever the configuration's locale changes.
     val vocabulary = rememberExerciseVocabulary(container.exerciseLocalizationSource)
+
+    // The first-launch intro is a device setting, not profile data: it is not exported, and
+    // deleting or restoring data never replays it. Anyone already onboarded counts as seen.
+    val appContext = LocalContext.current.applicationContext
+    val firstLaunchPrefs = remember(appContext) {
+        appContext.getSharedPreferences(FIRST_LAUNCH_PREFS, android.content.Context.MODE_PRIVATE)
+    }
+    var introPending by remember { mutableStateOf(!firstLaunchPrefs.getBoolean(KEY_INTRO_SEEN, false)) }
+    fun markIntroSeen() {
+        firstLaunchPrefs.edit().putBoolean(KEY_INTRO_SEEN, true).apply()
+        introPending = false
+    }
+    LaunchedEffect(effectiveProfile?.onboardingCompleted) {
+        if (effectiveProfile?.onboardingCompleted == true && introPending) markIntroSeen()
+    }
 
     CompositionLocalProvider(
         LocalExerciseVocabulary provides vocabulary,
@@ -126,11 +144,13 @@ fun WallCrawlApp(
                 WallCrawlAppContent(
                     container = container,
                     navController = navController,
-                    startDestination = if (effectiveProfile.onboardingCompleted) {
-                        AppRoutes.TODAY
-                    } else {
-                        AppRoutes.ONBOARDING
-                    }
+                    startDestination = when {
+                        effectiveProfile.onboardingCompleted -> AppRoutes.TODAY
+                        introPending -> AppRoutes.WELCOME
+                        else -> AppRoutes.ONBOARDING
+                    },
+                    onIntroFinished = ::markIntroSeen,
+                    splashHandoff = splashHandoff
                 )
             }
         }
@@ -141,7 +161,9 @@ fun WallCrawlApp(
 private fun WallCrawlAppContent(
     container: AppContainer,
     navController: NavHostController,
-    startDestination: String
+    startDestination: String,
+    onIntroFinished: () -> Unit,
+    splashHandoff: SplashHandoff?
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -196,7 +218,7 @@ private fun WallCrawlAppContent(
 
     LaunchedEffect(startDestination, currentRoute) {
         if (startDestination == AppRoutes.ONBOARDING &&
-            currentRoute != null && currentRoute != AppRoutes.ONBOARDING
+            currentRoute != null && currentRoute != AppRoutes.ONBOARDING && currentRoute != AppRoutes.WELCOME
         ) {
             restartAtOnboarding()
         }
@@ -285,6 +307,18 @@ private fun WallCrawlAppContent(
                 // a navigation bar's height above where it should.
                 .consumeWindowInsets(innerPadding)
         ) {
+            composable(AppRoutes.WELCOME) {
+                WelcomeScreen(
+                    onGetStarted = {
+                        onIntroFinished()
+                        navController.navigate(AppRoutes.ONBOARDING) {
+                            popUpTo(AppRoutes.WELCOME) { inclusive = true }
+                        }
+                    },
+                    splash = splashHandoff
+                )
+            }
+
             composable(AppRoutes.ONBOARDING) {
                 val onboardingViewModel: OnboardingViewModel = viewModel(
                     factory = OnboardingViewModel.provideFactory(
@@ -620,3 +654,12 @@ internal fun WallCrawlBottomBar(
 
 /** SharedPreferences file holding the Today screen's remembered mode and workout variant. */
 const val TODAY_PREFS = "today"
+
+/** Device-only flags about first launch; never exported and not cleared with local data. */
+const val FIRST_LAUNCH_PREFS = "first_launch"
+const val KEY_INTRO_SEEN = "intro_seen"
+
+/** Whether this launch opens the first-launch intro; the launch splash asks the same question. */
+fun shouldShowIntro(context: android.content.Context, profile: UserProfile): Boolean =
+    !profile.onboardingCompleted &&
+        !context.getSharedPreferences(FIRST_LAUNCH_PREFS, android.content.Context.MODE_PRIVATE).getBoolean(KEY_INTRO_SEEN, false)
