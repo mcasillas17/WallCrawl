@@ -73,6 +73,24 @@ class ProgressCalculatorTest {
         assertThat(calculator.summarize(mixed, emptyList()).totalVolume).isEqualTo(450.0)
     }
 
+    @Test fun warmUpAndCoolDownSetsAreNotCountedAsTraining() {
+        val ordinary = session("mixed", THIS_WEEK)
+        val ex = ordinary.exercises.single()
+        val phases = listOf(wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.WARMUP,
+            wallcrawl.elopenmike.com.core.model.PrescriptionPurpose.COOLDOWN).mapIndexed { i, purpose ->
+            ex.copy(id = "phase-$i", prescription = ex.prescription.copy(purpose = purpose),
+                sets = ex.sets.map { it.copy(id = "phase-$i-${it.id}", workoutExerciseId = "phase-$i") })
+        }
+        val mixed = ordinary.copy(exercises = ordinary.exercises + phases)
+        val plain = calculator.calculate(listOf(ordinary), profile, exercises, NOW, ZONE)
+        val result = calculator.calculate(listOf(mixed), profile, exercises, NOW, ZONE)
+        assertThat(result.completedSetsThisWeek).isEqualTo(plain.completedSetsThisWeek)
+        assertThat(result.totalVolumeThisWeek).isEqualTo(plain.totalVolumeThisWeek)
+        assertThat(result.legacyPrimaryActivity).isEqualTo(plain.legacyPrimaryActivity)
+        assertThat(calculator.summarize(mixed, emptyList()).totalSetsCompleted)
+            .isEqualTo(calculator.summarize(ordinary, emptyList()).totalSetsCompleted)
+    }
+
     @Test
     fun calculate_emptyHistoryReportsZeroedActivity() {
         val result = calculator.calculate(

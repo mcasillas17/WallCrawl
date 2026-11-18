@@ -296,6 +296,8 @@ private fun WorkoutHero(
         return
     }
     WallCrawlCard(Modifier.fillMaxWidth(), contentPadding = 0.dp) {
+        // The poster shows what starts first; the totals count training work only.
+        val training = workout.exercises.filterNot { it.prescription.purpose.isWorkoutPhase }
         WorkoutPoster(workout.title, workout.exercises.firstOrNull()?.exerciseId, visualProvider) {
             SourceRow(selected, onChange, !busy, onPoster = true)
             state.programSession?.let { Text(positionText(it.position), color = TextWhite, style = MaterialTheme.typography.labelLarge) }
@@ -304,9 +306,9 @@ private fun WorkoutHero(
             val focus = vocabulary.muscles(workout.focusMuscles).joinToString(stringResource(R.string.detail_separator))
             if (focus.isNotEmpty()) Text(focus, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             val minutes = LocaleFormatting.formatCount(workout.estimatedDurationMinutes, locale)
-            val count = workout.exercises.size
+            val count = training.size
             val exercises = LocaleFormatting.formatCount(count, locale)
-            val sets = workout.exercises.sumOf { it.targetSets }
+            val sets = training.sumOf { it.targetSets }
             val setCount = LocaleFormatting.formatCount(sets, locale)
             FlowRow(Modifier.fillMaxWidth().padding(vertical = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween, verticalArrangement = Arrangement.spacedBy(2.dp)) {

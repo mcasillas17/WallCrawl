@@ -121,10 +121,14 @@ data class WorkoutSession(
         get() = exercises.sumOf { it.sets.size }
 }
 
-/** Empty workouts predate the mobility block and retain their original training-day semantics. */
+/**
+ * The session without its non-training rows: legacy mobility and generated warm-up/cooldown.
+ * Empty workouts predate the mobility block and retain their original training-day semantics.
+ */
 internal fun WorkoutSession.trainingActivity(): WorkoutSession? {
-    if (exercises.none { it.isLegacyMobility }) return this
-    val counted = exercises.filterNot { it.isLegacyMobility }
+    fun WorkoutExercise.isNonTraining() = isLegacyMobility || prescription.purpose.isWorkoutPhase
+    if (exercises.none { it.isNonTraining() }) return this
+    val counted = exercises.filterNot { it.isNonTraining() }
     return if (counted.isEmpty()) null else copy(exercises = counted)
 }
 

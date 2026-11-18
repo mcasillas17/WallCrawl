@@ -298,6 +298,8 @@ alpha 1 → 0 over 180 ms ACCEL; phase → ABOUT at 1880 ms.
 
 ## 8. Timeline — Screen 2 (ABOUT), 0 → 1280 ms
 
+Times below are timeline ms. The screen plays them 1.8× slower in real time (`WelcomeMotion.ABOUT_PACE`), so the whole screen takes about 2.3 s.
+
 | Element | Property | Start ms | Dur ms | Easing | From → to |
 |---|---|---|---|---|---|
 | Emblem | position + size | 0 | 560 | EMPH_DEC | intro slot centre, 120 dp → header slot centre, 40 dp |
