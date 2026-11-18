@@ -296,9 +296,9 @@ private fun WorkoutHero(
         return
     }
     WallCrawlCard(Modifier.fillMaxWidth(), contentPadding = 0.dp) {
-        // Warm-up and cooldown are neither the session's picture nor part of its totals.
+        // The poster shows what starts first; the totals count training work only.
         val training = workout.exercises.filterNot { it.prescription.purpose.isWorkoutPhase }
-        WorkoutPoster(workout.title, training.firstOrNull()?.exerciseId, visualProvider) {
+        WorkoutPoster(workout.title, workout.exercises.firstOrNull()?.exerciseId, visualProvider) {
             SourceRow(selected, onChange, !busy, onPoster = true)
             state.programSession?.let { Text(positionText(it.position), color = TextWhite, style = MaterialTheme.typography.labelLarge) }
         }
