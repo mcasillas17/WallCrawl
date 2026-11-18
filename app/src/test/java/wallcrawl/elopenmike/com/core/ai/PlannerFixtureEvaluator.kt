@@ -130,6 +130,7 @@ internal data class PlannerFixtureInputSnapshot(
     val recentlyTrainedMuscles: List<String>,
     val excludedExerciseIds: List<String>,
     val allowedExercises: List<Exercise>,
+    val phaseExercises: List<Exercise>,
     val automaticEligibilityResult: AutomaticEligibilityResult?,
     /**
      * Deeply immutable, so the snapshot holds the instance directly.
@@ -325,6 +326,7 @@ private fun WorkoutGenerationContext.snapshot(): PlannerFixtureInputSnapshot =
         recentlyTrainedMuscles = recentlyTrainedMuscles.toList(),
         excludedExerciseIds = excludedExerciseIds.toList(),
         allowedExercises = allowedExercises.map(Exercise::deepCopy),
+        phaseExercises = phaseExercises.map(Exercise::deepCopy),
         automaticEligibilityResult = automaticEligibilityResult?.deepCopy(),
         capabilityEvidence = capabilityEvidence,
         schedulingEvidence = schedulingEvidence,

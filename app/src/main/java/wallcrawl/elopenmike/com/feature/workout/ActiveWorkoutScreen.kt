@@ -90,6 +90,7 @@ import wallcrawl.elopenmike.com.core.model.WorkoutSet
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.ui.components.ExerciseIllustration
+import wallcrawl.elopenmike.com.core.ui.components.WorkoutPhaseLabel
 import wallcrawl.elopenmike.com.core.ui.components.GymFloorSetRow
 import wallcrawl.elopenmike.com.core.ui.components.restCountdownLabel
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
@@ -335,6 +336,7 @@ private fun ActiveWorkoutContent(
                             liveRegion = LiveRegionMode.Polite
                             contentDescription = "$position, $name"
                         })
+                    WorkoutPhaseLabel(exercise.prescription.purpose)
                     Text(name, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
                     val effort = exercise.prescription.effortTarget?.let {
                         val min = LocaleFormatting.formatCount(it.minRir, locale)
@@ -404,7 +406,9 @@ private fun ActiveWorkoutContent(
                     }
                 }
                 selected?.let { set ->
-                    if (set.type == SetType.WARMUP) Text(stringResource(R.string.history_warmup), style = MaterialTheme.typography.labelLarge)
+                    if (set.type == SetType.WARMUP && !exercise.prescription.purpose.isWorkoutPhase) {
+                        Text(stringResource(R.string.history_warmup), style = MaterialTheme.typography.labelLarge)
+                    }
                     draftState.SaveableStateProvider(set.id) {
                         val matchedSet = state.previousSets.firstOrNull {
                             it.setNumber == set.setNumber && it.type == set.type && it.exerciseType == set.exerciseType &&

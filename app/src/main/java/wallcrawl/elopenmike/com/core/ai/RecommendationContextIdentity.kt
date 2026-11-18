@@ -185,6 +185,15 @@ object RecommendationContextIdentity {
             }
         }
 
+        if (context.phaseExercises.isNotEmpty()) {
+            val eligiblePhases = context.phaseExercises.filter { WorkoutPhasePolicy.eligible(it, context.userProfile) }
+            lines += line("workoutPhases", WorkoutPhasePolicy.VERSION, context.preferredWorkoutDurationMinutes.toString(),
+                context.fitnessGoals.ifEmpty { setOf(context.fitnessGoal) }.map { it.name }.sorted().joinToString(","))
+            for (exercise in eligiblePhases.sortedBy { it.id }) {
+                lines += line("phaseCandidate", exercise.id, exercise.type.name,
+                    exercise.primaryMuscles.joinToString(","), exercise.secondaryMuscles.joinToString(","))
+            }
+        }
         val canonical = (sequenceOf(FORMAT_VERSION) + lines.asSequence()).joinToString("\n")
         return MessageDigest.getInstance("SHA-256")
             .digest(canonical.toByteArray(Charsets.UTF_8))

@@ -296,7 +296,7 @@ class OfflineWorkoutRepository(
         })
         val needsConditions = userProfile.activeConditions.isNotEmpty() || userProfile.demandRestrictions.active ||
             recommendation?.conditionContext != null ||
-            exercises.any { it.prescription.purpose != PrescriptionPurpose.ORDINARY }
+            exercises.any { it.prescription.purpose == PrescriptionPurpose.SUPPORTIVE }
         if (generated != null && needsConditions) {
             if (recommendation == null) throw ConditionStartRefused("missing-condition-context")
             val build = generationContext ?: throw ConditionStartRefused("condition-validation-unavailable")
@@ -376,7 +376,7 @@ class OfflineWorkoutRepository(
                         isCompleted = false,
                         rpe = null,
                         rir = null,
-                        type = SetType.NORMAL
+                        type = if (genEx.prescription.purpose == PrescriptionPurpose.WARMUP) SetType.WARMUP else SetType.NORMAL
                     )
                 )
             }
@@ -411,7 +411,7 @@ class OfflineWorkoutRepository(
                     }
                     // A manual ordinary workout needs no released rule, schedule or frozen support context.
                     val needsReleaseCheck = profile.activeConditions.isNotEmpty() || recommendation?.conditionContext != null ||
-                        exercises.any { it.prescription.purpose != PrescriptionPurpose.ORDINARY }
+                        exercises.any { it.prescription.purpose == PrescriptionPurpose.SUPPORTIVE }
                     if (!needsReleaseCheck && generated == null) return@check null
                     val support = if (!needsReleaseCheck) ConditionSupportCatalog("unselected", emptyMap()) else try {
                         conditionSupport?.invoke() ?: throw ConditionStartRefused("missing-support")

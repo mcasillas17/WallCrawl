@@ -231,7 +231,7 @@ interface WorkoutSessionDao : CompletedWorkoutHistoryDao, WorkoutHistoryDao, Con
         })
         if (!profile.demandRestrictions.recognizesReports) throw ConditionStartRefused("legacy-condition-report")
         if (conditionCheck == null && (profile.activeConditions.isNotEmpty() || profile.demandRestrictions.active ||
-                session.conditionContextJson != null || exercises.any { it.purpose != PrescriptionPurpose.ORDINARY.name })) {
+                session.conditionContextJson != null || exercises.any { it.purpose == PrescriptionPurpose.SUPPORTIVE.name })) {
             throw ConditionStartRefused("missing-condition-context", profile.activeConditions.map { it.conditionId }.toSet())
         }
         val checkedContext = conditionCheck?.invoke(this, profile)

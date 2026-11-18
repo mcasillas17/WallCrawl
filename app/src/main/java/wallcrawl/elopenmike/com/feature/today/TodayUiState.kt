@@ -27,6 +27,7 @@ enum class TodayError(@StringRes val messageRes: Int) {
     NO_STRENGTH_CANDIDATES(R.string.today_error_no_strength_candidates),
     NO_CANDIDATES_FOR_ANY_SPLIT(R.string.today_error_no_split),
     REGENERATION_FAILED(R.string.today_error_regenerate_failed),
+    INSUFFICIENT_DURATION(R.string.today_error_insufficient_duration),
     FIRST_GENERATION_FAILED(R.string.today_error_first_failed),
     START_FAILED(R.string.today_error_start_failed),
     DELOAD_READ_FAILED(R.string.today_error_deload_read),

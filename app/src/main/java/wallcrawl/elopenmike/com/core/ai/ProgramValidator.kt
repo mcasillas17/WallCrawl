@@ -142,7 +142,21 @@ class ProgramValidator(
             violations += ProgramViolation(ProgramViolationCode.MULTI_WEEK_PROGRAM_INVALID, detail = failure.failure.name)
         }
 
-        violations += structuralValidator.structuralViolations(workout, authorizedIds)
+        val phasesById = context.phaseExercises.associateBy(Exercise::id)
+        violations += structuralValidator.structuralViolations(workout, authorizedIds, phasesById.keys)
+        val phases = workout.exercises.withIndex().filter { it.value.prescription.purpose.isWorkoutPhase }
+        for ((index, phase) in phases) {
+            val exercise = structuralValidator.catalogExercise(phase.exerciseId)
+            val expectedIndex = if (phase.prescription.purpose == PrescriptionPurpose.WARMUP) 0 else workout.exercises.lastIndex
+            if (index != expectedIndex || exercise == null || exercise != phasesById[phase.exerciseId] ||
+                !WorkoutPhasePolicy.eligible(exercise, context.userProfile) ||
+                phase.prescription != WorkoutPhasePolicy.prescription(exercise)
+            ) violations += ProgramViolation(ProgramViolationCode.EXPLICIT_CONSTRAINT_VIOLATED,
+                phase.exerciseId, index, "WORKOUT_PHASE")
+        }
+        if (phases.isNotEmpty() &&
+            WorkoutDurationEstimator.estimateSeconds(workout.exercises) > context.preferredWorkoutDurationMinutes.toLong() * 60L
+        ) violations += ProgramViolation(ProgramViolationCode.DURATION_OUT_OF_BOUNDS)
         violations += conditionViolations(workout, context)
         if (violations.any { it.code == ProgramViolationCode.EMPTY_RECOMMENDATION }) {
             return Evaluation(violations.sorted(), emptyList())
@@ -188,7 +202,7 @@ class ProgramValidator(
         if (planning is ConditionPlanningResult.Blocked) return planning.reasons.map { violation(it.reason) }
         if (planning !is ConditionPlanningResult.Ready) {
             return if (profile.activeConditions.isNotEmpty() || workout.conditionDecisions.isNotEmpty() ||
-                workout.exercises.any { it.prescription.purpose != PrescriptionPurpose.ORDINARY }) listOf(violation("missing-condition-context")) else emptyList()
+                workout.exercises.any { it.prescription.purpose == PrescriptionPurpose.SUPPORTIVE }) listOf(violation("missing-condition-context")) else emptyList()
         }
         val support = context.conditionSupport ?: return listOf(violation("missing-support"))
         if (history == null) return listOf(violation("missing-history"))

@@ -126,6 +126,7 @@ class ConditionPlanningPolicy {
                 targetAssistanceWeight = required.prescription.targetAssistanceWeight?.let { convertWeight(it, WeightUnit.KG, planning.weightUnit) })
             return if (planned.prescription == expected) emptyList() else violation("support-dose-mismatch")
         }
+        if (planned.prescription.purpose.isWorkoutPhase) return violation("unassessed-exercise")
         val bounds = planning.ordinaryRules[planned.exerciseId]?.bounds ?: return violation("unassessed-exercise")
         val identity = planning.context.appliedRules.firstOrNull { it.exerciseIdentity.exerciseId == planned.exerciseId }?.exerciseIdentity ?: return violation("missing-exercise-identity")
         val p = planned.prescription
@@ -145,6 +146,7 @@ class ConditionPlanningPolicy {
                 PrescriptionPurpose.ORDINARY -> ordinaryEligible(exercise, profile, reviewed)
                 PrescriptionPurpose.SUPPORTIVE -> profile.activeConditions.isNotEmpty() &&
                     profile.demandRestrictions.permitsReportDemands(exercise.id)
+                PrescriptionPurpose.WARMUP, PrescriptionPurpose.COOLDOWN -> WorkoutPhasePolicy.eligible(exercise, profile)
             }
 
     internal fun ordinaryEligible(exercise: Exercise, profile: UserProfile, reviewed: Boolean = true): Boolean {

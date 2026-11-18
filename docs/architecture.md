@@ -1060,7 +1060,7 @@ diagram, OEM limitations, and the lack of any previous-backup erasure guarantee.
 
 ### User-owned export, restore, and deletion
 
-`core/backup` writes archive format **version 9** and reads versions 1 through 9. Each JSON
+`core/backup` writes archive format **version 10** and reads versions 1 through 10. Each JSON
 document holds the profile, templates, every session with its exercises and sets, and
 the whole-program validation record for each session started from a recommendation. That
 version is independent of the Room schema version, which travels alongside the app
@@ -1068,8 +1068,7 @@ version, the creation time, and the bundled catalog commit as provenance only.
 
 Version 2 added the `recommendations` array. A version 1 document restores exactly as it
 always did and simply carries none; a version 1 document that uses a version 2 field is
-refused rather than quietly upgraded. Versions newer than 8 are refused as
-unsupported. Each record must name a session the same document carries, exactly once.
+refused rather than quietly upgraded. Versions newer than 10 are refused as unsupported. Each record must name a session the same document carries, exactly once.
 Version 4 adds owned deload preferences; older checksums and missing-choice
 semantics are preserved. A choice row also makes a restore destination nonempty.
 
@@ -1095,7 +1094,8 @@ A `MAIN` row remains ordinary. An originally supportive row retains its own orig
 including when its session has no frozen context.
 Per-repetition holds remain separate from total-duration targets and performed values.
 Session context, recommendation bindings and independent reassessment records survive
-when present. Restoring an older archive creates none of these facts.
+when present. Restoring an older archive creates none of these facts. Version 10 records
+the warm-up and cooldown purposes on generated session exercises.
 
 ```text
 Room (profile, templates, sessions, exercises, sets, recommendation records,

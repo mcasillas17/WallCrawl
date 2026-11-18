@@ -146,6 +146,12 @@ object LocalDataArchiveCodec {
         require(format.version >= 9 || snapshot.profile?.dumbbellRack == null) {
             "Dumbbell racks require archive version 9."
         }
+        require(format.supportsWorkoutPhases || snapshot.sessions.none { session ->
+            session.exercises.any { it.prescription.purpose.isWorkoutPhase }
+        }) { "Workout phases require archive version 10." }
+        require(snapshot.templates.none { template -> template.exercises.any { it.prescription.purpose.isWorkoutPhase } }) {
+            "Templates cannot carry generated workout phases."
+        }
         require(format.supportsContext || (snapshot.profile?.unresolvedTrainingConstraintsRaw == null &&
             snapshot.profile?.activeConditions.isNullOrEmpty() && snapshot.pendingConditionReassessments.isEmpty() &&
             snapshot.sessions.all { it.conditionContext == null } &&
@@ -361,6 +367,7 @@ object LocalDataArchiveCodec {
         var version7Layout: ArchiveV7Layout? = layout
             private set
 
+        val supportsWorkoutPhases get() = version >= 10
         val supportsContext get() =
             version >= 8 || (version == 7 && version7Layout != ArchiveV7Layout.REPORTED_CONDITIONS)
         val supportsReportsAndHolds get() =
@@ -1720,6 +1727,9 @@ object LocalDataArchiveCodec {
                 "purpose" -> {
                     format.observe(ArchiveV7Layout.CONDITION_CONTEXT)
                     purpose = nextEnum<PrescriptionPurpose>("$label.purpose")
+                    if (purpose.isWorkoutPhase && (!allowHold || !format.supportsWorkoutPhases)) {
+                        malformed("Workout phases require a session exercise and archive version 10.")
+                    }
                 }
                 "restTargetSource" ->
                     restTargetSource = nextEnum<RestTargetSource>("$label.restTargetSource")

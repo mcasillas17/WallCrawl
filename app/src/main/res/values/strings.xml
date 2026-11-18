@@ -120,7 +120,7 @@
 
     <string name="onboarding_schedule_days_heading">Training days per week</string>
     <string name="onboarding_duration_heading">Target duration</string>
-    <string name="onboarding_duration_hint">Includes warm-up sets, working volume, and rest periods.</string>
+    <string name="onboarding_duration_hint">Includes any warm-up, working sets, rest, and cooldown.</string>
     <string name="onboarding_break_heading">Returning after a break?</string>
     <string name="onboarding_break_hint">Pick how long your break was so WallCrawl can start you at a conservative volume.</string>
 
@@ -865,6 +865,8 @@
     <string name="history_assistance">Assistance</string>
     <string name="history_set_type">Set classification</string>
     <string name="history_warmup">Warm-up</string>
+    <string name="workout_cooldown">Cooldown</string>
+    <string name="today_error_insufficient_duration">Your workout needs more time. Increase your target duration in Profile.</string>
     <string name="history_normal">Normal work set</string>
     <string name="history_dropset">Drop set</string>
     <string name="history_myorep">Myo-rep set</string>

@@ -560,6 +560,8 @@ class TodayViewModel(
             WorkoutPlanningFailure.NO_CANDIDATES_FOR_ANY_SPLIT ->
                 TodayError.NO_CANDIDATES_FOR_ANY_SPLIT
 
+            WorkoutPlanningFailure.INSUFFICIENT_DURATION -> TodayError.INSUFFICIENT_DURATION
+
             WorkoutPlanningFailure.CONDITION_REQUIREMENTS_UNSATISFIED,
             null ->
                 if (isRegeneration) {

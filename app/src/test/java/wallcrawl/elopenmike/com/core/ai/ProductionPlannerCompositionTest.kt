@@ -593,18 +593,19 @@ class ProductionPlannerCompositionTest {
             val plan = served.workout
 
             assertWithMessage(cohort.name).that(plan.exercises).isNotEmpty()
-            // Only actually accepted catalog records are ever prescribed.
+            val work = plan.exercises.filterNot { it.prescription.purpose.isWorkoutPhase }
+            // Only accepted records can fill ordinary training slots.
             assertWithMessage(cohort.name).that(acceptedIds)
-                .containsAtLeastElementsIn(plan.exercises.map { it.exerciseId })
+                .containsAtLeastElementsIn(work.map { it.exerciseId })
             // The advertised focus is trained by the plan's own exercises.
             assertWithMessage(cohort.name).that(plan.focusMuscles).isNotEmpty()
-            val trained = plan.exercises.flatMap { planned ->
+            val trained = work.flatMap { planned ->
                 val metadata = requireNotNull(served.byId.getValue(planned.exerciseId).acceptedMetadata())
                 listOf(metadata.directPrimaryMuscle) + metadata.descriptiveSecondaryMuscles
             }.toSet()
             assertWithMessage(cohort.name).that(trained).containsAtLeastElementsIn(plan.focusMuscles)
 
-            plan.exercises.forEach { planned ->
+            work.forEach { planned ->
                 val exercise = served.byId.getValue(planned.exerciseId)
                 val message = "${cohort.name}/${planned.exerciseId}"
                 assertWithMessage(message).that(planned.prescription.exerciseType)
@@ -639,7 +640,7 @@ class ProductionPlannerCompositionTest {
             val served = planFor(cohort) as Served
             val owned = cohort.profile.availableEquipment.toSet()
 
-            served.workout.exercises.forEach { planned ->
+            served.workout.exercises.filterNot { it.prescription.purpose.isWorkoutPhase }.forEach { planned ->
                 val exercise = served.byId.getValue(planned.exerciseId)
                 val metadata = requireNotNull(exercise.acceptedMetadata())
                 val message = "${cohort.name}/${planned.exerciseId}"
