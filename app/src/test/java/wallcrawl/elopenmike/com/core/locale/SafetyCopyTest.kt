@@ -231,9 +231,7 @@ class SafetyCopyTest {
 
     @Test
     fun noTranslatedExerciseTextPromisesAMedicalOutcome() {
-        // The overlay is the other half of the shipped Spanish: 302 names and 131 coaching
-        // summaries that reach the same screens as the resource strings, and that the
-        // resource-file checks above cannot see.
+        // Catalog names and movement descriptions are shipped separately from resource strings.
         assertThat(translatedExerciseText).isNotEmpty()
         translatedExerciseText.forEach { (key, value) -> assertNoMedicalPromise(key, value) }
     }

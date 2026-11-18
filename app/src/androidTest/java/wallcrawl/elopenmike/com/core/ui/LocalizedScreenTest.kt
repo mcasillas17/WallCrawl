@@ -65,7 +65,7 @@ class LocalizedScreenTest {
     fun theBundledOverlayLoadsAndTranslatesTheCatalogVocabulary() {
         val localization = readBundledOverlay(context)
 
-        assertThat(localization.languages).containsExactly(AppLanguage.SPANISH.languageTag)
+        assertThat(localization.languages).containsExactly(AppLanguage.ENGLISH.languageTag, AppLanguage.SPANISH.languageTag)
         assertThat(localization.exerciseName("barbell-back-squat", "es-MX"))
             .isEqualTo("Sentadilla con barra")
         assertThat(localization.muscle("Chest", "es")).isEqualTo("Pecho")

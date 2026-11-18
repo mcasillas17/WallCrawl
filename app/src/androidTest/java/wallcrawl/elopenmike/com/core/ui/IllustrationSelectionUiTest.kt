@@ -111,17 +111,13 @@ class IllustrationSelectionUiTest {
         assertThat(compose.onAllNodes(hasText("Camilla acolchada", substring = true)).fetchSemanticsNodes()).isNotEmpty()
         assertThat(compose.onAllNodes(hasText("Apoyo para la pantorrilla", substring = true)).fetchSemanticsNodes()).isNotEmpty()
         listOf(R.string.exercise_detail_primary, R.string.exercise_detail_secondary,
-            R.string.exercise_detail_equipment, R.string.exercise_detail_review_pending).forEach { id ->
+            R.string.exercise_detail_equipment).forEach { id ->
             assertThat(context.getString(id)).isNotEqualTo(english.getString(id))
         }
-        compose.onNodeWithText("Principal:", substring = true).assertDoesNotExist()
-        compose.onNodeWithText(context.getString(R.string.guided_more_details)).performScrollTo().performClick()
-        compose.onNodeWithText("Principal:", substring = true).assertExists()
-        compose.onNodeWithText("Secundarios:", substring = true).assertExists()
+        compose.onNodeWithText("Enfoque principal").assertExists()
+        compose.onNodeWithText("Enfoque secundario").assertExists()
         compose.onNodeWithText("Equipo indicado:", substring = true).assertExists()
-        compose.onNodeWithText("Programación pendiente de revisión").assertExists()
-        compose.onNodeWithText("Primary:", substring = true).assertDoesNotExist()
-        compose.onNodeWithText("Programming review pending").assertDoesNotExist()
+        compose.onNodeWithText("Primary focus").assertDoesNotExist()
         compose.waitUntil(10_000) { compose.onAllNodes(hasText("Cuadro", substring = true)).fetchSemanticsNodes().isNotEmpty() }
         saveScreenshot("pht-detail-es.png", compose.onRoot())
     }

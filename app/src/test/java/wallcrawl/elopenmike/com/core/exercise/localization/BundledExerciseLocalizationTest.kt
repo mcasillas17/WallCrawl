@@ -68,37 +68,23 @@ class BundledExerciseLocalizationTest {
     }
 
     @Test
-    fun everyCoachingSummaryTheCatalogShipsIsTranslated() {
+    fun everyCatalogExerciseHasAMovementDescriptionInEnglishAndSpanish() {
         val array = catalog.getJSONArray("exercises")
-        val missing = (0 until array.length()).mapNotNull { index ->
+        for (index in 0 until array.length()) {
             val exercise = array.getJSONObject(index)
-            val english = exercise.optString("executionGuidance").ifBlank { exercise.optJSONObject("programming")?.optString("coachingSummary") }
-            if (english.isNullOrBlank()) return@mapNotNull null
-            val spanish = overlayExercises.optJSONObject(exercise.getString("id"))
-                ?.optJSONObject("es")
-                ?.optString("coachingSummary")
-            if (spanish.isNullOrBlank()) exercise.getString("id") else null
+            val id = exercise.getString("id")
+            val translations = overlayExercises.getJSONObject(id)
+            val english = exercise.optString("executionGuidance").takeIf { it.isNotBlank() }
+                ?: translations.optJSONObject("en")?.optString("coachingSummary").orEmpty()
+            val spanish = translations.getJSONObject("es").optString("coachingSummary")
+            assertWithMessage("$id English description").that(english).isNotEmpty()
+            assertWithMessage("$id Spanish description").that(spanish).isNotEmpty()
+            assertWithMessage("$id translated description").that(spanish).isNotEqualTo(english)
+            translations.optJSONObject("en")?.let { englishText ->
+                assertWithMessage("$id canonical name")
+                    .that(englishText.getString("name")).isEqualTo(exercise.getString("name"))
+            }
         }
-        assertThat(missing).isEmpty()
-    }
-
-    @Test
-    fun noSpanishCoachingSummaryExistsWithoutAnEnglishOne() {
-        // A translation with nothing behind it would be prose no reviewer ever approved.
-        val array = catalog.getJSONArray("exercises")
-        val withEnglish = (0 until array.length())
-            .map { array.getJSONObject(it) }
-            .filter { !it.optString("executionGuidance").isNullOrBlank() || !it.optJSONObject("programming")?.optString("coachingSummary").isNullOrBlank() }
-            .map { it.getString("id") }
-            .toSet()
-
-        val invented = overlayExercises.keys().asSequence().filter { id ->
-            val spanish = overlayExercises.getJSONObject(id)
-                .optJSONObject("es")
-                ?.optString("coachingSummary")
-            !spanish.isNullOrBlank() && id !in withEnglish
-        }.toList()
-        assertThat(invented).isEmpty()
     }
 
     @Test

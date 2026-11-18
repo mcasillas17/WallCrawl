@@ -12,7 +12,6 @@
     <string name="today_deload_title">One workout with fewer sets</string>
     <string name="today_view_exercises">View exercises</string>
     <string name="today_details">Details</string>
-    <string name="today_hide_details">Hide details</string>
     <string name="today_deload_applied_summary">One fewer set per exercise, with a minimum of one.</string>
     <string name="today_deload_accepted">Fewer sets this workout</string>
     <string name="today_deload_reason_request">You requested fewer sets.</string>
@@ -348,13 +347,18 @@
     <string name="exercises_catalog_error">The offline exercise catalog could not be loaded. Reinstall or update WallCrawl and try again.</string>
 
     <string name="exercise_detail_no_programming">Catalog details and the illustration are available. Programming review is pending.</string>
-    <string name="exercise_detail_primary">Primary: %1$s</string>
-    <string name="exercise_detail_secondary">Secondary: %1$s</string>
+    <string name="exercise_detail_how_to">How to do it</string>
+    <string name="exercise_detail_table">Exercise details</string>
+    <string name="exercise_detail_primary">Primary focus</string>
+    <string name="exercise_detail_secondary">Secondary focus</string>
     <string name="exercise_detail_equipment">Listed equipment: %1$s</string>
-    <string name="exercise_detail_pattern">Pattern: %1$s</string>
-    <string name="exercise_detail_difficulty">Difficulty: %1$s</string>
-    <string name="exercise_detail_fatigue">Fatigue score: %1$s/5</string>
-    <string name="exercise_detail_review_pending">Programming review pending</string>
+    <string name="exercise_detail_compound">Compound exercise</string>
+    <string name="exercise_detail_difficulty">Difficulty</string>
+    <string name="exercise_detail_fatigue">Fatigue score</string>
+    <string name="exercise_detail_score_out_of_five">%1$s/5</string>
+    <string name="exercise_detail_none_listed">None listed</string>
+    <string name="exercise_detail_not_rated">Not rated</string>
+    <string name="exercise_detail_unclassified">Not classified</string>
     <string name="exercise_detail_close">Close details</string>
     <string name="exercise_detail_original_language">Shown in English: this exercise has no Spanish description yet.</string>
 
@@ -711,10 +715,6 @@
     <plurals name="count_reps">
         <item quantity="one">%1$s rep</item>
         <item quantity="other">%1$s reps</item>
-    </plurals>
-    <plurals name="count_target_reps">
-        <item quantity="one">Target: %1$s rep</item>
-        <item quantity="other">Target: %1$s reps</item>
     </plurals>
     <plurals name="count_workouts">
         <item quantity="one">%1$s workout</item>
