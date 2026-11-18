@@ -48,13 +48,10 @@ class ProductionDetailLocaleTest {
     @Test fun productionLanguageSwitchRecreatesAndReopensSpanishDetail() {
         val prior = AppCompatDelegate.getApplicationLocales()
         try {
-            compose.runOnUiThread { AppLanguageController.apply(AppLanguage.ENGLISH) }
-            compose.waitUntil(10_000) { compose.activity.resources.configuration.locales[0].language == "en" }
-            val englishActivity = compose.activity
+            showInLanguage(AppLanguage.ENGLISH)
             openDetail()
             compose.onNodeWithText("Primary focus").assertExists()
-            compose.runOnUiThread { AppLanguageController.apply(AppLanguage.SPANISH) }
-            compose.waitUntil(10_000) { compose.activity !== englishActivity && compose.activity.resources.configuration.locales[0].language == "es" }
+            showInLanguage(AppLanguage.SPANISH)
             openDetail()
             compose.onNodeWithText("Enfoque principal").assertExists()
             compose.onNodeWithText("Enfoque secundario").assertExists()
@@ -88,8 +85,7 @@ class ProductionDetailLocaleTest {
     @Test fun arnoldPressShowsMovementAndAllFiveDetailsWithoutFooterLinks() {
         val prior = AppCompatDelegate.getApplicationLocales()
         try {
-            compose.runOnUiThread { AppLanguageController.apply(AppLanguage.ENGLISH) }
-            compose.waitUntil(10_000) { compose.activity.resources.configuration.locales[0].language == "en" }
+            showInLanguage(AppLanguage.ENGLISH)
             openDetail("arnold-press")
             compose.onNodeWithText("palms facing you", substring = true).performScrollTo().assertIsDisplayed()
             compose.onNode(hasText("Primary focus") and hasText("Shoulders")).assertExists()
@@ -108,6 +104,18 @@ class ProductionDetailLocaleTest {
             }
         } finally {
             compose.runOnUiThread { AppCompatDelegate.setApplicationLocales(prior) }
+            instrumentation.waitForIdleSync()
+        }
+    }
+
+    private fun showInLanguage(language: AppLanguage) {
+        val currentActivity = compose.activity
+        // Even an explicit English preference on an English device can recreate the activity.
+        if (currentActivity.resources.configuration.locales[0].language == language.languageTag) return
+        compose.runOnUiThread { AppLanguageController.apply(language) }
+        compose.waitUntil(10_000) {
+            val activity = compose.activity
+            activity !== currentActivity && activity.resources.configuration.locales[0].language == language.languageTag
         }
     }
 
