@@ -12,10 +12,11 @@ import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExternalResource
+import org.junit.rules.RuleChain
 import wallcrawl.elopenmike.com.AppContainer
 import wallcrawl.elopenmike.com.DefaultAppContainer
 import wallcrawl.elopenmike.com.R
@@ -30,20 +31,23 @@ import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
 
 /** Where first launch lands, and that the intro is remembered as a device setting. */
 class WelcomeNavigationTest {
-    @get:Rule val compose = createAndroidComposeRule<ComponentActivity>()
+    private val compose = createAndroidComposeRule<ComponentActivity>()
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
     private val prefs = context.getSharedPreferences(FIRST_LAUNCH_PREFS, Context.MODE_PRIVATE)
     private lateinit var database: WallCrawlDatabase
     private lateinit var nav: NavHostController
 
+    // The database closes only after the activity is gone: Today keeps querying until then.
+    @get:Rule val rules: RuleChain = RuleChain.outerRule(object : ExternalResource() {
+        override fun after() {
+            if (::database.isInitialized) database.close()
+            prefs.edit().clear().commit()
+        }
+    }).around(compose)
+
     @Before fun clearPrefs() {
         prefs.edit().clear().commit()
         context.getSharedPreferences(TODAY_PREFS, Context.MODE_PRIVATE).edit().clear().commit()
-    }
-
-    @After fun close() {
-        if (::database.isInitialized) database.close()
-        prefs.edit().clear().commit()
     }
 
     private fun launch(profile: UserProfile) {
