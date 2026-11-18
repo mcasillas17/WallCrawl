@@ -216,7 +216,7 @@ fun WelcomeScreen(
                         if (aboutStarted) aboutFade.snapTo(1f)
                         else aboutFade.animateTo(1f, tween(M.REDUCED_ABOUT_FADE_MS, easing = LinearEasing))
                     } else {
-                        aboutClock.animateTo(M.ABOUT_END, tween(M.ABOUT_END.toInt(), easing = LinearEasing))
+                        aboutClock.animateTo(M.ABOUT_END, tween((M.ABOUT_END * M.ABOUT_PACE).toInt(), easing = LinearEasing))
                     }
                     aboutStarted = true
                 }

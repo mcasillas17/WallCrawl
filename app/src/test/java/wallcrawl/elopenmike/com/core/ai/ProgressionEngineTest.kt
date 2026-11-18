@@ -40,6 +40,24 @@ class ProgressionEngineTest {
     }
 
     @Test
+    fun anUnloggedWarmUpOrCoolDownNeverHoldsTheSessionsTraining() {
+        val reference = cases.first().prescription
+        for (purpose in listOf(PrescriptionPurpose.WARMUP, PrescriptionPurpose.COOLDOWN)) {
+            val skipped = changeLatestSession(pair(reference)) { s ->
+                val phase = s.exercises.single().copy(id = "phase", exerciseId = "hamstring-stretch",
+                    prescription = ExercisePrescription(ExerciseType.DURATION, 1, targetDurationSeconds = 30,
+                        restSeconds = 15, purpose = purpose),
+                    sets = listOf(s.exercises.single().sets.first().copy(id = "phase-set", workoutExerciseId = "phase",
+                        exerciseType = ExerciseType.DURATION, isCompleted = false, completedAtTimestamp = null,
+                        feltManageable = null, completedReps = null, completedWeight = null, targetReps = null,
+                        targetWeight = null, targetDurationSeconds = 30)))
+                s.copy(exercises = s.exercises + phase)
+            }
+            assertThat(evaluate(reference, skipped).reason).isEqualTo(ProgressionReason.ADVANCED)
+        }
+    }
+
+    @Test
     fun supportivePainStopElsewhereInOrdinarySessionStillBlocksAndDuplicatesStillFail() {
         val reference = cases.first().prescription
         val mixed = changeLatestSession(pair(reference)) { s ->
