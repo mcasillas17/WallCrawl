@@ -94,6 +94,9 @@ def validate_supplement(catalog: dict, upstream: dict, overlay: dict, assets: Pa
     for entry in all_entries.values():
         for language in overlay["languages"]:
             text = overlay["exercises"][entry["id"]].get(language)
+            # Authored exercises already carry English guidance in the catalog.
+            if language == "en" and text is None and entry.get("executionGuidance"):
+                continue
             if not isinstance(text, dict):
                 raise CatalogImportError("Missing declared-language exercise localization")
             _required_string(text, "name", "localization", maximum=160)
@@ -101,15 +104,14 @@ def validate_supplement(catalog: dict, upstream: dict, overlay: dict, assets: Pa
             _required_string_list({"aliases": aliases}, "aliases", "localization", 12)
             for alias in aliases:
                 _bounded_string(alias, "localized alias", maximum=160)
-            if entry.get("executionGuidance") or entry.get("programming", {}).get("coachingSummary"):
-                _required_string(text, "coachingSummary", "localization", maximum=1000)
+            _required_string(text, "coachingSummary", "localization", maximum=1000)
         for category, words in [("muscles", entry["primaryMuscles"] + entry["secondaryMuscles"]), ("equipment", entry["listedEquipment"])]:
             for word in words:
                 # Upstream aliases are normalized by its pinned importer/runtime parser.
                 if word not in overlay["vocabulary"][category] and entry in entries:
                     raise CatalogImportError("Missing local vocabulary translation")
                 for language in overlay["languages"]:
-                    if word in overlay["vocabulary"][category]:
+                    if language != "en" and word in overlay["vocabulary"][category]:
                         _required_string(overlay["vocabulary"][category][word], language, "vocabulary", maximum=120)
     return len(entries), len(entries) * 3
 

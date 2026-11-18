@@ -22,7 +22,6 @@
     <string name="today_deload_title">Un entrenamiento con menos series</string>
     <string name="today_view_exercises">Ver ejercicios</string>
     <string name="today_details">Detalles</string>
-    <string name="today_hide_details">Ocultar detalles</string>
     <string name="today_deload_applied_summary">Una serie menos por ejercicio, con un mínimo de una.</string>
     <string name="today_deload_accepted">Menos series en esta sesión</string>
     <string name="today_deload_reason_request">Solicitaste menos series.</string>
@@ -343,13 +342,18 @@
     <string name="exercises_catalog_error">No se pudo cargar el catálogo de ejercicios sin conexión. Reinstala o actualiza WallCrawl e inténtalo de nuevo.</string>
 
     <string name="exercise_detail_no_programming">Los datos del catálogo y la ilustración están disponibles. La programación está pendiente de revisión.</string>
-    <string name="exercise_detail_primary">Principal: %1$s</string>
-    <string name="exercise_detail_secondary">Secundarios: %1$s</string>
+    <string name="exercise_detail_how_to">Cómo hacerlo</string>
+    <string name="exercise_detail_table">Detalles del ejercicio</string>
+    <string name="exercise_detail_primary">Enfoque principal</string>
+    <string name="exercise_detail_secondary">Enfoque secundario</string>
     <string name="exercise_detail_equipment">Equipo indicado: %1$s</string>
-    <string name="exercise_detail_pattern">Patrón: %1$s</string>
-    <string name="exercise_detail_difficulty">Dificultad: %1$s</string>
-    <string name="exercise_detail_fatigue">Fatiga: %1$s/5</string>
-    <string name="exercise_detail_review_pending">Programación pendiente de revisión</string>
+    <string name="exercise_detail_compound">Ejercicio compuesto</string>
+    <string name="exercise_detail_difficulty">Dificultad</string>
+    <string name="exercise_detail_fatigue">Puntuación de fatiga</string>
+    <string name="exercise_detail_score_out_of_five">%1$s/5</string>
+    <string name="exercise_detail_none_listed">No indicado</string>
+    <string name="exercise_detail_not_rated">Sin evaluar</string>
+    <string name="exercise_detail_unclassified">Sin clasificar</string>
     <string name="exercise_detail_close">Cerrar los detalles</string>
     <string name="exercise_detail_original_language">Se muestra en inglés: este ejercicio todavía no tiene descripción en español.</string>
 
@@ -703,10 +707,6 @@
     <plurals name="count_reps">
         <item quantity="one">%1$s rep</item>
         <item quantity="other">%1$s reps</item>
-    </plurals>
-    <plurals name="count_target_reps">
-        <item quantity="one">Objetivo: %1$s rep</item>
-        <item quantity="other">Objetivo: %1$s reps</item>
     </plurals>
     <plurals name="count_workouts">
         <item quantity="one">%1$s entrenamiento</item>

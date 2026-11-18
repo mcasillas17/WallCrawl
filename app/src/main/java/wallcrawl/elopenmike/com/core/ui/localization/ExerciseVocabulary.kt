@@ -48,21 +48,20 @@ class ExerciseVocabulary(
     /** The localized summary, with neutral catalog guidance as its original-language fallback. */
     fun coachingSummary(exercise: Exercise): String? =
         localization.coachingSummary(exercise.id, languageTag)
+            ?: originalCoachingSummary(exercise)
+
+    private fun originalCoachingSummary(exercise: Exercise): String? =
+        localization.coachingSummary(exercise.id, CATALOG_LANGUAGE)
             ?: exercise.executionGuidance
             ?: exercise.programming?.coachingSummary
 
     /**
      * True when execution or programming text has no translation in the reader's language.
-     *
-     * A reader of the catalog's own language is never in that position: the overlay carries
-     * no English block because the catalog already is the English, so asking it for one
-     * always comes back empty. Without this a reader in English would be told every coached
-     * exercise is missing a translation they do not need.
      */
     fun hasUntranslatedCoachingSummary(exercise: Exercise): Boolean =
         !readsCatalogLanguage &&
-            (exercise.executionGuidance != null || exercise.programming?.coachingSummary != null) &&
-            localization.coachingSummary(exercise.id, languageTag) == null
+            localization.coachingSummary(exercise.id, languageTag) == null &&
+            originalCoachingSummary(exercise) != null
 
     /** Whether this reader reads the language the catalog itself is written in. */
     private val readsCatalogLanguage: Boolean =

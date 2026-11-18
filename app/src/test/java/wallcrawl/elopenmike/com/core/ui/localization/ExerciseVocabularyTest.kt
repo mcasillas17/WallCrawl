@@ -59,13 +59,28 @@ class ExerciseVocabularyTest {
 
     @Test
     fun anEnglishReaderIsNeverToldAnExerciseLacksATranslation() {
-        // The overlay carries no English block, because the catalog already is the
-        // English. Asking it for one always comes back empty, so without a guard every
-        // coached exercise would carry "no Spanish description yet" on an English screen.
         val vocabulary = ExerciseVocabulary(localization, "en-US")
 
         assertThat(vocabulary.coachingSummary(coachedExercise)).isEqualTo("Squat with a barbell.")
         assertThat(vocabulary.hasUntranslatedCoachingSummary(coachedExercise)).isFalse()
+    }
+
+    @Test
+    fun englishOverlayDescriptionIsTheFallbackWhenOnlyItExists() {
+        val description = "Sit back into a squat, then stand."
+        val overlay = ExerciseLocalization(
+            languages = listOf("en"),
+            exercisesById = mapOf(
+                coachedExercise.id to mapOf("en" to LocalizedExerciseText(coachedExercise.name, coachingSummary = description))
+            ),
+            musclesByCanonicalName = emptyMap(),
+            equipmentByCanonicalName = emptyMap()
+        )
+        val vocabulary = ExerciseVocabulary(overlay, "es-MX")
+        val exercise = coachedExercise.copy(programming = null)
+
+        assertThat(vocabulary.coachingSummary(exercise)).isEqualTo(description)
+        assertThat(vocabulary.hasUntranslatedCoachingSummary(exercise)).isTrue()
     }
 
     @Test

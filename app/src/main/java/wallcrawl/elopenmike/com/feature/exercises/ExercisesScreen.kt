@@ -19,7 +19,6 @@ import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -31,6 +30,7 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.MechanicsType
 import wallcrawl.elopenmike.com.core.ui.components.ExerciseIllustration
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
@@ -84,8 +84,7 @@ fun ExercisesScreen(
                     is ExercisesUiState.Success -> {
                         ExerciseList(state, viewModel, visualProvider, onOpenConditionReference)
                         state.selectedExerciseDetail?.let { exercise ->
-                            ExerciseDetailSheet(exercise, visualProvider, viewModel::closeExerciseDetail,
-                                onOpenConditionReference = onOpenConditionReference)
+                            ExerciseDetailSheet(exercise, visualProvider, viewModel::closeExerciseDetail)
                         }
                     }
                 }
@@ -209,10 +208,8 @@ private fun FilterOptions(
 internal fun ExerciseDetailSheet(
     exercise: Exercise,
     visualProvider: ExerciseVisualProvider,
-    onDismiss: () -> Unit,
-    onOpenConditionReference: (() -> Unit)? = null
+    onDismiss: () -> Unit
 ) {
-    var moreDetails by rememberSaveable(exercise.id) { mutableStateOf(false) }
     val vocabulary = LocalExerciseVocabulary.current
     val listSeparator = stringResource(R.string.list_separator)
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
@@ -221,49 +218,62 @@ internal fun ExerciseDetailSheet(
             Text(vocabulary.exerciseName(exercise), style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.semantics { heading() })
             ExerciseIllustration(exercise, visualProvider, height = 200)
-            vocabulary.coachingSummary(exercise)?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
-            if (vocabulary.hasUntranslatedCoachingSummary(exercise)) Text(stringResource(R.string.exercise_detail_original_language),
-                style = MaterialTheme.typography.bodySmall)
-            if (exercise.listedEquipment.isNotEmpty()) Text(stringResource(R.string.exercise_detail_equipment,
-                vocabulary.equipment(exercise.listedEquipment).joinToString(listSeparator)))
-            TextButton(onClick = { moreDetails = !moreDetails }) {
-                Text(stringResource(if (moreDetails) R.string.today_hide_details else R.string.guided_more_details))
-            }
-            if (moreDetails) {
-                val locale = LocalConfiguration.current.locales[0]
-                Text(stringResource(R.string.exercise_detail_primary, vocabulary.muscles(exercise.primaryMuscles).joinToString(listSeparator)))
-                if (exercise.secondaryMuscles.isNotEmpty()) Text(stringResource(R.string.exercise_detail_secondary,
-                    vocabulary.muscles(exercise.secondaryMuscles).joinToString(listSeparator)))
-                val programming = exercise.programming
-                if (programming != null) {
-                    Text(stringResource(programming.mechanics.labelRes))
-                    Text(stringResource(R.string.exercise_detail_pattern, stringResource(programming.movementPattern.labelRes)))
-                    Text(stringResource(R.string.exercise_detail_difficulty, stringResource(programming.difficulty.labelRes)))
-                    programming.recommendedRepRange?.let { range ->
-                        Text(pluralStringResource(R.plurals.count_target_reps, range.max, stringResource(
-                            R.string.prescription_rep_range, LocaleFormatting.formatCount(range.min, locale),
-                            LocaleFormatting.formatCount(range.max, locale))))
+            vocabulary.coachingSummary(exercise)?.let { description ->
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(stringResource(R.string.exercise_detail_how_to), style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.semantics { heading() })
+                    Text(description, style = MaterialTheme.typography.bodyLarge)
+                    if (vocabulary.hasUntranslatedCoachingSummary(exercise)) {
+                        Text(stringResource(R.string.exercise_detail_original_language), style = MaterialTheme.typography.bodySmall)
                     }
-                    Text(stringResource(R.string.exercise_detail_fatigue, LocaleFormatting.formatCount(programming.fatigueScore, locale)))
-                } else Text(stringResource(R.string.exercise_detail_review_pending))
-                exercise.source?.attribution?.let { attribution ->
-                    val uriHandler = LocalUriHandler.current
-                    var failedUrl by remember { mutableStateOf<String?>(null) }
-                    val source = attribution.source
-                    val links = listOf(attribution.creator to attribution.creatorUrl, attribution.license to attribution.licenseUrl) +
-                        listOfNotNull(source?.let { it.name to it.url })
-                    links.distinct().forEach { (title, url) ->
-                        TextButton(onClick = {
-                            failedUrl = runCatching { uriHandler.openUri(url) }.exceptionOrNull()?.let { url }
-                        }) { Text(title) }
-                    }
-                    failedUrl?.let { Text(stringResource(R.string.credits_link_failed, it), color = MaterialTheme.colorScheme.error) }
-                }
-                if (onOpenConditionReference != null) TextButton(onClick = dropUnlessResumed { onOpenConditionReference() }) {
-                    Text(stringResource(R.string.guided_condition_guide))
                 }
             }
+            if (exercise.listedEquipment.isNotEmpty()) Text(
+                stringResource(R.string.exercise_detail_equipment, vocabulary.equipment(exercise.listedEquipment).joinToString(listSeparator)),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            ExerciseDetailsTable(exercise)
             WallCrawlPrimaryButton(stringResource(R.string.exercise_detail_close), onClick = onDismiss)
+        }
+    }
+}
+
+@Composable
+private fun ExerciseDetailsTable(exercise: Exercise) {
+    val vocabulary = LocalExerciseVocabulary.current
+    val locale = LocalConfiguration.current.locales[0]
+    val separator = stringResource(R.string.list_separator)
+    val noneListed = stringResource(R.string.exercise_detail_none_listed)
+    val notRated = stringResource(R.string.exercise_detail_not_rated)
+    val programming = exercise.programming
+    val compound = stringResource(when (programming?.mechanics) {
+        MechanicsType.COMPOUND -> R.string.answer_yes
+        MechanicsType.ISOLATION -> R.string.answer_no
+        null -> R.string.exercise_detail_unclassified
+    })
+    val rows = listOf(
+        R.string.exercise_detail_primary to vocabulary.muscles(exercise.primaryMuscles).joinToString(separator).ifEmpty { noneListed },
+        R.string.exercise_detail_secondary to vocabulary.muscles(exercise.secondaryMuscles).joinToString(separator).ifEmpty { noneListed },
+        R.string.exercise_detail_compound to compound,
+        R.string.exercise_detail_difficulty to (programming?.let { stringResource(it.difficulty.labelRes) } ?: notRated),
+        R.string.exercise_detail_fatigue to (programming?.let {
+            stringResource(R.string.exercise_detail_score_out_of_five, LocaleFormatting.formatCount(it.fatigueScore, locale))
+        } ?: notRated)
+    )
+    Column(Modifier.fillMaxWidth().padding(top = 4.dp)) {
+        Text(stringResource(R.string.exercise_detail_table), style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(bottom = 6.dp).semantics { heading() })
+        rows.forEach { (label, value) ->
+            HorizontalDivider()
+            Row(
+                Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}.padding(vertical = 9.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(stringResource(label), Modifier.weight(0.44f), style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(value, Modifier.weight(0.56f), style = MaterialTheme.typography.bodyMedium)
+            }
         }
     }
 }

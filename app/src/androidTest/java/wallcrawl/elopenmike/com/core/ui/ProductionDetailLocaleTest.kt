@@ -52,16 +52,17 @@ class ProductionDetailLocaleTest {
             compose.waitUntil(10_000) { compose.activity.resources.configuration.locales[0].language == "en" }
             val englishActivity = compose.activity
             openDetail()
-            compose.onNodeWithText("Primary:", substring = true).assertExists()
+            compose.onNodeWithText("Primary focus").assertExists()
             compose.runOnUiThread { AppLanguageController.apply(AppLanguage.SPANISH) }
             compose.waitUntil(10_000) { compose.activity !== englishActivity && compose.activity.resources.configuration.locales[0].language == "es" }
             openDetail()
-            compose.onNodeWithText("Principal:", substring = true).assertExists()
-            compose.onNodeWithText("Secundarios:", substring = true).assertExists()
+            compose.onNodeWithText("Enfoque principal").assertExists()
+            compose.onNodeWithText("Enfoque secundario").assertExists()
             compose.onNodeWithText("Equipo indicado:", substring = true).assertExists()
-            compose.onNodeWithText("Programación pendiente de revisión").assertExists()
-            compose.onNodeWithText("Primary:", substring = true).assertDoesNotExist()
-            compose.onNodeWithText("Programming review pending").assertDoesNotExist()
+            compose.onNode(hasText("Ejercicio compuesto") and hasText("Sin clasificar")).assertExists()
+            compose.onNode(hasText("Dificultad") and hasText("Sin evaluar")).assertExists()
+            compose.onNode(hasText("Puntuación de fatiga") and hasText("Sin evaluar")).assertExists()
+            compose.onNodeWithText("Primary focus").assertDoesNotExist()
             compose.waitUntil(10_000) { compose.onAllNodes(hasText("Cuadro", substring = true)).fetchSemanticsNodes().isNotEmpty() }
             assertThat(compose.onAllNodes(hasText("Apoyo para la pantorrilla", substring = true)).fetchSemanticsNodes()).isNotEmpty()
             compose.onNodeWithText("Cerrar los detalles").performScrollTo().assertIsDisplayed()
@@ -76,7 +77,7 @@ class ProductionDetailLocaleTest {
                 compose.onRoot().captureToImage().asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it)
             }
             compose.onNodeWithText("Cerrar los detalles").performClick()
-            compose.onNodeWithText("Programación pendiente de revisión").assertDoesNotExist()
+            compose.onNodeWithText("Enfoque principal").assertDoesNotExist()
         } finally {
             compose.runOnUiThread { AppCompatDelegate.setApplicationLocales(prior) }
             instrumentation.waitForIdleSync()
@@ -84,25 +85,47 @@ class ProductionDetailLocaleTest {
         }
     }
 
-    private fun openDetail() {
+    @Test fun arnoldPressShowsMovementAndAllFiveDetailsWithoutFooterLinks() {
+        val prior = AppCompatDelegate.getApplicationLocales()
+        try {
+            compose.runOnUiThread { AppLanguageController.apply(AppLanguage.ENGLISH) }
+            compose.waitUntil(10_000) { compose.activity.resources.configuration.locales[0].language == "en" }
+            openDetail("arnold-press")
+            compose.onNodeWithText("palms facing you", substring = true).performScrollTo().assertIsDisplayed()
+            compose.onNode(hasText("Primary focus") and hasText("Shoulders")).assertExists()
+            compose.onNode(hasText("Secondary focus") and hasText("Triceps")).assertExists()
+            compose.onNode(hasText("Compound exercise") and hasText("Yes")).assertExists()
+            compose.onNode(hasText("Difficulty") and hasText("Intermediate")).assertExists()
+            compose.onNode(hasText("Fatigue score") and hasText("3/5")).performScrollTo().assertIsDisplayed()
+            compose.onNodeWithText("Bryl Lim").assertDoesNotExist()
+            compose.onNodeWithText("CC BY-SA 4.0").assertDoesNotExist()
+            compose.onAllNodesWithText("Condition guide").assertCountEquals(1)
+
+            val output = InstrumentationRegistry.getArguments().getString("additionalTestOutputDir")?.let(::File) ?: app.filesDir
+            output.mkdirs()
+            File(output, "exercise-detail-arnold-press.png").outputStream().use {
+                compose.onRoot().captureToImage().asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it)
+            }
+        } finally {
+            compose.runOnUiThread { AppCompatDelegate.setApplicationLocales(prior) }
+        }
+    }
+
+    private fun openDetail(exerciseId: String = "pht-single-leg-calf-supported-isometric-hamstring-bridge") {
         val vm = ExercisesViewModel(original.exerciseCatalog)
-        val exercise = runBlocking { original.exerciseCatalog.getExerciseById("pht-single-leg-calf-supported-isometric-hamstring-bridge")!! }
+        val exercise = runBlocking { original.exerciseCatalog.getExerciseById(exerciseId)!! }
         compose.activityRule.scenario.onActivity { activity ->
             activity.setContent {
                 val vocabulary = rememberExerciseVocabulary(original.exerciseLocalizationSource)
                 CompositionLocalProvider(LocalExerciseVocabulary provides vocabulary) {
-                    WallCrawlTheme { ExercisesScreen(vm, original.exerciseVisualProvider) }
+                    WallCrawlTheme { ExercisesScreen(vm, original.exerciseVisualProvider, onOpenConditionReference = {}) }
                 }
             }
             vm.openExerciseDetail(exercise)
         }
-        val more = compose.activity.getString(R.string.guided_more_details)
-        val hide = compose.activity.getString(R.string.today_hide_details)
         compose.waitUntil(10_000) {
-            compose.onAllNodes(hasText(more) or hasText(hide)).fetchSemanticsNodes().isNotEmpty()
-        }
-        if (compose.onAllNodesWithText(more).fetchSemanticsNodes().isNotEmpty()) {
-            compose.onNodeWithText(more).performScrollTo().performClick()
+            compose.onAllNodesWithText(compose.activity.getString(R.string.exercise_detail_close))
+                .fetchSemanticsNodes().isNotEmpty()
         }
     }
 }

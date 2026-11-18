@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "languages": ["es"],
+  "languages": ["es", "en"],
   "vocabulary": {
     "muscles": {
       "Chest": { "es": "Pecho" },
@@ -132,982 +132,3108 @@
     "ab-wheel": {
       "es": {
         "name": "Rueda abdominal",
-        "aliases": ["Ab wheel", "Rollout con rueda"],
-        "coachingSummary": "Extensión con rueda que exige un control antiextensión firme del tronco."
+        "aliases": [
+          "Ab wheel",
+          "Rollout con rueda"
+        ],
+        "coachingSummary": "Sujeta la rueda abdominal y hazla rodar hacia delante mientras extiendes el cuerpo sin arquear la zona lumbar. Hazla rodar de vuelta hacia ti. La animación combina versiones de pie y de rodillas."
+      },
+      "en": {
+        "name": "Ab Wheel Rollout",
+        "coachingSummary": "Grip the ab wheel and roll it forward as your body extends, keeping your lower back steady. Roll it back toward you. The animation mixes standing and kneeling rollouts."
       }
     },
     "active-hang": {
       "es": {
         "name": "Suspensión activa",
-        "coachingSummary": "Cuélgate de una barra de dominadas con los brazos estirados. Mantén la suspensión activa con el cuerpo estable y respira durante toda la serie."
+        "coachingSummary": "Cuélgate de una barra de dominadas con los brazos rectos. Baja ligeramente los hombros y mantén la posición sin doblar los codos."
+      },
+      "en": {
+        "name": "Active Hang",
+        "coachingSummary": "Hang from a pull-up bar with straight arms. Draw your shoulders slightly down and hold without bending your elbows."
       }
     },
-    "archer-push-up": { "es": { "name": "Flexión de arquero" } },
-    "arm-circles": { "es": { "name": "Círculos de brazos" } },
+    "archer-push-up": {
+      "es": {
+        "name": "Flexión de arquero",
+        "coachingSummary": "Coloca las manos bien separadas en posición de flexión. Dobla un codo y baja hacia esa mano con el otro brazo recto, luego empuja para subir y cambia de lado."
+      },
+      "en": {
+        "name": "Archer Push-up",
+        "coachingSummary": "Set your hands wide apart in a push-up position. Bend one elbow to lower toward that hand while the other arm stays straight, then press up and switch sides."
+      }
+    },
+    "arm-circles": {
+      "es": {
+        "name": "Círculos de brazos",
+        "coachingSummary": "Ponte de pie y extiende los brazos hacia los lados. Haz círculos con ambos brazos y luego cambia de sentido."
+      },
+      "en": {
+        "name": "Arm Circles",
+        "coachingSummary": "Stand tall and extend your arms out to the sides. Make circles with both arms, then reverse direction."
+      }
+    },
     "arnold-press": {
       "es": {
         "name": "Press Arnold",
-        "coachingSummary": "Press de mancuernas por encima de la cabeza con rotación, que cubre el rango del deltoides anterior y lateral."
+        "coachingSummary": "Ponte de pie con las mancuernas a la altura de los hombros y las palmas hacia ti. Gira las palmas hacia fuera al empujar por encima de la cabeza e invierte el giro al bajar."
+      },
+      "en": {
+        "name": "Arnold Press",
+        "coachingSummary": "Stand with the dumbbells at shoulder height and your palms facing you. Turn your palms outward as you press overhead, then reverse the motion as you lower."
       }
     },
-    "assault-bike": { "es": { "name": "Bicicleta de asalto", "aliases": ["Assault bike"] } },
-    "assisted-chin-up": { "es": { "name": "Dominada supina asistida" } },
+    "assault-bike": {
+      "es": {
+        "name": "Bicicleta de asalto",
+        "aliases": [
+          "Assault bike"
+        ],
+        "coachingSummary": "Siéntate en la bicicleta de aire y pedalea mientras empujas un manillar y tiras del otro, alternando el movimiento."
+      },
+      "en": {
+        "name": "Assault Bike",
+        "coachingSummary": "Sit on the fan bike and pedal while you push one handle forward and pull the other back, alternating with each stroke."
+      }
+    },
+    "assisted-chin-up": {
+      "es": {
+        "name": "Dominada supina asistida",
+        "coachingSummary": "Apoya las rodillas en la almohadilla de asistencia y agarra las manijas superiores con las palmas hacia ti. Sube hasta que la barbilla supere las manijas y luego baja."
+      },
+      "en": {
+        "name": "Assisted Chin-up",
+        "coachingSummary": "Rest your knees on the machine's assistance pad and grip the overhead handles with your palms toward you. Pull up until your chin clears the handles, then lower."
+      }
+    },
     "assisted-dip": {
       "es": {
         "name": "Fondo asistido",
-        "coachingSummary": "Fondo en máquina asistida que sostiene parte del peso corporal mientras aprendes el patrón."
+        "coachingSummary": "Agarra las manijas de la máquina de fondos asistidos y usa su apoyo para descargar parte de tu peso. Dobla los codos para bajar el cuerpo y luego empuja para subir. La animación muestra un fondo en máquina con asiento."
+      },
+      "en": {
+        "name": "Assisted Dip",
+        "coachingSummary": "Grip the handles of an assisted dip machine and use its support to take some of your weight. Bend your elbows to lower your body, then press back up. The animation shows a seated dip press."
       }
     },
-    "assisted-pistol-squat": { "es": { "name": "Sentadilla a una pierna asistida" } },
+    "assisted-pistol-squat": {
+      "es": {
+        "name": "Sentadilla a una pierna asistida",
+        "coachingSummary": "Sujétate de las barras y extiende una pierna hacia delante. Haz una sentadilla sobre la otra pierna y vuelve a levantarte con ayuda de las barras."
+      },
+      "en": {
+        "name": "Assisted Pistol Squat",
+        "coachingSummary": "Hold the rails and extend one leg in front of you. Squat on the other leg, then stand up with help from the rails."
+      }
+    },
     "assisted-pull-up": {
       "es": {
         "name": "Dominada asistida",
-        "coachingSummary": "Dominada en máquina asistida que sostiene parte del peso corporal mientras ganas fuerza."
+        "coachingSummary": "Apoya las rodillas en la almohadilla de asistencia y agarra las manijas con las manos bien separadas y las palmas hacia delante. Sube hasta que la barbilla supere las manijas y luego baja."
+      },
+      "en": {
+        "name": "Assisted Pull-up",
+        "coachingSummary": "Place your knees on the machine's assistance pad and take a wide overhand grip on the handles. Pull up until your chin clears the handles, then lower."
       }
     },
     "back-extension": {
       "es": {
         "name": "Extensión lumbar",
-        "coachingSummary": "Extensión de tronco que entrena los erectores espinales y los glúteos."
+        "coachingSummary": "Apoya la parte alta de los muslos en la almohadilla inclinada y fija la parte baja de las piernas. Inclínate desde las caderas y luego levanta el torso hasta alinearlo con las piernas."
+      },
+      "en": {
+        "name": "Back Extension",
+        "coachingSummary": "Rest your upper thighs on the angled pad and secure your lower legs. Hinge forward at the hips, then lift your torso until it lines up with your legs."
       }
     },
     "band-pull-apart": {
       "es": {
         "name": "Apertura con banda",
-        "coachingSummary": "Banda separada a la altura del pecho: trabajo de espalda alta y deltoides posterior con poca fatiga."
+        "coachingSummary": "Sujeta una banda frente al pecho con los brazos extendidos. Separa las manos para estirar la banda y luego vuelve a juntarlas."
+      },
+      "en": {
+        "name": "Band Pull-Apart",
+        "coachingSummary": "Hold a band in front of your chest with your arms extended. Spread your hands to stretch the band, then bring them back together."
       }
     },
-    "banded-clamshell": { "es": { "name": "Almeja con banda" } },
-    "banded-dead-bug": { "es": { "name": "Dead bug con banda", "aliases": ["Bicho muerto con banda"] } },
-    "banded-donkey-kick": { "es": { "name": "Patada de glúteo con banda" } },
-    "banded-face-pull": { "es": { "name": "Face pull con banda", "aliases": ["Jalón a la cara con banda"] } },
-    "banded-fire-hydrant": { "es": { "name": "Abducción en cuadrupedia con banda" } },
-    "banded-frog-pump": { "es": { "name": "Puente de rana con banda" } },
-    "banded-glute-bridge": { "es": { "name": "Puente de glúteos con banda" } },
-    "banded-hip-thrust": { "es": { "name": "Empuje de cadera con banda", "aliases": ["Hip thrust con banda"] } },
-    "banded-kickback": { "es": { "name": "Patada atrás con banda" } },
+    "banded-clamshell": {
+      "es": {
+        "name": "Almeja con banda",
+        "coachingSummary": "Túmbate de lado con las rodillas dobladas, los pies juntos y una banda alrededor de los muslos. Sube y baja la rodilla de arriba sin girar las caderas hacia atrás."
+      },
+      "en": {
+        "name": "Banded Clamshell",
+        "coachingSummary": "Lie on your side with your knees bent, feet together, and a band looped around your thighs. Lift and lower the top knee without rolling your hips back."
+      }
+    },
+    "banded-dead-bug": {
+      "es": {
+        "name": "Dead bug con banda",
+        "aliases": [
+          "Bicho muerto con banda"
+        ],
+        "coachingSummary": "Túmbate boca arriba con las rodillas dobladas y sujeta la banda sobre el pecho con el otro extremo alrededor de los pies. Extiende una pierna a la vez hacia el suelo sin arquear la zona lumbar."
+      },
+      "en": {
+        "name": "Banded Dead Bug",
+        "coachingSummary": "Lie on your back with your knees bent and hold the band above your chest with the other end around your feet. Extend one leg toward the floor at a time, keeping your lower back steady."
+      }
+    },
+    "banded-donkey-kick": {
+      "es": {
+        "name": "Patada de glúteo con banda",
+        "coachingSummary": "Ponte a cuatro patas con una banda alrededor de las piernas. Eleva un pie hacia arriba y hacia atrás con la rodilla doblada y luego bájalo sin girar las caderas."
+      },
+      "en": {
+        "name": "Banded Donkey Kick",
+        "coachingSummary": "Start on hands and knees with a band looped around your legs. Lift one foot up and back with the knee bent, then lower it without twisting your hips."
+      }
+    },
+    "banded-face-pull": {
+      "es": {
+        "name": "Face pull con banda",
+        "aliases": [
+          "Jalón a la cara con banda"
+        ],
+        "coachingSummary": "Colócate frente a una banda anclada cerca de la altura de la cara y toma un extremo en cada mano. Lleva las manos a los lados de la cara con los codos abiertos y vuelve a extender los brazos."
+      },
+      "en": {
+        "name": "Banded Face Pull",
+        "coachingSummary": "Face a band anchored near face height and hold an end in each hand. Pull your hands toward the sides of your face with your elbows wide, then reach forward again."
+      }
+    },
+    "banded-fire-hydrant": {
+      "es": {
+        "name": "Abducción en cuadrupedia con banda",
+        "coachingSummary": "Ponte a cuatro patas con una banda alrededor de los muslos. Eleva una rodilla hacia el lado sin estirar la pierna y bájala con las caderas orientadas hacia el suelo."
+      },
+      "en": {
+        "name": "Banded Fire Hydrant",
+        "coachingSummary": "Start on hands and knees with a band around your thighs. Keep one knee bent as you lift it out to the side, then lower it with your hips facing the floor."
+      }
+    },
+    "banded-frog-pump": {
+      "es": {
+        "name": "Puente de rana con banda",
+        "coachingSummary": "Túmbate boca arriba con una banda alrededor de los muslos, las plantas de los pies juntas y las rodillas abiertas. Presiona un pie contra el otro al subir las caderas y luego bájalas. La animación muestra una apertura de rodillas en posición sentada."
+      },
+      "en": {
+        "name": "Banded Frog Pump",
+        "coachingSummary": "Lie on your back with a band around your thighs, soles together, and knees open. Press your feet together as you lift your hips, then lower them. The animation shows a seated knee-opening movement."
+      }
+    },
+    "banded-glute-bridge": {
+      "es": {
+        "name": "Puente de glúteos con banda",
+        "coachingSummary": "Túmbate boca arriba con las rodillas dobladas, los pies apoyados y una banda alrededor de los muslos. Sube y baja las caderas sin juntar las rodillas."
+      },
+      "en": {
+        "name": "Banded Glute Bridge",
+        "coachingSummary": "Lie on your back with your knees bent, feet flat, and a band around your thighs. Lift and lower your hips while keeping your knees apart."
+      }
+    },
+    "banded-hip-thrust": {
+      "es": {
+        "name": "Empuje de cadera con banda",
+        "aliases": [
+          "Hip thrust con banda"
+        ],
+        "coachingSummary": "Apoya la parte alta de la espalda en un banco, planta los pies y coloca una banda alrededor de los muslos, por encima de las rodillas. Eleva las caderas hasta alinear el torso con los muslos y luego baja."
+      },
+      "en": {
+        "name": "Banded Hip Thrust",
+        "coachingSummary": "Rest your upper back against a bench, plant your feet, and place a band around your thighs above the knees. Lift your hips until your torso lines up with your thighs, then lower."
+      }
+    },
+    "banded-kickback": {
+      "es": {
+        "name": "Patada atrás con banda",
+        "coachingSummary": "Sujétate del poste y coloca en un tobillo la banda anclada cerca del suelo. Lleva esa pierna recta hacia atrás sin mover el torso y luego vuelve a la posición inicial."
+      },
+      "en": {
+        "name": "Banded Kickback",
+        "coachingSummary": "Hold the upright and attach the low-anchored band to one ankle. Move that leg straight back while keeping your torso steady, then return."
+      }
+    },
     "banded-lat-pulldown": {
       "es": {
         "name": "Jalón al pecho con banda",
-        "coachingSummary": "Jalón con banda que da un tirón vertical sin necesidad de una polea."
+        "coachingSummary": "Siéntate debajo de una banda anclada por encima de la cabeza y toma un extremo en cada mano. Baja los codos hacia los costados y luego vuelve a extender los brazos hacia arriba."
+      },
+      "en": {
+        "name": "Banded Lat Pulldown",
+        "coachingSummary": "Sit beneath a band anchored overhead and hold one end in each hand. Pull your elbows down toward your sides, then reach overhead again."
       }
     },
-    "banded-lateral-walk": { "es": { "name": "Caminata lateral con banda" } },
-    "banded-monster-walk": { "es": { "name": "Caminata monstruo con banda" } },
-    "banded-pallof-press": { "es": { "name": "Press Pallof con banda" } },
+    "banded-lateral-walk": {
+      "es": {
+        "name": "Caminata lateral con banda",
+        "coachingSummary": "Coloca una banda alrededor de los tobillos y dobla un poco las rodillas. Da un paso lateral y acerca el otro pie sin aflojar la banda."
+      },
+      "en": {
+        "name": "Banded Lateral Walk",
+        "coachingSummary": "Loop a band around your ankles and bend your knees slightly. Step to the side and follow with your other foot, keeping tension on the band."
+      }
+    },
+    "banded-monster-walk": {
+      "es": {
+        "name": "Caminata monstruo con banda",
+        "coachingSummary": "Coloca una banda por encima de las rodillas y empieza con los pies separados y las rodillas dobladas. Da pasos alternos sin juntar tanto los pies que la banda pierda tensión."
+      },
+      "en": {
+        "name": "Banded Monster Walk",
+        "coachingSummary": "Loop a band above your knees and start with your feet apart and knees bent. Take alternating steps, keeping your feet wide enough to hold tension on the band."
+      }
+    },
+    "banded-pallof-press": {
+      "es": {
+        "name": "Press Pallof con banda",
+        "coachingSummary": "Ponte de lado a una banda anclada a la altura del pecho y sujétala frente al pecho. Extiende los brazos hacia delante y vuelve a acercar las manos sin girar el torso."
+      },
+      "en": {
+        "name": "Banded Pallof Press",
+        "coachingSummary": "Stand sideways to a band anchored at chest height and hold it at your chest. Press your hands straight forward and bring them back without turning your torso."
+      }
+    },
     "banded-row": {
       "es": {
         "name": "Remo con banda",
-        "coachingSummary": "Remo con banda que da un tirón horizontal en cualquier lugar donde haya un anclaje."
+        "coachingSummary": "Ponte de frente al anclaje de la banda con los brazos extendidos. Acerca las manos a las costillas llevando los codos hacia atrás y luego vuelve a extender los brazos."
+      },
+      "en": {
+        "name": "Banded Row",
+        "coachingSummary": "Stand facing the band anchor with both arms extended. Pull your hands toward your ribs and send your elbows back, then reach forward again."
       }
     },
-    "banded-seated-hip-abduction": { "es": { "name": "Abducción de cadera sentado con banda" } },
-    "banded-squat": { "es": { "name": "Sentadilla con banda" } },
-    "banded-standing-hip-abduction": { "es": { "name": "Abducción de cadera de pie con banda" } },
-    "banded-woodchop": { "es": { "name": "Leñador con banda" } },
+    "banded-seated-hip-abduction": {
+      "es": {
+        "name": "Abducción de cadera sentado con banda",
+        "coachingSummary": "Siéntate con los pies en el suelo y una banda alrededor de los muslos, por encima de las rodillas. Separa las rodillas para estirar la banda y luego vuelve a acercarlas."
+      },
+      "en": {
+        "name": "Banded Seated Hip Abduction",
+        "coachingSummary": "Sit with your feet on the floor and a band looped above your knees. Press your knees apart against the band, then bring them back in."
+      }
+    },
+    "banded-squat": {
+      "es": {
+        "name": "Sentadilla con banda",
+        "coachingSummary": "Pisa el centro de una banda larga y sujeta los extremos a la altura de los hombros. Flexiona las caderas y las rodillas para bajar y luego vuelve a levantarte."
+      },
+      "en": {
+        "name": "Banded Squat",
+        "coachingSummary": "Stand on the middle of a long band and hold the ends at your shoulders. Bend your hips and knees to squat, then stand back up."
+      }
+    },
+    "banded-standing-hip-abduction": {
+      "es": {
+        "name": "Abducción de cadera de pie con banda",
+        "coachingSummary": "Coloca una banda alrededor de los tobillos y apóyate sobre una pierna. Eleva la otra pierna hacia el lado y vuelve a bajarla sin inclinar el torso."
+      },
+      "en": {
+        "name": "Banded Standing Hip Abduction",
+        "coachingSummary": "Loop a band around your ankles and stand on one leg. Raise the other leg out to the side and bring it back without leaning your torso."
+      }
+    },
+    "banded-woodchop": {
+      "es": {
+        "name": "Leñador con banda",
+        "coachingSummary": "Ponte de lado al anclaje bajo de la banda y sujétala con ambas manos. Tira de ella en diagonal hacia el lado opuesto, de abajo hacia arriba, y luego vuelve a bajar."
+      },
+      "en": {
+        "name": "Banded Woodchop",
+        "coachingSummary": "Stand sideways to a low band anchor and hold the band in both hands. Pull it diagonally upward across your body, then return to the low position."
+      }
+    },
     "barbell-back-squat": {
       "es": {
         "name": "Sentadilla con barra",
-        "aliases": ["Sentadilla trasera", "Back squat"],
-        "coachingSummary": "Sentadilla con barra centrada en cuádriceps y glúteos, con todo el cuerpo estabilizado."
+        "aliases": [
+          "Sentadilla trasera",
+          "Back squat"
+        ],
+        "coachingSummary": "Ponte de pie con la barra sobre la parte alta de la espalda. Flexiona las caderas y las rodillas para bajar y luego empuja con ambos pies para levantarte."
+      },
+      "en": {
+        "name": "Squat",
+        "coachingSummary": "Stand with the barbell across your upper back. Bend your hips and knees to squat, then drive through both feet to stand up."
       }
     },
     "barbell-bench-press": {
       "es": {
         "name": "Press de banca",
-        "aliases": ["Press de banca con barra"],
-        "coachingSummary": "Empuje horizontal fundamental para la fuerza de pecho, hombro y tríceps."
+        "aliases": [
+          "Press de banca con barra"
+        ],
+        "coachingSummary": "Túmbate en un banco plano con los pies en el suelo. Baja la barra al pecho y luego empújala hacia arriba hasta extender los brazos."
+      },
+      "en": {
+        "name": "Bench Press",
+        "coachingSummary": "Lie on a flat bench with your feet on the floor. Lower the bar to your chest, then press it back up until your arms are straight."
       }
     },
     "barbell-bicep-curl": {
       "es": {
         "name": "Curl con barra Z",
-        "aliases": ["Curl con barra", "Curl de bíceps con barra"],
-        "coachingSummary": "Curl de pie para bíceps y flexores del antebrazo con barra recta o barra Z."
+        "aliases": [
+          "Curl con barra",
+          "Curl de bíceps con barra"
+        ],
+        "coachingSummary": "Ponte de pie con una barra frente a los muslos y las palmas hacia arriba. Dobla los codos para acercar la barra al pecho y luego bájala."
+      },
+      "en": {
+        "name": "EZ-Bar Curl",
+        "coachingSummary": "Stand holding a barbell in front of your thighs with your palms up. Bend your elbows to curl the bar toward your chest, then lower it."
       }
     },
     "barbell-deadlift": {
       "es": {
         "name": "Peso muerto",
-        "aliases": ["Peso muerto con barra"],
-        "coachingSummary": "Bisagra de cadera pesada para la fuerza de la cadena posterior, la estabilización del tronco y el agarre."
+        "aliases": [
+          "Peso muerto con barra"
+        ],
+        "coachingSummary": "Flexiona las caderas y las rodillas para agarrar la barra en el suelo. Levántate manteniendo la barra cerca de las piernas y vuelve a flexionar las caderas y las rodillas para bajarla."
+      },
+      "en": {
+        "name": "Deadlift",
+        "coachingSummary": "Bend at the hips and knees to grip the bar on the floor. Stand up with the bar close to your legs, then bend your hips and knees to set it down."
       }
     },
-    "barbell-glute-bridge": { "es": { "name": "Puente de glúteos con barra" } },
+    "barbell-glute-bridge": {
+      "es": {
+        "name": "Puente de glúteos con barra",
+        "coachingSummary": "Túmbate boca arriba con las rodillas dobladas, los pies apoyados y una barra sobre las caderas. Sujeta la barra para que no se mueva al subir y bajar las caderas."
+      },
+      "en": {
+        "name": "Barbell Glute Bridge",
+        "coachingSummary": "Lie on your back with your knees bent, feet flat, and a barbell across your hips. Hold the bar steady as you lift and lower your hips."
+      }
+    },
     "barbell-row": {
       "es": {
         "name": "Remo con barra",
-        "coachingSummary": "Remo con barra inclinado que tira hacia las costillas bajas desde una bisagra estable."
+        "coachingSummary": "Inclínate desde las caderas y deja que la barra cuelgue debajo de los hombros. Acerca la barra a la parte baja de las costillas y bájala sin levantar el torso."
+      },
+      "en": {
+        "name": "Barbell Row",
+        "coachingSummary": "Hinge forward at the hips and let the bar hang below your shoulders. Pull the bar toward your lower ribs, then lower it without lifting your torso."
       }
     },
-    "battle-ropes": { "es": { "name": "Cuerdas de batalla" } },
-    "bear-crawl": { "es": { "name": "Gateo del oso" } },
+    "battle-ropes": {
+      "es": {
+        "name": "Cuerdas de batalla",
+        "coachingSummary": "Colócate frente al anclaje con las rodillas un poco dobladas y sujeta un extremo de cuerda en cada mano. Sube y baja los brazos de forma alterna para crear olas en las cuerdas."
+      },
+      "en": {
+        "name": "Battle Ropes",
+        "coachingSummary": "Face the rope anchor, bend your knees slightly, and grip one rope end in each hand. Raise and lower your arms in alternation to send waves down the ropes."
+      }
+    },
+    "bear-crawl": {
+      "es": {
+        "name": "Gateo del oso",
+        "coachingSummary": "Apóyate en las manos y los dedos de los pies con las rodillas cerca del suelo. Avanza moviendo a la vez una mano y el pie contrario, luego cambia de lado."
+      },
+      "en": {
+        "name": "Bear Crawl",
+        "coachingSummary": "Start on your hands and toes with your knees just above the floor. Crawl forward by moving one hand and the opposite foot together, then switch sides."
+      }
+    },
     "bear-plank": {
       "es": {
         "name": "Plancha del oso",
-        "coachingSummary": "Ponte en cuadrupedia y despega las rodillas apenas del suelo. Mantén las manos y las puntas de los pies apoyadas mientras sostienes la posición."
+        "coachingSummary": "Coloca las manos debajo de los hombros y las rodillas debajo de las caderas. Despega un poco las rodillas del suelo y mantén la posición con las manos y los dedos de los pies apoyados. Uno de los cuadros muestra una posición de gateo."
+      },
+      "en": {
+        "name": "Bear Plank",
+        "coachingSummary": "Place your hands under your shoulders and your knees under your hips. Lift your knees just off the floor and hold with your hands and toes planted. One frame shows a crawling position."
       }
     },
-    "belt-squat": { "es": { "name": "Sentadilla con cinturón" } },
+    "belt-squat": {
+      "es": {
+        "name": "Sentadilla con cinturón",
+        "coachingSummary": "Ponte de pie en la plataforma con el cinturón de la máquina alrededor de las caderas. Flexiona las caderas y las rodillas para bajar y luego empuja con los pies para levantarte."
+      },
+      "en": {
+        "name": "Belt Squat",
+        "coachingSummary": "Stand on the platform with the machine belt around your hips. Bend your hips and knees to squat, then push through your feet to stand."
+      }
+    },
     "bench-dip": {
       "es": {
         "name": "Fondo en banco",
-        "coachingSummary": "Fondo de tríceps con las manos apoyadas atrás en un banco y los pies apoyados."
+        "coachingSummary": "Apoya las manos en un banco detrás de las caderas y los talones en un segundo banco. Dobla los codos para bajar las caderas y luego estira los brazos para subir."
+      },
+      "en": {
+        "name": "Bench Dip",
+        "coachingSummary": "Place your hands on a bench behind your hips and your heels on a second bench. Bend your elbows to lower your hips, then straighten your arms to rise."
       }
     },
-    "bent-over-rear-delt-raise": { "es": { "name": "Elevación posterior inclinado" } },
+    "bent-over-rear-delt-raise": {
+      "es": {
+        "name": "Elevación posterior inclinado",
+        "coachingSummary": "Inclínate desde las caderas con una mancuerna colgando de cada mano. Con los codos un poco doblados, eleva las mancuernas hacia los lados y luego bájalas."
+      },
+      "en": {
+        "name": "Bent-Over Rear Delt Raise",
+        "coachingSummary": "Hinge forward with a dumbbell hanging from each hand. With your elbows slightly bent, raise the dumbbells out to the sides and lower them."
+      }
+    },
     "bicep-curl": {
       "es": {
         "name": "Curl de bíceps",
-        "coachingSummary": "Curl con mancuernas que entrena el bíceps con agarre supino."
+        "coachingSummary": "Ponte de pie con una mancuerna en cada mano y los brazos a los lados. Mantén los codos cerca del cuerpo al subir las mancuernas hacia los hombros y volver a bajarlas."
+      },
+      "en": {
+        "name": "Bicep Curl",
+        "coachingSummary": "Stand with a dumbbell in each hand and your arms by your sides. Keep your elbows close to your body as you curl the dumbbells toward your shoulders and lower them."
       }
     },
-    "bicycle-crunch": { "es": { "name": "Crunch bicicleta" } },
+    "bicycle-crunch": {
+      "es": {
+        "name": "Crunch bicicleta",
+        "coachingSummary": "Túmbate boca arriba y levanta los hombros. Gira un hombro hacia la rodilla contraria mientras extiendes la otra pierna y luego cambia de lado."
+      },
+      "en": {
+        "name": "Bicycle Crunch",
+        "coachingSummary": "Lie on your back and lift your shoulders. Turn one shoulder toward the opposite knee as the other leg extends, then switch sides."
+      }
+    },
     "bird-dog": {
       "es": {
         "name": "Bird dog",
-        "aliases": ["Perro pájaro"],
-        "coachingSummary": "Ejercicio en cuadrupedia que extiende extremidades opuestas mientras el tronco resiste la rotación."
+        "aliases": [
+          "Perro pájaro"
+        ],
+        "coachingSummary": "Ponte a cuatro patas. Extiende un brazo hacia delante y la pierna contraria hacia atrás sin girar las caderas, vuelve a apoyarlos y cambia de lado."
+      },
+      "en": {
+        "name": "Bird Dog",
+        "coachingSummary": "Start on hands and knees. Reach one arm forward and the opposite leg back without turning your hips, then bring them back down and switch sides."
       }
     },
     "bodyweight-squat": {
       "es": {
         "name": "Sentadilla con peso corporal",
-        "coachingSummary": "Sentadilla sin carga para asentar el patrón y construir una base."
+        "coachingSummary": "Ponte de pie con los pies separados y extiende los brazos hacia delante. Flexiona las caderas y las rodillas sin levantar los pies y luego vuelve a ponerte de pie."
+      },
+      "en": {
+        "name": "Bodyweight Squat",
+        "coachingSummary": "Stand with your feet apart and reach your arms forward. Bend your hips and knees to squat with both feet flat, then stand back up."
       }
     },
     "bulgarian-split-squat": {
       "es": {
         "name": "Sentadilla búlgara",
-        "coachingSummary": "Sentadilla dividida con el pie trasero elevado: un patrón unilateral exigente."
+        "coachingSummary": "Sujeta las mancuernas a los lados y apoya el empeine del pie trasero en un banco. Dobla la rodilla delantera para bajar y luego empuja con el pie delantero para subir."
+      },
+      "en": {
+        "name": "Bulgarian Split Squat",
+        "coachingSummary": "Hold dumbbells at your sides and rest the top of your rear foot on a bench. Bend your front knee to lower, then press through your front foot to rise."
       }
     },
-    "burpee": { "es": { "name": "Burpee" } },
-    "butterfly-stretch": { "es": { "name": "Estiramiento de mariposa" } },
+    "burpee": {
+      "es": {
+        "name": "Burpee",
+        "coachingSummary": "Desde la posición de pie, agáchate, apoya las manos en el suelo y lleva los pies atrás con un salto hasta quedar en plancha. Salta para acercar los pies a las manos y luego salta hacia arriba con los brazos extendidos."
+      },
+      "en": {
+        "name": "Burpee",
+        "coachingSummary": "From standing, crouch, place your hands on the floor, and jump your feet back into a plank. Jump your feet back in, then jump up and reach overhead."
+      }
+    },
+    "butterfly-stretch": {
+      "es": {
+        "name": "Estiramiento de mariposa",
+        "coachingSummary": "Siéntate con las plantas de los pies juntas y las rodillas abiertas hacia los lados. Sujeta los pies, inclínate desde las caderas y mantén el estiramiento."
+      },
+      "en": {
+        "name": "Butterfly Stretch",
+        "coachingSummary": "Sit with the soles of your feet together and your knees open to the sides. Hold your feet, lean forward from the hips, and hold the stretch."
+      }
+    },
     "cable-crunch": {
       "es": {
         "name": "Crunch en polea",
-        "coachingSummary": "Crunch arrodillado en polea, que permite cargar el trabajo abdominal de forma progresiva."
+        "coachingSummary": "Sujeta la cuerda de una polea alta cerca de la cabeza. Flexiona el torso para acercar las costillas a las caderas y vuelve a la posición inicial sin mover las caderas. La animación combina versiones de pie y de rodillas."
+      },
+      "en": {
+        "name": "Cable Crunch",
+        "coachingSummary": "Hold the rope from a high pulley near your head. Curl your ribs toward your hips, then return while keeping your hips steady. The animation mixes standing and kneeling setups."
       }
     },
     "cable-curl": {
       "es": {
         "name": "Curl en polea",
-        "coachingSummary": "Curl en polea que mantiene tensión sobre el bíceps en todo el recorrido."
+        "coachingSummary": "Ponte de frente a una polea baja y sujeta la barra corta con las palmas hacia arriba. Dobla los codos para acercar la barra al pecho y luego bájala."
+      },
+      "en": {
+        "name": "Cable Curl",
+        "coachingSummary": "Stand facing a low pulley and hold the short bar with your palms up. Bend your elbows to curl the bar toward your chest, then lower it."
       }
     },
     "cable-fly": {
       "es": {
         "name": "Aperturas en polea",
-        "coachingSummary": "Apertura de pecho en polea que mantiene tensión constante durante todo el arco."
+        "coachingSummary": "Ponte entre dos poleas con un pie adelantado y una manija en cada mano. Con los codos un poco doblados, junta las manos frente al pecho y vuelve a abrir los brazos."
+      },
+      "en": {
+        "name": "Cable Fly",
+        "coachingSummary": "Stand between two pulleys with one foot forward and a handle in each hand. With a slight bend in your elbows, bring your hands together in front of your chest, then open your arms again."
       }
     },
-    "cable-front-raise": { "es": { "name": "Elevación frontal en polea" } },
-    "cable-kickback": { "es": { "name": "Patada de glúteo en polea" } },
+    "cable-front-raise": {
+      "es": {
+        "name": "Elevación frontal en polea",
+        "coachingSummary": "Ponte de pie con la manija de una polea baja en una mano. Con el codo un poco doblado, eleva la manija al frente hasta la altura del hombro y luego bájala."
+      },
+      "en": {
+        "name": "Cable Front Raise",
+        "coachingSummary": "Stand with one low-pulley handle in your hand. With your elbow slightly bent, lift the handle straight ahead to shoulder height, then lower it."
+      }
+    },
+    "cable-kickback": {
+      "es": {
+        "name": "Patada de glúteo en polea",
+        "coachingSummary": "Engancha el cable de una polea baja a un tobillo y ponte de frente a la máquina. Extiende esa pierna hacia atrás sin inclinarte y luego vuelve a colocarla debajo del cuerpo."
+      },
+      "en": {
+        "name": "Cable Kickback",
+        "coachingSummary": "Fasten a low cable to one ankle and face the pulley. Extend that leg back without leaning forward, then bring it back under you."
+      }
+    },
     "cable-lateral-raise": {
       "es": {
         "name": "Elevación lateral en polea",
-        "coachingSummary": "Elevación lateral en polea que mantiene tensión sobre el deltoides lateral en todo el recorrido."
+        "coachingSummary": "Ponte de pie con una manija de polea baja en cada mano y los cables cruzados delante del cuerpo. Eleva ambos brazos hacia los lados hasta la altura de los hombros y luego bájalos."
+      },
+      "en": {
+        "name": "Cable Lateral Raise",
+        "coachingSummary": "Stand with a low-pulley handle in each hand and the cables crossing in front of you. Raise both arms to the sides to shoulder height, then lower them."
       }
     },
     "cable-pallof-hold": {
       "es": {
         "name": "Sostén Pallof en polea",
-        "coachingSummary": "Colócate de lado a la polea, sujeta el agarre con ambas manos y extiende los brazos al frente. Mantén el torso mirando al frente durante todo el sostén."
+        "coachingSummary": "Ponte de lado a la polea y sujeta la manija frente al pecho con ambas manos. Extiende los brazos hacia delante y mantén la posición sin dejar que el cable gire tu torso."
+      },
+      "en": {
+        "name": "Cable Pallof Hold",
+        "coachingSummary": "Stand sideways to the pulley and hold the handle at your chest with both hands. Extend your arms straight ahead and hold without letting the cable turn your torso."
       }
     },
     "cable-pull-through": {
       "es": {
         "name": "Pull-through en polea",
-        "coachingSummary": "Bisagra en polea que tira desde entre las piernas y enseña el empuje de cadera con poca carga."
+        "coachingSummary": "Ponte de espaldas a una polea baja y sujeta la cuerda entre las piernas. Lleva las caderas hacia atrás con las rodillas algo dobladas y luego enderézate para tirar de la cuerda hacia delante."
+      },
+      "en": {
+        "name": "Cable Pull-Through",
+        "coachingSummary": "Face away from a low pulley and hold the rope between your legs. Push your hips back with your knees slightly bent, then stand tall to pull the rope forward."
       }
     },
     "cable-rear-delt-fly": {
       "es": {
         "name": "Apertura posterior en polea",
-        "coachingSummary": "Apertura inversa en polea que mantiene la tensión sobre los deltoides posteriores."
+        "coachingSummary": "Ponte entre dos poleas altas y toma el cable del lado contrario con cada mano, con los brazos cruzados al frente. Abre los brazos hacia los lados y luego vuelve a cruzarlos."
+      },
+      "en": {
+        "name": "Cable Rear Delt Fly",
+        "coachingSummary": "Stand between two high pulleys and take the opposite cable in each hand, with your arms crossed in front. Sweep your arms out to the sides, then bring them back across."
       }
     },
-    "cable-standing-hip-abduction": { "es": { "name": "Abducción de cadera de pie en polea" } },
-    "cable-standing-hip-adduction": { "es": { "name": "Aducción de cadera de pie en polea" } },
+    "cable-standing-hip-abduction": {
+      "es": {
+        "name": "Abducción de cadera de pie en polea",
+        "coachingSummary": "Ponte de lado a una polea baja y sujétate de la estructura para mantener el equilibrio. Con la tobillera en el pie más alejado de la polea, eleva esa pierna hacia el lado y luego bájala."
+      },
+      "en": {
+        "name": "Cable Standing Hip Abduction",
+        "coachingSummary": "Stand sideways to a low pulley, holding the frame for balance. With the strap on your far ankle, lift that leg out to the side, then bring it back."
+      }
+    },
+    "cable-standing-hip-adduction": {
+      "es": {
+        "name": "Aducción de cadera de pie en polea",
+        "coachingSummary": "Ponte de lado a una polea baja y sujétate de la estructura para mantener el equilibrio. Coloca la tobillera en el tobillo más cercano a la polea, cruza esa pierna por delante del cuerpo y luego vuelve."
+      },
+      "en": {
+        "name": "Cable Standing Hip Adduction",
+        "coachingSummary": "Stand sideways to a low pulley, holding the frame for balance. Strap in the ankle closest to the pulley and draw that leg across your body, then return."
+      }
+    },
     "cable-triceps-pushdown": {
       "es": {
         "name": "Extensión de tríceps en polea",
-        "aliases": ["Jalón de tríceps", "Pushdown de tríceps"],
-        "coachingSummary": "Extensión de codo en polea que entrena el tríceps en un rango controlado."
+        "aliases": [
+          "Jalón de tríceps",
+          "Pushdown de tríceps"
+        ],
+        "coachingSummary": "Ponte de frente a una polea alta y sujeta el accesorio con los codos doblados y pegados a los costados. Estira los brazos para empujarlo hacia los muslos y luego deja que suba."
+      },
+      "en": {
+        "name": "Tricep Pushdown",
+        "coachingSummary": "Face a high pulley and hold the attachment with your elbows bent and close to your sides. Straighten your arms to push it down toward your thighs, then let it rise."
       }
     },
-    "cable-woodchop": { "es": { "name": "Leñador en polea" } },
+    "cable-woodchop": {
+      "es": {
+        "name": "Leñador en polea",
+        "coachingSummary": "Ponte de lado a una polea alta y agarra la manija con ambas manos. Gira el torso mientras llevas la manija hacia la cadera contraria y luego vuelve a subirla."
+      },
+      "en": {
+        "name": "Cable Woodchop",
+        "coachingSummary": "Stand sideways to a high pulley and grip the handle with both hands. Turn your torso as you pull the handle down toward the opposite hip, then return."
+      }
+    },
     "calf-raise": {
       "es": {
         "name": "Elevación de talones",
-        "coachingSummary": "Elevación de talones con peso corporal que entrena las pantorrillas en todo el rango."
+        "coachingSummary": "Ponte de pie con ambos pies apoyados y sujétate de las barras para mantener el equilibrio. Ponte de puntillas y luego baja los talones."
+      },
+      "en": {
+        "name": "Calf Raise",
+        "coachingSummary": "Stand with both feet flat and hold the rails for balance. Rise onto the balls of your feet, then lower your heels."
       }
     },
-    "captains-chair-knee-raise": { "es": { "name": "Elevación de rodillas en silla romana" } },
-    "cat-cow-stretch": { "es": { "name": "Estiramiento gato-camello" } },
-    "chair-dip": { "es": { "name": "Fondo en silla" } },
+    "captains-chair-knee-raise": {
+      "es": {
+        "name": "Elevación de rodillas en silla romana",
+        "coachingSummary": "Apoya los antebrazos y la espalda en las almohadillas de la máquina. Eleva ambas rodillas hacia el pecho y luego bájalas."
+      },
+      "en": {
+        "name": "Captain's Chair Knee Raise",
+        "coachingSummary": "Rest your forearms and back against the pads of the station. Bring both knees up toward your chest, then lower them."
+      }
+    },
+    "cat-cow-stretch": {
+      "es": {
+        "name": "Estiramiento gato-camello",
+        "coachingSummary": "Ponte a cuatro patas. Redondea la espalda y baja la barbilla, luego deja caer el abdomen mientras elevas el pecho y miras al frente."
+      },
+      "en": {
+        "name": "Cat-Cow Stretch",
+        "coachingSummary": "Start on hands and knees. Round your back and bring your chin down, then let your belly drop as you lift your chest and look ahead."
+      }
+    },
+    "chair-dip": {
+      "es": {
+        "name": "Fondo en silla",
+        "coachingSummary": "Sujeta el borde delantero de una silla firme detrás de ti y estira las piernas con los talones en el suelo. Dobla los codos para bajar las caderas y luego empuja para subir."
+      },
+      "en": {
+        "name": "Chair Dip",
+        "coachingSummary": "Grip the front edge of a sturdy chair behind you and extend your legs with your heels on the floor. Bend your elbows to lower your hips, then press back up."
+      }
+    },
     "chest-supported-row": {
       "es": {
         "name": "Remo con pecho apoyado",
-        "coachingSummary": "Remo con el pecho apoyado, que saca a la zona lumbar del movimiento."
+        "coachingSummary": "Apoya el pecho en la almohadilla inclinada de la máquina de remo y agarra las manijas. Lleva las manijas hacia las costillas y luego vuelve a extender los brazos."
+      },
+      "en": {
+        "name": "Chest Supported Row",
+        "coachingSummary": "Rest your chest against the row machine's angled pad and grip the handles. Pull the handles toward your ribs, then extend your arms again."
       }
     },
-    "childs-pose": { "es": { "name": "Postura del niño" } },
+    "childs-pose": {
+      "es": {
+        "name": "Postura del niño",
+        "coachingSummary": "Arrodíllate y lleva las caderas hacia los talones. Extiende los brazos hacia delante por el suelo, apoya la frente y mantén la posición."
+      },
+      "en": {
+        "name": "Child's Pose",
+        "coachingSummary": "Kneel and sit your hips back toward your heels. Reach your arms forward along the floor, rest your forehead down, and hold."
+      }
+    },
     "chin-up": {
       "es": {
         "name": "Dominada supina",
-        "coachingSummary": "Dominada con agarre supino, que carga más trabajo sobre el bíceps."
+        "coachingSummary": "Cuélgate de una barra de dominadas con las palmas hacia ti. Sube hasta que la barbilla supere la barra y luego baja hasta extender los brazos."
+      },
+      "en": {
+        "name": "Chin-up",
+        "coachingSummary": "Hang from a pull-up bar with your palms facing you. Pull until your chin clears the bar, then lower until your arms are straight."
       }
     },
-    "clamshell": { "es": { "name": "Almeja" } },
+    "clamshell": {
+      "es": {
+        "name": "Almeja",
+        "coachingSummary": "Túmbate de lado con las rodillas dobladas y los pies juntos. Abre y cierra la rodilla de arriba sin separar los pies ni girar las caderas."
+      },
+      "en": {
+        "name": "Clamshell",
+        "coachingSummary": "Lie on your side with your knees bent and feet together. Open and close the top knee while keeping your feet together and your hips stacked."
+      }
+    },
     "close-grip-bench-press": {
       "es": {
         "name": "Press de banca agarre cerrado",
-        "coachingSummary": "Press de banca con agarre estrecho que desplaza el énfasis del pecho al tríceps."
+        "coachingSummary": "Túmbate en un banco plano y agarra la barra con las manos aproximadamente a la anchura de los hombros. Baja la barra al pecho con los codos cerca de los costados y luego empuja hacia arriba."
+      },
+      "en": {
+        "name": "Close-Grip Bench Press",
+        "coachingSummary": "Lie on a flat bench and grip the bar with your hands about shoulder-width apart. Lower the bar to your chest with your elbows near your sides, then press up."
       }
     },
     "close-grip-lat-pulldown": {
       "es": {
         "name": "Jalón al pecho agarre cerrado",
-        "coachingSummary": "Jalón con agarre cerrado, con más recorrido y más flexión de codo que el agarre ancho."
+        "coachingSummary": "Siéntate con los muslos debajo de la almohadilla y sujeta la manija con las manos juntas. Tira de ella hacia la parte alta del pecho y luego vuelve a extender los brazos hacia arriba."
+      },
+      "en": {
+        "name": "Close-Grip Lat Pulldown",
+        "coachingSummary": "Sit with your thighs under the pad and hold the handle with your hands close together. Pull it toward your upper chest, then let your arms extend overhead."
       }
     },
-    "commando-pull-up": { "es": { "name": "Dominada comando" } },
-    "concentration-curl": { "es": { "name": "Curl concentrado" } },
+    "commando-pull-up": {
+      "es": {
+        "name": "Dominada comando",
+        "coachingSummary": "Ponte de lado debajo de una barra de dominadas y agárrala con una mano delante de la otra. Sube con la cabeza a un lado de la barra, luego baja y cambia de lado. La animación muestra el agarre de una dominada convencional."
+      },
+      "en": {
+        "name": "Commando Pull-up",
+        "coachingSummary": "Stand sideways under a pull-up bar and grip it with one hand in front of the other. Pull up with your head to one side of the bar, then lower and switch sides. The animation shows a standard pull-up grip."
+      }
+    },
+    "concentration-curl": {
+      "es": {
+        "name": "Curl concentrado",
+        "coachingSummary": "Inclínate hacia delante con una mancuerna en una mano y apoya ese codo en la parte interna del muslo. Acerca la mancuerna al hombro y luego bájala sin mover la parte superior del brazo."
+      },
+      "en": {
+        "name": "Concentration Curl",
+        "coachingSummary": "Lean forward with a dumbbell in one hand and brace that elbow against the inside of your thigh. Curl the dumbbell toward your shoulder, then lower it without moving your upper arm."
+      }
+    },
     "copenhagen-plank": {
       "es": {
         "name": "Plancha de Copenhague",
-        "coachingSummary": "Apoya la pierna de arriba en un banco y sostén el torso sobre un antebrazo. Despega la cadera del suelo y mantén la posición lateral."
+        "coachingSummary": "Apóyate de lado sobre el antebrazo de abajo y coloca la pierna de arriba sobre un banco. Eleva las caderas y mantén el cuerpo en línea recta."
+      },
+      "en": {
+        "name": "Copenhagen Plank",
+        "coachingSummary": "Support yourself sideways on your bottom forearm and rest your top leg on a bench. Lift your hips and hold your body in a straight line."
       }
     },
-    "cossack-squat": { "es": { "name": "Sentadilla cosaca" } },
+    "cossack-squat": {
+      "es": {
+        "name": "Sentadilla cosaca",
+        "coachingSummary": "Ponte de pie con los pies bien separados y baja hacia una pierna. Mantén ese talón apoyado y la otra pierna recta con los dedos del pie hacia arriba, luego sube y cambia de lado."
+      },
+      "en": {
+        "name": "Cossack Squat",
+        "coachingSummary": "Stand with your feet wide apart and squat toward one leg. Keep that heel down and the other leg straight with its toes up, then rise and switch sides."
+      }
+    },
     "crab-walk": {
       "es": {
         "name": "Caminata del cangrejo",
-        "coachingSummary": "Siéntate con manos y pies en el suelo y levanta la cadera. Da pasos cortos alternando manos y pies durante todo el intervalo."
+        "coachingSummary": "Con las manos y los pies en el suelo y el pecho hacia arriba, eleva las caderas. Avanza dando pasos cortos y alternos con las manos y los pies."
+      },
+      "en": {
+        "name": "Crab Walk",
+        "coachingSummary": "With your hands and feet on the floor and chest facing up, lift your hips. Travel in small alternating steps with your hands and feet."
       }
     },
-    "cross-body-shoulder-stretch": { "es": { "name": "Estiramiento de hombro cruzado" } },
+    "cross-body-shoulder-stretch": {
+      "es": {
+        "name": "Estiramiento de hombro cruzado",
+        "coachingSummary": "Lleva un brazo cruzado por delante del pecho. Acércalo suavemente con el otro brazo y mantén el estiramiento."
+      },
+      "en": {
+        "name": "Cross-Body Shoulder Stretch",
+        "coachingSummary": "Reach one arm across your chest. Use your other arm to draw it gently closer and hold."
+      }
+    },
     "crunch": {
       "es": {
         "name": "Crunch abdominal",
-        "coachingSummary": "Flexión de tronco de recorrido corto que entrena los abdominales."
+        "coachingSummary": "Túmbate boca arriba con la parte baja de las piernas apoyada en un banco. Eleva los hombros del suelo hacia las rodillas y luego vuelve a bajarlos."
+      },
+      "en": {
+        "name": "Crunch",
+        "coachingSummary": "Lie on your back with your lower legs resting on a bench. Curl your shoulders off the floor toward your knees, then lower them again."
       }
     },
-    "curtsy-lunge": { "es": { "name": "Zancada cruzada" } },
-    "cycling": { "es": { "name": "Ciclismo" } },
+    "curtsy-lunge": {
+      "es": {
+        "name": "Zancada cruzada",
+        "coachingSummary": "Lleva un pie hacia atrás y crúzalo por detrás de la otra pierna, luego dobla ambas rodillas para bajar. Empuja con el pie delantero para volver a levantarte."
+      },
+      "en": {
+        "name": "Curtsy Lunge",
+        "coachingSummary": "Step one foot back and across behind the other leg, then bend both knees to lower. Push through the front foot to return to standing."
+      }
+    },
+    "cycling": {
+      "es": {
+        "name": "Ciclismo",
+        "coachingSummary": "Siéntate en una bicicleta estática con ambos pies en los pedales. Pedalea de manera uniforme sin levantarte del asiento."
+      },
+      "en": {
+        "name": "Cycling",
+        "coachingSummary": "Sit on a stationary bike with both feet on the pedals. Turn the pedals smoothly while staying seated."
+      }
+    },
     "dead-bug": {
       "es": {
         "name": "Dead bug",
-        "aliases": ["Bicho muerto"],
-        "coachingSummary": "Ejercicio antiextensión que mueve extremidades opuestas mientras la zona lumbar se mantiene plana."
+        "aliases": [
+          "Bicho muerto"
+        ],
+        "coachingSummary": "Túmbate boca arriba con los brazos hacia arriba y las rodillas dobladas sobre las caderas. Baja un brazo y la pierna contraria hacia el suelo sin arquear la zona lumbar y luego cambia de lado."
+      },
+      "en": {
+        "name": "Dead Bug",
+        "coachingSummary": "Lie on your back with your arms up and your knees bent over your hips. Lower one arm and the opposite leg toward the floor without arching your lower back, then switch sides."
       }
     },
     "dead-hang": {
       "es": {
         "name": "Suspensión pasiva",
-        "coachingSummary": "Sujétate de una barra de dominadas y cuélgate con los brazos estirados. Mantén el cuerpo estable y respira durante todo el sostén."
+        "coachingSummary": "Agarra una barra de dominadas y deja los pies en el aire. Mantén los brazos rectos y el cuerpo quieto."
+      },
+      "en": {
+        "name": "Dead Hang",
+        "coachingSummary": "Grip a pull-up bar and let your feet hang clear of the floor. Hold with your arms straight and your body still."
       }
     },
-    "decline-bench-press": { "es": { "name": "Press de banca declinado" } },
-    "decline-dumbbell-press": { "es": { "name": "Press declinado con mancuernas" } },
-    "decline-push-up": { "es": { "name": "Flexión declinada" } },
-    "decline-sit-up": { "es": { "name": "Abdominal en banco declinado" } },
-    "deficit-reverse-lunge": { "es": { "name": "Zancada atrás con déficit" } },
+    "decline-bench-press": {
+      "es": {
+        "name": "Press de banca declinado",
+        "coachingSummary": "Túmbate en un banco declinado con la cabeza por debajo de las caderas y los pies sujetos bajo las almohadillas. Baja la barra a la parte baja del pecho y luego empújala hacia arriba."
+      },
+      "en": {
+        "name": "Decline Bench Press",
+        "coachingSummary": "Lie on a decline bench with your head below your hips and your feet secured under the pads. Lower the bar to your lower chest, then press it back up."
+      }
+    },
+    "decline-dumbbell-press": {
+      "es": {
+        "name": "Press declinado con mancuernas",
+        "coachingSummary": "Túmbate en un banco declinado con la cabeza por debajo de las caderas. Empuja las mancuernas hacia arriba desde los lados del pecho y luego bájalas por el mismo recorrido."
+      },
+      "en": {
+        "name": "Decline Dumbbell Press",
+        "coachingSummary": "Lie on a decline bench with your head below your hips. Press both dumbbells up from the sides of your chest, then lower them the same way."
+      }
+    },
+    "decline-push-up": {
+      "es": {
+        "name": "Flexión declinada",
+        "coachingSummary": "Apoya los pies en un banco y las manos en el suelo. Mantén el cuerpo recto al bajar el pecho hacia el suelo y luego empuja para subir."
+      },
+      "en": {
+        "name": "Decline Push-up",
+        "coachingSummary": "Place your feet on a bench and your hands on the floor. Keep your body straight as you lower your chest toward the floor, then press back up."
+      }
+    },
+    "decline-sit-up": {
+      "es": {
+        "name": "Abdominal en banco declinado",
+        "coachingSummary": "Fija los pies bajo las almohadillas de un banco declinado y recuéstate. Flexiona el torso para acercarlo a los muslos y luego baja de nuevo al banco."
+      },
+      "en": {
+        "name": "Decline Sit-Up",
+        "coachingSummary": "Secure your feet under the pads of a decline bench and lie back. Curl your torso up toward your thighs, then lower it to the bench."
+      }
+    },
+    "deficit-reverse-lunge": {
+      "es": {
+        "name": "Zancada atrás con déficit",
+        "coachingSummary": "Ponte de pie sobre un cajón bajo con las mancuernas a los lados. Baja un pie hacia atrás hasta el suelo y dobla ambas rodillas, luego empuja con el pie delantero para volver al cajón."
+      },
+      "en": {
+        "name": "Deficit Reverse Lunge",
+        "coachingSummary": "Stand on a low box with dumbbells at your sides. Step one foot back down to the floor and bend both knees, then push through the front foot to return to the box."
+      }
+    },
     "diamond-push-up": {
       "es": {
         "name": "Flexión diamante",
-        "coachingSummary": "Flexión con las manos juntas, que enfatiza el tríceps."
+        "coachingSummary": "Junta las manos debajo del pecho formando un rombo con los pulgares y los índices. Baja el pecho hacia las manos y luego empuja para subir."
+      },
+      "en": {
+        "name": "Diamond Push-up",
+        "coachingSummary": "Place your hands close together under your chest with your thumbs and index fingers forming a diamond. Lower your chest toward your hands, then press up."
       }
     },
     "dip": {
       "es": {
         "name": "Fondo",
-        "coachingSummary": "Fondo con peso corporal en barras paralelas, que empuja pecho y tríceps en un recorrido profundo."
+        "coachingSummary": "Sostén el cuerpo sobre las barras paralelas con los brazos rectos y los pies en el aire. Dobla los codos para bajar el cuerpo y luego empuja para subir."
+      },
+      "en": {
+        "name": "Dip",
+        "coachingSummary": "Support yourself on parallel bars with your arms straight and feet off the floor. Bend your elbows to lower your body, then push back up."
       }
     },
-    "donkey-calf-raise": { "es": { "name": "Elevación de talones tipo burro" } },
-    "donkey-kick": { "es": { "name": "Patada de glúteo" } },
-    "doorway-chest-stretch": { "es": { "name": "Estiramiento de pecho en marco de puerta" } },
-    "doorway-row": { "es": { "name": "Remo en marco de puerta" } },
-    "drag-curl": { "es": { "name": "Curl arrastrado" } },
-    "dragon-flag": { "es": { "name": "Bandera del dragón" } },
+    "donkey-calf-raise": {
+      "es": {
+        "name": "Elevación de talones tipo burro",
+        "coachingSummary": "Inclínate desde las caderas y sujétate del apoyo con la parte delantera de los pies sobre una plataforma elevada. Eleva los talones y luego bájalos. La animación muestra una versión con el peso de otra persona."
+      },
+      "en": {
+        "name": "Donkey Calf Raise",
+        "coachingSummary": "Hinge forward at the hips and hold the support, with the balls of your feet on a raised platform. Lift your heels, then lower them. The animation shows a partner-loaded version."
+      }
+    },
+    "donkey-kick": {
+      "es": {
+        "name": "Patada de glúteo",
+        "coachingSummary": "Ponte a cuatro patas. Con una rodilla doblada, lleva ese pie hacia arriba y hacia atrás sin arquear la zona lumbar y luego vuelve a bajarlo."
+      },
+      "en": {
+        "name": "Donkey Kick",
+        "coachingSummary": "Start on hands and knees. Keeping one knee bent, lift that foot up and back without arching your lower back, then lower it again."
+      }
+    },
+    "doorway-chest-stretch": {
+      "es": {
+        "name": "Estiramiento de pecho en marco de puerta",
+        "coachingSummary": "Ponte en el marco de una puerta con los antebrazos apoyados en el marco y un pie adelantado. Inclínate suavemente hacia delante y mantén el estiramiento."
+      },
+      "en": {
+        "name": "Doorway Chest Stretch",
+        "coachingSummary": "Stand in a doorway with your forearms against the frame and one foot forward. Lean gently through the doorway and hold the stretch."
+      }
+    },
+    "doorway-row": {
+      "es": {
+        "name": "Remo en marco de puerta",
+        "coachingSummary": "Sujeta ambos lados del marco de la puerta e inclínate hacia atrás con los pies apoyados y el cuerpo recto. Acerca el pecho al marco y luego vuelve a extender los brazos."
+      },
+      "en": {
+        "name": "Doorway Row",
+        "coachingSummary": "Grip both sides of the door frame and lean back with your feet planted and body straight. Pull your chest toward the doorway, then extend your arms again."
+      }
+    },
+    "drag-curl": {
+      "es": {
+        "name": "Curl arrastrado",
+        "coachingSummary": "Ponte de pie con una barra frente a los muslos. Lleva los codos hacia atrás al subir la barra cerca del torso y luego bájala por el mismo recorrido."
+      },
+      "en": {
+        "name": "Drag Curl",
+        "coachingSummary": "Stand holding a barbell in front of your thighs. Draw your elbows back as you curl the bar close to your torso, then lower it along the same path."
+      }
+    },
+    "dragon-flag": {
+      "es": {
+        "name": "Bandera del dragón",
+        "coachingSummary": "Túmbate en un banco y sujeta una manija fija detrás de la cabeza. Con la parte alta de la espalda apoyada, eleva las caderas y las piernas en bloque y luego bájalas."
+      },
+      "en": {
+        "name": "Dragon Flag",
+        "coachingSummary": "Lie on a bench and grip a fixed handle behind your head. With your upper back on the bench, raise your hips and legs together in a straight line, then lower them."
+      }
+    },
     "dumbbell-bench-press": {
       "es": {
         "name": "Press de banca con mancuernas",
-        "coachingSummary": "Press plano con mancuernas, que permite más estiramiento y una trayectoria independiente por brazo."
+        "coachingSummary": "Túmbate en un banco plano con los pies en el suelo y las mancuernas a los lados del pecho. Empuja ambas mancuernas hacia arriba y luego bájalas a la altura del pecho."
+      },
+      "en": {
+        "name": "Dumbbell Bench Press",
+        "coachingSummary": "Lie on a flat bench with your feet on the floor and the dumbbells beside your chest. Press both dumbbells up, then lower them back to chest level."
       }
     },
     "dumbbell-bent-over-row": {
       "es": {
         "name": "Remo inclinado con mancuernas",
-        "coachingSummary": "Remo inclinado con mancuernas que entrena la espalda media desde una bisagra estable."
+        "coachingSummary": "Inclínate desde las caderas y deja que las mancuernas cuelguen debajo de los hombros. Acércalas a las costillas y luego bájalas sin levantar el torso."
+      },
+      "en": {
+        "name": "Dumbbell Bent Over Row",
+        "coachingSummary": "Hinge forward at your hips and let the dumbbells hang below your shoulders. Pull them toward your ribs, then lower them without lifting your torso."
       }
     },
-    "dumbbell-curtsy-lunge": { "es": { "name": "Zancada cruzada con mancuernas" } },
+    "dumbbell-curtsy-lunge": {
+      "es": {
+        "name": "Zancada cruzada con mancuernas",
+        "coachingSummary": "Sujeta las mancuernas a los lados y cruza un pie hacia atrás por detrás de la otra pierna. Dobla ambas rodillas para bajar y luego empuja con el pie delantero para levantarte."
+      },
+      "en": {
+        "name": "Dumbbell Curtsy Lunge",
+        "coachingSummary": "Hold dumbbells at your sides and step one foot back and across the other leg. Bend both knees to lower, then push through the front foot to stand."
+      }
+    },
     "dumbbell-fly": {
       "es": {
         "name": "Aperturas con mancuernas",
-        "coachingSummary": "Aislamiento de pecho en un arco amplio, con los codos fijos en un ángulo ligeramente flexionado."
+        "coachingSummary": "Túmbate en un banco plano y sujeta dos mancuernas sobre el pecho. Con los codos un poco doblados, abre los brazos hacia los lados y luego vuelve a juntar las mancuernas."
+      },
+      "en": {
+        "name": "Dumbbell Fly",
+        "coachingSummary": "Lie on a flat bench and hold two dumbbells above your chest. With your elbows slightly bent, lower your arms out to the sides, then bring the dumbbells back together."
       }
     },
-    "dumbbell-glute-bridge": { "es": { "name": "Puente de glúteos con mancuerna" } },
+    "dumbbell-glute-bridge": {
+      "es": {
+        "name": "Puente de glúteos con mancuerna",
+        "coachingSummary": "Túmbate boca arriba con las rodillas dobladas y los pies apoyados. Sujeta una mancuerna sobre las caderas mientras las subes y las bajas."
+      },
+      "en": {
+        "name": "Dumbbell Glute Bridge",
+        "coachingSummary": "Lie on your back with your knees bent and feet flat. Hold a dumbbell across your hips as you lift and lower them."
+      }
+    },
     "dumbbell-hip-thrust": {
       "es": {
         "name": "Empuje de cadera con mancuerna",
-        "aliases": ["Hip thrust con mancuerna"],
-        "coachingSummary": "Empuje de cadera cargado con una mancuerna apoyada sobre la cadera."
+        "aliases": [
+          "Hip thrust con mancuerna"
+        ],
+        "coachingSummary": "Apoya la parte alta de la espalda en un banco y los pies en el suelo. Sujeta una mancuerna sobre la cadera y eleva la cadera hasta alinear el torso con los muslos. Luego vuelve a bajarla."
+      },
+      "en": {
+        "name": "Dumbbell Hip Thrust",
+        "coachingSummary": "Rest your upper back on a bench, plant your feet, and hold a dumbbell across your hips. Lift your hips until your torso and thighs line up, then lower them."
       }
     },
-    "dumbbell-lateral-lunge": { "es": { "name": "Zancada lateral con mancuernas" } },
+    "dumbbell-lateral-lunge": {
+      "es": {
+        "name": "Zancada lateral con mancuernas",
+        "coachingSummary": "Sujeta una mancuerna a cada lado del cuerpo. Da un paso lateral, flexiona la rodilla de ese lado con la otra pierna extendida y empuja con ese pie para volver a subir."
+      },
+      "en": {
+        "name": "Dumbbell Lateral Lunge",
+        "coachingSummary": "Hold a dumbbell in each hand at your sides. Step sideways and bend that knee while the other leg stays straight, then push back up."
+      }
+    },
     "dumbbell-lateral-raise": {
       "es": {
         "name": "Elevación lateral",
-        "aliases": ["Elevación lateral con mancuernas"],
-        "coachingSummary": "Aislamiento de hombro centrado en el deltoides lateral con una elevación de brazos controlada."
+        "aliases": [
+          "Elevación lateral con mancuernas"
+        ],
+        "coachingSummary": "Ponte de pie con una mancuerna en cada mano a los lados. Eleva los brazos hacia los lados hasta la altura de los hombros y vuelve a bajarlos."
+      },
+      "en": {
+        "name": "Lateral Raise",
+        "coachingSummary": "Stand with a dumbbell in each hand at your sides. Raise your arms out to about shoulder height, then lower them."
       }
     },
     "dumbbell-overhead-tricep-extension": {
       "es": {
         "name": "Extensión de tríceps sobre la cabeza con mancuerna",
-        "coachingSummary": "Extensión de codo por encima de la cabeza, que carga el tríceps en posición alargada."
+        "coachingSummary": "Siéntate y sujeta una mancuerna con ambas manos por encima de la cabeza. Flexiona los codos para bajarla detrás de la cabeza y vuelve a extender los brazos."
+      },
+      "en": {
+        "name": "Dumbbell Overhead Tricep Extension",
+        "coachingSummary": "Sit and hold one dumbbell overhead with both hands. Bend your elbows to lower it behind your head, then straighten your arms."
       }
     },
     "dumbbell-romanian-deadlift": {
       "es": {
         "name": "Peso muerto rumano con mancuernas",
-        "coachingSummary": "Bisagra de cadera con mancuernas, que carga los isquiotibiales de forma controlada."
+        "coachingSummary": "Ponte de pie con las mancuernas delante de los muslos y las rodillas ligeramente flexionadas. Lleva la cadera hacia atrás, baja las mancuernas cerca de las piernas y vuelve a erguirte."
+      },
+      "en": {
+        "name": "Dumbbell Romanian Deadlift",
+        "coachingSummary": "Stand with dumbbells in front of your thighs and your knees slightly bent. Push your hips back, lower the weights close to your legs, then return to standing."
       }
     },
     "dumbbell-shoulder-press": {
       "es": {
         "name": "Press de hombro sentado con mancuernas",
-        "aliases": ["Press militar con mancuernas"],
-        "coachingSummary": "Press sentado de mancuernas por encima de la cabeza para la fuerza de hombro y tríceps."
+        "aliases": [
+          "Press militar con mancuernas"
+        ],
+        "coachingSummary": "Siéntate con la espalda apoyada y una mancuerna a la altura de cada hombro. Empuja las mancuernas por encima de la cabeza y vuelve a bajarlas hasta los hombros."
+      },
+      "en": {
+        "name": "Dumbbell Seated Shoulder Press",
+        "coachingSummary": "Sit against a backrest with a dumbbell at each shoulder. Press both weights overhead, then lower them back to shoulder height."
       }
     },
     "dumbbell-shrug": {
       "es": {
         "name": "Encogimiento con mancuernas",
-        "coachingSummary": "Encogimiento con mancuernas que entrena el trapecio superior con los brazos colgando a los lados."
+        "coachingSummary": "Ponte de pie con las mancuernas a los lados. Eleva los hombros hacia las orejas y bájalos con los brazos extendidos."
+      },
+      "en": {
+        "name": "Dumbbell Shrug",
+        "coachingSummary": "Stand with dumbbells hanging at your sides. Lift your shoulders toward your ears, then lower them with your arms still straight."
       }
     },
-    "dumbbell-side-bend": { "es": { "name": "Flexión lateral con mancuerna" } },
-    "dumbbell-skull-crusher": { "es": { "name": "Extensión de tríceps con dos mancuernas" } },
-    "dumbbell-sumo-deadlift": { "es": { "name": "Peso muerto sumo con mancuerna" } },
+    "dumbbell-side-bend": {
+      "es": {
+        "name": "Flexión lateral con mancuerna",
+        "coachingSummary": "Ponte de pie con una mancuerna a un lado. Inclina el torso hacia el lado de la mancuerna y vuelve a erguirte."
+      },
+      "en": {
+        "name": "Dumbbell Side Bend",
+        "coachingSummary": "Stand with a dumbbell at one side. Lean sideways toward the weight, then return to upright."
+      }
+    },
+    "dumbbell-skull-crusher": {
+      "es": {
+        "name": "Extensión de tríceps con dos mancuernas",
+        "coachingSummary": "Túmbate boca arriba en un banco plano con una mancuerna en cada mano y los brazos hacia arriba. Mantén fijos los brazos mientras flexionas los codos para bajar las mancuernas a los lados de la cabeza y luego vuelve a extender los codos."
+      },
+      "en": {
+        "name": "Two Dumbbell Skullcrusher",
+        "coachingSummary": "Lie on a flat bench with two dumbbells held above you. Keep your upper arms in place as you bend your elbows to lower the weights beside your head, then straighten your arms."
+      }
+    },
+    "dumbbell-sumo-deadlift": {
+      "es": {
+        "name": "Peso muerto sumo con mancuerna",
+        "coachingSummary": "Separa bien los pies y sujeta dos mancuernas entre las piernas. Flexiona la cadera y las rodillas para bajar las mancuernas y luego vuelve a erguirte."
+      },
+      "en": {
+        "name": "Dumbbell Sumo Deadlift",
+        "coachingSummary": "Take a wide stance with two dumbbells hanging between your legs. Bend at your hips and knees to lower the weights, then straighten your legs and stand tall."
+      }
+    },
     "dumbbell-sumo-squat": {
       "es": {
         "name": "Sentadilla sumo con mancuerna",
-        "coachingSummary": "Sentadilla con base amplia sosteniendo una mancuerna, que enfatiza glúteos y aductores."
+        "coachingSummary": "Ponte de pie con los pies bien separados y las puntas hacia afuera. Sujeta una mancuerna en vertical entre las piernas, baja en sentadilla y vuelve a subir."
+      },
+      "en": {
+        "name": "Dumbbell Sumo Squat",
+        "coachingSummary": "Stand with your feet wide and toes turned out, holding one dumbbell vertically between your legs. Lower into a squat, then stand up."
       }
     },
-    "elliptical": { "es": { "name": "Elíptica" } },
-    "explosive-push-up": { "es": { "name": "Flexión explosiva" } },
+    "elliptical": {
+      "es": {
+        "name": "Elíptica",
+        "coachingSummary": "Coloca los pies sobre los pedales de la elíptica y sujeta las asas móviles. Pedalea de forma continua mientras las asas van hacia delante y hacia atrás."
+      },
+      "en": {
+        "name": "Elliptical",
+        "coachingSummary": "Stand on the elliptical pedals and grasp the moving handles. Press through the pedals in a continuous stride as the handles move back and forth."
+      }
+    },
+    "explosive-push-up": {
+      "es": {
+        "name": "Flexión explosiva",
+        "coachingSummary": "Baja el pecho desde una plancha con los brazos extendidos. Impúlsate hasta despegar las manos del suelo y flexiona los codos al volver a apoyarlas."
+      },
+      "en": {
+        "name": "Explosive Push-up",
+        "coachingSummary": "Lower your chest from a high plank. Push off the floor so your hands briefly lift, then land on your hands with your elbows bending."
+      }
+    },
     "face-pull": {
       "es": {
         "name": "Face pull",
-        "aliases": ["Jalón a la cara"],
-        "coachingSummary": "Tirón en polea hacia la cara que entrena los deltoides posteriores y los rotadores de la espalda alta."
+        "aliases": [
+          "Jalón a la cara"
+        ],
+        "coachingSummary": "Ponte frente a una polea alta con un accesorio de cuerda. Tira de la cuerda hacia la cara con los codos hacia los lados y vuelve a extender los brazos."
+      },
+      "en": {
+        "name": "Face Pull",
+        "coachingSummary": "Stand facing a high cable with a rope attachment. Pull the rope toward your face, moving your elbows out, then extend your arms again."
       }
     },
-    "farmer-carry": { "es": { "name": "Caminata del granjero" } },
-    "fast-feet": { "es": { "name": "Pies rápidos" } },
-    "feet-elevated-pike-push-up": { "es": { "name": "Flexión pike con pies elevados" } },
-    "fire-hydrant": { "es": { "name": "Abducción en cuadrupedia" } },
+    "farmer-carry": {
+      "es": {
+        "name": "Caminata del granjero",
+        "coachingSummary": "Sujeta una mancuerna en cada mano con los brazos a los lados. Camina hacia delante con el torso erguido."
+      },
+      "en": {
+        "name": "Farmer Carry",
+        "coachingSummary": "Hold one dumbbell in each hand with your arms at your sides. Walk forward with your torso upright."
+      }
+    },
+    "fast-feet": {
+      "es": {
+        "name": "Pies rápidos",
+        "coachingSummary": "Pasa por los espacios de una escalera de agilidad con pasos cortos y rápidos."
+      },
+      "en": {
+        "name": "Fast Feet",
+        "coachingSummary": "Take quick, short steps through the spaces of an agility ladder."
+      }
+    },
+    "feet-elevated-pike-push-up": {
+      "es": {
+        "name": "Flexión pike con pies elevados",
+        "coachingSummary": "Apoya los pies en un cajón y las manos en el suelo, con la cadera elevada. Flexiona los codos para acercar la cabeza al suelo y vuelve a subir empujando con las manos."
+      },
+      "en": {
+        "name": "Feet-Elevated Pike Push-up",
+        "coachingSummary": "Place your feet on a box and your hands on the floor, with your hips high. Bend your elbows to lower your head toward the floor, then press back up."
+      }
+    },
+    "fire-hydrant": {
+      "es": {
+        "name": "Abducción en cuadrupedia",
+        "coachingSummary": "Colócate a cuatro apoyos, con las manos y las rodillas en el suelo. Eleva una rodilla hacia un lado con la pierna flexionada y vuelve a bajarla."
+      },
+      "en": {
+        "name": "Fire Hydrant",
+        "coachingSummary": "Start on your hands and knees. Lift one bent knee out to the side, then bring it back down."
+      }
+    },
     "flutter-kick": {
       "es": {
         "name": "Tijeras verticales",
-        "coachingSummary": "Acuéstate boca arriba con las piernas estiradas y algo elevadas. Alterna movimientos cortos hacia arriba y hacia abajo durante todo el intervalo."
+        "coachingSummary": "Recuéstate sobre los antebrazos y despega ambas piernas del suelo. Haz patadas cortas y alternas con las piernas extendidas, subiendo una mientras baja la otra."
+      },
+      "en": {
+        "name": "Flutter Kick",
+        "coachingSummary": "Lean back on your forearms and lift both legs off the floor. Alternate short kicks, raising one straight leg as the other lowers."
       }
     },
     "forward-lunge": {
       "es": {
         "name": "Zancada frontal",
-        "coachingSummary": "Zancada que avanza y regresa, entrenando una pierna a la vez."
+        "coachingSummary": "Da un paso hacia delante y flexiona ambas rodillas para acercar la de atrás al suelo. Empuja con el pie delantero para volver a la posición inicial."
+      },
+      "en": {
+        "name": "Forward Lunge",
+        "coachingSummary": "Step forward and bend both knees to lower your back knee toward the floor. Push through your front foot to return to standing."
       }
     },
-    "frog-pump": { "es": { "name": "Puente de rana" } },
-    "front-foot-elevated-split-squat": { "es": { "name": "Sentadilla dividida con pie delantero elevado" } },
+    "frog-pump": {
+      "es": {
+        "name": "Puente de rana",
+        "coachingSummary": "Túmbate boca arriba con las plantas de los pies juntas y las rodillas abiertas. Separa la cadera del suelo y vuelve a bajarla."
+      },
+      "en": {
+        "name": "Frog Pump",
+        "coachingSummary": "Lie on your back with the soles of your feet together and your knees open. Lift your hips off the floor, then lower them."
+      }
+    },
+    "front-foot-elevated-split-squat": {
+      "es": {
+        "name": "Sentadilla dividida con pie delantero elevado",
+        "coachingSummary": "Sujeta una mancuerna en cada mano, con el pie delantero sobre un cajón y el trasero en el suelo. Flexiona ambas rodillas para bajar y empuja con el pie delantero para subir."
+      },
+      "en": {
+        "name": "Front-Foot Elevated Split Squat",
+        "coachingSummary": "Hold a dumbbell in each hand and place your front foot on a box with your back foot on the floor. Bend both knees to lower, then press through your front foot to rise."
+      }
+    },
     "front-raise": {
       "es": {
         "name": "Elevación frontal",
-        "coachingSummary": "Aislamiento del deltoides anterior que eleva la carga hasta la altura del hombro de forma controlada."
+        "coachingSummary": "Ponte de pie con las mancuernas delante de los muslos. Eleva los brazos hacia delante hasta la altura de los hombros y vuelve a bajarlos."
+      },
+      "en": {
+        "name": "Front Raise",
+        "coachingSummary": "Stand with dumbbells in front of your thighs. Lift both arms in front of you to about shoulder height, then lower them."
       }
     },
     "front-squat": {
       "es": {
         "name": "Sentadilla frontal",
-        "coachingSummary": "Sentadilla con la barra apoyada en los deltoides anteriores, que exige un torso muy erguido."
+        "coachingSummary": "Apoya la barra sobre la parte delantera de los hombros con los codos hacia delante. Flexiona la cadera y las rodillas para bajar en sentadilla y vuelve a erguirte."
+      },
+      "en": {
+        "name": "Front Squat",
+        "coachingSummary": "Support a barbell across the front of your shoulders with your elbows pointing forward. Bend your hips and knees to squat, then return to standing."
       }
     },
     "glute-bridge": {
       "es": {
         "name": "Puente de glúteos",
-        "coachingSummary": "Puente en el suelo que extiende la cadera contra el peso corporal."
+        "coachingSummary": "Túmbate boca arriba con las rodillas flexionadas y los pies apoyados en el suelo. Eleva la cadera sin despegar los hombros del suelo y vuelve a bajarla."
+      },
+      "en": {
+        "name": "Glute Bridge",
+        "coachingSummary": "Lie on your back with your knees bent and feet flat on the floor. Lift your hips while keeping your shoulders down, then lower them."
       }
     },
-    "glute-bridge-march": { "es": { "name": "Puente de glúteos con marcha" } },
-    "glute-focused-back-extension": { "es": { "name": "Extensión lumbar enfocada en glúteo" } },
+    "glute-bridge-march": {
+      "es": {
+        "name": "Puente de glúteos con marcha",
+        "coachingSummary": "Eleva la cadera en puente con los hombros y los pies apoyados en el suelo. Mantén la cadera elevada mientras subes y bajas una pierna flexionada a la vez."
+      },
+      "en": {
+        "name": "Glute Bridge March",
+        "coachingSummary": "Raise your hips into a bridge with your shoulders and feet on the floor. Keep your hips lifted as you lift and lower one bent leg at a time."
+      }
+    },
+    "glute-focused-back-extension": {
+      "es": {
+        "name": "Extensión lumbar enfocada en glúteo",
+        "coachingSummary": "Apoya los muslos en la almohadilla de un banco de extensiones y fija los tobillos bajo los soportes. Flexiona la cadera para bajar el torso y elévalo hasta alinearlo con las piernas."
+      },
+      "en": {
+        "name": "Glute-Focused Back Extension",
+        "coachingSummary": "Set your thighs against the pad of a back extension bench and secure your ankles under its supports. Bend forward at the hips, then lift your torso until it lines up with your legs."
+      }
+    },
     "goblet-squat": {
       "es": {
         "name": "Sentadilla goblet",
-        "coachingSummary": "Sentadilla sosteniendo un solo peso en el pecho, lo que ayuda a mantener el torso erguido."
+        "coachingSummary": "Sujeta una pesa cerca del pecho con ambas manos. Flexiona la cadera y las rodillas para bajar en sentadilla y vuelve a subir."
+      },
+      "en": {
+        "name": "Goblet Squat",
+        "coachingSummary": "Hold one weight close to your chest with both hands. Lower into a squat by bending your hips and knees, then stand back up."
       }
     },
     "good-morning": {
       "es": {
         "name": "Buenos días",
-        "aliases": ["Good morning"],
-        "coachingSummary": "Bisagra con la barra en la espalda, que exige una estabilización cuidadosa."
+        "aliases": [
+          "Good morning"
+        ],
+        "coachingSummary": "Ponte de pie con una barra sobre la parte alta de la espalda y las rodillas ligeramente flexionadas. Lleva la cadera hacia atrás para inclinar el torso y vuelve a erguirte."
+      },
+      "en": {
+        "name": "Good Morning",
+        "coachingSummary": "Stand with a barbell across your upper back and your knees slightly bent. Push your hips back to lean your torso forward, then return to standing."
       }
     },
     "hack-squat": {
       "es": {
         "name": "Sentadilla hack",
-        "coachingSummary": "Sentadilla guiada en una trayectoria fija, con sesgo hacia los cuádriceps."
+        "coachingSummary": "Apoya la espalda y los hombros en las almohadillas de la máquina, con los pies sobre la plataforma. Flexiona las rodillas para bajar el trineo y empuja con los pies para subirlo."
+      },
+      "en": {
+        "name": "Hack Squat",
+        "coachingSummary": "Set your back and shoulders against the machine pads and place your feet on the platform. Bend your knees to bring the sled down, then press through your feet to raise it."
       }
     },
-    "half-burpee": { "es": { "name": "Medio burpee" } },
-    "half-kneeling-pallof-press": { "es": { "name": "Press Pallof de rodilla" } },
+    "half-burpee": {
+      "es": {
+        "name": "Medio burpee",
+        "coachingSummary": "Empieza en plancha con los brazos extendidos y lleva los pies debajo del torso para quedar en sentadilla baja. Vuelve a apoyar las manos en el suelo y lleva los pies atrás para retomar la plancha."
+      },
+      "en": {
+        "name": "Half Burpee",
+        "coachingSummary": "Start in a high plank, then bring your feet in under your torso to reach a low squat. Put your hands back on the floor and return your feet to plank."
+      }
+    },
+    "half-kneeling-pallof-press": {
+      "es": {
+        "name": "Press Pallof de rodilla",
+        "coachingSummary": "Coloca una rodilla en el suelo, de lado a la polea, y sujeta el agarre con ambas manos a la altura del pecho. Empújalo hacia delante y llévalo de nuevo al pecho con el torso orientado al frente."
+      },
+      "en": {
+        "name": "Half-Kneeling Pallof Press",
+        "coachingSummary": "Kneel on one knee with a cable pulling from the side and both hands on the handle at your chest. Press straight ahead and draw the handle back while keeping your torso facing forward."
+      }
+    },
     "hammer-curl": {
       "es": {
         "name": "Curl martillo",
-        "coachingSummary": "Curl con agarre neutro que carga el bíceps y el braquial que hay debajo."
+        "coachingSummary": "Ponte de pie con las mancuernas a los lados y las palmas hacia dentro. Flexiona los codos para acercar las mancuernas a los hombros y vuelve a bajarlas sin girar las muñecas."
+      },
+      "en": {
+        "name": "Hammer Curl",
+        "coachingSummary": "Stand with dumbbells at your sides and palms facing inward. Bend your elbows to lift the weights toward your shoulders, then lower them without turning your wrists."
       }
     },
-    "hamstring-stretch": { "es": { "name": "Estiramiento de isquiotibiales" } },
-    "handstand-push-up": { "es": { "name": "Flexión en pino" } },
+    "hamstring-stretch": {
+      "es": {
+        "name": "Estiramiento de isquiotibiales",
+        "coachingSummary": "De pie, apoya un talón sobre un soporte elevado con esa pierna extendida. Inclina el torso hacia delante desde la cadera y mantén la posición."
+      },
+      "en": {
+        "name": "Hamstring Stretch",
+        "coachingSummary": "Stand and rest one heel on a raised support with that leg extended. Lean your torso forward from the hips and hold the stretch."
+      }
+    },
+    "handstand-push-up": {
+      "es": {
+        "name": "Flexión en pino",
+        "coachingSummary": "En posición vertical invertida sobre barras paralelas bajas, flexiona los codos para bajar la cabeza entre las manos. Empuja hacia arriba hasta extender los brazos."
+      },
+      "en": {
+        "name": "Handstand Push-up",
+        "coachingSummary": "In a handstand on low parallel handles, bend your elbows to lower your head between your hands. Press back up until your arms are straight."
+      }
+    },
     "hanging-knee-raise": {
       "es": {
         "name": "Elevación de rodillas colgado",
-        "coachingSummary": "Elevación de rodillas en suspensión: el paso previo habitual antes de la elevación de piernas completa."
+        "coachingSummary": "Cuélgate de una barra de dominadas con ambas manos. Flexiona y eleva las rodillas hacia el pecho y vuelve a bajar las piernas."
+      },
+      "en": {
+        "name": "Hanging Knee Raise",
+        "coachingSummary": "Hang from a pull-up bar with both hands. Bend and lift your knees toward your chest, then lower your legs."
       }
     },
     "hanging-leg-raise": {
       "es": {
         "name": "Elevación de piernas colgado",
-        "coachingSummary": "Flexión de tronco y cadera en suspensión para abdominales, flexores de cadera y agarre."
+        "coachingSummary": "Cuélgate de una barra de dominadas con ambas manos. Eleva las piernas extendidas hacia delante y vuelve a bajarlas."
+      },
+      "en": {
+        "name": "Hanging Leg Raise",
+        "coachingSummary": "Hang from a pull-up bar with both hands. Raise your straight legs in front of you, then lower them back to the hanging position."
       }
     },
-    "heel-elevated-goblet-squat": { "es": { "name": "Sentadilla goblet con talones elevados" } },
-    "heel-tap": { "es": { "name": "Toque de talones" } },
-    "high-knees": { "es": { "name": "Rodillas altas" } },
-    "hiking": { "es": { "name": "Senderismo" } },
-    "hindu-push-up": { "es": { "name": "Flexión hindú" } },
+    "heel-elevated-goblet-squat": {
+      "es": {
+        "name": "Sentadilla goblet con talones elevados",
+        "coachingSummary": "Sujeta una mancuerna a la altura del pecho y apoya ambos talones sobre un soporte elevado. Baja en sentadilla y vuelve a subir."
+      },
+      "en": {
+        "name": "Heel-Elevated Goblet Squat",
+        "coachingSummary": "Hold a dumbbell at your chest and rest both heels on a raised support. Lower into a squat, then stand back up."
+      }
+    },
+    "heel-tap": {
+      "es": {
+        "name": "Toque de talones",
+        "coachingSummary": "Túmbate boca arriba con las rodillas flexionadas, los pies apoyados y los hombros ligeramente elevados. Inclina el torso hacia un lado para tocar un talón y luego hacia el otro para tocar el otro talón."
+      },
+      "en": {
+        "name": "Heel Tap",
+        "coachingSummary": "Lie on your back with your knees bent, feet planted, and shoulders slightly raised. Reach sideways to tap one heel, then the other."
+      }
+    },
+    "high-knees": {
+      "es": {
+        "name": "Rodillas altas",
+        "coachingSummary": "Corre en el sitio y eleva una rodilla frente a ti al apoyar el otro pie. Alterna las piernas en cada paso."
+      },
+      "en": {
+        "name": "High Knees",
+        "coachingSummary": "Run in place, lifting one knee high in front of you as you land on the other foot. Switch legs with each step."
+      }
+    },
+    "hiking": {
+      "es": {
+        "name": "Senderismo",
+        "coachingSummary": "Camina por un sendero al aire libre y adapta tus pasos a los cambios del terreno. La animación muestra una máquina de cardio de interior."
+      },
+      "en": {
+        "name": "Hiking",
+        "coachingSummary": "Walk outdoors along a trail, adjusting your steps as the terrain changes. The animation shows an indoor cardio machine."
+      }
+    },
+    "hindu-push-up": {
+      "es": {
+        "name": "Flexión hindú",
+        "coachingSummary": "Empieza con las manos y los pies en el suelo y la cadera elevada. Flexiona los codos y lleva el pecho hacia delante cerca del suelo. Empuja con las manos y vuelve a elevar la cadera."
+      },
+      "en": {
+        "name": "Hindu Push-up",
+        "coachingSummary": "Start with your hands and feet on the floor and your hips raised. Bend your elbows and sweep your chest forward close to the floor, then press up and return to the raised-hip position."
+      }
+    },
     "hip-abduction-machine": {
       "es": {
         "name": "Máquina de abducción de cadera",
-        "coachingSummary": "Máquina de abducción sentado que aísla la cara externa de la cadera."
+        "coachingSummary": "Siéntate con las almohadillas contra la parte exterior de los muslos. Empuja las rodillas hacia afuera contra las almohadillas y vuelve a juntarlas."
+      },
+      "en": {
+        "name": "Hip Abduction Machine",
+        "coachingSummary": "Sit with the pads against the outside of your thighs. Press your knees out against the pads, then bring them back in."
       }
     },
     "hip-adduction-machine": {
       "es": {
         "name": "Máquina de aducción de cadera",
-        "coachingSummary": "Máquina de aducción sentado que aísla la cara interna del muslo."
+        "coachingSummary": "Siéntate con las piernas separadas y las almohadillas contra la parte interior de los muslos. Junta las rodillas contra las almohadillas y vuelve a separarlas."
+      },
+      "en": {
+        "name": "Hip Adduction Machine",
+        "coachingSummary": "Sit with your legs apart and the pads against the inside of your thighs. Press your knees together, then open them again."
       }
     },
-    "hip-airplane": { "es": { "name": "Avión de cadera" } },
+    "hip-airplane": {
+      "es": {
+        "name": "Avión de cadera",
+        "coachingSummary": "Mantén el equilibrio sobre una pierna e inclina el torso hacia delante desde la cadera. Gira la pelvis hacia el lado de la pierna elevada y luego vuelve a orientarla hacia el suelo. La animación muestra una elevación lateral de pierna de pie."
+      },
+      "en": {
+        "name": "Hip Airplane",
+        "coachingSummary": "Balance on one leg and hinge forward at the hip. Rotate your pelvis open to the side, then turn it back toward the floor. The animation shows a standing side leg lift."
+      }
+    },
     "hip-thrust": {
       "es": {
         "name": "Empuje de cadera",
-        "aliases": ["Hip thrust"],
-        "coachingSummary": "Empuje con barra apoyado en un banco, que carga los glúteos en el final de la extensión de cadera."
+        "aliases": [
+          "Hip thrust"
+        ],
+        "coachingSummary": "Apoya la parte alta de la espalda en un banco y los pies en el suelo, con una barra sobre la cadera. Eleva la cadera hasta alinear el torso con los muslos y vuelve a bajarla."
+      },
+      "en": {
+        "name": "Hip Thrust",
+        "coachingSummary": "Rest your upper back on a bench with your feet planted and a barbell across your hips. Lift your hips until your torso and thighs line up, then lower them."
       }
     },
     "hollow-body-hold": {
       "es": {
         "name": "Sostén hollow",
-        "coachingSummary": "Acuéstate boca arriba, eleva un poco los hombros y las piernas y mantén esa posición. Sigue respirando durante todo el sostén."
+        "coachingSummary": "Túmbate boca arriba y eleva un poco los hombros y las piernas. Mantén la posición con la parte baja de la espalda apoyada en el suelo. La animación muestra varias posiciones sentadas y encogidas."
+      },
+      "en": {
+        "name": "Hollow Body Hold",
+        "coachingSummary": "Lie on your back and raise your shoulders and legs slightly off the floor. Hold the position with your lower back against the floor. The animation shows several seated and tucked positions."
       }
     },
-    "hollow-rock": { "es": { "name": "Balanceo hollow" } },
-    "inchworm": { "es": { "name": "Gusano" } },
+    "hollow-rock": {
+      "es": {
+        "name": "Balanceo hollow",
+        "coachingSummary": "Túmbate boca arriba con los brazos y las piernas elevados, formando una curva con el cuerpo. Mantén esa forma mientras te balanceas hacia delante y hacia atrás."
+      },
+      "en": {
+        "name": "Hollow Rock",
+        "coachingSummary": "Lie on your back with your arms and legs raised in a rounded position. Keep that shape as you rock back and forth."
+      }
+    },
+    "inchworm": {
+      "es": {
+        "name": "Gusano",
+        "coachingSummary": "Inclínate hacia delante desde la posición de pie y avanza con las manos hasta quedar en plancha. Acerca los pies a las manos y vuelve a erguirte."
+      },
+      "en": {
+        "name": "Inchworm",
+        "coachingSummary": "Fold forward from standing and walk your hands out into a high plank. Walk your feet toward your hands and return to standing."
+      }
+    },
     "incline-bench-press": {
       "es": {
         "name": "Press de banca inclinado",
-        "coachingSummary": "Press con barra en banco inclinado, que desplaza el énfasis hacia el pecho alto y el deltoides anterior."
+        "coachingSummary": "Recuéstate en un banco inclinado con la barra por encima del pecho. Baja la barra hacia la parte alta del pecho y vuelve a empujarla hacia arriba."
+      },
+      "en": {
+        "name": "Incline Bench Press",
+        "coachingSummary": "Lie back on an incline bench with a barbell above your chest. Lower the bar toward your upper chest, then press it back up."
       }
     },
-    "incline-cable-fly": { "es": { "name": "Aperturas inclinadas en polea" } },
+    "incline-cable-fly": {
+      "es": {
+        "name": "Aperturas inclinadas en polea",
+        "coachingSummary": "Recuéstate en un banco inclinado con un agarre de polea en cada mano. Con los codos ligeramente flexionados, junta los brazos por encima del pecho y vuelve a abrirlos."
+      },
+      "en": {
+        "name": "Incline Cable Fly",
+        "coachingSummary": "Lie back on an incline bench with a cable handle in each hand. With your elbows slightly bent, bring your arms together above your chest, then open them again."
+      }
+    },
     "incline-dumbbell-curl": {
       "es": {
         "name": "Curl inclinado con mancuernas",
-        "coachingSummary": "Curl recostado en un banco inclinado, que carga el bíceps en posición estirada."
+        "coachingSummary": "Recuéstate en un banco inclinado con una mancuerna a cada lado y los brazos colgando. Flexiona los codos para acercar las mancuernas a los hombros y vuelve a bajarlas."
+      },
+      "en": {
+        "name": "Incline Dumbbell Curl",
+        "coachingSummary": "Recline on an incline bench with a dumbbell hanging at each side. Bend your elbows to curl the weights toward your shoulders, then lower them."
       }
     },
     "incline-dumbbell-press": {
       "es": {
         "name": "Press inclinado con mancuernas",
-        "coachingSummary": "Press de pecho alto con mancuernas en banco inclinado y un rango de movimiento controlado."
+        "coachingSummary": "Recuéstate en un banco inclinado con los pies apoyados y una mancuerna junto a cada hombro. Empuja las mancuernas por encima del pecho y vuelve a bajarlas."
+      },
+      "en": {
+        "name": "Incline Dumbbell Press",
+        "coachingSummary": "Recline on an incline bench with your feet planted and a dumbbell beside each shoulder. Press the weights up over your chest, then lower them."
       }
     },
     "incline-push-up": {
       "es": {
         "name": "Flexión inclinada",
-        "coachingSummary": "Flexión con las manos elevadas, que reduce la carga sin perder el rango completo."
+        "coachingSummary": "Apoya las manos en una plataforma elevada y las puntas de los pies en el suelo. Mantén el cuerpo alineado mientras acercas el pecho a la plataforma y vuelves a subir."
+      },
+      "en": {
+        "name": "Incline Push-up",
+        "coachingSummary": "Place your hands on a raised platform and keep your toes on the floor. Keep your body in a straight line as you lower your chest toward the platform and press back up."
       }
     },
     "inverted-row": {
       "es": {
         "name": "Remo invertido",
-        "coachingSummary": "Remo con peso corporal bajo una barra fija, cuya dificultad depende de qué tan horizontal esté el cuerpo."
+        "coachingSummary": "Sujeta una barra fija baja desde abajo y apoya los talones en el suelo. Mantén el cuerpo alineado, acerca el pecho a la barra y baja extendiendo los brazos. La animación muestra una dominada desde una barra alta."
+      },
+      "en": {
+        "name": "Inverted Row",
+        "coachingSummary": "Hold a low, fixed bar from underneath with your heels on the floor. Keep your body straight as you pull your chest toward the bar, then straighten your arms to lower. The animation shows a pull-up from an overhead bar."
       }
     },
-    "jump-rope": { "es": { "name": "Salto de cuerda" } },
-    "jump-squat": { "es": { "name": "Sentadilla con salto" } },
-    "jumping-jack": { "es": { "name": "Salto de tijera" } },
+    "jump-rope": {
+      "es": {
+        "name": "Salto de cuerda",
+        "coachingSummary": "Haz girar la cuerda por encima de la cabeza y salta al pasarla por debajo de los pies. Sigue girando la cuerda para repetir el movimiento."
+      },
+      "en": {
+        "name": "Jump Rope",
+        "coachingSummary": "Swing the rope overhead and jump as it passes beneath your feet. Keep turning the rope to repeat the motion."
+      }
+    },
+    "jump-squat": {
+      "es": {
+        "name": "Sentadilla con salto",
+        "coachingSummary": "Baja en sentadilla y empuja con ambos pies para saltar. Flexiona las rodillas al aterrizar y vuelve a la sentadilla."
+      },
+      "en": {
+        "name": "Jump Squat",
+        "coachingSummary": "Lower into a squat, then push through both feet to jump. Bend your knees as you land and return to a squat."
+      }
+    },
+    "jumping-jack": {
+      "es": {
+        "name": "Salto de tijera",
+        "coachingSummary": "Empieza con los pies juntos y los brazos a los lados. Separa los pies de un salto mientras elevas los brazos por encima de la cabeza y vuelve de un salto a la posición inicial."
+      },
+      "en": {
+        "name": "Jumping Jack",
+        "coachingSummary": "Start with your feet together and arms at your sides. Jump your feet apart as you raise your arms overhead, then jump back to the starting position."
+      }
+    },
     "kettlebell-romanian-deadlift": {
       "es": {
         "name": "Peso muerto rumano con kettlebell",
-        "coachingSummary": "Bisagra con kettlebell que entrena isquiotibiales y glúteos con cargas más ligeras."
+        "coachingSummary": "Sujeta una pesa rusa con ambas manos y flexiona un poco las rodillas. Lleva la cadera hacia atrás para bajar la pesa cerca de las piernas y vuelve a erguirte."
+      },
+      "en": {
+        "name": "Kettlebell Romanian Deadlift",
+        "coachingSummary": "Hold one kettlebell with both hands and keep your knees slightly bent. Push your hips back to lower the bell close to your legs, then stand tall."
       }
     },
     "kettlebell-swing": {
       "es": {
         "name": "Swing con kettlebell",
-        "coachingSummary": "Bisagra de cadera balística que lanza la pesa hasta la altura del pecho con un empuje seco de glúteo."
+        "coachingSummary": "Sujeta una pesa rusa con ambas manos y lleva la cadera hacia atrás para que la pesa pase entre las piernas. Extiende la cadera para impulsarla hasta la altura del pecho y flexiónala de nuevo cuando la pesa regrese."
+      },
+      "en": {
+        "name": "Kettlebell Swing",
+        "coachingSummary": "Hold a kettlebell with both hands and hinge at the hips to let it swing between your legs. Straighten your hips to swing it forward to about chest height, then hinge again as it comes back."
       }
     },
     "knee-push-up": {
       "es": {
         "name": "Flexión de rodillas",
-        "coachingSummary": "Flexión apoyando las rodillas, que mantiene el tronco firme mientras reduce la carga."
+        "coachingSummary": "Apoya las manos y las rodillas en el suelo, con el cuerpo alineado desde la cabeza hasta las rodillas. Flexiona los codos para bajar el pecho y vuelve a subir."
+      },
+      "en": {
+        "name": "Knee Push-up",
+        "coachingSummary": "Place your hands and knees on the floor with your body in a straight line from head to knees. Bend your elbows to lower your chest, then press back up."
       }
     },
-    "kneeling-hip-flexor-stretch": { "es": { "name": "Estiramiento de flexores de cadera de rodilla" } },
+    "kneeling-hip-flexor-stretch": {
+      "es": {
+        "name": "Estiramiento de flexores de cadera de rodilla",
+        "coachingSummary": "Apoya una rodilla en el suelo y el otro pie delante. Mantén el torso erguido, desplaza la cadera hacia delante y sostén la posición."
+      },
+      "en": {
+        "name": "Kneeling Hip Flexor Stretch",
+        "coachingSummary": "Kneel on one knee with your opposite foot planted in front. Keep your torso upright as you shift your hips forward and hold."
+      }
+    },
     "l-sit-hold": {
       "es": {
         "name": "Sostén en L",
-        "aliases": ["L-sit"],
-        "coachingSummary": "Sostente en barras paralelas con los brazos estirados y las piernas extendidas al frente. Mantén la posición respirando de forma constante."
+        "aliases": [
+          "L-sit"
+        ],
+        "coachingSummary": "Apóyate en barras paralelas con los brazos extendidos. Extiende ambas piernas hacia delante a la altura de la cadera y mantén la posición. La animación también muestra posiciones con las rodillas flexionadas."
+      },
+      "en": {
+        "name": "L-Sit Hold",
+        "coachingSummary": "Support yourself on parallel bars with your arms straight. Extend both legs straight in front of you at about hip height and hold. The animation also shows positions with bent knees."
       }
     },
-    "l-sit-pull-up": { "es": { "name": "Dominada en L" } },
-    "landmine-press": { "es": { "name": "Press landmine" } },
-    "landmine-romanian-deadlift": { "es": { "name": "Peso muerto rumano landmine" } },
-    "landmine-squat": { "es": { "name": "Sentadilla landmine" } },
+    "l-sit-pull-up": {
+      "es": {
+        "name": "Dominada en L",
+        "coachingSummary": "Cuélgate de una barra de dominadas con ambas piernas extendidas hacia delante a la altura de la cadera. Mantén las piernas elevadas mientras subes y bajas hasta extender los brazos."
+      },
+      "en": {
+        "name": "L-Sit Pull-up",
+        "coachingSummary": "Hang from a pull-up bar with both legs straight out in front at hip height. Keep your legs raised as you pull up and then lower to straight arms."
+      }
+    },
+    "landmine-press": {
+      "es": {
+        "name": "Press landmine",
+        "coachingSummary": "Ponte de pie con un pie delante del otro y sostén el extremo libre de una barra anclada a la altura de un hombro. Empuja la barra hacia arriba y delante con ese brazo y vuelve a bajarla hasta el hombro."
+      },
+      "en": {
+        "name": "Landmine Press",
+        "coachingSummary": "Stand with one foot in front of the other and hold the free end of a pivoted barbell at one shoulder. Press the bar up and forward with that arm, then lower it to your shoulder."
+      }
+    },
+    "landmine-romanian-deadlift": {
+      "es": {
+        "name": "Peso muerto rumano landmine",
+        "coachingSummary": "Sujeta el extremo libre de una barra anclada con ambas manos y flexiona un poco las rodillas. Lleva la cadera hacia atrás para bajar la barra y vuelve a erguirte."
+      },
+      "en": {
+        "name": "Landmine Romanian Deadlift",
+        "coachingSummary": "Hold the free end of a pivoted barbell with both hands and keep your knees slightly bent. Push your hips back to lower the bar, then return to standing."
+      }
+    },
+    "landmine-squat": {
+      "es": {
+        "name": "Sentadilla landmine",
+        "coachingSummary": "Sujeta el extremo libre de una barra anclada contra el pecho con ambas manos. Baja en sentadilla y vuelve a subir."
+      },
+      "en": {
+        "name": "Landmine Squat",
+        "coachingSummary": "Hold the free end of a pivoted barbell against your chest with both hands. Lower into a squat, then stand back up."
+      }
+    },
     "lat-pulldown": {
       "es": {
         "name": "Jalón al pecho",
-        "aliases": ["Jalón dorsal"],
-        "coachingSummary": "Jalón en polea que entrena el tirón vertical con una carga que se puede ajustar con precisión."
+        "aliases": [
+          "Jalón dorsal"
+        ],
+        "coachingSummary": "Siéntate en la máquina de jalón y sujeta la barra por encima de la cabeza. Tira de ella hacia la parte alta del pecho y vuelve a extender los brazos hacia arriba."
+      },
+      "en": {
+        "name": "Lat Pulldown",
+        "coachingSummary": "Sit at the pulldown station and grasp the bar overhead. Pull it toward your upper chest, then let your arms extend overhead again."
       }
     },
-    "lateral-lunge": { "es": { "name": "Zancada lateral" } },
-    "lateral-shuffle": { "es": { "name": "Desplazamiento lateral" } },
+    "lateral-lunge": {
+      "es": {
+        "name": "Zancada lateral",
+        "coachingSummary": "Empieza con los pies bien separados. Desplaza la cadera hacia un lado y flexiona la rodilla de ese lado con la otra pierna extendida. Vuelve al centro y cambia de lado."
+      },
+      "en": {
+        "name": "Lateral Lunge",
+        "coachingSummary": "Start with your feet wide apart. Shift your hips toward one side and bend that knee while the other leg stays straight, then return to the middle and switch sides."
+      }
+    },
+    "lateral-shuffle": {
+      "es": {
+        "name": "Desplazamiento lateral",
+        "coachingSummary": "Flexiona un poco las rodillas y da pasos laterales rápidos. Después de cada paso, acerca el otro pie sin cruzar los pies."
+      },
+      "en": {
+        "name": "Lateral Shuffle",
+        "coachingSummary": "Bend your knees slightly and take quick side steps. Bring your trailing foot in after each step without crossing your feet."
+      }
+    },
     "leg-curl": {
       "es": {
         "name": "Curl femoral",
-        "coachingSummary": "Flexión de rodilla en máquina que aísla los isquiotibiales."
+        "coachingSummary": "Túmbate boca abajo en la máquina con los tobillos debajo del rodillo. Flexiona las rodillas para acercar los talones a los glúteos y extiende las piernas para bajar el rodillo."
+      },
+      "en": {
+        "name": "Leg Curl",
+        "coachingSummary": "Lie face down on the machine with your ankles under the roller. Bend your knees to bring your heels toward your glutes, then straighten your legs to lower the roller."
       }
     },
     "leg-extension": {
       "es": {
         "name": "Extensión de piernas",
-        "coachingSummary": "Extensión de rodilla que aísla los cuádriceps con los muslos apoyados."
+        "coachingSummary": "Siéntate con el rodillo de la máquina contra la parte baja de las espinillas. Extiende las rodillas para elevar el rodillo y flexiónalas para bajarlo."
+      },
+      "en": {
+        "name": "Leg Extension",
+        "coachingSummary": "Sit with the machine roller against the front of your lower shins. Straighten your knees to raise the roller, then bend them to lower it."
       }
     },
     "leg-press": {
       "es": {
         "name": "Prensa de piernas",
-        "coachingSummary": "Press en máquina que carga las piernas con mucho peso y la espalda apoyada."
+        "coachingSummary": "Recuéstate contra el respaldo de la máquina con ambos pies sobre la plataforma. Flexiona las rodillas para acercar la plataforma y empújala con ambos pies para alejarla."
+      },
+      "en": {
+        "name": "Leg Press",
+        "coachingSummary": "Recline against the machine's back pad with both feet on the plate. Bend your knees to bring the plate toward you, then press it away with both feet."
       }
     },
-    "leg-press-calf-raise": { "es": { "name": "Elevación de talones en prensa" } },
-    "leg-swings-stretch": { "es": { "name": "Balanceos de pierna" } },
-    "lying-hamstring-walkout": { "es": { "name": "Caminata de isquiotibiales tumbado" } },
-    "lying-leg-curl": { "es": { "name": "Curl femoral tumbado" } },
+    "leg-press-calf-raise": {
+      "es": {
+        "name": "Elevación de talones en prensa",
+        "coachingSummary": "Siéntate en la prensa con la parte delantera de los pies sobre la plataforma. Mantén las piernas casi extendidas mientras presionas la plataforma para elevar los talones y luego bájalos."
+      },
+      "en": {
+        "name": "Leg Press Calf Raise",
+        "coachingSummary": "Sit in the leg press with the balls of your feet on the plate. Keep your legs nearly straight as you press through the balls of your feet and then lower your heels."
+      }
+    },
+    "leg-swings-stretch": {
+      "es": {
+        "name": "Balanceos de pierna",
+        "coachingSummary": "Sujétate a un soporte firme para mantener el equilibrio sobre una pierna. Balancea la otra pierna hacia delante y hacia atrás desde la cadera."
+      },
+      "en": {
+        "name": "Leg Swings",
+        "coachingSummary": "Hold a stable support for balance while standing on one leg. Swing your other leg forward and backward from the hip."
+      }
+    },
+    "lying-hamstring-walkout": {
+      "es": {
+        "name": "Caminata de isquiotibiales tumbado",
+        "coachingSummary": "Túmbate boca arriba con las rodillas flexionadas y eleva la cadera en puente. Aleja los talones con pasos cortos y alternos y vuelve a acercarlos manteniendo la cadera elevada. La animación muestra una flexión de rodillas con correas de suspensión."
+      },
+      "en": {
+        "name": "Lying Hamstring Walkout",
+        "coachingSummary": "Lie on your back with your knees bent and lift your hips into a bridge. Take small alternating steps with your heels away from you, then walk them back in while keeping your hips lifted. The animation shows a hamstring curl with suspension straps."
+      }
+    },
+    "lying-leg-curl": {
+      "es": {
+        "name": "Curl femoral tumbado",
+        "coachingSummary": "Túmbate boca abajo en la máquina con los tobillos debajo del rodillo. Flexiona las rodillas para acercar los talones a los glúteos y extiende las piernas para bajar el rodillo."
+      },
+      "en": {
+        "name": "Lying Leg Curl",
+        "coachingSummary": "Lie face down on the machine with your ankles under the roller. Bend your knees to bring your heels toward your glutes, then straighten your legs to lower the roller."
+      }
+    },
     "lying-leg-raise": {
       "es": {
         "name": "Elevación de piernas tumbado",
-        "coachingSummary": "Elevación de piernas en el suelo que entrena el abdomen bajo y los flexores de cadera."
+        "coachingSummary": "Túmbate boca arriba con los brazos apoyados a los lados. Eleva ambas piernas hasta acercarlas a la vertical y bájalas hacia el suelo manteniéndolas extendidas."
+      },
+      "en": {
+        "name": "Lying Leg Raise",
+        "coachingSummary": "Lie on your back with your arms resting at your sides. Raise both legs toward vertical, then lower them toward the floor while keeping them straight."
       }
     },
     "machine-chest-press": {
       "es": {
         "name": "Press de pecho en máquina",
-        "coachingSummary": "Empuje horizontal guiado que entrena el pecho con muy poca demanda de equilibrio."
+        "coachingSummary": "Siéntate con la espalda contra el respaldo de la máquina y sujeta los agarres a los lados del pecho. Empújalos hacia delante y flexiona los codos para volver a acercarlos al pecho."
+      },
+      "en": {
+        "name": "Machine Chest Press",
+        "coachingSummary": "Sit against the machine's back pad and grasp the handles beside your chest. Push the handles forward, then bend your elbows to bring them back."
       }
     },
-    "machine-glute-kickback": { "es": { "name": "Patada de glúteo en máquina" } },
-    "machine-lateral-raise": { "es": { "name": "Elevación lateral en máquina" } },
+    "machine-glute-kickback": {
+      "es": {
+        "name": "Patada de glúteo en máquina",
+        "coachingSummary": "Ponte frente a una polea con un accesorio sujeto a un tobillo y las manos apoyadas en la máquina. Lleva esa pierna hacia atrás desde la cadera y vuelve a traerla a la posición inicial."
+      },
+      "en": {
+        "name": "Machine Glute Kickback",
+        "coachingSummary": "Face a cable machine with an ankle attachment on one leg and your hands holding the station for balance. Move the attached leg behind you from the hip, then bring it back in."
+      }
+    },
+    "machine-lateral-raise": {
+      "es": {
+        "name": "Elevación lateral en máquina",
+        "coachingSummary": "Siéntate en la máquina con los brazos flexionados contra las almohadillas de las palancas. Eleva los codos hacia los lados hasta la altura de los hombros y vuelve a bajarlos."
+      },
+      "en": {
+        "name": "Machine Lateral Raise",
+        "coachingSummary": "Sit at the machine with your bent arms against the lever pads. Lift your elbows out to about shoulder height, then lower them."
+      }
+    },
     "machine-row": {
       "es": {
         "name": "Remo en máquina",
-        "coachingSummary": "Patrón de remo guiado para acumular volumen de espalda media con muy poca demanda de equilibrio."
+        "coachingSummary": "Siéntate con el pecho contra la almohadilla y sujeta los agarres de la máquina. Tira de ellos hacia el torso y extiende los brazos para volver a la posición inicial."
+      },
+      "en": {
+        "name": "Machine Row",
+        "coachingSummary": "Sit with your chest against the pad and grasp the machine handles. Pull them toward your torso, then extend your arms to return."
       }
     },
     "machine-shoulder-press": {
       "es": {
         "name": "Press de hombro en máquina",
-        "coachingSummary": "Press guiado por encima de la cabeza para volumen de hombro con muy poca demanda de equilibrio."
+        "coachingSummary": "Siéntate con la espalda apoyada y sujeta los agarres de la máquina a la altura de los hombros. Empújalos por encima de la cabeza y vuelve a bajarlos hasta los hombros."
+      },
+      "en": {
+        "name": "Machine Shoulder Press",
+        "coachingSummary": "Sit against the backrest and grasp the machine handles at shoulder level. Press them overhead, then lower them back to shoulder height."
       }
     },
-    "meadows-row": { "es": { "name": "Remo Meadows" } },
+    "meadows-row": {
+      "es": {
+        "name": "Remo Meadows",
+        "coachingSummary": "Inclina el torso hacia delante con un pie delante del otro y apoya un antebrazo sobre el muslo. Con la mano libre, tira del extremo de una barra anclada hacia la cadera y vuelve a bajarlo."
+      },
+      "en": {
+        "name": "Meadows Row",
+        "coachingSummary": "Hinge forward in a staggered stance and brace one forearm on your thigh. With your free hand, pull the sleeve of an anchored barbell toward your hip, then lower it."
+      }
+    },
     "mountain-climber": {
       "es": {
         "name": "Escaladores",
-        "coachingSummary": "Empieza con las manos y las puntas de los pies en el suelo y los brazos estirados. Lleva una rodilla al frente alternando a un ritmo constante durante todo el intervalo."
+        "coachingSummary": "Empieza en plancha con las manos en el suelo y los brazos extendidos. Acerca una rodilla al pecho y lleva esa pierna hacia atrás al acercar la otra rodilla."
+      },
+      "en": {
+        "name": "Mountain Climber",
+        "coachingSummary": "Start in a high plank with your hands on the floor. Bring one knee toward your chest, then send that leg back as the other knee comes forward."
       }
     },
     "negative-pull-up": {
       "es": {
         "name": "Dominada negativa",
-        "coachingSummary": "La fase de bajada de la dominada, hecha lentamente, como paso previo al movimiento completo."
+        "coachingSummary": "Empieza con la barbilla por encima de la barra de dominadas y los codos flexionados. Baja despacio hasta extender los brazos. La animación empieza mostrando la subida de una dominada."
+      },
+      "en": {
+        "name": "Negative Pull-up",
+        "coachingSummary": "Start with your chin above a pull-up bar and your elbows bent. Slowly lower your body until your arms are straight. The animation starts by showing the upward part of a pull-up."
       }
     },
     "neutral-grip-pull-up": {
       "es": {
         "name": "Dominada agarre neutro",
-        "coachingSummary": "Dominada con las palmas enfrentadas, que suele ser el agarre más amable con el hombro."
+        "coachingSummary": "Cuélgate de agarres paralelos con las palmas enfrentadas. Eleva el cuerpo hacia los agarres y baja hasta extender los brazos. La animación muestra una barra recta."
+      },
+      "en": {
+        "name": "Neutral-Grip Pull-up",
+        "coachingSummary": "Hang from parallel handles with your palms facing each other. Pull your body up toward the handles, then lower until your arms are straight. The animation shows a straight bar."
       }
     },
-    "nordic-hamstring-curl": { "es": { "name": "Curl nórdico" } },
+    "nordic-hamstring-curl": {
+      "es": {
+        "name": "Curl nórdico",
+        "coachingSummary": "Arrodíllate con los tobillos sujetos por detrás. Mantén el torso y los muslos alineados mientras te inclinas hacia delante desde las rodillas y vuelves a erguirte."
+      },
+      "en": {
+        "name": "Nordic Hamstring Curl",
+        "coachingSummary": "Kneel with your ankles secured behind you. Keep your torso and thighs in line as you lean forward from the knees and return to upright."
+      }
+    },
     "one-arm-dumbbell-row": {
       "es": {
         "name": "Remo a una mano con mancuerna",
-        "coachingSummary": "Remo unilateral con la mano libre apoyada, que permite un tirón largo y controlado."
+        "coachingSummary": "Apoya una mano y la rodilla de ese lado en un banco plano, con el otro pie en el suelo. Lleva una mancuerna hacia el costado con la mano libre y vuelve a bajarla."
+      },
+      "en": {
+        "name": "One-Arm Dumbbell Row",
+        "coachingSummary": "Support one hand and the knee on that side on a flat bench, with the other foot on the floor. Pull a dumbbell toward your side with your free hand, then lower it."
       }
     },
     "overhead-press": {
       "es": {
         "name": "Press militar",
-        "aliases": ["Press por encima de la cabeza"],
-        "coachingSummary": "Press de barra de pie por encima de la cabeza, con el tronco firme y las costillas abajo."
+        "aliases": [
+          "Press por encima de la cabeza"
+        ],
+        "coachingSummary": "Ponte de pie con una barra justo delante de los hombros. Empújala por encima de la cabeza con ambos brazos y vuelve a bajarla hasta los hombros."
+      },
+      "en": {
+        "name": "Overhead Press",
+        "coachingSummary": "Stand with a barbell held just in front of your shoulders. Press it overhead with both arms, then lower it back to shoulder height."
       }
     },
-    "overhead-tricep-extension": { "es": { "name": "Extensión de tríceps sobre la cabeza" } },
+    "overhead-tricep-extension": {
+      "es": {
+        "name": "Extensión de tríceps sobre la cabeza",
+        "coachingSummary": "Ponte de espaldas a una polea baja y sujeta el agarre detrás de la cabeza. Extiende los codos hacia arriba y vuelve a flexionarlos para bajar el agarre."
+      },
+      "en": {
+        "name": "Overhead Tricep Extension",
+        "coachingSummary": "Stand facing away from a low pulley with a cable attachment held behind your head. Straighten your elbows overhead, then bend them to bring the attachment back down."
+      }
+    },
     "pallof-press": {
       "es": {
         "name": "Press Pallof",
-        "coachingSummary": "Press antirrotación que mantiene el tronco de frente contra un tirón lateral."
+        "coachingSummary": "Ponte de lado a la polea y sostén el agarre con ambas manos a la altura del pecho. Empújalo hacia delante y vuelve a acercarlo al pecho con el torso orientado al frente."
+      },
+      "en": {
+        "name": "Pallof Press",
+        "coachingSummary": "Stand sideways to a cable machine with both hands holding the handle at your chest. Press the handle straight forward and bring it back while keeping your torso facing ahead."
       }
     },
     "parallel-bar-dips": {
       "es": {
         "name": "Fondo de pecho",
-        "aliases": ["Fondos en paralelas"],
-        "coachingSummary": "Empuje en barras paralelas que enfatiza pecho y tríceps con una profundidad de hombro controlada."
+        "aliases": [
+          "Fondos en paralelas"
+        ],
+        "coachingSummary": "Apóyate en barras paralelas con los brazos extendidos. Flexiona los codos para bajar el cuerpo entre las barras y vuelve a subir."
+      },
+      "en": {
+        "name": "Chest Dip",
+        "coachingSummary": "Support yourself on parallel bars with straight arms. Bend your elbows to lower your body between the bars, then press back up."
       }
     },
     "pec-deck": {
       "es": {
         "name": "Contractor de pecho",
-        "aliases": ["Pec deck"],
-        "coachingSummary": "Apertura de pecho en máquina con trayectoria fija, útil para volumen de pecho con poca exigencia técnica."
+        "aliases": [
+          "Pec deck"
+        ],
+        "coachingSummary": "Siéntate contra el respaldo de la máquina y sujeta los agarres con los brazos abiertos y los codos flexionados. Junta los agarres delante del pecho y vuelve a abrir los brazos."
+      },
+      "en": {
+        "name": "Pec Deck",
+        "coachingSummary": "Sit against the machine's backrest and grasp the handles with your arms open and elbows bent. Bring the handles together in front of your chest, then open your arms again."
       }
     },
     "pendlay-row": {
       "es": {
         "name": "Remo Pendlay",
-        "coachingSummary": "Remo con barra que arranca desde el suelo en cada repetición, lo que elimina la inercia."
+        "coachingSummary": "Flexiona la cadera hasta que el torso quede casi paralelo al suelo y agarra la barra desde el suelo. Tira de ella hacia la parte baja del pecho y vuelve a apoyarla en el suelo antes de tirar otra vez. La animación muestra un remo con el torso inclinado."
+      },
+      "en": {
+        "name": "Pendlay Row",
+        "coachingSummary": "Hinge at the hips until your torso is nearly parallel to the floor and grasp the barbell on the floor. Pull it toward your lower chest, then set it back down before pulling again. The animation shows a bent-over row."
       }
     },
     "pike-push-up": {
       "es": {
         "name": "Flexión pike",
-        "coachingSummary": "Empuje vertical con peso corporal y la cadera alta, que carga hombros y tríceps."
+        "coachingSummary": "Apoya las manos y las puntas de los pies en el suelo y eleva la cadera en forma de V invertida. Flexiona los codos para acercar la cabeza al suelo y vuelve a subir."
+      },
+      "en": {
+        "name": "Pike Push-up",
+        "coachingSummary": "Place your hands and toes on the floor with your hips raised into an upside-down V. Bend your elbows to lower your head toward the floor, then press back up."
       }
     },
-    "pistol-squat": { "es": { "name": "Sentadilla a una pierna" } },
+    "pistol-squat": {
+      "es": {
+        "name": "Sentadilla a una pierna",
+        "coachingSummary": "Ponte de pie sobre una pierna con la otra extendida hacia delante. Flexiona la pierna de apoyo para bajar en sentadilla y empuja con ese pie para volver a subir."
+      },
+      "en": {
+        "name": "Pistol Squat",
+        "coachingSummary": "Stand on one leg with the other leg extended in front. Bend the standing leg to squat, then push through that foot to stand again."
+      }
+    },
     "plank": {
       "es": {
         "name": "Plancha",
-        "coachingSummary": "Apóyate sobre los antebrazos y las puntas de los pies. Mantén el cuerpo estable y sigue respirando durante toda la serie."
+        "coachingSummary": "Apoya los antebrazos y las puntas de los pies en el suelo, con los codos debajo de los hombros. Mantén el cuerpo alineado. Uno de los cuadros muestra la versión con apoyo de rodillas."
+      },
+      "en": {
+        "name": "Plank",
+        "coachingSummary": "Rest on your forearms and toes, with your elbows under your shoulders. Hold your body in a straight line. One frame shows the knee-supported version."
       }
     },
-    "plank-jack": { "es": { "name": "Plancha con salto" } },
-    "plank-shoulder-tap": { "es": { "name": "Plancha con toque de hombro" } },
-    "plate-front-raise": { "es": { "name": "Elevación frontal con disco" } },
+    "plank-jack": {
+      "es": {
+        "name": "Plancha con salto",
+        "coachingSummary": "Empieza en plancha con los brazos extendidos y los pies juntos. Separa los pies de un salto y vuelve a juntarlos manteniendo las manos apoyadas. La animación muestra una rodilla que se mueve hacia delante."
+      },
+      "en": {
+        "name": "Plank Jack",
+        "coachingSummary": "Start in a high plank with your feet together. Hop both feet apart and back together while keeping your hands planted. The animation shows a forward knee drive."
+      }
+    },
+    "plank-shoulder-tap": {
+      "es": {
+        "name": "Plancha con toque de hombro",
+        "coachingSummary": "Empieza en plancha con las manos en el suelo y los brazos extendidos. Levanta una mano para tocar el hombro contrario, vuelve a apoyarla y cambia de mano."
+      },
+      "en": {
+        "name": "Plank Shoulder Tap",
+        "coachingSummary": "Start in a high plank with your hands on the floor. Lift one hand to tap the opposite shoulder, set it down, and switch hands."
+      }
+    },
+    "plate-front-raise": {
+      "es": {
+        "name": "Elevación frontal con disco",
+        "coachingSummary": "Ponte de pie y sujeta un disco con ambas manos frente a los muslos. Elévalo al frente hasta la altura de los hombros y bájalo."
+      },
+      "en": {
+        "name": "Plate Front Raise",
+        "coachingSummary": "Stand holding a weight plate in both hands in front of your thighs. Lift it forward to shoulder height, then lower it."
+      }
+    },
     "preacher-curl": {
       "es": {
         "name": "Curl predicador",
-        "coachingSummary": "Curl con los brazos apoyados, lo que elimina el balanceo del movimiento."
+        "coachingSummary": "Siéntate en la máquina con la parte superior de los brazos apoyada en la almohadilla. Flexiona los codos para subir los agarres y luego bájalos."
+      },
+      "en": {
+        "name": "Preacher Curl",
+        "coachingSummary": "Sit at the machine with your upper arms against the pad. Bend your elbows to raise the handles, then lower them."
       }
     },
-    "prone-t-raise": { "es": { "name": "Elevación en T boca abajo" } },
+    "prone-t-raise": {
+      "es": {
+        "name": "Elevación en T boca abajo",
+        "coachingSummary": "Acuéstate boca abajo y extiende los brazos hacia los lados formando una T. Elévalos y luego bájalos despacio. La animación muestra una versión en banco con mancuernas."
+      },
+      "en": {
+        "name": "Prone T Raise",
+        "coachingSummary": "Lie face down and extend your arms out to the sides in a T. Lift them, then lower them slowly. The animation shows a bench version with dumbbells."
+      }
+    },
     "prone-y-raise": {
       "es": {
         "name": "Elevación en Y boca abajo",
-        "coachingSummary": "Elevación boca abajo en posición de Y para el trapecio inferior y la espalda alta."
+        "coachingSummary": "Acuéstate boca abajo con los brazos en forma de Y y los pulgares hacia arriba. Eleva los brazos del suelo y luego bájalos."
+      },
+      "en": {
+        "name": "Prone Y Raise",
+        "coachingSummary": "Lie face down with your arms in a Y and thumbs pointing up. Lift your arms off the floor, then lower them."
       }
     },
     "pull-ups": {
       "es": {
         "name": "Dominada",
-        "aliases": ["Dominadas"],
-        "coachingSummary": "Tirón vertical con peso corporal que enfatiza dorsales, espalda alta, bíceps y agarre."
+        "aliases": [
+          "Dominadas"
+        ],
+        "coachingSummary": "Cuélgate de una barra con las palmas hacia delante. Sube hasta que la barbilla supere la barra y baja de forma controlada."
+      },
+      "en": {
+        "name": "Pull-up",
+        "coachingSummary": "Hang from a bar with your palms facing away. Pull until your chin clears the bar, then lower with control."
       }
     },
     "push-press": {
       "es": {
         "name": "Push press",
-        "coachingSummary": "Press por encima de la cabeza impulsado por una flexión corta de piernas, que permite más carga que un press estricto."
+        "coachingSummary": "Sujeta la barra a la altura de los hombros y flexiona un poco las rodillas. Extiende las piernas para impulsar la barra sobre la cabeza y bájala a los hombros."
+      },
+      "en": {
+        "name": "Push Press",
+        "coachingSummary": "Hold the barbell at your shoulders and bend your knees slightly. Straighten your legs to drive the bar overhead, then lower it to your shoulders."
       }
     },
     "push-up": {
       "es": {
         "name": "Flexión de brazos",
-        "aliases": ["Lagartija", "Push-up"],
-        "coachingSummary": "Empuje horizontal con peso corporal, con el tronco firme en línea recta de la cabeza a los talones."
+        "aliases": [
+          "Lagartija",
+          "Push-up"
+        ],
+        "coachingSummary": "Adopta una posición de plancha alta y flexiona los codos para bajar el pecho hacia el suelo. Mantén el cuerpo recto al empujarte hacia arriba."
+      },
+      "en": {
+        "name": "Push-up",
+        "coachingSummary": "Start in a high plank and bend your elbows to lower your chest toward the floor. Keep your body straight as you press back up."
       }
     },
-    "push-up-shoulder-tap": { "es": { "name": "Flexión con toque de hombro" } },
-    "rack-pull": { "es": { "name": "Rack pull" } },
+    "push-up-shoulder-tap": {
+      "es": {
+        "name": "Flexión con toque de hombro",
+        "coachingSummary": "Adopta una posición de plancha alta. Toca el hombro contrario con una mano, vuelve a apoyarla y cambia de lado sin girar la cadera."
+      },
+      "en": {
+        "name": "Push-up Shoulder Tap",
+        "coachingSummary": "Start in a high plank. Tap the opposite shoulder with one hand, return it to the floor, and switch sides while keeping your hips steady."
+      }
+    },
+    "rack-pull": {
+      "es": {
+        "name": "Rack pull",
+        "coachingSummary": "Empieza con la barra en los soportes del rack cerca de las rodillas. Agárrala, ponte de pie con la barra cerca de las piernas y vuelve a apoyarla."
+      },
+      "en": {
+        "name": "Rack Pull",
+        "coachingSummary": "Start with the barbell supported in a rack near knee height. Grip the bar, stand up with it close to your legs, then lower it to the supports."
+      }
+    },
     "rear-delt-fly": {
       "es": {
         "name": "Apertura posterior",
-        "coachingSummary": "Apertura con mancuernas inclinado que entrena los deltoides posteriores."
+        "coachingSummary": "Inclínate hacia delante desde la cadera con una mancuerna en cada mano. Eleva los brazos hacia los lados con los codos ligeramente flexionados y vuelve a bajarlos."
+      },
+      "en": {
+        "name": "Rear Delt Fly",
+        "coachingSummary": "Hinge forward at the hips with a dumbbell in each hand. Raise your arms out to the sides with slightly bent elbows, then lower them."
       }
     },
     "reverse-crunch": {
       "es": {
         "name": "Crunch inverso",
-        "coachingSummary": "Flexión de tronco impulsada por la elevación de la cadera, que carga el abdomen bajo."
+        "coachingSummary": "Acuéstate boca arriba con las rodillas flexionadas y los pies elevados. Levanta la cadera para acercar las rodillas al pecho y luego bájala."
+      },
+      "en": {
+        "name": "Reverse Crunch",
+        "coachingSummary": "Lie on your back with your knees bent and feet off the floor. Curl your hips up to bring your knees toward your chest, then lower."
       }
     },
     "reverse-curl": {
       "es": {
         "name": "Curl inverso",
-        "coachingSummary": "Curl con agarre prono que carga los extensores del antebrazo y el braquiorradial."
+        "coachingSummary": "Ponte de pie con una barra y las palmas hacia abajo. Mantén los codos junto al cuerpo mientras subes y bajas la barra."
+      },
+      "en": {
+        "name": "Reverse Curl",
+        "coachingSummary": "Stand holding a barbell with your palms facing down. Keep your elbows by your sides as you curl the bar up and lower it."
       }
     },
-    "reverse-hyperextension": { "es": { "name": "Hiperextensión inversa" } },
+    "reverse-hyperextension": {
+      "es": {
+        "name": "Hiperextensión inversa",
+        "coachingSummary": "Apoya el torso boca abajo sobre la almohadilla de la máquina. Eleva las piernas hacia atrás desde la cadera y bájalas de forma controlada."
+      },
+      "en": {
+        "name": "Reverse Hyperextension",
+        "coachingSummary": "Rest your torso face down on the machine pad. Raise your legs behind you from the hips, then lower them under control."
+      }
+    },
     "reverse-lunge": {
       "es": {
         "name": "Zancada atrás",
-        "coachingSummary": "Zancada dando el paso hacia atrás, por lo general más amable con la rodilla que hacerlo hacia delante."
+        "coachingSummary": "Sujeta una mancuerna a cada lado y da un paso hacia atrás. Flexiona ambas rodillas y empuja con el pie delantero para volver a ponerte de pie."
+      },
+      "en": {
+        "name": "Reverse Lunge",
+        "coachingSummary": "Hold a dumbbell at each side and step back with one foot. Bend both knees, then press through the front foot to return to standing."
       }
     },
     "reverse-pec-deck": {
       "es": {
         "name": "Contractor inverso",
-        "coachingSummary": "Apertura inversa en máquina para volumen de deltoides posterior con una trayectoria fija."
+        "coachingSummary": "Siéntate de cara a la máquina con el pecho apoyado en la almohadilla. Abre los brazos hacia los lados con los agarres y llévalos de nuevo al frente."
+      },
+      "en": {
+        "name": "Reverse Pec Deck",
+        "coachingSummary": "Sit facing the machine with your chest against the pad. Sweep the handles out to the sides, then guide them back in front."
       }
     },
-    "reverse-snow-angel": { "es": { "name": "Ángel invertido" } },
+    "reverse-snow-angel": {
+      "es": {
+        "name": "Ángel invertido",
+        "coachingSummary": "Acuéstate boca abajo con los brazos junto al cuerpo. Elévalos un poco, llévalos por los lados hasta encima de la cabeza y vuelve por el mismo recorrido."
+      },
+      "en": {
+        "name": "Reverse Snow Angel",
+        "coachingSummary": "Lie face down with your arms by your sides. Lift them slightly and sweep them out and overhead, then reverse the motion."
+      }
+    },
     "romanian-deadlift": {
       "es": {
         "name": "Peso muerto rumano",
-        "aliases": ["RDL"],
-        "coachingSummary": "Bisagra de cadera controlada que enfatiza isquiotibiales y glúteos bajo carga."
+        "aliases": [
+          "RDL"
+        ],
+        "coachingSummary": "Sujeta la barra frente a los muslos con las rodillas ligeramente flexionadas. Lleva la cadera hacia atrás para bajar la barra cerca de las piernas y vuelve a enderezarte."
+      },
+      "en": {
+        "name": "Romanian Deadlift",
+        "coachingSummary": "Hold the barbell in front of your thighs with soft knees. Push your hips back to lower the bar close to your legs, then stand tall."
       }
     },
-    "rope-hammer-curl": { "es": { "name": "Curl martillo con cuerda" } },
+    "rope-hammer-curl": {
+      "es": {
+        "name": "Curl martillo con cuerda",
+        "coachingSummary": "Sujeta los extremos de una cuerda en una polea baja con las palmas enfrentadas. Sube la cuerda hacia los hombros sin separar los codos del cuerpo."
+      },
+      "en": {
+        "name": "Rope Hammer Curl",
+        "coachingSummary": "Grip both ends of a rope attached to a low pulley with palms facing each other. Curl the rope toward your shoulders while keeping your elbows at your sides."
+      }
+    },
     "rope-tricep-pushdown": {
       "es": {
         "name": "Extensión de tríceps con cuerda",
-        "coachingSummary": "Extensión en polea con cuerda, que permite separar las manos al final del recorrido."
+        "coachingSummary": "Sujeta una cuerda en una polea alta con los codos junto al cuerpo. Extiende los brazos y separa los extremos de la cuerda, luego flexiona los codos para volver."
+      },
+      "en": {
+        "name": "Rope Tricep Pushdown",
+        "coachingSummary": "Grip a rope on a high pulley with your elbows by your sides. Straighten your arms and separate the rope ends, then bend your elbows to return."
       }
     },
-    "rowing": { "es": { "name": "Remo ergómetro" } },
-    "running": { "es": { "name": "Correr" } },
-    "russian-twist": { "es": { "name": "Giro ruso" } },
-    "scapular-pull-up": { "es": { "name": "Dominada escapular" } },
-    "scapular-push-up": { "es": { "name": "Flexión escapular" } },
-    "seal-jack": { "es": { "name": "Salto de foca" } },
+    "rowing": {
+      "es": {
+        "name": "Remo ergómetro",
+        "coachingSummary": "Siéntate en el remo con los pies apoyados. Empuja con las piernas y lleva el agarre hacia las costillas. Extiende los brazos y flexiona las rodillas para volver."
+      },
+      "en": {
+        "name": "Rowing",
+        "coachingSummary": "Sit on the rowing machine with your feet braced. Push with your legs, pull the handle toward your ribs, then extend your arms and bend your knees to return."
+      }
+    },
+    "running": {
+      "es": {
+        "name": "Correr",
+        "coachingSummary": "Corre en la cinta con un paso uniforme y deja que los brazos se muevan con naturalidad."
+      },
+      "en": {
+        "name": "Running",
+        "coachingSummary": "Run on the treadmill with an even stride and let your arms swing naturally."
+      }
+    },
+    "russian-twist": {
+      "es": {
+        "name": "Giro ruso",
+        "coachingSummary": "Siéntate con las rodillas flexionadas e inclínate un poco hacia atrás. Sostén un balón delante de ti y gira el torso de lado a lado."
+      },
+      "en": {
+        "name": "Russian Twist",
+        "coachingSummary": "Sit with your knees bent and lean back slightly. Hold a ball in front of you and turn your torso from side to side."
+      }
+    },
+    "scapular-pull-up": {
+      "es": {
+        "name": "Dominada escapular",
+        "coachingSummary": "Cuélgate de una barra con los brazos extendidos. Baja los omóplatos para elevar un poco el cuerpo y vuelve a la posición inicial."
+      },
+      "en": {
+        "name": "Scapular Pull-up",
+        "coachingSummary": "Hang from a bar with straight arms. Draw your shoulder blades down to lift your body slightly, then relax back into the hang."
+      }
+    },
+    "scapular-push-up": {
+      "es": {
+        "name": "Flexión escapular",
+        "coachingSummary": "Mantén los brazos extendidos en plancha alta. Deja que el pecho baje entre los hombros y empuja el suelo para separar los omóplatos."
+      },
+      "en": {
+        "name": "Scapular Push-up",
+        "coachingSummary": "Keep your arms straight in a high plank. Let your chest sink between your shoulders, then push the floor away to spread your shoulder blades."
+      }
+    },
+    "seal-jack": {
+      "es": {
+        "name": "Salto de foca",
+        "coachingSummary": "Salta para separar los pies mientras abres los brazos a la altura de los hombros. Vuelve a juntar los pies de un salto al juntar las manos al frente. La animación muestra una máquina de cadera con asiento."
+      },
+      "en": {
+        "name": "Seal Jack",
+        "coachingSummary": "Jump your feet apart as you open your arms wide at shoulder height. Jump your feet together as you bring your hands together in front. The animation shows a seated hip machine."
+      }
+    },
     "seated-calf-raise": {
       "es": {
         "name": "Elevación de talones sentado",
-        "coachingSummary": "Elevación de talones sentado con las rodillas flexionadas, con sesgo hacia el sóleo."
+        "coachingSummary": "Siéntate en la máquina con la almohadilla sobre los muslos y la parte delantera de los pies en la plataforma. Eleva los talones y bájalos despacio."
+      },
+      "en": {
+        "name": "Seated Calf Raise",
+        "coachingSummary": "Sit at the machine with the pad on your thighs and the balls of your feet on the platform. Raise your heels, then lower them slowly."
       }
     },
-    "seated-forward-fold-stretch": { "es": { "name": "Flexión hacia delante sentado" } },
-    "seated-knee-tuck": { "es": { "name": "Encogimiento de rodillas sentado" } },
+    "seated-forward-fold-stretch": {
+      "es": {
+        "name": "Flexión hacia delante sentado",
+        "coachingSummary": "Siéntate con las piernas extendidas al frente. Inclínate desde la cadera, lleva las manos hacia los pies y mantén el estiramiento."
+      },
+      "en": {
+        "name": "Seated Forward Fold",
+        "coachingSummary": "Sit with your legs extended in front of you. Hinge forward at the hips, reach toward your feet, and hold the stretch."
+      }
+    },
+    "seated-knee-tuck": {
+      "es": {
+        "name": "Encogimiento de rodillas sentado",
+        "coachingSummary": "Siéntate con las manos apoyadas detrás de ti e inclínate un poco hacia atrás. Acerca ambas rodillas al pecho y vuelve a extender las piernas."
+      },
+      "en": {
+        "name": "Seated Knee Tuck",
+        "coachingSummary": "Sit with your hands braced behind you and lean back slightly. Bring both knees toward your chest, then extend your legs again."
+      }
+    },
     "seated-leg-curl": {
       "es": {
         "name": "Curl femoral sentado",
-        "coachingSummary": "Flexión de rodilla sentado que entrena los isquiotibiales con la cadera flexionada."
+        "coachingSummary": "Siéntate con los muslos bajo la almohadilla y los tobillos contra el rodillo. Flexiona las rodillas para llevarlo bajo el asiento y extiende las piernas."
+      },
+      "en": {
+        "name": "Seated Leg Curl",
+        "coachingSummary": "Sit with your thighs under the pad and your ankles against the roller. Bend your knees to pull the roller under the seat, then extend your legs."
       }
     },
     "seated-row": {
       "es": {
         "name": "Remo sentado en polea",
-        "coachingSummary": "Remo sentado en polea que tira hacia el tronco con el pecho alto y los hombros abajo."
+        "coachingSummary": "Siéntate frente a la polea con los pies apoyados y el pecho erguido. Lleva el agarre hacia el torso y extiende los brazos sin inclinarte hacia delante."
+      },
+      "en": {
+        "name": "Seated Cable Row",
+        "coachingSummary": "Sit facing the cable with your feet braced and chest lifted. Pull the handle toward your torso, then extend your arms without leaning forward."
       }
     },
-    "shrimp-squat": { "es": { "name": "Sentadilla camarón" } },
+    "shrimp-squat": {
+      "es": {
+        "name": "Sentadilla camarón",
+        "coachingSummary": "Ponte de pie sobre una pierna con la otra flexionada detrás. Sujétate a un apoyo firme para mantener el equilibrio al flexionar y volver a extender la rodilla de apoyo."
+      },
+      "en": {
+        "name": "Shrimp Squat",
+        "coachingSummary": "Stand on one leg with the other knee bent behind you. Hold a stable support for balance as you bend the standing knee and rise again."
+      }
+    },
     "shrug": {
       "es": {
         "name": "Encogimiento con barra",
-        "coachingSummary": "Encogimiento con barra que eleva los hombros para entrenar el trapecio superior."
+        "coachingSummary": "Sujeta la barra frente a los muslos con los brazos extendidos. Eleva los hombros hacia las orejas y luego bájalos."
+      },
+      "en": {
+        "name": "Barbell Shrug",
+        "coachingSummary": "Hold a barbell in front of your thighs with your arms straight. Lift your shoulders toward your ears, then lower them."
       }
     },
-    "side-lying-hip-abduction": { "es": { "name": "Abducción de cadera tumbado de lado" } },
-    "side-lying-leg-raise": { "es": { "name": "Elevación de pierna tumbado de lado" } },
+    "side-lying-hip-abduction": {
+      "es": {
+        "name": "Abducción de cadera tumbado de lado",
+        "coachingSummary": "Acuéstate de lado con una cadera sobre la otra. Eleva la pierna de arriba con la rodilla extendida y bájala sin girar hacia atrás."
+      },
+      "en": {
+        "name": "Side-Lying Hip Abduction",
+        "coachingSummary": "Lie on your side with your hips stacked. Lift your top leg with the knee straight, then lower it without rolling back."
+      }
+    },
+    "side-lying-leg-raise": {
+      "es": {
+        "name": "Elevación de pierna tumbado de lado",
+        "coachingSummary": "Acuéstate de lado con una pierna sobre la otra. Eleva la pierna de arriba sin flexionarla y luego bájala despacio."
+      },
+      "en": {
+        "name": "Side-Lying Leg Raise",
+        "coachingSummary": "Lie on your side with your legs stacked. Raise the top leg, keeping it straight, then lower it smoothly."
+      }
+    },
     "side-plank": {
       "es": {
         "name": "Plancha lateral",
-        "coachingSummary": "Acuéstate de lado, apóyate sobre un antebrazo y el canto del pie y levanta la cadera. Mantén la posición respirando de forma constante."
+        "coachingSummary": "Apóyate sobre un antebrazo y el borde del pie de abajo. Eleva la cadera y mantén el cuerpo en línea recta de la cabeza a los pies."
+      },
+      "en": {
+        "name": "Side Plank",
+        "coachingSummary": "Support yourself on one forearm and the side of your lower foot. Lift your hips and hold a straight line from head to feet."
       }
     },
-    "side-plank-hip-dip": { "es": { "name": "Plancha lateral con descenso de cadera" } },
-    "single-arm-cable-row": { "es": { "name": "Remo a una mano en polea" } },
-    "single-arm-dumbbell-tricep-extension": { "es": { "name": "Extensión de tríceps a una mano con mancuerna" } },
-    "single-dumbbell-skullcrusher": { "es": { "name": "Extensión de tríceps con una mancuerna" } },
-    "single-leg-box-squat": { "es": { "name": "Sentadilla a una pierna al cajón" } },
+    "side-plank-hip-dip": {
+      "es": {
+        "name": "Plancha lateral con descenso de cadera",
+        "coachingSummary": "Colócate en plancha lateral sobre el antebrazo con un pie sobre el otro. Baja la cadera hacia el suelo y elévala hasta alinear el cuerpo de nuevo."
+      },
+      "en": {
+        "name": "Side Plank Hip Dip",
+        "coachingSummary": "Start in a forearm side plank with your feet stacked. Lower your hips toward the floor, then lift them back into line."
+      }
+    },
+    "single-arm-cable-row": {
+      "es": {
+        "name": "Remo a una mano en polea",
+        "coachingSummary": "Colócate frente a la polea con el agarre en una mano. Lleva el codo hacia atrás junto al cuerpo y vuelve a extender el brazo sin girar el torso."
+      },
+      "en": {
+        "name": "Single-Arm Cable Row",
+        "coachingSummary": "Face the cable with the handle in one hand. Pull your elbow back alongside your body, then extend the arm while keeping your torso steady."
+      }
+    },
+    "single-arm-dumbbell-tricep-extension": {
+      "es": {
+        "name": "Extensión de tríceps a una mano con mancuerna",
+        "coachingSummary": "Ponte de pie con una mancuerna sobre la cabeza. Mantén el codo hacia arriba al bajar la mancuerna detrás de la cabeza y vuelve a extender el brazo."
+      },
+      "en": {
+        "name": "Single Arm Dumbbell Tricep Extension",
+        "coachingSummary": "Stand with one dumbbell overhead. Point your elbow up as you lower the dumbbell behind your head, then straighten your arm."
+      }
+    },
+    "single-dumbbell-skullcrusher": {
+      "es": {
+        "name": "Extensión de tríceps con una mancuerna",
+        "coachingSummary": "Acuéstate en un banco plano y sostén una mancuerna arriba con ambas manos. Flexiona y extiende los codos para bajar la mancuerna hacia la cabeza y volver a subirla."
+      },
+      "en": {
+        "name": "Single Dumbbell Skullcrusher",
+        "coachingSummary": "Lie on a flat bench and hold one dumbbell above you in both hands. Bend and straighten your elbows to lower and raise the dumbbell near your head."
+      }
+    },
+    "single-leg-box-squat": {
+      "es": {
+        "name": "Sentadilla a una pierna al cajón",
+        "coachingSummary": "Ponte de pie sobre una pierna con un cajón detrás y la pierna libre al frente. Baja hasta tocar el cajón y vuelve a levantarte sobre la misma pierna."
+      },
+      "en": {
+        "name": "Single-Leg Box Squat",
+        "coachingSummary": "Stand in front of a box on one leg with your free leg reaching forward. Lower until you touch the box, then stand back up on the same leg."
+      }
+    },
     "single-leg-calf-raise": {
       "es": {
         "name": "Elevación de talones a una pierna",
-        "coachingSummary": "Elevación de talones de una pierna a la vez, que añade carga sin necesidad de equipo."
+        "coachingSummary": "Ponte de pie sobre un pie y usa un apoyo firme para mantener el equilibrio. Eleva el talón y bájalo despacio."
+      },
+      "en": {
+        "name": "Single-Leg Calf Raise",
+        "coachingSummary": "Stand on one foot and use a stable support for balance. Lift your heel, then lower it slowly."
       }
     },
     "single-leg-glute-bridge": {
       "es": {
         "name": "Puente de glúteos a una pierna",
-        "coachingSummary": "Puente impulsado por una pierna a la vez, que añade carga sin necesidad de equipo."
+        "coachingSummary": "Acuéstate boca arriba con un pie apoyado y la otra pierna extendida. Empuja con el pie apoyado para elevar la cadera y vuelve a bajarla."
+      },
+      "en": {
+        "name": "Single-Leg Glute Bridge",
+        "coachingSummary": "Lie on your back with one foot planted and the other leg extended. Press through the planted foot to lift your hips, then lower them."
       }
     },
     "single-leg-romanian-deadlift": {
       "es": {
         "name": "Peso muerto rumano a una pierna",
-        "coachingSummary": "Bisagra unilateral que entrena los isquiotibiales y además exige equilibrio."
+        "coachingSummary": "Sujeta una mancuerna y mantén el equilibrio sobre una pierna. Inclínate desde la cadera mientras extiendes la pierna libre hacia atrás y vuelve a enderezarte."
+      },
+      "en": {
+        "name": "Single-Leg Romanian Deadlift",
+        "coachingSummary": "Hold a dumbbell and balance on one leg. Hinge at the hip as your free leg reaches behind you, then return to standing."
       }
     },
-    "sissy-squat": { "es": { "name": "Sentadilla sissy" } },
-    "skater-hop": { "es": { "name": "Salto de patinador" } },
-    "skater-squat": { "es": { "name": "Sentadilla de patinador" } },
-    "skierg": { "es": { "name": "SkiErg" } },
+    "sissy-squat": {
+      "es": {
+        "name": "Sentadilla sissy",
+        "coachingSummary": "Coloca los pies bajo el soporte de la máquina. Flexiona las rodillas e inclínate hacia atrás en línea recta desde las rodillas hasta los hombros, luego vuelve a enderezarte."
+      },
+      "en": {
+        "name": "Sissy Squat",
+        "coachingSummary": "Set your feet under the brace of a sissy squat station. Bend your knees as you lean back in a line from knees to shoulders, then stand upright."
+      }
+    },
+    "skater-hop": {
+      "es": {
+        "name": "Salto de patinador",
+        "coachingSummary": "Impúlsate con un pie y salta hacia un lado. Aterriza sobre el otro pie con la rodilla ligeramente flexionada y salta de vuelta."
+      },
+      "en": {
+        "name": "Skater Hop",
+        "coachingSummary": "Push off one foot and hop sideways. Land on the opposite foot with a soft knee, then hop back the other way."
+      }
+    },
+    "skater-squat": {
+      "es": {
+        "name": "Sentadilla de patinador",
+        "coachingSummary": "Mantén el equilibrio sobre una pierna con la otra flexionada detrás. Baja flexionando la pierna de apoyo y empuja con ese pie para volver a subir. La animación incluye posiciones de sentadilla con los dos pies apoyados."
+      },
+      "en": {
+        "name": "Skater Squat",
+        "coachingSummary": "Balance on one leg with the other knee bent behind you. Squat toward the floor on the standing leg, then push through that foot to rise. The animation includes two-footed squat positions."
+      }
+    },
+    "skierg": {
+      "es": {
+        "name": "SkiErg",
+        "coachingSummary": "Ponte frente al SkiErg y toma ambos agarres arriba. Tira de ellos hacia abajo hasta pasar la cadera mientras te inclinas un poco, luego llévalos de nuevo arriba."
+      },
+      "en": {
+        "name": "SkiErg",
+        "coachingSummary": "Stand facing the SkiErg and reach up for both handles. Pull them down past your hips as you bend slightly, then reach up again."
+      }
+    },
     "skull-crusher": {
       "es": {
         "name": "Extensión de tríceps tumbado",
-        "aliases": ["Rompecráneos"],
-        "coachingSummary": "Extensión de codo tumbado que mantiene los brazos quietos mientras la barra pasa por detrás de la cabeza."
+        "aliases": [
+          "Rompecráneos"
+        ],
+        "coachingSummary": "Acuéstate en un banco plano y sostén la barra arriba. Flexiona los codos para bajarla hacia la cabeza y vuelve a extenderlos sin mover la parte superior de los brazos."
+      },
+      "en": {
+        "name": "Skull Crusher",
+        "coachingSummary": "Lie on a flat bench holding the barbell above you. Bend your elbows to lower the bar toward your head, then extend them while keeping your upper arms still."
       }
     },
-    "smith-machine-bench-press": { "es": { "name": "Press de banca en multipower" } },
-    "smith-machine-bulgarian-split-squat": { "es": { "name": "Sentadilla búlgara en multipower" } },
-    "smith-machine-hip-thrust": { "es": { "name": "Empuje de cadera en multipower" } },
-    "smith-machine-reverse-lunge": { "es": { "name": "Zancada atrás en multipower" } },
-    "smith-machine-romanian-deadlift": { "es": { "name": "Peso muerto rumano en multipower" } },
-    "smith-machine-split-squat": { "es": { "name": "Sentadilla dividida en multipower" } },
-    "smith-machine-squat": { "es": { "name": "Sentadilla en multipower" } },
-    "spider-curl": { "es": { "name": "Curl araña" } },
-    "split-squat": { "es": { "name": "Sentadilla dividida" } },
-    "sprawl": { "es": { "name": "Sprawl" } },
-    "squat-thrust": { "es": { "name": "Sentadilla con empuje de piernas" } },
-    "stability-ball-hamstring-curl": { "es": { "name": "Curl femoral con balón" } },
-    "stair-climber": { "es": { "name": "Escaladora" } },
+    "smith-machine-bench-press": {
+      "es": {
+        "name": "Press de banca en multipower",
+        "coachingSummary": "Acuéstate en un banco plano debajo de la barra del multipower. Baja la barra por los rieles hasta el pecho y empújala hacia arriba."
+      },
+      "en": {
+        "name": "Smith Machine Bench Press",
+        "coachingSummary": "Lie on a flat bench beneath the Smith machine bar. Lower the bar to your chest along the rails, then press it back up."
+      }
+    },
+    "smith-machine-bulgarian-split-squat": {
+      "es": {
+        "name": "Sentadilla búlgara en multipower",
+        "coachingSummary": "Apoya la barra del multipower en la parte alta de la espalda y coloca el pie trasero en un banco. Flexiona la rodilla delantera para bajar y empuja con ese pie para subir."
+      },
+      "en": {
+        "name": "Smith Machine Bulgarian Split Squat",
+        "coachingSummary": "Rest the Smith machine bar across your upper back and place your rear foot on a bench. Bend your front knee to lower, then push through your front foot to rise."
+      }
+    },
+    "smith-machine-hip-thrust": {
+      "es": {
+        "name": "Empuje de cadera en multipower",
+        "coachingSummary": "Apoya la parte alta de la espalda en un banco y coloca la barra del multipower sobre la cadera. Con los pies apoyados, eleva la cadera guiando la barra por los rieles y bájala."
+      },
+      "en": {
+        "name": "Smith Machine Hip Thrust",
+        "coachingSummary": "Rest your upper back on a bench with the Smith machine bar across your hips. With your feet planted, lift your hips along the rails, then lower them."
+      }
+    },
+    "smith-machine-reverse-lunge": {
+      "es": {
+        "name": "Zancada atrás en multipower",
+        "coachingSummary": "Apoya la barra del multipower en la parte alta de la espalda y da un paso hacia atrás. Flexiona ambas rodillas y empuja con el pie delantero para levantarte y juntar los pies."
+      },
+      "en": {
+        "name": "Smith Machine Reverse Lunge",
+        "coachingSummary": "Rest the Smith machine bar across your upper back and step back with one foot. Bend both knees, then push through the front foot to stand and bring your feet together."
+      }
+    },
+    "smith-machine-romanian-deadlift": {
+      "es": {
+        "name": "Peso muerto rumano en multipower",
+        "coachingSummary": "Sujeta la barra del multipower frente a los muslos. Lleva la cadera hacia atrás y baja la barra cerca de las piernas con las rodillas ligeramente flexionadas, luego vuelve a enderezarte."
+      },
+      "en": {
+        "name": "Smith Machine Romanian Deadlift",
+        "coachingSummary": "Hold the Smith machine bar in front of your thighs. Push your hips back and lower the bar close to your legs with a slight knee bend, then stand tall."
+      }
+    },
+    "smith-machine-split-squat": {
+      "es": {
+        "name": "Sentadilla dividida en multipower",
+        "coachingSummary": "Colócate con un pie delante del otro y la barra del multipower sobre la parte alta de la espalda. Mantén ambos pies en su sitio al flexionar las rodillas y volver a enderezarte."
+      },
+      "en": {
+        "name": "Smith Machine Split Squat",
+        "coachingSummary": "Stand with one foot in front of the other and the Smith machine bar across your upper back. Keep both feet in place as you bend your knees and straighten up."
+      }
+    },
+    "smith-machine-squat": {
+      "es": {
+        "name": "Sentadilla en multipower",
+        "coachingSummary": "Coloca la barra del multipower sobre la parte alta de la espalda. Flexiona la cadera y las rodillas para bajar por los rieles y empuja con ambos pies para levantarte."
+      },
+      "en": {
+        "name": "Smith Machine Squat",
+        "coachingSummary": "Stand with the Smith machine bar across your upper back. Bend your hips and knees to lower along the rails, then press through both feet to stand."
+      }
+    },
+    "spider-curl": {
+      "es": {
+        "name": "Curl araña",
+        "coachingSummary": "Apoya el pecho en un banco inclinado con una mancuerna en cada mano y los brazos colgando. Flexiona y extiende los codos sin mover la parte superior de los brazos. La animación muestra un curl en banco Scott."
+      },
+      "en": {
+        "name": "Spider Curl",
+        "coachingSummary": "Lie chest down on an inclined bench with a dumbbell in each hand and your arms hanging. Keep your upper arms still as you bend and straighten your elbows. The animation shows a preacher curl."
+      }
+    },
+    "split-squat": {
+      "es": {
+        "name": "Sentadilla dividida",
+        "coachingSummary": "Sujeta las mancuernas a los lados con un pie delante y otro detrás. Mantén los pies en su sitio al flexionar ambas rodillas y volver a subir."
+      },
+      "en": {
+        "name": "Split Squat",
+        "coachingSummary": "Hold dumbbells at your sides with one foot forward and one back. Keep your feet in place as you bend both knees and rise again."
+      }
+    },
+    "sprawl": {
+      "es": {
+        "name": "Sprawl",
+        "coachingSummary": "Agáchate y apoya ambas manos en el suelo. Lleva las piernas hacia atrás y baja la cadera, luego vuelve a recoger los pies bajo el cuerpo."
+      },
+      "en": {
+        "name": "Sprawl",
+        "coachingSummary": "Crouch and plant both hands on the floor. Drive your legs back and lower your hips, then bring your feet back under you."
+      }
+    },
+    "squat-thrust": {
+      "es": {
+        "name": "Sentadilla con empuje de piernas",
+        "coachingSummary": "Desde una posición agachada con las manos en el suelo, lleva ambos pies hacia atrás hasta quedar en plancha alta. Acerca los pies a las manos para volver a agacharte."
+      },
+      "en": {
+        "name": "Squat Thrust",
+        "coachingSummary": "From a crouch with your hands on the floor, send both feet back into a high plank. Bring your feet forward to return to the crouch."
+      }
+    },
+    "stability-ball-hamstring-curl": {
+      "es": {
+        "name": "Curl femoral con balón",
+        "coachingSummary": "Acuéstate boca arriba con los talones sobre el balón y eleva la cadera. Flexiona las rodillas para acercar el balón y vuelve a extender las piernas. La animación muestra una flexión de rodillas sobre el balón en posición boca abajo."
+      },
+      "en": {
+        "name": "Stability Ball Hamstring Curl",
+        "coachingSummary": "Lie on your back with your heels on the ball and lift your hips. Bend your knees to roll the ball toward you, then extend your legs. The animation shows a face-down ball tuck."
+      }
+    },
+    "stair-climber": {
+      "es": {
+        "name": "Escaladora",
+        "coachingSummary": "Sube los peldaños de la máquina de forma continua y usa las barandillas para mantener el equilibrio."
+      },
+      "en": {
+        "name": "Stair Climber",
+        "coachingSummary": "Step continuously on the moving stairs, using the rails for balance."
+      }
+    },
     "standing-calf-raise": {
       "es": {
         "name": "Elevación de talones de pie",
-        "coachingSummary": "Elevación de talones de pie con carga, con sesgo hacia el gemelo."
+        "coachingSummary": "Apoya la parte delantera de los pies en la plataforma y coloca los hombros bajo las almohadillas. Eleva y baja los talones de forma controlada."
+      },
+      "en": {
+        "name": "Standing Calf Raise",
+        "coachingSummary": "Stand with the balls of your feet on the machine platform and your shoulders under the pads. Raise and lower your heels with control."
       }
     },
     "standing-dumbbell-press": {
       "es": {
         "name": "Press de pie con mancuernas",
-        "coachingSummary": "Press de mancuernas de pie por encima de la cabeza, con trayectoria independiente por brazo y el tronco firme."
+        "coachingSummary": "Ponte de pie con una mancuerna a la altura de cada hombro. Empuja ambas sobre la cabeza y bájalas hasta la altura de los hombros."
+      },
+      "en": {
+        "name": "Standing Dumbbell Press",
+        "coachingSummary": "Stand with a dumbbell at each shoulder. Press both overhead, then lower them back to shoulder height."
       }
     },
-    "standing-quad-stretch": { "es": { "name": "Estiramiento de cuádriceps de pie" } },
-    "step-down": { "es": { "name": "Descenso del cajón" } },
+    "standing-quad-stretch": {
+      "es": {
+        "name": "Estiramiento de cuádriceps de pie",
+        "coachingSummary": "Ponte de pie sobre una pierna y sujeta el otro tobillo detrás del cuerpo. Mantén las rodillas cerca una de otra y sostén el estiramiento."
+      },
+      "en": {
+        "name": "Standing Quad Stretch",
+        "coachingSummary": "Stand on one leg and hold the other ankle behind you. Keep your knees near each other and hold the stretch."
+      }
+    },
+    "step-down": {
+      "es": {
+        "name": "Descenso del cajón",
+        "coachingSummary": "Ponte de pie sobre un cajón con un pie cerca del borde. Flexiona esa rodilla para bajar el otro pie hacia el suelo y luego extiende la pierna de apoyo."
+      },
+      "en": {
+        "name": "Step-Down",
+        "coachingSummary": "Stand on a box with one foot near the edge. Bend that knee to lower your free foot toward the floor, then straighten the standing leg."
+      }
+    },
     "step-up": {
       "es": {
         "name": "Subida al cajón",
-        "coachingSummary": "Subida unilateral a un cajón, empujando con la pierna que trabaja."
+        "coachingSummary": "Sujeta una mancuerna a cada lado y coloca un pie sobre un banco. Empuja con ese pie para subir y baja de forma controlada."
+      },
+      "en": {
+        "name": "Step-Up",
+        "coachingSummary": "Hold a dumbbell at each side and place one foot on a bench. Push through that foot to step up, then step back down with control."
       }
     },
     "straight-arm-pulldown": {
       "es": {
         "name": "Jalón con brazos rectos",
-        "coachingSummary": "Aislamiento de dorsales que baja la barra manteniendo los codos casi estirados."
+        "coachingSummary": "Colócate frente a una polea alta con la barra delante de ti. Mantén los codos casi extendidos al bajar la barra hasta los muslos y volver a subirla."
+      },
+      "en": {
+        "name": "Straight-Arm Pulldown",
+        "coachingSummary": "Face a high cable and hold the bar in front of you. Keep your elbows nearly straight as you pull the bar to your thighs and return it."
       }
     },
     "sumo-deadlift": {
       "es": {
         "name": "Peso muerto sumo",
-        "coachingSummary": "Peso muerto con base amplia y un torso más erguido que en el peso muerto convencional."
+        "coachingSummary": "Separa bien los pies con las puntas hacia fuera y toma la barra del suelo con las manos entre las rodillas. Ponte de pie y vuelve a bajar la barra al suelo."
+      },
+      "en": {
+        "name": "Sumo Deadlift",
+        "coachingSummary": "Stand wide with your toes angled out and grip the barbell from the floor with your hands inside your knees. Stand tall, then lower the bar back to the floor."
       }
     },
     "superman": {
       "es": {
         "name": "Superman",
-        "coachingSummary": "Elevación de brazos y piernas boca abajo: trabajo de poca carga para los erectores espinales."
+        "coachingSummary": "Acuéstate boca abajo con los brazos extendidos por encima de la cabeza. Eleva los brazos y las piernas del suelo y vuelve a bajarlos."
+      },
+      "en": {
+        "name": "Superman",
+        "coachingSummary": "Lie face down with your arms reaching overhead. Lift your arms and legs off the floor, then lower them back down."
       }
     },
     "superman-hold": {
       "es": {
         "name": "Sostén superman",
-        "coachingSummary": "Acuéstate boca abajo con los brazos estirados. Eleva un poco brazos y piernas del suelo y mantén la posición mientras respiras."
+        "coachingSummary": "Acuéstate boca abajo con los brazos extendidos por encima de la cabeza. Eleva un poco los brazos y las piernas del suelo y mantén la posición."
+      },
+      "en": {
+        "name": "Superman Hold",
+        "coachingSummary": "Lie face down with your arms reaching overhead. Lift your arms and legs slightly off the floor and hold."
       }
     },
-    "swimming": { "es": { "name": "Natación" } },
-    "t-bar-row": { "es": { "name": "Remo en T" } },
-    "toe-touch": { "es": { "name": "Toque de puntas" } },
-    "torso-twist-stretch": { "es": { "name": "Giros de torso" } },
-    "towel-hamstring-curl": { "es": { "name": "Curl femoral con toalla" } },
-    "towel-pull-up": { "es": { "name": "Dominada con toalla" } },
-    "towel-row": { "es": { "name": "Remo con toalla" } },
+    "swimming": {
+      "es": {
+        "name": "Natación",
+        "coachingSummary": "Avanza en el agua coordinando las brazadas y la patada con la respiración. La animación muestra una máquina de entrenamiento en seco."
+      },
+      "en": {
+        "name": "Swimming",
+        "coachingSummary": "Move through the water by coordinating your strokes, kicks, and breathing. The animation shows a dry-land machine."
+      }
+    },
+    "t-bar-row": {
+      "es": {
+        "name": "Remo en T",
+        "coachingSummary": "Colócate sobre la plataforma de remo en T e inclínate desde la cadera para tomar el agarre. Acércalo al torso y luego extiende los brazos."
+      },
+      "en": {
+        "name": "T-Bar Row",
+        "coachingSummary": "Stand on the T-bar row platform and hinge at your hips to grip the handle. Pull it toward your torso, then extend your arms."
+      }
+    },
+    "toe-touch": {
+      "es": {
+        "name": "Toque de puntas",
+        "coachingSummary": "Acuéstate boca arriba con las piernas extendidas hacia arriba. Despega los hombros del suelo para acercar las manos a los pies y baja despacio. La animación muestra una flexión del torso hacia delante en posición de pie."
+      },
+      "en": {
+        "name": "Toe Touch",
+        "coachingSummary": "Lie on your back with your legs extended upward. Curl your shoulders off the floor to reach toward your toes, then lower slowly. The animation shows a standing forward fold."
+      }
+    },
+    "torso-twist-stretch": {
+      "es": {
+        "name": "Giros de torso",
+        "coachingSummary": "Siéntate con la espalda erguida y gira suavemente la parte superior del cuerpo hacia un lado sin mover la cadera. Mantén el estiramiento y cambia de lado. La animación muestra un giro sentado con un disco de peso."
+      },
+      "en": {
+        "name": "Torso Twists",
+        "coachingSummary": "Sit upright and gently turn your upper body to one side while keeping your hips still. Hold the stretch, then switch sides. The animation shows a seated twist with a weight plate."
+      }
+    },
+    "towel-hamstring-curl": {
+      "es": {
+        "name": "Curl femoral con toalla",
+        "coachingSummary": "Acuéstate boca arriba con los talones sobre una toalla que se deslice por el suelo. Eleva la cadera, acerca los talones y vuelve a alejarlos. La animación muestra un estiramiento de isquiotibiales con una toalla."
+      },
+      "en": {
+        "name": "Towel Hamstring Curl",
+        "coachingSummary": "Lie on your back with your heels on a towel that can slide along the floor. Lift your hips, pull your heels in, then slide them back out. The animation shows a hamstring stretch with a towel."
+      }
+    },
+    "towel-pull-up": {
+      "es": {
+        "name": "Dominada con toalla",
+        "coachingSummary": "Sujeta los dos extremos de una toalla pasada por encima de una barra de dominadas. Sube flexionando los codos y baja de forma controlada."
+      },
+      "en": {
+        "name": "Towel Pull-up",
+        "coachingSummary": "Grip the two ends of a towel looped over a pull-up bar. Pull your body up by bending your elbows, then lower under control."
+      }
+    },
+    "towel-row": {
+      "es": {
+        "name": "Remo con toalla",
+        "coachingSummary": "Sujeta la toalla con ambas manos frente a ti. Mantenla tensa al llevar los codos hacia las costillas y vuelve a extender los brazos."
+      },
+      "en": {
+        "name": "Towel Row",
+        "coachingSummary": "Hold the towel with both hands in front of you. Keep it taut as you draw your elbows toward your ribs, then extend your arms again."
+      }
+    },
     "trap-bar-deadlift": {
       "es": {
         "name": "Peso muerto con barra hexagonal",
-        "coachingSummary": "Peso muerto con barra hexagonal y agarres neutros, que suele ser más llevadero para la zona lumbar."
+        "coachingSummary": "Colócate dentro de la barra hexagonal y toma las asas a los lados. Empuja con ambos pies para levantarte y flexiona la cadera y las rodillas para bajar la barra."
+      },
+      "en": {
+        "name": "Trap Bar Deadlift",
+        "coachingSummary": "Stand inside the trap bar and grip the handles at your sides. Push through both feet to stand, then bend at the hips and knees to lower the bar."
       }
     },
-    "treadmill-incline-walk": { "es": { "name": "Caminata inclinada en cinta" } },
-    "tricep-kickback": { "es": { "name": "Patada de tríceps" } },
-    "typewriter-push-up": { "es": { "name": "Flexión de máquina de escribir" } },
-    "upright-row": { "es": { "name": "Remo al mentón" } },
+    "treadmill-incline-walk": {
+      "es": {
+        "name": "Caminata inclinada en cinta",
+        "coachingSummary": "Camina en la cinta con la plataforma inclinada y mantén un paso uniforme."
+      },
+      "en": {
+        "name": "Treadmill Incline Walk",
+        "coachingSummary": "Walk on the treadmill with the deck inclined, keeping an even stride."
+      }
+    },
+    "tricep-kickback": {
+      "es": {
+        "name": "Patada de tríceps",
+        "coachingSummary": "Apoya una mano y una rodilla en un banco y sujeta una mancuerna con la mano libre. Extiende y flexiona el codo sin mover la parte superior del brazo."
+      },
+      "en": {
+        "name": "Tricep Kickback",
+        "coachingSummary": "Support one hand and knee on a bench and hold a dumbbell in your free hand. Keep that upper arm still as you straighten and bend your elbow."
+      }
+    },
+    "typewriter-push-up": {
+      "es": {
+        "name": "Flexión de máquina de escribir",
+        "coachingSummary": "Empieza en posición de flexión con las manos separadas y baja el pecho. Mantén el cuerpo bajo mientras desplazas el peso de una mano hacia la otra."
+      },
+      "en": {
+        "name": "Typewriter Push-up",
+        "coachingSummary": "Start in a wide push-up and lower your chest. Stay low as you shift your body weight from one hand toward the other."
+      }
+    },
+    "upright-row": {
+      "es": {
+        "name": "Remo al mentón",
+        "coachingSummary": "Ponte de pie con la barra frente a los muslos. Guía el movimiento con los codos para subir la barra cerca del torso y luego bájala."
+      },
+      "en": {
+        "name": "Upright Row",
+        "coachingSummary": "Stand holding a barbell in front of your thighs. Lead with your elbows to lift the bar close to your torso, then lower it."
+      }
+    },
     "v-up": {
       "es": {
         "name": "V-up",
-        "coachingSummary": "Elevación simultánea de piernas y torso que se encuentran sobre la cadera."
+        "coachingSummary": "Acuéstate boca arriba con las piernas extendidas. Eleva el torso y las piernas a la vez hasta formar una V y bájalos de forma controlada."
+      },
+      "en": {
+        "name": "V-Up",
+        "coachingSummary": "Lie on your back with your legs extended. Lift your torso and legs together into a V, then lower them under control."
       }
     },
-    "walking": { "es": { "name": "Caminar" } },
+    "walking": {
+      "es": {
+        "name": "Caminar",
+        "coachingSummary": "Camina en la cinta sin inclinación con un paso natural y constante."
+      },
+      "en": {
+        "name": "Walking",
+        "coachingSummary": "Walk on the flat treadmill with a steady, natural stride."
+      }
+    },
     "walking-lunge": {
       "es": {
         "name": "Zancada caminando",
-        "coachingSummary": "Zancadas frontales alternas que avanzan por el suelo."
+        "coachingSummary": "Sujeta una mancuerna en cada mano y da un paso al frente para hacer una zancada. Empuja con el pie delantero para subir y da el siguiente paso con la otra pierna."
+      },
+      "en": {
+        "name": "Walking Lunge",
+        "coachingSummary": "Hold a dumbbell in each hand and step forward into a lunge. Push through your front foot to rise and take the next step with the other leg."
       }
     },
-    "wall-calf-stretch": { "es": { "name": "Estiramiento de pantorrilla en pared" } },
-    "wall-handstand-push-up": { "es": { "name": "Flexión en pino contra la pared" } },
+    "wall-calf-stretch": {
+      "es": {
+        "name": "Estiramiento de pantorrilla en pared",
+        "coachingSummary": "Apoya ambas manos en la pared y lleva un pie hacia atrás. Flexiona la rodilla delantera y mantén el talón trasero en el suelo durante el estiramiento."
+      },
+      "en": {
+        "name": "Wall Calf Stretch",
+        "coachingSummary": "Place both hands on the wall and step one foot back. Bend your front knee and keep your back heel down as you hold the stretch."
+      }
+    },
+    "wall-handstand-push-up": {
+      "es": {
+        "name": "Flexión en pino contra la pared",
+        "coachingSummary": "Colócate en posición invertida sobre las manos con los pies contra la pared. Flexiona los codos para acercar la cabeza al suelo y empújate hacia arriba."
+      },
+      "en": {
+        "name": "Wall Handstand Push-up",
+        "coachingSummary": "Start in a handstand with your feet against a wall. Bend your elbows to lower your head toward the floor, then press back up."
+      }
+    },
     "wall-push-up": {
       "es": {
         "name": "Flexión en pared",
-        "coachingSummary": "Flexión de pie contra una pared: la entrada con menos carga al empuje horizontal."
+        "coachingSummary": "Ponte frente a la pared con las manos apoyadas a la altura de los hombros. Flexiona los codos para acercar el pecho a la pared y empuja para alejarte."
+      },
+      "en": {
+        "name": "Wall Push-up",
+        "coachingSummary": "Stand facing a wall with your hands against it at shoulder height. Bend your elbows to bring your chest closer to the wall, then push away."
       }
     },
     "wall-sit": {
       "es": {
         "name": "Sentadilla isométrica en pared",
-        "coachingSummary": "Apoya la espalda en una pared y flexiona las rodillas hasta una posición que puedas sostener. Mantén los pies apoyados y conserva esa posición durante toda la serie."
+        "coachingSummary": "Apoya la espalda en la pared y deslízate hacia abajo flexionando las rodillas. Mantén los pies apoyados y sostén la posición."
+      },
+      "en": {
+        "name": "Wall Sit",
+        "coachingSummary": "Lean your back against a wall and slide down by bending your knees. Keep your feet planted and hold the position."
       }
     },
-    "wall-walk": { "es": { "name": "Caminata en pared" } },
-    "weighted-chin-up": { "es": { "name": "Dominada supina con lastre" } },
-    "weighted-crunch": { "es": { "name": "Crunch con lastre" } },
-    "weighted-dip": { "es": { "name": "Fondo con lastre" } },
-    "weighted-pull-up": { "es": { "name": "Dominada con lastre" } },
+    "wall-walk": {
+      "es": {
+        "name": "Caminata en pared",
+        "coachingSummary": "Empieza con las manos en el suelo y los pies al pie de la pared. Sube los pies por la pared mientras acercas las manos y luego vuelve por el mismo recorrido."
+      },
+      "en": {
+        "name": "Wall Walk",
+        "coachingSummary": "Start with your hands on the floor and your feet at the base of the wall. Walk your feet up the wall as your hands move toward it, then reverse the motion."
+      }
+    },
+    "weighted-chin-up": {
+      "es": {
+        "name": "Dominada supina con lastre",
+        "coachingSummary": "Cuélgate de la barra con las palmas hacia ti y un disco suspendido de un cinturón de lastre. Sube hasta que la barbilla supere la barra y baja de forma controlada."
+      },
+      "en": {
+        "name": "Weighted Chin-up",
+        "coachingSummary": "Hang from the bar with palms facing you and a plate suspended from a dip belt. Pull your chin above the bar, then lower with control."
+      }
+    },
+    "weighted-crunch": {
+      "es": {
+        "name": "Crunch con lastre",
+        "coachingSummary": "Acuéstate boca arriba con las rodillas flexionadas y sujeta un disco contra el pecho. Despega los hombros del suelo flexionando el torso y vuelve a bajarlos."
+      },
+      "en": {
+        "name": "Weighted Crunch",
+        "coachingSummary": "Lie on your back with your knees bent and hold a plate against your chest. Curl your shoulders off the floor, then lower them."
+      }
+    },
+    "weighted-dip": {
+      "es": {
+        "name": "Fondo con lastre",
+        "coachingSummary": "Apóyate en las barras paralelas con un disco suspendido de un cinturón de lastre. Flexiona los codos para bajar el cuerpo y empuja para volver a subir."
+      },
+      "en": {
+        "name": "Weighted Dip",
+        "coachingSummary": "Support yourself on parallel bars with a plate suspended from a dip belt. Bend your elbows to lower your body, then press back up."
+      }
+    },
+    "weighted-pull-up": {
+      "es": {
+        "name": "Dominada con lastre",
+        "coachingSummary": "Cuélgate de la barra con las palmas hacia delante y un disco suspendido de un cinturón de lastre. Sube hasta que la barbilla supere la barra y baja de forma controlada."
+      },
+      "en": {
+        "name": "Weighted Pull-up",
+        "coachingSummary": "Hang from the bar with palms facing away and a plate suspended from a dip belt. Pull your chin above the bar, then lower with control."
+      }
+    },
     "weighted-push-up": {
       "es": {
         "name": "Flexión con lastre",
-        "coachingSummary": "Flexión cargada con peso externo cuando las repeticiones con peso corporal dejan de suponer un reto."
+        "coachingSummary": "Con un disco asegurado sobre la parte alta de la espalda, colócate en plancha alta. Mantén el cuerpo recto al bajar el pecho y empujarte de nuevo hacia arriba."
+      },
+      "en": {
+        "name": "Weighted Push-up",
+        "coachingSummary": "With a plate secured across your upper back, start in a high plank. Keep your body straight as you lower your chest and press back up."
       }
     },
-    "weighted-russian-twist": { "es": { "name": "Giro ruso con lastre" } },
+    "weighted-russian-twist": {
+      "es": {
+        "name": "Giro ruso con lastre",
+        "coachingSummary": "Siéntate con las rodillas flexionadas e inclínate un poco hacia atrás con una mancuerna en ambas manos. Gira el torso para llevar la mancuerna de un lado al otro."
+      },
+      "en": {
+        "name": "Weighted Russian Twist",
+        "coachingSummary": "Sit with your knees bent and lean back slightly, holding a dumbbell with both hands. Rotate your torso to move the dumbbell from side to side."
+      }
+    },
     "wide-grip-lat-pulldown": {
       "es": {
         "name": "Jalón al pecho agarre ancho",
-        "coachingSummary": "Jalón con agarre ancho que enfatiza los dorsales en una trayectoria de tirón vertical."
+        "coachingSummary": "Siéntate con los muslos bajo la almohadilla y agarra la barra con las manos bien separadas. Baja la barra hacia la parte alta del pecho y vuelve a extender los brazos hacia arriba."
+      },
+      "en": {
+        "name": "Wide-Grip Lat Pulldown",
+        "coachingSummary": "Sit with your thighs under the pad and take a wide grip on the bar. Pull it toward your upper chest, then extend your arms overhead."
       }
     },
     "wide-push-up": {
       "es": {
         "name": "Flexión con manos anchas",
-        "coachingSummary": "Flexión con las manos más separadas, que desplaza el énfasis hacia el pecho."
+        "coachingSummary": "Adopta una plancha alta con las manos más separadas que los hombros. Flexiona los codos para bajar el pecho y empuja para volver a subir."
+      },
+      "en": {
+        "name": "Wide Push-up",
+        "coachingSummary": "Start in a high plank with your hands wider than your shoulders. Bend your elbows to lower your chest, then press back up."
       }
     },
-    "worlds-greatest-stretch": { "es": { "name": "El mejor estiramiento del mundo" } },
+    "worlds-greatest-stretch": {
+      "es": {
+        "name": "El mejor estiramiento del mundo",
+        "coachingSummary": "Da una zancada profunda y apoya una mano en el suelo por dentro del pie delantero. Gira el pecho y eleva el otro brazo, luego bájalo y cambia de lado."
+      },
+      "en": {
+        "name": "World's Greatest Stretch",
+        "coachingSummary": "Take a deep lunge and plant a hand just inside your front foot. Rotate your chest and reach the other arm up, then lower it and switch sides."
+      }
+    },
     "wrist-curl": {
       "es": {
         "name": "Curl de muñeca",
-        "coachingSummary": "Flexión de muñeca contra carga: trabajo directo para los flexores del antebrazo y el agarre."
+        "coachingSummary": "Sujeta una barra frente a los muslos. Mantén los antebrazos quietos y flexiona las muñecas para elevar un poco la barra, luego bájala."
+      },
+      "en": {
+        "name": "Wrist Curl",
+        "coachingSummary": "Hold a barbell in front of your thighs. Keep your forearms still and bend your wrists to lift the bar slightly, then lower it."
       }
     },
-    "wrist-extension": { "es": { "name": "Extensión de muñeca" } }
+    "wrist-extension": {
+      "es": {
+        "name": "Extensión de muñeca",
+        "coachingSummary": "Sujeta unas mancuernas con las palmas hacia abajo. Mantén los antebrazos quietos mientras elevas el dorso de las manos y luego bájalas."
+      },
+      "en": {
+        "name": "Wrist Extension",
+        "coachingSummary": "Hold dumbbells with your palms facing down. Keep your forearms still as you lift the backs of your hands, then lower them."
+      }
+    }
   }
 }

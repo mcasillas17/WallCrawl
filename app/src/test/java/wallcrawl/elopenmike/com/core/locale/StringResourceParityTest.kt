@@ -208,6 +208,7 @@ class StringResourceParityTest {
             "editor_summary_effort",
             // A number next to its unit, with no words of its own.
             "editor_summary_load",
+            "exercise_detail_score_out_of_five",
             "previous_load",
             "previous_weight_reps",
             "previous_entry",
