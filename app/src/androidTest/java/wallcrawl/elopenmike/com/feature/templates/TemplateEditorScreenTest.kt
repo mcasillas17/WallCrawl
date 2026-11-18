@@ -269,8 +269,8 @@ class TemplateEditorScreenTest {
         composeRule.waitUntil(10_000) { imeTop() != null }
         assertAboveKeyboard(search)
         search.performTextInput("squat")
-        // The picker's result is the one tappable row naming the exercise.
-        val matches = hasClickAction() and hasText(editor.exerciseName, substring = true, ignoreCase = true)
+        val addResult = editor.resources.getString(R.string.picker_add_content_description)
+        val matches = hasClickAction() and hasContentDescription(addResult) and hasText(editor.exerciseName)
         composeRule.onAllNodes(matches).assertCountEquals(1)
         val result = composeRule.onNode(matches)
         assertAboveKeyboard(result)
