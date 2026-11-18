@@ -149,7 +149,7 @@ class MultiWeekProgramProductionReplayTest {
         }
         val context = run.context()
         val valid = validator.validate(FakeWorkoutPlanner().generateWorkout(context), context, true) as ProgramValidationResult.Valid
-        val primary = byId.getValue(valid.workout.exercises.first().exerciseId).acceptedMetadata()!!.directPrimaryMuscle
+        val primary = byId.getValue(valid.workout.exercises.first { it.prescription.purpose == PrescriptionPurpose.ORDINARY }.exerciseId).acceptedMetadata()!!.directPrimaryMuscle
         run.finish(valid, completedWorkSets = 1)
         val after = run.context()
         assertThat(after.programInput!!.position.slotOrdinal).isEqualTo(1)
@@ -351,12 +351,13 @@ class MultiWeekProgramProductionReplayTest {
             action(ProgramAction.FINISH_SESSION, sessionId = id)
             slots[slots.lastIndex] = slots.last().copy(status = SessionStatus.COMPLETED, completedAtEpochMillis = now)
             val plan = valid.workout
+            val firstWorkIndex = plan.exercises.indexOfFirst { it.prescription.purpose == PrescriptionPurpose.ORDINARY }
             history += WorkoutSession(id, "Recorded workout", now - HOUR, now,
                 status = SessionStatus.COMPLETED, weightUnit = profile.preferredUnit,
                 exercises = plan.exercises.mapIndexed { index, exercise ->
                     val exerciseId = "$id-exercise-$index"
                     WorkoutExercise(exerciseId, id, exercise.exerciseId, index, exercise.prescription,
-                        sets = if (index == 0) (1..minOf(completedWorkSets, exercise.prescription.targetSets)).map { number -> WorkoutSet(
+                        sets = if (index == firstWorkIndex) (1..minOf(completedWorkSets, exercise.prescription.targetSets)).map { number -> WorkoutSet(
                             id = "$id-set-$number", workoutExerciseId = exerciseId, setNumber = number,
                             exerciseType = exercise.prescription.exerciseType, isCompleted = true,
                             targetReps = exercise.prescription.repRange?.max,

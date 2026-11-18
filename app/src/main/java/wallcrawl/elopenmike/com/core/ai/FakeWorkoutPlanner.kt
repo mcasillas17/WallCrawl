@@ -106,6 +106,15 @@ class FakeWorkoutPlanner(
         }
         val prescriptionDecisions = selectedExercises.map { prescriptionFactory.createDecision(it, context) }.toMutableList()
         val conditionDecisions = mutableListOf<ConditionPrescriptionDecision>()
+        val phases = if (ready == null && context.phaseExercises.isNotEmpty()) {
+            val minimumWorkSeconds = WorkoutDurationEstimator.estimateSeconds(prescriptionDecisions.map {
+                GeneratedExercise(it.exerciseId, it.prescription.copy(targetSets = 1))
+            })
+            val selectedPhases = WorkoutPhasePolicy.select(context, selectedExercises, budgetSeconds - minimumWorkSeconds)
+            fitOrdinaryBudget(selectedExercises, prescriptionDecisions, null,
+                budgetSeconds - WorkoutDurationEstimator.estimateSeconds(selectedPhases), splitType, context)
+            selectedPhases
+        } else emptyList()
         if (ready != null) {
             fitOrdinaryBudget(selectedExercises, prescriptionDecisions, ready, budgetSeconds - supportiveSeconds, splitType, context)
             selectedExercises.zip(prescriptionDecisions).forEach { (exercise, decision) ->
@@ -123,9 +132,11 @@ class FakeWorkoutPlanner(
                     PrescriptionPurpose.SUPPORTIVE, support.executionIdentity, support.sourceRuleReferences)
             }
         }
-        val generatedExerciseList = selectedExercises.zip(prescriptionDecisions).map { (exercise, decision) ->
+        val ordinary = selectedExercises.zip(prescriptionDecisions).map { (exercise, decision) ->
             GeneratedExercise(exercise.id, decision.prescription, exercise.programming?.coachingSummary.orEmpty())
-        } + supportive
+        }
+        val generatedExerciseList = phases.filter { it.prescription.purpose == PrescriptionPurpose.WARMUP } +
+            ordinary + supportive + phases.filter { it.prescription.purpose == PrescriptionPurpose.COOLDOWN }
         if (ready != null) {
             val violations = generatedExerciseList.flatMap { ConditionPlanningPolicy().validate(it, ready) }
             if (violations.isNotEmpty()) conditionPlanningFailure(violations)
@@ -217,7 +228,7 @@ class FakeWorkoutPlanner(
     private fun fitOrdinaryBudget(
         exercises: MutableList<Exercise>,
         decisions: MutableList<ProgressionDecision>,
-        ready: ConditionPlanningResult.Ready,
+        ready: ConditionPlanningResult.Ready?,
         seconds: Long,
         split: WorkoutSplit,
         context: WorkoutGenerationContext
@@ -226,12 +237,13 @@ class FakeWorkoutPlanner(
         // Reduce surplus sets before considering removal of an optional exercise.
         for (index in decisions.indices.reversed()) {
             val decision = decisions[index]
-            val minimum = ready.ordinaryRules.getValue(decision.exerciseId).bounds.minSets ?: 1
+            val minimum = ready?.ordinaryRules?.getValue(decision.exerciseId)?.bounds?.minSets ?: 1
+            val reference = if (ready != null) decision.prescription else decision.referencePrescription
             var prescription = decision.prescription
             while (total() > seconds && prescription.targetSets > minimum) {
-                prescription = prescription.copy(targetSets = prescription.targetSets - 1)
+                prescription = reference.copy(targetSets = prescription.targetSets - 1)
                 decisions[index] = decision.copy(reason = ProgressionReason.HOLD_VALIDATION_REPAIR, axis = null,
-                    referencePrescription = decision.prescription, prescription = prescription, sourceSessionIds = emptyList())
+                    referencePrescription = reference, prescription = prescription, sourceSessionIds = emptyList())
             }
         }
         for (index in exercises.indices.reversed()) {
@@ -244,8 +256,11 @@ class FakeWorkoutPlanner(
                 decisions.removeAt(index)
             }
         }
-        if (total() > seconds) conditionPlanningFailure(listOf(ConditionViolation(
+        if (total() <= seconds) return
+        if (ready != null) conditionPlanningFailure(listOf(ConditionViolation(
             "insufficient-duration", ready.context.selectedConditions.map { it.conditionId }.toSet())))
+        throw WorkoutValidationException("Required training cannot fit the target duration.",
+            WorkoutPlanningFailure.INSUFFICIENT_DURATION)
     }
 
     /**

@@ -37,6 +37,7 @@ import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.model.*
 import wallcrawl.elopenmike.com.core.ui.components.ConditionExecution
+import wallcrawl.elopenmike.com.core.ui.components.WorkoutPhaseLabel
 import wallcrawl.elopenmike.com.core.ui.components.ConditionRefusal
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
@@ -376,6 +377,7 @@ private fun ExercisePreview(state: TodayUiState.Success) {
         Column(Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text("${LocaleFormatting.formatCount(index + 1, locale)}. ${vocabulary.exerciseName(exercise.exerciseId)}",
                 style = MaterialTheme.typography.titleMedium, modifier = Modifier.semantics { heading() })
+            WorkoutPhaseLabel(exercise.prescription.purpose)
             PrescriptionPreview(exercise, state.prescriptionUnit)
             if (exercise.notes.isNotBlank()) Text(exercise.notes)
             ConditionExecution(state.conditionContext, exercise.exerciseId, exercise.prescription.purpose)

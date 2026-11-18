@@ -564,7 +564,7 @@ class TodayProductionLifecycleTest {
             advanceUntilIdle()
             assertThat(deload.get().choice!!.status).isEqualTo(status)
             assertThat((restored.uiState.value as TodayUiState.Success).deload!!.offer).isNull()
-            assertThat((restored.uiState.value as TodayUiState.Success).suggestedWorkout.exercises.map { it.targetSets })
+            assertThat((restored.uiState.value as TodayUiState.Success).suggestedWorkout.exercises.filterNot { it.prescription.purpose.isWorkoutPhase }.map { it.targetSets })
                 .containsNoneOf(0, 1)
         }
     }
@@ -587,7 +587,7 @@ class TodayProductionLifecycleTest {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { restored.uiState.collect {} }
         advanceUntilIdle()
         assertThat((restored.uiState.value as TodayUiState.Success).deload!!.offer).isNull()
-        assertThat((restored.uiState.value as TodayUiState.Success).suggestedWorkout.exercises.map { it.targetSets })
+        assertThat((restored.uiState.value as TodayUiState.Success).suggestedWorkout.exercises.filterNot { it.prescription.purpose.isWorkoutPhase }.map { it.targetSets })
             .containsNoneOf(0, 1)
     }
 
@@ -1342,7 +1342,7 @@ class TodayProductionLifecycleTest {
         // Generated, validated, and displayed — built only from actually accepted records.
         val displayed = (viewModel.uiState.value as TodayUiState.Success).suggestedWorkout
         assertThat(displayed.exercises).isNotEmpty()
-        assertThat(acceptedIds).containsAtLeastElementsIn(displayed.exercises.map { it.exerciseId })
+        assertThat(acceptedIds).containsAtLeastElementsIn(displayed.exercises.filterNot { it.prescription.purpose.isWorkoutPhase }.map { it.exerciseId })
 
         viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE) {}
         advanceUntilIdle()
@@ -1365,7 +1365,7 @@ class TodayProductionLifecycleTest {
 
         val next = (viewModel.uiState.value as TodayUiState.Success).suggestedWorkout
         assertThat(next.exercises).isNotEmpty()
-        assertThat(acceptedIds).containsAtLeastElementsIn(next.exercises.map { it.exerciseId })
+        assertThat(acceptedIds).containsAtLeastElementsIn(next.exercises.filterNot { it.prescription.purpose.isWorkoutPhase }.map { it.exerciseId })
         // The week was rebuilt from history at every step rather than reused from memory.
         assertThat(ledgerRepository.reconstructionCount).isGreaterThan(1)
     }
@@ -1539,7 +1539,7 @@ class TodayProductionLifecycleTest {
         val eligibleIds = bundledExercises.filter { exercise ->
             exercise.acceptedMetadata()?.let { clearsJointSensitivities(exercise.id, profile, it.clearedTrainingConstraints) } == true
         }.map(Exercise::id)
-        assertThat(eligibleIds).containsAtLeastElementsIn(displayed.exercises.map { it.exerciseId })
+        assertThat(eligibleIds).containsAtLeastElementsIn(displayed.exercises.filterNot { it.prescription.purpose.isWorkoutPhase }.map { it.exerciseId })
         assertThat(eligibleIds).doesNotContain("barbell-bench-press")
         viewModel.startWorkout(WORKOUT_NAME, WORKOUT_RATIONALE, displayed) {}
         advanceUntilIdle()
@@ -1854,13 +1854,13 @@ private class LifecycleWorkoutRepository(
             }
         } else super.observeCompletedSessionProbeInRange(startTimestamp, endTimestampExclusive)
 
-    /** Finishes what [startWorkoutFromGenerated] recorded, as completing a workout would. */
+    /** Simulates completing the working sets recorded by [startWorkoutFromGenerated]. */
     fun completeStartedSession(workout: GeneratedWorkout, completedAtEpochMillis: Long) {
         val sessionId = "completed-${completed.value.size}"
         val session = completedSession(
             id = sessionId,
             completedAtEpochMillis = completedAtEpochMillis,
-            exercises = workout.exercises.mapIndexed { index, planned ->
+            exercises = workout.exercises.filterNot { it.prescription.purpose.isWorkoutPhase }.mapIndexed { index, planned ->
                 exerciseInstance(
                     exerciseId = planned.exerciseId,
                     id = "$sessionId-$index",

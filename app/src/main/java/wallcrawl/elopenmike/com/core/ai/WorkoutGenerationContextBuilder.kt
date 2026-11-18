@@ -289,7 +289,8 @@ class WorkoutGenerationContextBuilder(
             programInput = programInput,
             conditionPlanning = conditionPlanning,
             conditionHistory = conditionRead?.history?.takeIf { profile.activeConditions.isNotEmpty() || it.pending.isNotEmpty() },
-            conditionSupport = support
+            conditionSupport = support,
+            phaseExercises = allExercises.filter(WorkoutPhasePolicy::isCatalogCandidate)
         ).also { it.validatedProgramSession() }
         if (trainingProgramState == null || recentCompletedSessions.size < MAX_RECENT_SESSIONS) return context
         val missingWeights = conditionCandidates.filter {

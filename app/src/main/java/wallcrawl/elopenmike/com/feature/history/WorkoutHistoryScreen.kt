@@ -26,6 +26,7 @@ import java.text.DateFormat
 import java.util.Date
 import kotlinx.coroutines.flow.StateFlow
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.core.ui.components.WorkoutPhaseLabel
 import wallcrawl.elopenmike.com.core.ai.ProgramViolationCode
 import wallcrawl.elopenmike.com.core.database.repository.WorkoutHistoryDetail
 import wallcrawl.elopenmike.com.core.database.repository.HistoricalSessionHeader
@@ -141,7 +142,10 @@ fun WorkoutHistoryDetailScreen(
                     }
                     recordedReasons(state.reasons)
                     state.detail.session.exercises.sortedWith(compareBy({ it.orderIndex }, { it.id })).forEach { exercise ->
-                        item { HistoryHeading(exercise.exerciseId) }
+                        item {
+                            HistoryHeading(exercise.exerciseId)
+                            WorkoutPhaseLabel(exercise.prescription.purpose)
+                        }
                         item { wallcrawl.elopenmike.com.core.ui.components.ConditionExecution(
                             state.detail.session.conditionContext, exercise.exerciseId, exercise.prescription.purpose) }
                         field(R.string.history_exercise_type) { stringResource(exerciseTypeRes(exercise.prescription.exerciseType)) }

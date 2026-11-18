@@ -24,9 +24,8 @@ import wallcrawl.elopenmike.com.core.model.PlannedExercise
  * ## What it is not
  *
  * It is an estimate, never a promise about how long a session will take, and its bounds are
- * structural limits on a representable duration rather than physiological limits. It says
- * nothing about whether a proposal fits the user's requested duration; version 1 of the
- * validator deliberately enforces no relationship between the two.
+ * structural limits on a representable duration rather than physiological limits. The planner
+ * uses the unrounded seconds to budget required work and any warm-up and cooldown.
  */
 object WorkoutDurationEstimator {
 

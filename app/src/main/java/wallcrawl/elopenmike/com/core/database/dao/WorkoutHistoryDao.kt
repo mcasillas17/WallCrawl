@@ -67,14 +67,14 @@ private const val PRIOR_SESSION_CHRONOLOGY = """
 // Select unknown relevant types and purposes too, so strict decoding reports corruption rather
 // than silently relabelling it via the legacy converter or skipping it as incompatible evidence.
 private const val INVALID_PURPOSE_OR_ROLE = """
-    e.purpose NOT IN ('ORDINARY', 'SUPPORTIVE') OR e.role NOT IN ('MAIN', 'MOBILITY')
+    e.purpose NOT IN ('ORDINARY', 'SUPPORTIVE', 'WARMUP', 'COOLDOWN') OR e.role NOT IN ('MAIN', 'MOBILITY')
     OR (e.role = 'MOBILITY' AND e.purpose != 'SUPPORTIVE')
 """
 
 private const val ELIGIBLE_PREVIOUS_EXERCISE = """
     e.exerciseId = v.exerciseId AND (
         ($INVALID_PURPOSE_OR_ROLE)
-        OR (e.purpose = v.purpose AND e.role = v.role AND (
+        OR (e.purpose = v.purpose AND e.purpose NOT IN ('WARMUP', 'COOLDOWN') AND e.role = v.role AND (
         e.exerciseType NOT IN ('WEIGHT_REPS', 'BODYWEIGHT_REPS', 'ASSISTED_BODYWEIGHT', 'DURATION', 'DISTANCE_DURATION')
         OR (e.exerciseType = v.exerciseType
             AND (v.exerciseType != 'DISTANCE_DURATION' OR (

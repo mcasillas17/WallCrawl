@@ -6,7 +6,11 @@ import java.net.URISyntaxException
 import java.security.MessageDigest
 import java.util.Collections
 
-enum class PrescriptionPurpose { ORDINARY, SUPPORTIVE }
+enum class PrescriptionPurpose {
+    ORDINARY, SUPPORTIVE, WARMUP, COOLDOWN;
+
+    val isWorkoutPhase: Boolean get() = this == WARMUP || this == COOLDOWN
+}
 enum class ConditionReviewState { DRAFT, RELEASED }
 enum class ConditionRuleEffect { EXCLUDE, PERMIT_ORDINARY, PRESCRIBE_SUPPORTIVE }
 enum class ConditionPopulation { ADULT_NONOPERATIVE }

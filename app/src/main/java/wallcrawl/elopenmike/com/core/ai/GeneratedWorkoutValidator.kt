@@ -37,7 +37,8 @@ class GeneratedWorkoutValidator(
      */
     suspend fun structuralViolations(
         workout: GeneratedWorkout,
-        allowedExerciseIds: Set<String>
+        allowedExerciseIds: Set<String>,
+        allowedPhaseExerciseIds: Set<String> = emptySet()
     ): List<ProgramViolation> {
         val violations = mutableListOf<ProgramViolation>()
 
@@ -59,7 +60,8 @@ class GeneratedWorkoutValidator(
         }
 
         workout.exercises.forEachIndexed { index, exercise ->
-            violations += exerciseViolations(index, exercise, allowedExerciseIds)
+            val candidates = if (exercise.prescription.purpose.isWorkoutPhase) allowedPhaseExerciseIds else allowedExerciseIds
+            violations += exerciseViolations(index, exercise, candidates)
         }
         return violations
     }
@@ -135,6 +137,8 @@ enum class WorkoutPlanningFailure {
 
     /** Strength candidates exist, but none of them train any split. */
     NO_CANDIDATES_FOR_ANY_SPLIT,
+
+    INSUFFICIENT_DURATION,
 
     /** Reviewed condition requirements cannot be delivered by this ordinary plan. */
     CONDITION_REQUIREMENTS_UNSATISFIED

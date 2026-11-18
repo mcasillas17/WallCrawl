@@ -46,6 +46,7 @@ import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.LedgerPolicyVersion
 import wallcrawl.elopenmike.com.core.model.MovementCapabilities
 import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
+import wallcrawl.elopenmike.com.core.model.PrescriptionPurpose
 import wallcrawl.elopenmike.com.core.model.ReviewState
 import wallcrawl.elopenmike.com.core.model.SessionStatus
 import wallcrawl.elopenmike.com.core.model.SetPerformanceInput
@@ -201,7 +202,7 @@ class ProductionPlannerPersistenceTest {
         assertThat(before.exerciseHistory).isEmpty()
         assertThat(before.schedulingEvidence?.practiceDates?.get("Shoulders")).hasSize(2)
         val accepted = validatedPlan(before)
-        assertThat(accepted.workout.exercises.map { it.exerciseId }).containsExactly(
+        assertThat(accepted.workout.exercises.filterNot { it.prescription.purpose.isWorkoutPhase }.map { it.exerciseId }).containsExactly(
             "dumbbell-shoulder-press", "dumbbell-bench-press", "cable-lateral-raise"
         ).inOrder()
         assertThat(accepted.workout.rankingReasons).hasSize(2)
@@ -336,18 +337,20 @@ class ProductionPlannerPersistenceTest {
         assertThat(storedRecord.adaptationState).isNotNull()
         assertThat(storedRows.sets).hasSize(accepted.workout.exercises.sumOf { it.targetSets })
 
-        // Completion is persisted, not simulated: every planned set is logged and the
-        // session is closed through the repository.
-        // Completion is persisted, not simulated. One set is logged — a session the user cut
-        // short — so the week keeps allowance and the next generation is still expected to
-        // plan. `aFullyCompletedSessionSpendsTheWeek` covers the opposite end.
-        val firstSet = storedRows.sets.minBy { it.setNumber }
-        val firstExercise = storedRows.sessionExercises.single { it.id == firstSet.workoutExerciseId }
+        // Log both phases and one working set. Only the working set should spend weekly allowance.
+        val firstExercise = storedRows.sessionExercises.first { it.purpose == PrescriptionPurpose.ORDINARY.name }
+        val firstSet = storedRows.sets.filter { it.workoutExerciseId == firstExercise.id }.minBy { it.setNumber }
+        assertThat(session.exercises.first().prescription.purpose).isEqualTo(PrescriptionPurpose.WARMUP)
+        assertThat(session.exercises.last().prescription.purpose).isEqualTo(PrescriptionPurpose.COOLDOWN)
+        assertThat(session.exercises.first().sets.single().type).isEqualTo(SetType.WARMUP)
+        val phaseIds = session.exercises.filter { it.prescription.purpose.isWorkoutPhase }.map { it.id }.toSet()
+        storedRows.sets.filter { it.workoutExerciseId in phaseIds }.forEach { logSetAsCompleted(it) }
         logSetAsCompleted(firstSet)
         workoutRepository.completeWorkout(sessionId = session.id, actualDurationMinutes = 30)
         val completed = checkNotNull(workoutRepository.getSessionById(session.id))
         assertThat(completed.status).isEqualTo(SessionStatus.COMPLETED)
         assertThat(completed.completedAtTimestamp).isNotNull()
+        assertThat(database.workoutSessionDao().selectHistorySizes(listOf(session.id)).single().invalidMetadata).isFalse()
         assertThat(workoutRepository.observeCompletedWorkoutCount().first()).isEqualTo(1)
 
         // The next generation reads that persisted history: the week now carries the set
@@ -385,7 +388,7 @@ class ProductionPlannerPersistenceTest {
         val nextContext = contextBuilder.build()
         val ledger = checkNotNull(nextContext.trainingProgramState).weeklyLedger
         assertThat(ledger.creditedWorkSets)
-            .isEqualTo(accepted.workout.exercises.sumOf { it.targetSets })
+            .isEqualTo(accepted.workout.exercises.filter { it.prescription.purpose == PrescriptionPurpose.ORDINARY }.sumOf { it.targetSets })
 
         // The refusal comes from the prescription policy reading that persisted week, and it
         // is the typed one `TodayViewModel` maps to the configured-allowance copy — not a

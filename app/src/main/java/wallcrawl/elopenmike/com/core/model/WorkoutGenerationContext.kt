@@ -81,7 +81,9 @@ data class WorkoutGenerationContext(
     val conditionHistory: wallcrawl.elopenmike.com.core.ai.ConditionHistory? = null,
     val conditionSupport: ConditionSupportCatalog? = null,
     /** Completed working weights in preferred units for weighted exercises outside the recent sample. */
-    val rememberedWorkingWeights: Map<String, Double> = emptyMap()
+    val rememberedWorkingWeights: Map<String, Double> = emptyMap(),
+    /** Bundled movements available for warm-up and cooldown selection. */
+    val phaseExercises: List<Exercise> = emptyList()
 )
 
 enum class WorkoutPlanningIntent { ORDINARY, PROGRAM }

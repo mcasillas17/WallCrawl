@@ -116,7 +116,7 @@
 
     <string name="onboarding_schedule_days_heading">Días de entrenamiento por semana</string>
     <string name="onboarding_duration_heading">Duración objetivo</string>
-    <string name="onboarding_duration_hint">Incluye las series de calentamiento, el volumen de trabajo y los descansos.</string>
+    <string name="onboarding_duration_hint">Incluye el calentamiento, las series de trabajo, los descansos y la vuelta a la calma.</string>
     <string name="onboarding_break_heading">¿vuelves después de una pausa?</string>
     <string name="onboarding_break_hint">Indica cuánto duró tu pausa para que WallCrawl empiece con un volumen conservador.</string>
 
@@ -857,6 +857,8 @@
     <string name="history_assistance">Asistencia</string>
     <string name="history_set_type">Clasificación de la serie</string>
     <string name="history_warmup">Calentamiento</string>
+    <string name="workout_cooldown">Vuelta a la calma</string>
+    <string name="today_error_insufficient_duration">Tu entrenamiento necesita más tiempo. Aumenta la duración objetivo en tu perfil.</string>
     <string name="history_normal">Serie de trabajo normal</string>
     <string name="history_dropset">Serie descendente</string>
     <string name="history_myorep">Serie myo-rep</string>
