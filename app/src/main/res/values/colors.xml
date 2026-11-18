@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Launch splash (docs/launch-animation.md). Light; values-night has the dark set. -->
+    <color name="splash_background">#F8F7F5</color>
+    <color name="splash_graphite">#54545C</color>
+    <color name="splash_red">#DE2045</color>
+    <color name="splash_glow">#33DE2045</color> <!-- red at 0.20 -->
+</resources>

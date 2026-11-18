@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+: the animated emblem. Below 13 the system reads the duration from here. -->
+    <style name="Theme.WallCrawl.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/avd_splash_emblem</item>
+        <item name="windowSplashScreenAnimationDuration">880</item>
+        <item name="postSplashScreenTheme">@style/Theme.WallCrawl</item>
+    </style>
+</resources>

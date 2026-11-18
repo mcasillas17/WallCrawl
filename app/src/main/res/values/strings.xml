@@ -1145,4 +1145,24 @@
     <string name="profile_excluded_hint">Automatic workouts leave these out. Remove one to allow it again.</string>
     <string name="profile_excluded_remove">Remove</string>
     <string name="profile_excluded_remove_description">Remove %1$s from excluded exercises</string>
+
+    <!-- First-launch intro (docs/first-launch-intro.md) -->
+    <string name="welcome_skip">Skip</string>
+    <string name="welcome_tagline_line1">Train. Log. Progress.</string>
+    <string name="welcome_tagline_line2">All on your phone.</string>
+    <string name="welcome_about_eyebrow">What WallCrawl does</string>
+    <string name="welcome_about_headline">Your training, start to finish.</string>
+    <string name="welcome_feature_plan_title">Plan your week</string>
+    <string name="welcome_feature_plan_body">Workouts built around your goals, days and equipment.</string>
+    <string name="welcome_feature_log_title">Log every set</string>
+    <string name="welcome_feature_log_body">Reps and weight in a tap or two. Rest starts on its own.</string>
+    <string name="welcome_feature_progress_title">Track progress</string>
+    <string name="welcome_feature_progress_body">See each lift move over time, from what you logged.</string>
+    <string name="welcome_privacy_title">Private by design</string>
+    <string name="welcome_privacy_no_account">No account</string>
+    <string name="welcome_privacy_no_ads">No ads</string>
+    <string name="welcome_privacy_no_tracking">No tracking</string>
+    <string name="welcome_privacy_body">Everything stays on this phone, even offline. Export or delete it any time.</string>
+    <string name="welcome_get_started">Get started</string>
+    <string name="credits_notice_font">Roboto Condensed font license</string>
 </resources>

@@ -1137,4 +1137,24 @@
     <string name="profile_excluded_hint">Los entrenamientos automáticos los dejan fuera. Quita uno para permitirlo de nuevo.</string>
     <string name="profile_excluded_remove">Quitar</string>
     <string name="profile_excluded_remove_description">Quitar %1$s de los ejercicios excluidos</string>
+
+    <!-- First-launch intro (docs/first-launch-intro.md) -->
+    <string name="welcome_skip">Omitir</string>
+    <string name="welcome_tagline_line1">Entrena. Registra. Progresa.</string>
+    <string name="welcome_tagline_line2">Todo en tu teléfono.</string>
+    <string name="welcome_about_eyebrow">Qué hace WallCrawl</string>
+    <string name="welcome_about_headline">Tu entrenamiento, de principio a fin.</string>
+    <string name="welcome_feature_plan_title">Planea tu semana</string>
+    <string name="welcome_feature_plan_body">Rutinas según tus metas, días y equipo.</string>
+    <string name="welcome_feature_log_title">Registra cada serie</string>
+    <string name="welcome_feature_log_body">Repeticiones y peso en uno o dos toques. El descanso inicia solo.</string>
+    <string name="welcome_feature_progress_title">Mide tu progreso</string>
+    <string name="welcome_feature_progress_body">Mira cómo avanza cada ejercicio con lo que registraste.</string>
+    <string name="welcome_privacy_title">Privado por diseño</string>
+    <string name="welcome_privacy_no_account">Sin cuenta</string>
+    <string name="welcome_privacy_no_ads">Sin anuncios</string>
+    <string name="welcome_privacy_no_tracking">Sin rastreo</string>
+    <string name="welcome_privacy_body">Todo se queda en este teléfono, incluso sin conexión. Exporta o borra tus datos cuando quieras.</string>
+    <string name="welcome_get_started">Comenzar</string>
+    <string name="credits_notice_font">Licencia de la fuente Roboto Condensed</string>
 </resources>

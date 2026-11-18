@@ -10,4 +10,11 @@
         <item name="android:statusBarColor">#0D0F12</item>
         <item name="android:navigationBarColor">#0D0F12</item>
     </style>
+
+    <!-- Launch splash (docs/launch-animation.md). Android 8–11 show this static emblem. -->
+    <style name="Theme.WallCrawl.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_emblem_static</item>
+        <item name="postSplashScreenTheme">@style/Theme.WallCrawl</item>
+    </style>
 </resources>

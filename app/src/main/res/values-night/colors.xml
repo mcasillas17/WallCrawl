@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="splash_background">#101113</color>
+    <color name="splash_graphite">#54545C</color>
+    <color name="splash_red">#DE2045</color>
+    <color name="splash_glow">#59DE2045</color> <!-- red at 0.35 -->
+</resources>

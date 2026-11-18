@@ -102,6 +102,8 @@ class WorkoutGuideCatalogParserTest {
             it.body.contains("WallCrawl contributors authored the neutral exercise descriptions") }).isTrue()
         assertThat(notices.any { it.titleRes == wallcrawl.elopenmike.com.R.string.credits_notice_supplement_license &&
             it.body.contains("MIT License") }).isTrue()
+        assertThat(notices.any { it.titleRes == wallcrawl.elopenmike.com.R.string.credits_notice_font &&
+            it.body.contains("SIL OPEN FONT LICENSE Version 1.1") }).isTrue()
     }
 
     @Test fun supplement_rejectsMissingCanonicalArtworkIncludingUnboundValidator() {

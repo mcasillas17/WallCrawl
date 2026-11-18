@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<!-- Static splash emblem for API 26-30 (core-splashscreen shows it without animation). Same geometry as avd_splash_emblem at rest. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="288dp" android:height="288dp" android:viewportWidth="288" android:viewportHeight="288">
+    <!-- 100x100 emblem drawn at 168dp, centred: fits the 192dp splash icon mask (furthest point 86dp from centre) -->
+    <group android:name="emblem" android:translateX="60" android:translateY="60" android:scaleX="1.68" android:scaleY="1.68">
+        <path android:name="glow" android:pathData="M46 22 A32 32 0 1 1 46 86 A32 32 0 1 1 46 22" android:strokeColor="@color/splash_glow" android:strokeWidth="9" android:strokeLineCap="round" android:trimPathEnd="0.25"/>
+        <path android:name="ring" android:pathData="M46 22 A32 32 0 1 1 46 86 A32 32 0 1 1 46 22" android:strokeColor="@color/splash_graphite" android:strokeWidth="4" android:trimPathEnd="1"/>
+        <path android:name="spoke0" android:pathData="M46 47 L46 22" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <path android:name="spoke1" android:pathData="M50.95 49.05 L68.63 31.37" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <path android:name="spoke2" android:pathData="M53 54 L78 54" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <path android:name="spoke3" android:pathData="M50.95 58.95 L68.63 76.63" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <path android:name="spoke4" android:pathData="M46 61 L46 86" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <path android:name="spoke5" android:pathData="M41.05 58.95 L23.37 76.63" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <path android:name="spoke6" android:pathData="M39 54 L14 54" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <path android:name="spoke7" android:pathData="M41.05 49.05 L23.37 31.37" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <path android:name="strand0" android:pathData="M46 32 Q50.97 41.99 61.56 38.44" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <path android:name="strand1" android:pathData="M61.56 38.44 Q58.01 49.03 68 54" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <path android:name="strand2" android:pathData="M68 54 Q58.01 58.97 61.56 69.56" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <path android:name="strand3" android:pathData="M61.56 69.56 Q50.97 66.01 46 76" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <path android:name="strand4" android:pathData="M46 76 Q41.03 66.01 30.44 69.56" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <path android:name="strand5" android:pathData="M30.44 69.56 Q33.99 58.97 24 54" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <path android:name="strand6" android:pathData="M24 54 Q33.99 49.03 30.44 38.44" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <path android:name="strand7" android:pathData="M30.44 38.44 Q41.03 41.99 46 32" android:strokeColor="@color/splash_graphite" android:strokeWidth="3" android:strokeLineCap="round" android:trimPathEnd="1"/>
+        <group android:name="hub" android:pivotX="46" android:pivotY="54" android:scaleX="1" android:scaleY="1">
+            <path android:pathData="M39 54 A7 7 0 1 1 53 54 A7 7 0 1 1 39 54" android:strokeColor="@color/splash_graphite" android:strokeWidth="3.5"/>
+        </group>
+        <path android:name="arc" android:pathData="M46 22 A32 32 0 1 1 46 86 A32 32 0 1 1 46 22" android:strokeColor="@color/splash_red" android:strokeWidth="4" android:strokeLineCap="round" android:trimPathEnd="0.25"/>
+        <path android:name="glint0" android:pathData="M51.56 85.51 A32 32 0 0 1 40.44 85.51" android:strokeColor="@color/splash_red" android:strokeWidth="4" android:strokeLineCap="round" android:strokeAlpha="1"/>
+        <path android:name="glint1" android:pathData="M14.49 59.56 A32 32 0 0 1 14.49 48.44" android:strokeColor="@color/splash_red" android:strokeWidth="4" android:strokeLineCap="round" android:strokeAlpha="1"/>
+        <group android:rotation="-40" android:pivotX="79.53" android:pivotY="38.36">
+            <group android:name="streak0" android:pivotX="79.53" android:pivotY="38.36" android:scaleX="1">
+                <group android:rotation="40" android:pivotX="79.53" android:pivotY="38.36">
+                    <path android:name="streakFill0" android:pathData="M80.63 39.67 L91.02 28.72 L78.44 37.06 Z" android:fillColor="@color/splash_red" android:fillAlpha="1"/>
+                </group>
+            </group>
+        </group>
+        <group android:rotation="-40" android:pivotX="72.16" android:pivotY="27.84">
+            <group android:name="streak1" android:pivotX="72.16" android:pivotY="27.84" android:scaleX="1">
+                <group android:rotation="40" android:pivotX="72.16" android:pivotY="27.84">
+                    <path android:name="streakFill1" android:pathData="M73.26 29.14 L87.48 14.98 L71.07 26.53 Z" android:fillColor="@color/splash_red" android:fillAlpha="1"/>
+                </group>
+            </group>
+        </group>
+        <group android:rotation="-40" android:pivotX="61.64" android:pivotY="20.47">
+            <group android:name="streak2" android:pivotX="61.64" android:pivotY="20.47" android:scaleX="1">
+                <group android:rotation="40" android:pivotX="61.64" android:pivotY="20.47">
+                    <path android:name="streakFill2" android:pathData="M62.73 21.77 L73.13 10.82 L60.54 19.16 Z" android:fillColor="@color/splash_red" android:fillAlpha="1"/>
+                </group>
+            </group>
+        </group>
+    </group>
+</vector>
