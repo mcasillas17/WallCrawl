@@ -47,5 +47,12 @@ class MovementCapabilityControlsTest {
         notSure.assertIsNotSelected()
         notSure.performClick()
         notSure.assertIsSelected()
+
+        // The scale steps and Not sure are one radio group.
+        val avoid = composeRule.onNodeWithContentDescription("Impact tolerance, Avoid", useUnmergedTree = true)
+        avoid.assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton))
+        avoid.performClick()
+        avoid.assertIsSelected()
+        notSure.assertIsNotSelected()
     }
 }
