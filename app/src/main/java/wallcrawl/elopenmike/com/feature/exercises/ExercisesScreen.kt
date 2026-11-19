@@ -31,6 +31,7 @@ import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.model.Exercise
 import wallcrawl.elopenmike.com.core.model.MechanicsType
+import wallcrawl.elopenmike.com.core.model.missingEquipmentAlternatives
 import wallcrawl.elopenmike.com.core.ui.components.ExerciseIllustration
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
@@ -156,8 +157,17 @@ private fun ExerciseList(
                 headlineContent = { Text(vocabulary.exerciseName(exercise)) },
                 supportingContent = {
                     val equipment = vocabulary.equipment(exercise.listedEquipment)
-                    Text(equipment.ifEmpty { vocabulary.muscles(exercise.primaryMuscles) }
-                        .joinToString(stringResource(R.string.list_separator)))
+                    Column {
+                        Text(equipment.ifEmpty { vocabulary.muscles(exercise.primaryMuscles) }
+                            .joinToString(stringResource(R.string.list_separator)))
+                        // The smallest set of equipment that would make this exercise possible.
+                        state.ownedEquipment?.let { exercise.missingEquipmentAlternatives(it).minByOrNull(List<String>::size) }
+                            ?.let { missing ->
+                                Text(stringResource(R.string.editor_equipment_missing,
+                                    vocabulary.equipment(missing).joinToString(stringResource(R.string.list_separator))),
+                                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.tertiary)
+                            }
+                    }
                 },
                 trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) }
             )

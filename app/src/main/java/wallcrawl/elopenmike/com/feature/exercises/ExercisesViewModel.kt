@@ -9,9 +9,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.UserProfile
+import wallcrawl.elopenmike.com.core.model.hasRequiredEquipment
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,7 +29,9 @@ import kotlinx.coroutines.flow.stateIn
 @OptIn(ExperimentalCoroutinesApi::class)
 class ExercisesViewModel(
     private val exerciseCatalog: ExerciseCatalog,
-    private val savedState: SavedStateHandle = SavedStateHandle()
+    private val savedState: SavedStateHandle = SavedStateHandle(),
+    /** The equipment from the user's profile; null when there is none to sort by. */
+    ownedEquipment: Flow<Set<String>?> = flowOf(null)
 ) : ViewModel() {
 
     private val queryFlow = savedState.getStateFlow("query", "")
@@ -41,8 +48,15 @@ class ExercisesViewModel(
         Triple(query, muscle, equipment)
     }
 
-    private val searchResultsFlow = filterParamsFlow.flatMapLatest { (query, muscle, equipment) ->
-        exerciseCatalog.searchExercises(query = query, muscle = muscle, equipment = equipment)
+    private val searchResultsFlow = combine(
+        filterParamsFlow.flatMapLatest { (query, muscle, equipment) ->
+            exerciseCatalog.searchExercises(query = query, muscle = muscle, equipment = equipment)
+        },
+        ownedEquipment
+    ) { exercises, owned ->
+        // What the user can do with their equipment comes first; catalog order holds within each group.
+        val sorted = if (owned == null) exercises else exercises.sortedBy { !it.hasRequiredEquipment(owned) }
+        sorted to owned
     }
 
     private val results = combine(
@@ -51,7 +65,7 @@ class ExercisesViewModel(
         selectedMuscleFlow,
         selectedEquipmentFlow,
         selectedExerciseDetailFlow
-    ) { exercises, query, muscle, equipment, detail ->
+    ) { (exercises, owned), query, muscle, equipment, detail ->
         val muscles = exerciseCatalog.getMuscleGroups()
         val eqTypes = exerciseCatalog.getEquipmentTypes()
 
@@ -62,7 +76,8 @@ class ExercisesViewModel(
             selectedEquipment = equipment,
             availableMuscles = muscles,
             availableEquipment = eqTypes,
-            selectedExerciseDetail = detail
+            selectedExerciseDetail = detail,
+            ownedEquipment = owned
         )
         state
     }.catch { error ->
@@ -102,9 +117,13 @@ class ExercisesViewModel(
 
     companion object {
         fun provideFactory(
-            exerciseCatalog: ExerciseCatalog
+            exerciseCatalog: ExerciseCatalog,
+            profile: Flow<UserProfile>? = null
         ): ViewModelProvider.Factory = viewModelFactory {
-            initializer { ExercisesViewModel(exerciseCatalog, createSavedStateHandle()) }
+            initializer {
+                ExercisesViewModel(exerciseCatalog, createSavedStateHandle(),
+                    profile?.map { it.availableEquipment.toSet().ifEmpty { null } } ?: flowOf(null))
+            }
         }
     }
 }

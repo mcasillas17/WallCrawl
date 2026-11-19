@@ -452,7 +452,8 @@ private fun WallCrawlAppContent(
             composable(AppRoutes.EXERCISES) {
                 val exercisesViewModel: ExercisesViewModel = viewModel(
                     factory = ExercisesViewModel.provideFactory(
-                        exerciseCatalog = container.exerciseCatalog
+                        exerciseCatalog = container.exerciseCatalog,
+                        profile = container.userProfileRepository.getUserProfile()
                     )
                 )
                 val templates: WorkoutTemplatesViewModel = viewModel(factory = templatesFactory(container))

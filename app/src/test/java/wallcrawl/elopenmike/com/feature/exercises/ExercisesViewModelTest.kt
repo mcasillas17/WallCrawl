@@ -16,6 +16,7 @@ import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.exercise.ExerciseCatalog
 import wallcrawl.elopenmike.com.core.exercise.InMemoryExerciseCatalog
 import wallcrawl.elopenmike.com.core.model.Exercise
+import wallcrawl.elopenmike.com.core.model.hasRequiredEquipment
 import wallcrawl.elopenmike.com.test.MainDispatcherRule
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -64,6 +65,24 @@ class ExercisesViewModelTest {
         assertThat(state.selectedEquipment).isEqualTo(exercise.listedEquipment.first())
         assertThat(state.exercises).contains(exercise)
         assertThat(state.selectedExerciseDetail).isEqualTo(exercise)
+    }
+
+    @Test
+    fun exercisesTheUserCanDoComeFirstInCatalogOrder() = runTest {
+        val bundled = PlannerFixtureContextFactory().bundledCatalogProjection().exercises
+        val owned = setOf("Bodyweight", "Dumbbell")
+        val viewModel = ExercisesViewModel(InMemoryExerciseCatalog(bundled), SavedStateHandle(),
+            kotlinx.coroutines.flow.flowOf(owned))
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as ExercisesUiState.Success
+        val doable = bundled.filter { it.hasRequiredEquipment(owned) }
+        assertThat(doable).isNotEmpty()
+        assertThat(doable.size).isLessThan(bundled.size)
+        assertThat(state.exercises).containsExactlyElementsIn(doable + bundled.filterNot { it.hasRequiredEquipment(owned) })
+            .inOrder()
+        assertThat(state.ownedEquipment).isEqualTo(owned)
     }
 
     @Test
