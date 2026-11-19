@@ -31,8 +31,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.TrendingUp
-import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material.icons.outlined.FitnessCenter
+import androidx.compose.material.icons.outlined.TrackChanges
 import androidx.compose.material.icons.outlined.VerifiedUser
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
@@ -55,8 +56,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.MotionDurationScale
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathMeasure
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -216,7 +224,7 @@ fun WelcomeScreen(
                         if (aboutStarted) aboutFade.snapTo(1f)
                         else aboutFade.animateTo(1f, tween(M.REDUCED_ABOUT_FADE_MS, easing = LinearEasing))
                     } else {
-                        aboutClock.animateTo(M.ABOUT_END, tween((M.ABOUT_END * M.ABOUT_PACE).toInt(), easing = LinearEasing))
+                        aboutClock.animateTo(M.ABOUT_END, tween(M.ABOUT_END.toInt(), easing = LinearEasing))
                     }
                     aboutStarted = true
                 }
@@ -443,7 +451,7 @@ private fun AboutContent(
     val scroll = rememberScrollState()
     val colors = MaterialTheme.colorScheme
     val tileFill = if (dark) GraphiteSurfaceElevated else LightSurfaceCard
-    val eyebrowColor = if (dark) SpiderRedVibrant else SpiderRedDeep
+    val connectorColor = if (dark) SpiderRedVibrant else SpiderRedDeep
 
     Column(Modifier.fillMaxSize().graphicsLayer { alpha = fade() }.testTag(WELCOME_ABOUT_TEST_TAG)) {
         Column(
@@ -451,15 +459,9 @@ private fun AboutContent(
                 .weight(1f)
                 .verticalScroll(scroll)
                 .padding(top = 24.dp, start = 24.dp, end = 24.dp, bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             EmblemSlot(M.HEADER_SLOT_DP, drawSlot, glowAlpha, paths) { slots.header = it }
-            Text(
-                stringResource(R.string.welcome_about_eyebrow),
-                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, letterSpacing = 0.5.sp),
-                color = eyebrowColor,
-                modifier = Modifier.padding(top = 8.dp).rise({ M.eyebrow(clock()) }, 12),
-            )
+            Spacer(Modifier.height(16.dp))
             Text(
                 stringResource(R.string.welcome_about_headline),
                 style = TextStyle(fontSize = 28.sp, lineHeight = 34.sp, fontWeight = FontWeight.Black, letterSpacing = (-0.5).sp),
@@ -467,21 +469,24 @@ private fun AboutContent(
                 modifier = Modifier.semantics { heading() }.rise({ M.headline(clock()) }, 16),
             )
 
-            Spacer(Modifier.height(20.dp)) // 28 dp above the features, with the 8 dp column gap
+            Spacer(Modifier.height(28.dp))
+            WorkoutBuilderCard(clock, tileFill, connectorColor, glowAlpha, paths)
+
+            Spacer(Modifier.height(24.dp))
             Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
                 listOf(
-                    Triple(Icons.Outlined.CalendarMonth, R.string.welcome_feature_plan_title, R.string.welcome_feature_plan_body),
-                    Triple(Icons.Outlined.FitnessCenter, R.string.welcome_feature_log_title, R.string.welcome_feature_log_body),
+                    Triple(Icons.Outlined.Checklist, R.string.welcome_feature_log_title, R.string.welcome_feature_log_body),
                     Triple(Icons.AutoMirrored.Outlined.TrendingUp, R.string.welcome_feature_progress_title, R.string.welcome_feature_progress_body),
                 ).forEachIndexed { i, (icon, title, body) ->
                     FeatureRow(icon, stringResource(title), stringResource(body), tileFill, clock, i)
                 }
             }
 
-            Spacer(Modifier.height(16.dp)) // 24 dp above the card
+            // 16 dp, not 24: the spec's first fallback for fitting 360×800 (welcome-workout-builder.md §2).
+            Spacer(Modifier.height(16.dp))
             Column(
                 Modifier
-                    .rise({ M.card(clock()) }, 16)
+                    .rise({ M.privacyCard(clock()) }, 16)
                     .fillMaxWidth()
                     .background(colors.surface, RoundedCornerShape(16.dp))
                     .border(1.dp, colors.outlineVariant, RoundedCornerShape(16.dp))
@@ -548,6 +553,104 @@ private fun FeatureRow(icon: ImageVector, title: String, body: String, tileFill:
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(title, style = MaterialTheme.typography.titleMedium, color = colors.onBackground)
             Text(body, style = MaterialTheme.typography.bodyMedium, color = colors.onSurfaceVariant)
+        }
+    }
+}
+
+const val WELCOME_BUILDER_TEST_TAG = "welcome_builder"
+
+/**
+ * Goals, progress and equipment feed "Your next workout" (docs/welcome-workout-builder.md §3).
+ * Read as one node by TalkBack; nothing in it is clickable.
+ */
+@Composable
+private fun WorkoutBuilderCard(clock: () -> Float, tileFill: Color, connectorColor: Color, emblemGlow: Float, paths: EmblemPaths) {
+    val colors = MaterialTheme.colorScheme
+    Column(
+        Modifier
+            .rise({ M.builderCard(clock()) }, 16)
+            .fillMaxWidth()
+            .background(colors.surface, RoundedCornerShape(16.dp))
+            .border(1.dp, colors.outlineVariant, RoundedCornerShape(16.dp))
+            .padding(16.dp)
+            .semantics(mergeDescendants = true) {}
+            .testTag(WELCOME_BUILDER_TEST_TAG),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Text(stringResource(R.string.welcome_builder_title), style = MaterialTheme.typography.titleMedium, color = colors.onBackground)
+        // No spacing inside: the connector lines touch both the inputs and the output.
+        Column {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(
+                    Icons.Outlined.TrackChanges to R.string.welcome_builder_goals,
+                    Icons.AutoMirrored.Outlined.TrendingUp to R.string.welcome_builder_progress,
+                    Icons.Outlined.FitnessCenter to R.string.welcome_builder_equipment,
+                ).forEachIndexed { k, (icon, label) ->
+                    Column(
+                        Modifier
+                            .weight(1f)
+                            .graphicsLayer { val s = M.inputScale(k, clock()); scaleX = s; scaleY = s; alpha = M.inputAlpha(k, clock()) }
+                            .heightIn(min = 56.dp)
+                            .background(tileFill, RoundedCornerShape(12.dp))
+                            .border(1.dp, colors.outlineVariant, RoundedCornerShape(12.dp))
+                            .padding(vertical = 8.dp, horizontal = 4.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
+                    ) {
+                        Icon(icon, contentDescription = null, tint = colors.primary, modifier = Modifier.size(20.dp))
+                        Text(stringResource(label), style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                            color = colors.onBackground, textAlign = TextAlign.Center)
+                    }
+                }
+            }
+            Spacer(
+                Modifier.fillMaxWidth().height(20.dp).drawWithCache {
+                    val w = size.width
+                    val h = size.height
+                    fun curve(x: Float) = Path().apply { moveTo(x, 0f); cubicTo(x, 0.6f * h, w / 2f, 0.4f * h, w / 2f, h) }
+                    val lines = listOf(curve(w / 6f), Path().apply { moveTo(w / 2f, 0f); lineTo(w / 2f, h) }, curve(5f * w / 6f))
+                        .map { path -> PathMeasure().apply { setPath(path, false) } }
+                    val stroke = Stroke(1.5.dp.toPx(), cap = StrokeCap.Round)
+                    val drawn = Path()
+                    onDrawBehind {
+                        lines.forEachIndexed { k, line ->
+                            val p = M.connector(k, clock())
+                            // A zero-length round-capped segment would still leave a dot.
+                            if (p > 0f) {
+                                drawn.reset()
+                                line.getSegment(0f, line.length * p, drawn, true)
+                                drawPath(drawn, connectorColor, style = stroke)
+                            }
+                        }
+                    }
+                }
+            )
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer { val s = M.outputScale(clock()); scaleX = s; scaleY = s; alpha = M.outputAlpha(clock()) }
+                    .drawBehind {
+                        val glow = M.outputGlow(clock())
+                        if (glow > 0f) {
+                            val ring = 4.dp.toPx()
+                            drawRoundRect(SpiderRedPrimary.copy(alpha = glow), topLeft = Offset(-ring, -ring),
+                                size = Size(size.width + 2 * ring, size.height + 2 * ring), cornerRadius = CornerRadius(16.dp.toPx()))
+                        }
+                    }
+                    .background(tileFill, RoundedCornerShape(12.dp))
+                    .border(1.5.dp, SpiderRedPrimary, RoundedCornerShape(12.dp))
+                    .padding(vertical = 10.dp, horizontal = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(Modifier.size(28.dp).drawBehind { drawEmblem(EmblemFrame.REST, paths, TextDisabled, SpiderRedPrimary, emblemGlow) })
+                Column {
+                    Text(stringResource(R.string.welcome_builder_output_title),
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold), color = colors.onBackground)
+                    Text(stringResource(R.string.welcome_builder_output_body), style = MaterialTheme.typography.bodySmall,
+                        color = colors.onSurfaceVariant)
+                }
+            }
         }
     }
 }

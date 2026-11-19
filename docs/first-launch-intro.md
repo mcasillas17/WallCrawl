@@ -56,7 +56,7 @@ app start ─► profile == null ─► (splash still showing; the existing spin
 | Secondary text, Skip | `TextSecondary` #B7B6BB | `LightTextSecondary` #54545C |
 | Emblem graphite (both themes) | `TextDisabled` #54545C | `TextDisabled` #54545C |
 | Emblem red, arc, streaks, wordmark pill | `SpiderRedPrimary` #DE2045 | same |
-| Eyebrow text (screen 2) | `SpiderRedVibrant` #FF6C87 (7.0:1) | `SpiderRedDeep` #602334 (11.0:1) |
+| Builder connectors (screen 2) | `SpiderRedVibrant` #FF6C87 | `SpiderRedDeep` #602334 |
 | Feature/shield icons | #FF6C87 | #DE2045 |
 | Get started button | #FF6C87 bg / #101113 text (= `colorScheme.primary/onPrimary`) | #DE2045 / #FFFFFF (same) |
 | Arc glow alpha | 0.35 | 0.20 |
@@ -64,7 +64,7 @@ app start ─► profile == null ─► (splash still showing; the existing spin
 
 Use `MaterialTheme.colorScheme` where a role exists (background, surface, onBackground,
 onSurfaceVariant, primary, onPrimary, outlineVariant); the raw tokens above are for the emblem,
-pill, and eyebrow.
+pill, and builder connectors.
 
 Type: `WallCrawlTypography` (FontFamily.SansSerif) except the wordmark.
 
@@ -88,11 +88,11 @@ Full-screen, background color. Content is a centered `Column`, horizontal paddin
 |   | "CRAWL" pill | Height 44 dp, horizontal padding 12 dp, `RoundedCornerShape(8.dp)`, bg #DE2045, same text style, color #101113. |
 | — | Gap | 20 dp |
 | 3 | Tagline line 1 | `titleMedium` (16/22 sp SemiBold), onBackground, centered. |
-| 4 | Tagline line 2 | `bodyLarge` (16/24 sp), onSurfaceVariant, centered. |
+| 4 | Tagline line 2 | `bodyLarge` (16/24 sp), onSurfaceVariant, centered. Says what WallCrawl does; wraps to 2 lines at 360 dp. |
 | 5 | Skip | `TextButton`, aligned TopEnd, padding top 8 dp, end 8 dp. Min 48×48 dp, contentPadding horizontal 12 dp. `labelLarge` (14 sp Bold, +0.5 sp), color onSurfaceVariant. Visible from frame 0. |
 
-Block height at 100% font: 120+24+44+20+22+24 = 254 dp → top at 273 dp on 360×800, 193 dp on 320×640.
-At 200% only the tagline and Skip grow (tagline may wrap to 4 lines; must not clip at 320×640).
+Block height at 100% font: 120+24+44+20+22+48 = 278 dp (line 2 wraps) → top ≈261 dp on 360×800, ≈181 dp on 320×640. Measure; don't hard-code.
+At 200% only the tagline and Skip grow (tagline may wrap to 5–6 lines; must not clip at 320×640).
 
 Copy (`res/values/strings.xml` / `res/values-es/strings.xml`):
 
@@ -100,7 +100,7 @@ Copy (`res/values/strings.xml` / `res/values-es/strings.xml`):
 |---|---|---|
 | `welcome_skip` | Skip | Omitir |
 | `welcome_tagline_line1` | Train. Log. Progress. | Entrena. Registra. Progresa. |
-| `welcome_tagline_line2` | All on your phone. | Todo en tu teléfono. |
+| `welcome_tagline_line2` | Workouts built from your goals, progress and equipment. | Rutinas según tus metas, tu progreso y tu equipo. |
 
 ("WALL"/"CRAWL" are the logo, not translated, not string resources — or add them as `translatable="false"`.)
 
@@ -119,27 +119,34 @@ Scroll content, top to bottom:
 | # | Element | Spec |
 |---|---|---|
 | 1 | Header emblem slot | `Box(Modifier.size(40.dp))` placeholder (emblem drawn by the overlay; measure its bounds). |
-|   | Gap | 16 dp (8 dp column gap + 8 dp top margin on eyebrow) |
-|   | Eyebrow | `labelLarge` 14/20 sp Bold, +0.5 sp, eyebrow color (§2). |
-|   | Gap | 8 dp |
+|   | Gap | 16 dp |
 |   | Headline | 28/34 sp, `FontWeight.Black`, letterSpacing −0.5 sp, onBackground, `semantics { heading() }`. |
-| 2 | Features | 28 dp above. 3 rows, 20 dp between rows. Row: `Row(spacedBy(14.dp), verticalAlignment = Top)`. |
-|   | Icon tile | 44×44 dp, `RoundedCornerShape(12.dp)`, tile fill, 1 dp border, icon 22 dp stroke-style in icon color. Icons: `Icons.Outlined.CalendarMonth`, `Icons.Outlined.FitnessCenter`, `Icons.AutoMirrored.Outlined.TrendingUp` (material-icons-extended is already a dependency). Decorative (`contentDescription = null`). |
+| 2 | Workout builder card | 28 dp above. bg surface, 1 dp border, `RoundedCornerShape(16.dp)`, padding 16 dp, inner gap 12 dp. Shows that WallCrawl builds each workout from the user's goals, logged progress and equipment. |
+|   | Card title | `titleMedium` 16/22 SemiBold, onBackground. |
+|   | Input tiles | 3 equal columns (`Row` + `weight(1f)`), gap 8 dp. Each: min height 56 dp, padding 8/4 dp, `RoundedCornerShape(12.dp)`, tile fill + 1 dp border; icon 20 dp in icon color over `labelMedium` 12 sp SemiBold, 4 dp gap, centred. Icons: `Icons.Outlined.TrackChanges` (goals), `Icons.AutoMirrored.Outlined.TrendingUp` (progress), `Icons.Outlined.FitnessCenter` (equipment). Not clickable. |
+|   | Connectors | See `docs/welcome-workout-builder.md` §3: inputs, a 20 dp connector canvas and the output tile sit in an inner `Column` with no spacing; three 1.5 dp round-cap strokes in the connector colour converge from each input column's centre to the middle. Animate with `PathMeasure` stroke progress. Decorative. |
+|   | Output tile | `Row(spacedBy(12.dp), CenterVertically)`, padding 10/12 dp, `RoundedCornerShape(12.dp)`, tile fill, **1.5 dp #DE2045 border**. Static emblem 28 dp (§5, at rest) + title `titleSmall` 14/20 SemiBold onBackground + subtitle `bodySmall` 12/16 onSurfaceVariant. Glow: a 4 dp ring outside the border, #DE2045 at the animated alpha (§8), drawn with `drawBehind`. |
+|   | Semantics | Merge the card: `semantics(mergeDescendants = true)` so TalkBack reads title, the three inputs, then the output. |
+| 3 | Features | 24 dp below the card. 2 rows (log, progress), 20 dp between rows. Row: `Row(spacedBy(14.dp), verticalAlignment = Top)`. |
+|   | Icon tile | 44×44 dp, `RoundedCornerShape(12.dp)`, tile fill, 1 dp border, icon 22 dp stroke-style in icon color. Icons: `Icons.Outlined.Checklist` (log), `Icons.AutoMirrored.Outlined.TrendingUp` (progress) (material-icons-extended is already a dependency). Decorative (`contentDescription = null`). |
 |   | Text | Title `titleMedium` 16/22 SemiBold onBackground; body `bodyMedium` 14/20 onSurfaceVariant; 2 dp gap. |
-| 3 | Privacy card | 24 dp above. bg surface, 1 dp border, `RoundedCornerShape(16.dp)`, padding 16 dp, inner gap 10 dp. |
+| 4 | Privacy card | 24 dp above. bg surface, 1 dp border, `RoundedCornerShape(16.dp)`, padding 16 dp, inner gap 10 dp. |
 |   | Card title row | `Icons.Outlined.VerifiedUser` (or `Shield`) 22 dp in icon color + 10 dp + `titleMedium` title. |
 |   | Chips | `FlowRow(spacedBy(8.dp))`. Each: min height 28 dp, horizontal padding 10 dp, `RoundedCornerShape(14.dp)`, tile fill + 1 dp border, `labelMedium` 12 sp SemiBold, onBackground. **Not clickable** (plain `Surface`/`Box`, no ripple). |
 |   | Body | `bodyMedium` 14/20 onSurfaceVariant. |
-| 4 | Get started | In footer. M3 `Button`, `fillMaxWidth`, min height 56 dp, pill shape (default), text 16 sp Bold, +0.3 sp. Colors default `primary/onPrimary`. |
+| 5 | Get started | In footer. M3 `Button`, `fillMaxWidth`, min height 56 dp, pill shape (default), text 16 sp Bold, +0.3 sp. Colors default `primary/onPrimary`. |
 
 Copy:
 
 | Key | EN | ES |
 |---|---|---|
-| `welcome_about_eyebrow` | What WallCrawl does | Qué hace WallCrawl |
 | `welcome_about_headline` | Your training, start to finish. | Tu entrenamiento, de principio a fin. |
-| `welcome_feature_plan_title` | Plan your week | Planea tu semana |
-| `welcome_feature_plan_body` | Workouts built around your goals, days and equipment. | Rutinas según tus metas, días y equipo. |
+| `welcome_builder_title` | Workouts built for you | Rutinas hechas para ti |
+| `welcome_builder_goals` | Goals | Metas |
+| `welcome_builder_progress` | Progress | Progreso |
+| `welcome_builder_equipment` | Equipment | Equipo |
+| `welcome_builder_output_title` | Your next workout | Tu próxima rutina |
+| `welcome_builder_output_body` | Adjusts as you log. | Se ajusta con lo que registras. |
 | `welcome_feature_log_title` | Log every set | Registra cada serie |
 | `welcome_feature_log_body` | Reps and weight in a tap or two. Rest starts on its own. | Repeticiones y peso en uno o dos toques. El descanso inicia solo. |
 | `welcome_feature_progress_title` | Track progress | Mide tu progreso |
@@ -148,7 +155,7 @@ Copy:
 | `welcome_privacy_no_account` | No account | Sin cuenta |
 | `welcome_privacy_no_ads` | No ads | Sin anuncios |
 | `welcome_privacy_no_tracking` | No tracking | Sin rastreo |
-| `welcome_privacy_body` | Everything stays on this phone, even offline. Export or delete it any time. | Todo se queda en este teléfono, incluso sin conexión. Exporta o borra tus datos cuando quieras. |
+| `welcome_privacy_body` | Stays on this phone, even offline. | Se queda en tu teléfono, incluso sin conexión. |
 | `welcome_get_started` | Get started | Comenzar |
 
 Follow `docs/localization.md`: add every key to both files.
@@ -264,7 +271,7 @@ Emblem units are viewBox units (at 168 dp, 1 unit = 1.68 dp). Times absolute fro
 | Streak j | translation along axis | 1120 + 40·j | 200 | STANDARD | 0 → 3 units (+2.3, −1.93) |
 | Streak j | alpha | 1120 + 40·j | 60 | linear | 0 → 1 |
 | Emblem | scale (settle) | 1260 | 460 | EMPH_DEC | 1.03 → 0.714 (168 → 120 dp) |
-| Emblem | translation (settle) | 1260 | 460 | EMPH_DEC | (+4,−10) → slot centre. Starts at screen centre (ΔY = screen centre − slot centre, measured; ≈ 67 dp at 360×800) |
+| Emblem | translation (settle) | 1260 | 460 | EMPH_DEC | (+4,−10) → slot centre. Starts at screen centre (ΔY = screen centre − slot centre, measured; ≈ 79 dp at 360×800) |
 | "WALL" | alpha / translationY | 1400 | 300 | EMPH_DEC | 0 → 1 / +16 → 0 dp |
 | "CRAWL" pill | scale (pivot centre) | 1540 | 380 | OVERSHOOT | 0.5 → 1 (peaks ≈1.05) |
 | "CRAWL" pill | alpha | 1540 | 100 | linear | 0 → 1 |
@@ -296,25 +303,31 @@ alpha 1 → 0 over 180 ms ACCEL; phase → ABOUT at 1880 ms.
 
 ---
 
-## 8. Timeline — Screen 2 (ABOUT), 0 → 1280 ms
+## 8. Timeline — Screen 2 (ABOUT), 0 → 3000 ms
 
-Times below are timeline ms. The screen plays them 1.8× slower in real time (`WelcomeMotion.ABOUT_PACE`), so the whole screen takes about 2.3 s.
+**Total: 3000 ms real time.** These are real milliseconds: remove `WelcomeMotion.ABOUT_PACE` (or set it to 1f). The durations were lengthened rather than uniformly slowed, so the overshoot pops stay snappy.
 
 | Element | Property | Start ms | Dur ms | Easing | From → to |
 |---|---|---|---|---|---|
-| Emblem | position + size | 0 | 560 | EMPH_DEC | intro slot centre, 120 dp → header slot centre, 40 dp |
-| Red arc | one lap: tail 0 → 360°, head 90° → 450° | 100 | 540 | IN_OUT | rests at 12 → 3 o'clock (glow follows) |
-| Eyebrow | alpha / translationY | 280 | 300 | EMPH_DEC | 0 → 1 / +12 → 0 dp |
-| Headline | alpha / translationY | 340 | 360 | EMPH_DEC | 0 → 1 / +16 → 0 dp |
-| Feature row i (0..2) | alpha / translationY | 460 + 70·i | 320 | EMPH_DEC | 0 → 1 / +12 → 0 dp |
-| Icon tile i | scale | 460 + 70·i | 360 | OVERSHOOT | 0.6 → 1 |
-| Icon tile i | alpha | 460 + 70·i | 120 | linear | 0 → 1 |
-| Privacy card | alpha / translationY | 700 | 360 | EMPH_DEC | 0 → 1 / +16 → 0 dp |
-| Chip j (0..2) | scale | 820 + 50·j | 280 | OVERSHOOT | 0.8 → 1 |
-| Chip j | alpha | 820 + 50·j | 100 | linear | 0 → 1 |
-| Footer (Get started) | alpha / translationY | 900 | 380 | EMPH_DEC | 0 → 1 / +24 → 0 dp |
+| Emblem | position + size | 0 | 900 | EMPH_DEC | intro slot centre, 120 dp → header slot centre, 40 dp |
+| Red arc | one lap: tail 0 → 360°, head 90° → 450° | 150 | 900 | IN_OUT | rests at 12 → 3 o'clock (glow follows) |
+| Headline | alpha / translationY | 450 | 600 | EMPH_DEC | 0 → 1 / +16 → 0 dp |
+| Builder card | alpha / translationY | 650 | 600 | EMPH_DEC | 0 → 1 / +16 → 0 dp |
+| Input tile k (0..2) | scale (centre) | 850 + 120·k | 600 | OVERSHOOT | 0.6 → 1 |
+| Input tile k | alpha | 850 + 120·k | 200 | linear | 0 → 1 |
+| Connector k (0..2) | stroke progress, top → converge | 1250 + 60·k | 500 | STANDARD | 0 → 1 |
+| Output tile | scale (centre) | 1650 | 650 | OVERSHOOT | 0.85 → 1 |
+| Output tile | alpha | 1650 | 200 | linear | 0 → 1 |
+| Output glow | alpha | 1650 | 240 | STANDARD | 0 → 0.45 |
+| Output glow | alpha | 1950 | 600 | STANDARD | 0.45 → 0 |
+| Feature row i (0..1) | alpha / translationY | 1500 + 140·i | 550 | EMPH_DEC | 0 → 1 / +12 → 0 dp |
+| Feature icon tile i | scale | 1500 + 140·i | 600 | OVERSHOOT | 0.6 → 1 |
+| Feature icon tile i | alpha | 1500 + 140·i | 200 | linear | 0 → 1 |
+| Privacy card | alpha / translationY | 1950 | 600 | EMPH_DEC | 0 → 1 / +16 → 0 dp |
+| Chip j (0..2) | scale / alpha | 2150 + 100·j | 450 / 150 | OVERSHOOT / linear | 0.8 → 1 / 0 → 1 |
+| Footer (Get started) | alpha / translationY | 2350 | 650 | EMPH_DEC | 0 → 1 / +24 → 0 dp (ends at 3000) |
 
-- **Arrived via Skip:** same table, plus emblem alpha 0 → 1 over 0–150 ms, linear.
+- **Arrived via Skip:** same table, plus emblem alpha 0 → 1 over 0–250 ms, linear.
 - **Reduced motion:** everything at rest, emblem already at the header slot; whole screen alpha 0 → 1 over 200 ms linear.
 - Get started is enabled from frame 0 (tapping mid-entrance is fine).
 
@@ -344,7 +357,7 @@ Times below are timeline ms. The screen plays them 1.8× slower in real time (`W
 
 ## 11. Tests
 
-- Unit (JVM): `seg()` + the timeline functions — e.g. ring progress 0 at 0 ms, 1 at 450 ms; settle scale 0.714 at ≥1720 ms; pill scale > 1 near 1700 ms (overshoot); screen-2 emblem at header bounds at ≥560 ms.
+- Unit (JVM): `seg()` + the timeline functions — e.g. ring progress 0 at 0 ms, 1 at 450 ms; settle scale 0.714 at ≥1720 ms; pill scale > 1 near 1700 ms (overshoot); screen-2 emblem at header bounds at ≥900 ms.
 - Compose UI tests (androidTest): Skip → screen 2 visible; Get started → `introSeen` true and ONBOARDING route; Back during intro → screen 2; reduced-motion path reaches screen 2; start destination is ONBOARDING when `introSeen` is true. Use `mainClock.autoAdvance = false` / `advanceTimeBy` for deterministic timing.
 - Run the existing test suite; nothing else should change.
 

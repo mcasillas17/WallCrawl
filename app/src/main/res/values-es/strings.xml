@@ -1143,11 +1143,14 @@
     <!-- First-launch intro (docs/first-launch-intro.md) -->
     <string name="welcome_skip">Omitir</string>
     <string name="welcome_tagline_line1">Entrena. Registra. Progresa.</string>
-    <string name="welcome_tagline_line2">Todo en tu teléfono.</string>
-    <string name="welcome_about_eyebrow">Qué hace WallCrawl</string>
+    <string name="welcome_tagline_line2">Rutinas según tus metas, tu progreso y tu equipo.</string>
     <string name="welcome_about_headline">Tu entrenamiento, de principio a fin.</string>
-    <string name="welcome_feature_plan_title">Planea tu semana</string>
-    <string name="welcome_feature_plan_body">Rutinas según tus metas, días y equipo.</string>
+    <string name="welcome_builder_title">Rutinas hechas para ti</string>
+    <string name="welcome_builder_goals">Metas</string>
+    <string name="welcome_builder_progress">Progreso</string>
+    <string name="welcome_builder_equipment">Equipo</string>
+    <string name="welcome_builder_output_title">Tu próxima rutina</string>
+    <string name="welcome_builder_output_body">Se ajusta con lo que registras.</string>
     <string name="welcome_feature_log_title">Registra cada serie</string>
     <string name="welcome_feature_log_body">Repeticiones y peso en uno o dos toques. El descanso inicia solo.</string>
     <string name="welcome_feature_progress_title">Mide tu progreso</string>
@@ -1156,7 +1159,7 @@
     <string name="welcome_privacy_no_account">Sin cuenta</string>
     <string name="welcome_privacy_no_ads">Sin anuncios</string>
     <string name="welcome_privacy_no_tracking">Sin rastreo</string>
-    <string name="welcome_privacy_body">Todo se queda en este teléfono, incluso sin conexión. Exporta o borra tus datos cuando quieras.</string>
+    <string name="welcome_privacy_body">Se queda en tu teléfono, incluso sin conexión.</string>
     <string name="welcome_get_started">Comenzar</string>
     <string name="credits_notice_font">Licencia de la fuente Roboto Condensed</string>
 </resources>

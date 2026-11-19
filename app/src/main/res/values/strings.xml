@@ -1151,11 +1151,14 @@
     <!-- First-launch intro (docs/first-launch-intro.md) -->
     <string name="welcome_skip">Skip</string>
     <string name="welcome_tagline_line1">Train. Log. Progress.</string>
-    <string name="welcome_tagline_line2">All on your phone.</string>
-    <string name="welcome_about_eyebrow">What WallCrawl does</string>
+    <string name="welcome_tagline_line2">Workouts built from your goals, progress and equipment.</string>
     <string name="welcome_about_headline">Your training, start to finish.</string>
-    <string name="welcome_feature_plan_title">Plan your week</string>
-    <string name="welcome_feature_plan_body">Workouts built around your goals, days and equipment.</string>
+    <string name="welcome_builder_title">Workouts built for you</string>
+    <string name="welcome_builder_goals">Goals</string>
+    <string name="welcome_builder_progress">Progress</string>
+    <string name="welcome_builder_equipment">Equipment</string>
+    <string name="welcome_builder_output_title">Your next workout</string>
+    <string name="welcome_builder_output_body">Adjusts as you log.</string>
     <string name="welcome_feature_log_title">Log every set</string>
     <string name="welcome_feature_log_body">Reps and weight in a tap or two. Rest starts on its own.</string>
     <string name="welcome_feature_progress_title">Track progress</string>
@@ -1164,7 +1167,7 @@
     <string name="welcome_privacy_no_account">No account</string>
     <string name="welcome_privacy_no_ads">No ads</string>
     <string name="welcome_privacy_no_tracking">No tracking</string>
-    <string name="welcome_privacy_body">Everything stays on this phone, even offline. Export or delete it any time.</string>
+    <string name="welcome_privacy_body">Stays on this phone, even offline.</string>
     <string name="welcome_get_started">Get started</string>
     <string name="credits_notice_font">Roboto Condensed font license</string>
 </resources>
