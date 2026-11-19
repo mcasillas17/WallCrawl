@@ -121,8 +121,8 @@
     <string name="onboarding_schedule_days_heading">Training days per week</string>
     <string name="onboarding_duration_heading">Target duration</string>
     <string name="onboarding_duration_hint">Includes any warm-up, working sets, rest, and cooldown.</string>
-    <string name="onboarding_break_heading">Returning after a break?</string>
-    <string name="onboarding_break_hint">Pick how long your break was so WallCrawl can start you at a conservative volume.</string>
+    <string name="onboarding_break_heading">Time off from training?</string>
+    <string name="onboarding_break_hint">If you stopped training for a while, pick how long so WallCrawl starts you at a conservative volume. New to training? Choose the first option.</string>
 
     <string name="onboarding_equipment_quick_heading">Equipment presets</string>
     <string name="onboarding_equipment_bodyweight_only">Bodyweight only</string>
@@ -170,8 +170,8 @@
     <string name="onboarding_restore_action">Restore profile from file</string>
 
     <!-- ============================ Break ranges ============================ -->
-    <string name="break_range_none_title">Consistent / no break</string>
-    <string name="break_range_none_subtitle">Regular training without extended gaps</string>
+    <string name="break_range_none_title">No break / new to training</string>
+    <string name="break_range_none_subtitle">Training regularly, or just starting out</string>
     <string name="break_range_short_title">1–4 weeks</string>
     <string name="break_range_short_subtitle">Short break • quick return to your usual volume</string>
     <string name="break_range_moderate_title">1–3 months</string>
@@ -615,7 +615,7 @@
     <string name="profile_duration_value">~%1$s min</string>
     <string name="profile_training_days">Training days per week</string>
     <string name="profile_safety_description">Automatic workouts use your joint selections to filter exercises by movement demand. Low impact only excludes high-impact exercises.</string>
-    <string name="profile_break_title">Returning after a break</string>
+    <string name="profile_break_title">Time off from training</string>
     <string name="profile_break_hint">Adjust your break duration so WallCrawl can scale the volume it plans.</string>
     <string name="profile_app_preferences_heading">APP PREFERENCES</string>
     <string name="profile_theme_title">Interface theme</string>

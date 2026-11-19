@@ -117,8 +117,8 @@
     <string name="onboarding_schedule_days_heading">Días de entrenamiento por semana</string>
     <string name="onboarding_duration_heading">Duración objetivo</string>
     <string name="onboarding_duration_hint">Incluye el calentamiento, las series de trabajo, los descansos y la vuelta a la calma.</string>
-    <string name="onboarding_break_heading">¿vuelves después de una pausa?</string>
-    <string name="onboarding_break_hint">Indica cuánto duró tu pausa para que WallCrawl empiece con un volumen conservador.</string>
+    <string name="onboarding_break_heading">¿Has dejado de entrenar?</string>
+    <string name="onboarding_break_hint">Si dejaste de entrenar un tiempo, indica cuánto para que WallCrawl empiece con un volumen conservador. ¿Apenas empiezas? Elige la primera opción.</string>
 
     <string name="onboarding_equipment_quick_heading">Opciones de equipo</string>
     <string name="onboarding_equipment_bodyweight_only">Solo peso corporal</string>
@@ -166,8 +166,8 @@
     <string name="onboarding_restore_action">Restaurar perfil desde archivo</string>
 
     <!-- ============================ Break ranges ============================ -->
-    <string name="break_range_none_title">Constante / sin pausa</string>
-    <string name="break_range_none_subtitle">Entrenamiento regular, sin interrupciones largas</string>
+    <string name="break_range_none_title">Sin pausa / apenas empiezo</string>
+    <string name="break_range_none_subtitle">Entrenas con regularidad o apenas empiezas</string>
     <string name="break_range_short_title">1 a 4 semanas</string>
     <string name="break_range_short_subtitle">Pausa corta • regreso rápido a tu volumen habitual</string>
     <string name="break_range_moderate_title">1 a 3 meses</string>
@@ -608,7 +608,7 @@
     <string name="profile_duration_value">~%1$s min</string>
     <string name="profile_training_days">Días de entrenamiento por semana</string>
     <string name="profile_safety_description">Los entrenamientos automáticos usan tu selección de articulaciones para filtrar ejercicios según los movimientos que requieren. «Solo bajo impacto» excluye los ejercicios de alto impacto.</string>
-    <string name="profile_break_title">Regreso después de una pausa</string>
+    <string name="profile_break_title">Tiempo sin entrenar</string>
     <string name="profile_break_hint">Ajusta la duración de tu pausa para que WallCrawl adapte el volumen que planifica.</string>
     <string name="profile_app_preferences_heading">PREFERENCIAS DE LA APP</string>
     <string name="profile_theme_title">Tema de la interfaz</string>
