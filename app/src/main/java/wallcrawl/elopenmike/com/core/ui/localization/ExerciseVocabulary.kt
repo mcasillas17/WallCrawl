@@ -50,6 +50,15 @@ class ExerciseVocabulary(
         localization.coachingSummary(exercise.id, languageTag)
             ?: originalCoachingSummary(exercise)
 
+    /**
+     * The localized summary from an id alone, for screens that only hold a planned exercise.
+     * A generated workout stores the catalog's English programming note, so screens show this
+     * instead to read in the reader's language.
+     */
+    fun coachingSummary(exerciseId: String): String? =
+        localization.coachingSummary(exerciseId, languageTag)
+            ?: localization.coachingSummary(exerciseId, CATALOG_LANGUAGE)
+
     private fun originalCoachingSummary(exercise: Exercise): String? =
         localization.coachingSummary(exercise.id, CATALOG_LANGUAGE)
             ?: exercise.executionGuidance

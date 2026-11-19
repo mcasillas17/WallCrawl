@@ -146,7 +146,8 @@ internal fun WorkoutPreviewSheet(
                     }
                     items(sectionRows, key = { it.exercise.exerciseId + it.exercise.prescription.purpose }) { row ->
                         val id = row.exercise.exerciseId
-                        val description = row.exercise.notes.takeIf(String::isNotBlank)
+                        // Generated notes are the catalog's English text; show the reader's language.
+                        val description = vocabulary.coachingSummary(id) ?: row.exercise.notes.takeIf(String::isNotBlank)
                         val open = expanded[id] == true
                         PreviewExerciseRow(row, state.prescriptionUnit, visualProvider, description, open,
                             effort = row.effort?.takeIf { it != sharedEffort },

@@ -160,4 +160,24 @@ class ExerciseVocabularyTest {
         assertThat(vocabulary.musclesByLabel(listOf("Chest", "Hamstrings")))
             .containsExactly("Hamstrings", "Chest").inOrder()
     }
+
+    @Test
+    fun aPlannedExercisesSummaryReadsInTheReadersLanguageAndFallsBackToEnglish() {
+        val texts = ExerciseLocalization(
+            languages = listOf("en", "es"),
+            exercisesById = mapOf(
+                "wall-push-up" to mapOf(
+                    "en" to LocalizedExerciseText("Wall Push-Up", coachingSummary = "Push away from a wall."),
+                    "es" to LocalizedExerciseText("Flexión en pared", coachingSummary = "Empuja contra una pared.")
+                ),
+                "arm-circles" to mapOf("en" to LocalizedExerciseText("Arm Circles", coachingSummary = "Circle your arms."))
+            ),
+            musclesByCanonicalName = emptyMap(),
+            equipmentByCanonicalName = emptyMap()
+        )
+        val spanish = ExerciseVocabulary(texts, "es-MX")
+        assertThat(spanish.coachingSummary("wall-push-up")).isEqualTo("Empuja contra una pared.")
+        assertThat(spanish.coachingSummary("arm-circles")).isEqualTo("Circle your arms.")
+        assertThat(spanish.coachingSummary("unknown")).isNull()
+    }
 }
