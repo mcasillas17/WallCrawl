@@ -108,8 +108,9 @@ class ProgramNavigationTest {
         assertThat(artBounds.top).isLessThan(titleBounds.bottom)
         capture("train-workout-poster")
         click(R.string.today_view_exercises)
-        compose.waitUntil(10_000) { compose.onAllNodesWithTag("preview-exercise-name").fetchSemanticsNodes().isNotEmpty() }
-        val first = compose.onAllNodesWithTag("preview-exercise-name").fetchSemanticsNodes().first()
+        // A row with a description is tappable and merges its name, so look in the unmerged tree.
+        compose.waitUntil(10_000) { compose.onAllNodesWithTag("preview-exercise-name", useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty() }
+        val first = compose.onAllNodesWithTag("preview-exercise-name", useUnmergedTree = true).fetchSemanticsNodes().first()
             .config[SemanticsProperties.Text].first().text
         closePreview()
         val picture = hasContentDescription(localized.getString(R.string.illustration_content_description, first))
@@ -476,7 +477,7 @@ class ProgramNavigationTest {
         val close = hasContentDescription(text(R.string.action_close)) and hasClickAction()
         compose.waitUntil(10_000) { compose.onAllNodes(close).fetchSemanticsNodes().isNotEmpty() }
         compose.onNode(close).performClick()
-        compose.waitUntil(10_000) { compose.onAllNodesWithTag("preview-exercise-name").fetchSemanticsNodes().isEmpty() }
+        compose.waitUntil(10_000) { compose.onAllNodesWithTag("preview-exercise-name", useUnmergedTree = true).fetchSemanticsNodes().isEmpty() }
     }
 
     private fun click(id: Int) {
