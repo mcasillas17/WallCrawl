@@ -54,8 +54,8 @@ fun movementCapabilityDescription(type: MovementCapabilityType): String =
 fun capabilityLevelLabel(level: CapabilityLevel): String = stringResource(level.labelRes)
 
 /**
- * Comfortable, Limited and Avoid read as one three-step scale; Not sure sits under it as its own
- * choice because it is not a point on that scale. All four stay one radio group.
+ * Comfortable, Limited and Avoid read as one three-step scale; Not sure sits beside the title as its
+ * own choice because it is not a point on that scale. All four stay one radio group.
  */
 @Composable
 fun MovementCapabilityQuestion(
@@ -68,61 +68,22 @@ fun MovementCapabilityQuestion(
     val capabilityLabel = movementCapabilityLabel(type)
     val outline = MaterialTheme.colorScheme.outline
     val shape = RoundedCornerShape(10.dp)
-    Column(modifier = modifier.fillMaxWidth()) {
-        Text(
-            text = capabilityLabel,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        Spacer(modifier = Modifier.height(2.dp))
-        Text(
-            text = movementCapabilityDescription(type),
-            fontSize = 12.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Column(Modifier.fillMaxWidth().selectableGroup()) {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Min)
-                    .clip(shape)
-                    .border(1.dp, outline, shape)
-            ) {
-                listOf(CapabilityLevel.COMFORTABLE, CapabilityLevel.LIMITED, CapabilityLevel.AVOID)
-                    .forEachIndexed { index, level ->
-                        if (index > 0) VerticalDivider(color = outline)
-                        val isSelected = selectedLevel == level
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
-                                .heightIn(min = 48.dp)
-                                .background(if (isSelected) CrimsonRedPrimary else Color.Transparent)
-                                .capabilityOption(capabilityLabel, level, isSelected, onSelect)
-                                .padding(horizontal = 4.dp, vertical = 6.dp)
-                        ) {
-                            Text(
-                                text = capabilityLevelLabel(level),
-                                textAlign = TextAlign.Center,
-                                // Narrow phones and large font scales shrink the label rather than break a word.
-                                maxLines = 1,
-                                autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = 14.sp),
-                                color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                            )
-                        }
-                    }
-            }
-            val unsure = selectedLevel == CapabilityLevel.UNKNOWN
+    val unsure = selectedLevel == CapabilityLevel.UNKNOWN
+    Column(modifier = modifier.fillMaxWidth().selectableGroup()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = capabilityLabel,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.weight(1f)
+            )
+            // Compact on purpose: Compose still widens its touch area to the 48 dp minimum.
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .heightIn(min = 48.dp)
+                    .padding(start = 8.dp)
                     .capabilityOption(capabilityLabel, CapabilityLevel.UNKNOWN, unsure, onSelect)
-                    .padding(end = 8.dp)
             ) {
                 RadioButton(
                     selected = unsure,
@@ -132,11 +93,51 @@ fun MovementCapabilityQuestion(
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = capabilityLevelLabel(CapabilityLevel.UNKNOWN),
-                    fontSize = 14.sp,
+                    fontSize = 13.sp,
                     color = if (unsure) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = if (unsure) FontWeight.Bold else FontWeight.Normal
                 )
             }
+        }
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = movementCapabilityDescription(type),
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+                .clip(shape)
+                .border(1.dp, outline, shape)
+        ) {
+            listOf(CapabilityLevel.COMFORTABLE, CapabilityLevel.LIMITED, CapabilityLevel.AVOID)
+                .forEachIndexed { index, level ->
+                    if (index > 0) VerticalDivider(color = outline)
+                    val isSelected = selectedLevel == level
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .heightIn(min = 48.dp)
+                            .background(if (isSelected) CrimsonRedPrimary else Color.Transparent)
+                            .capabilityOption(capabilityLabel, level, isSelected, onSelect)
+                            .padding(horizontal = 4.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = capabilityLevelLabel(level),
+                            textAlign = TextAlign.Center,
+                            // Narrow phones and large font scales shrink the label rather than break a word.
+                            maxLines = 1,
+                            autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = 14.sp),
+                            color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                        )
+                    }
+                }
         }
         if (showAnswerRequired) {
             Text(

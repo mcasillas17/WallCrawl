@@ -191,7 +191,6 @@
     <string name="break_range_close_menu">Cerrar el menú de duraciones</string>
 
     <!-- ============================ Movement preferences ============================ -->
-    <string name="movement_capability_intro">Responde cada preferencia, incluida «No estoy seguro» cuando sea la mejor opción.</string>
     <string name="movement_capability_current_use">Los entrenamientos automáticos leen estos ajustes. Un movimiento que requiere algo marcado como Evitar queda fuera de tus recomendaciones y, si no queda nada que planificar, WallCrawl lo dice en vez de ofrecer uno.</string>
     <string name="movement_capability_answer_required">Elige una respuesta para esta preferencia de movimiento.</string>
     <string name="movement_capability_summary_label">Preferencias de movimiento</string>
