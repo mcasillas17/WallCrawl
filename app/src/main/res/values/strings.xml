@@ -10,6 +10,7 @@
     <string name="today_error_deload_read">Your one-workout choice could not be loaded. Try again before starting an automatic workout.</string>
     <string name="today_error_deload_write">Your choice could not be saved. Nothing was accepted or changed here. Try again.</string>
     <string name="today_deload_title">One workout with fewer sets</string>
+    <string name="today_preview_main">Main</string>
     <string name="today_view_exercises">View exercises</string>
     <string name="today_details">Details</string>
     <string name="today_deload_applied_summary">One fewer set per exercise, with a minimum of one.</string>

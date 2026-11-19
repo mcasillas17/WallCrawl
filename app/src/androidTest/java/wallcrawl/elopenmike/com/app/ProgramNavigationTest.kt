@@ -108,10 +108,10 @@ class ProgramNavigationTest {
         assertThat(artBounds.top).isLessThan(titleBounds.bottom)
         capture("train-workout-poster")
         click(R.string.today_view_exercises)
-        val first = compose.onNode(SemanticsMatcher("first exercise in preview") { node ->
-            node.config.getOrNull(SemanticsProperties.Text)?.any { it.text.startsWith("1. ") } == true
-        }).fetchSemanticsNode().config[SemanticsProperties.Text].first().text.removePrefix("1. ")
-        click(R.string.action_close)
+        compose.waitUntil(10_000) { compose.onAllNodesWithTag("preview-exercise-name").fetchSemanticsNodes().isNotEmpty() }
+        val first = compose.onAllNodesWithTag("preview-exercise-name").fetchSemanticsNodes().first()
+            .config[SemanticsProperties.Text].first().text
+        closePreview()
         val picture = hasContentDescription(localized.getString(R.string.illustration_content_description, first))
         compose.waitUntil(10_000) { compose.onAllNodes(picture).fetchSemanticsNodes().isNotEmpty() }
         click(R.string.today_action_start)
@@ -137,7 +137,7 @@ class ProgramNavigationTest {
         assertThat(button.bottom.value).isAtMost(viewport.bottom.value)
         compose.onNodeWithTag("planning-PROGRAM").assertDoesNotExist()
         click(R.string.today_view_exercises)
-        click(R.string.action_close)
+        closePreview()
         click(R.string.today_details)
         compose.onNodeWithText(text(R.string.today_deload_cancel)).assertIsEnabled()
     }
@@ -472,6 +472,13 @@ class ProgramNavigationTest {
         compose.waitUntil(15_000) { nav.currentDestination?.route == AppRoutes.ACTIVE_WORKOUT }
         waitText(R.string.workout_action_finish)
     }
+    private fun closePreview() {
+        val close = hasContentDescription(text(R.string.action_close)) and hasClickAction()
+        compose.waitUntil(10_000) { compose.onAllNodes(close).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNode(close).performClick()
+        compose.waitUntil(10_000) { compose.onAllNodesWithTag("preview-exercise-name").fetchSemanticsNodes().isEmpty() }
+    }
+
     private fun click(id: Int) {
         val button = hasText(text(id)) and hasClickAction() and isEnabled()
         compose.waitUntil(15_000) {

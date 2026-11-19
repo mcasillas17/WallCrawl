@@ -250,7 +250,10 @@ internal fun TodayContent(
             TrainLink(manageLabel, programSummary, onClick = { close(); onManageProgram() })
         }
         TrainDialog.PREVIEW -> ready?.let {
-            TrainDetail(R.string.guided_train_preview, close) { ExercisePreview(it) }
+            WorkoutPreviewSheet(it, visualProvider,
+                stringResource(if (selected == WorkoutPlanningIntent.PROGRAM) R.string.program_start_session
+                    else R.string.today_action_start),
+                startEnabled = !busy, onStart = { close(); onStartWorkout() }, onDismiss = close)
         }
         TrainDialog.REASONS -> ready?.let {
             TrainDetail(R.string.guided_train_why, close) {

@@ -20,6 +20,7 @@
     <string name="today_error_deload_read">No se pudo cargar tu elección para un entrenamiento. Vuelve a intentarlo antes de iniciar un entrenamiento automático.</string>
     <string name="today_error_deload_write">No se pudo guardar tu elección. Aquí no se aceptó ni cambió nada. Vuelve a intentarlo.</string>
     <string name="today_deload_title">Un entrenamiento con menos series</string>
+    <string name="today_preview_main">Principal</string>
     <string name="today_view_exercises">Ver ejercicios</string>
     <string name="today_details">Detalles</string>
     <string name="today_deload_applied_summary">Una serie menos por ejercicio, con un mínimo de una.</string>
