@@ -936,24 +936,13 @@ private fun MovementCapabilityStep(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        WallCrawlCard(
-            cornerRadius = 16.dp,
-            contentPadding = 16.dp
-        ) {
-            Text(
-                text = stringResource(wallcrawl.elopenmike.com.R.string.movement_capability_intro),
-                fontSize = 13.sp,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stringResource(
-                    wallcrawl.elopenmike.com.R.string.movement_capability_current_use
-                ),
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        Text(
+            text = stringResource(
+                wallcrawl.elopenmike.com.R.string.movement_capability_current_use
+            ),
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
 
         MovementCapabilityType.entries.forEach { type ->
             WallCrawlCard(

@@ -195,7 +195,6 @@
     <string name="break_range_close_menu">Close the break duration menu</string>
 
     <!-- ============================ Movement preferences ============================ -->
-    <string name="movement_capability_intro">Answer each preference, including Not sure when that fits best.</string>
     <string name="movement_capability_current_use">Automatic workouts read these settings. A movement that needs something you mark Avoid is left out of your recommendations, and if that leaves nothing to plan, WallCrawl says so instead of offering one.</string>
     <string name="movement_capability_answer_required">Choose an answer for this movement preference.</string>
     <string name="movement_capability_summary_label">Movement preferences</string>
