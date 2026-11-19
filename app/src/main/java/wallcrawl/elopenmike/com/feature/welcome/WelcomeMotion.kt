@@ -68,8 +68,8 @@ internal object WelcomeMotion {
 
     // ---- Screen 2: what WallCrawl is about, 0 → 1280 ms ----
     const val ABOUT_END = 1280f
-    /** Real-time stretch of the screen-2 timeline: 1280 spec ms play over about 2.3 s. */
-    const val ABOUT_PACE = 1.8f
+    /** Real time the screen-2 timeline plays over: its 1280 spec ms stretch to 3 s. */
+    const val ABOUT_PLAY_MS = 3000
     const val REDUCED_ABOUT_FADE_MS = 200
 
     fun flight(t: Float) = seg(t, 0f, 560f, EMPH_DEC)

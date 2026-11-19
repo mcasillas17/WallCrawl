@@ -298,7 +298,7 @@ alpha 1 → 0 over 180 ms ACCEL; phase → ABOUT at 1880 ms.
 
 ## 8. Timeline — Screen 2 (ABOUT), 0 → 1280 ms
 
-Times below are timeline ms. The screen plays them 1.8× slower in real time (`WelcomeMotion.ABOUT_PACE`), so the whole screen takes about 2.3 s.
+Times below are timeline ms. The screen stretches them to 3 s of real time (`WelcomeMotion.ABOUT_PLAY_MS`), about 2.3× slower.
 
 | Element | Property | Start ms | Dur ms | Easing | From → to |
 |---|---|---|---|---|---|
