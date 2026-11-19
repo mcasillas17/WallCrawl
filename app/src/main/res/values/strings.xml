@@ -20,7 +20,7 @@
     <string name="today_deload_effect">Your next ONE automatic workout uses the current reference working targets with one fewer work set per exercise, minimum one. It keeps reference load, assistance, repetition, duration, effort, and rest targets. Progression is paused, including any suggested increase.</string>
     <string name="today_deload_preview_title">If you accept</string>
     <string name="today_deload_preview_rest">Rest: %1$s</string>
-    <string name="today_deload_preview_effort">Target effort: %1$s RIR</string>
+    <string name="today_deload_preview_effort">Target effort: leave %1$s reps in reserve</string>
     <string name="today_deload_accepted_detail">This choice stays pending until you start an automatic workout. A manual routine does not use it. You can cancel before starting.</string>
     <string name="today_deload_request">Request fewer sets</string>
     <string name="today_deload_accept">Accept for one workout</string>
