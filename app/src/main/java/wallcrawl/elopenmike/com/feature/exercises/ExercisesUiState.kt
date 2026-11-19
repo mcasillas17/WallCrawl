@@ -14,7 +14,9 @@ sealed interface ExercisesUiState {
         val selectedEquipment: String? = null,
         val availableMuscles: List<String> = emptyList(),
         val availableEquipment: List<String> = emptyList(),
-        val selectedExerciseDetail: Exercise? = null
+        val selectedExerciseDetail: Exercise? = null,
+        /** The user's equipment, which marks what each exercise is missing; null when unknown. */
+        val ownedEquipment: Set<String>? = null
     ) : ExercisesUiState
 
     data class Error(
