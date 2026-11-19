@@ -30,7 +30,7 @@
     <string name="today_deload_effect">Tu próximo entrenamiento automático, y solo UNO, usa las metas de trabajo de referencia actuales con una serie de trabajo menos por ejercicio, mínimo una. Mantiene las metas de referencia de carga, asistencia, repeticiones, duración, esfuerzo y descanso. La progresión queda en pausa, incluido cualquier aumento sugerido.</string>
     <string name="today_deload_preview_title">Si aceptas</string>
     <string name="today_deload_preview_rest">Descanso: %1$s</string>
-    <string name="today_deload_preview_effort">Esfuerzo objetivo: %1$s RIR</string>
+    <string name="today_deload_preview_effort">Esfuerzo objetivo: deja %1$s repeticiones en reserva</string>
     <string name="today_deload_accepted_detail">Esta elección queda pendiente hasta que inicies un entrenamiento automático. Una rutina manual no la utiliza. Puedes cancelarla antes de empezar.</string>
     <string name="today_deload_request">Solicitar menos series</string>
     <string name="today_deload_accept">Aceptar para un entrenamiento</string>

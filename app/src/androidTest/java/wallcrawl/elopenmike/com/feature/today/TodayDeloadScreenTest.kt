@@ -84,7 +84,7 @@ class TodayDeloadScreenTest {
         listOf(
             "One workout with fewer sets", "You requested fewer sets.",
             "Your next ONE automatic workout uses the current reference working targets with one fewer work set per exercise, minimum one. It keeps reference load, assistance, repetition, duration, effort, and rest targets. Progression is paused, including any suggested increase.",
-            "If you accept", "Overhead Press", "1 × 8–12", "40 kg", "Rest: 90 s", "Target effort: 2–4 RIR",
+            "If you accept", "Overhead Press", "1 × 8–12", "40 kg", "Rest: 90 s", "Target effort: leave 2–4 reps in reserve",
             "Accept for one workout", "Decline", "Dismiss"
         ).forEach(::assertRenderedTextContrast)
     }
@@ -371,7 +371,7 @@ class TodayDeloadScreenTest {
         compose.onNodeWithText("1 × 8–12").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("40 kg").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("Rest: 90 s").performScrollTo().assertIsDisplayed()
-        compose.onNodeWithText("Target effort: 2–4 RIR").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Target effort: leave 2–4 reps in reserve").performScrollTo().assertIsDisplayed()
         val ordinaryNotice = "Progression: load 40 kg → 42.5 kg. Other targets stay unchanged."
         compose.onNodeWithText("Close").performClick()
         showAction("View exercises")

@@ -384,7 +384,7 @@ private fun ExercisePreview(state: TodayUiState.Success) {
                 style = MaterialTheme.typography.titleMedium, modifier = Modifier.semantics { heading() })
             WorkoutPhaseLabel(exercise.prescription.purpose)
             PrescriptionPreview(exercise, state.prescriptionUnit)
-            if (exercise.notes.isNotBlank()) Text(exercise.notes)
+            (vocabulary.coachingSummary(exercise.exerciseId) ?: exercise.notes.takeIf(String::isNotBlank))?.let { Text(it) }
             ConditionExecution(state.conditionContext, exercise.exerciseId, exercise.prescription.purpose)
             workout.progressionDecisions.firstOrNull { it.exerciseId == exercise.exerciseId }?.let {
                 Text(progressionNotice(it, state.prescriptionUnit, state.prescriptionUnit), style = MaterialTheme.typography.bodySmall)
