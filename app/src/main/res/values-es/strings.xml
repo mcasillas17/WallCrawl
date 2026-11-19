@@ -1152,14 +1152,14 @@
     <string name="welcome_builder_output_title">Tu próxima rutina</string>
     <string name="welcome_builder_output_body">Se ajusta con lo que registras.</string>
     <string name="welcome_feature_log_title">Registra cada serie</string>
-    <string name="welcome_feature_log_body">Repeticiones y peso en uno o dos toques. El descanso inicia solo.</string>
+    <string name="welcome_feature_log_body">Peso y repeticiones en pocos toques.</string>
     <string name="welcome_feature_progress_title">Mide tu progreso</string>
-    <string name="welcome_feature_progress_body">Mira cómo avanza cada ejercicio con lo que registraste.</string>
+    <string name="welcome_feature_progress_body">Mira cómo avanza cada ejercicio.</string>
     <string name="welcome_privacy_title">Privado por diseño</string>
     <string name="welcome_privacy_no_account">Sin cuenta</string>
     <string name="welcome_privacy_no_ads">Sin anuncios</string>
     <string name="welcome_privacy_no_tracking">Sin rastreo</string>
-    <string name="welcome_privacy_body">Se queda en tu teléfono, incluso sin conexión.</string>
+    <string name="welcome_privacy_body">En tu teléfono, incluso sin conexión.</string>
     <string name="welcome_get_started">Comenzar</string>
     <string name="credits_notice_font">Licencia de la fuente Roboto Condensed</string>
 </resources>

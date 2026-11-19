@@ -148,14 +148,14 @@ Copy:
 | `welcome_builder_output_title` | Your next workout | Tu próxima rutina |
 | `welcome_builder_output_body` | Adjusts as you log. | Se ajusta con lo que registras. |
 | `welcome_feature_log_title` | Log every set | Registra cada serie |
-| `welcome_feature_log_body` | Reps and weight in a tap or two. Rest starts on its own. | Repeticiones y peso en uno o dos toques. El descanso inicia solo. |
+| `welcome_feature_log_body` | Reps and weight in a tap or two. | Peso y repeticiones en pocos toques. |
 | `welcome_feature_progress_title` | Track progress | Mide tu progreso |
-| `welcome_feature_progress_body` | See each lift move over time, from what you logged. | Mira cómo avanza cada ejercicio con lo que registraste. |
+| `welcome_feature_progress_body` | See each lift improve over time. | Mira cómo avanza cada ejercicio. |
 | `welcome_privacy_title` | Private by design | Privado por diseño |
 | `welcome_privacy_no_account` | No account | Sin cuenta |
 | `welcome_privacy_no_ads` | No ads | Sin anuncios |
 | `welcome_privacy_no_tracking` | No tracking | Sin rastreo |
-| `welcome_privacy_body` | Stays on this phone, even offline. | Se queda en tu teléfono, incluso sin conexión. |
+| `welcome_privacy_body` | Stays on this phone, even offline. | En tu teléfono, incluso sin conexión. |
 | `welcome_get_started` | Get started | Comenzar |
 
 Follow `docs/localization.md`: add every key to both files.

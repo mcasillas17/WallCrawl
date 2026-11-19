@@ -1,6 +1,14 @@
 package wallcrawl.elopenmike.com.feature.welcome
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
@@ -83,6 +91,32 @@ class WelcomeScreenTest {
         ).inOrder()
         compose.onNodeWithText("Plan your week").assertDoesNotExist()
         compose.onNodeWithText("What WallCrawl does").assertDoesNotExist()
+    }
+
+    /** Builder input labels at [fontScale] in a 320 dp wide screen: the top of Goals and of Equipment. */
+    private fun inputTops(fontScale: Float): Pair<Float, Float> {
+        compose.mainClock.autoAdvance = false
+        compose.setContent {
+            val density = LocalDensity.current
+            CompositionLocalProvider(LocalDensity provides Density(density.density, fontScale)) {
+                WallCrawlTheme(ThemePreference.DARK) {
+                    Box(Modifier.width(320.dp)) { WelcomeScreen(onGetStarted = {}, reducedMotion = true, touchExploration = true) }
+                }
+            }
+        }
+        compose.mainClock.advanceTimeBy(300)
+        fun top(id: Int) = compose.onNodeWithText(context.getString(id), useUnmergedTree = true).getUnclippedBoundsInRoot().top.value
+        return top(R.string.welcome_builder_goals) to top(R.string.welcome_builder_equipment)
+    }
+
+    @Test fun builderInputsSitSideBySideAtNormalText() {
+        val (goals, equipment) = inputTops(1f)
+        assertThat(equipment).isWithin(1f).of(goals)
+    }
+
+    @Test fun builderInputsStackWhenALabelCannotFitItsTile() {
+        val (goals, equipment) = inputTops(2f)
+        assertThat(equipment).isGreaterThan(goals + 40f)
     }
 
     @Test fun talkBackStartsOnAbout() {
