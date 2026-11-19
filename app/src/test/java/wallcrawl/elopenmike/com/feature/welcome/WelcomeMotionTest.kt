@@ -66,18 +66,65 @@ class WelcomeMotionTest {
         assertThat(M.reducedIntroAlpha(M.REDUCED_INTRO_END)).isEqualTo(0f)
     }
 
-    @Test fun aboutEmblemReachesHeaderAt560msAndArcLapsBackToRest() {
-        assertThat(M.flight(560f)).isEqualTo(1f)
+    @Test fun aboutPlaysOver3000RealMs() {
+        assertThat(M.ABOUT_END).isEqualTo(3000f)
+        assertThat(M.footer(2999f)).isLessThan(1f)
+        assertThat(M.footer(3000f)).isEqualTo(1f)
+    }
+
+    @Test fun aboutEmblemReachesHeaderAt900msAndArcLapsBackToRest() {
+        assertThat(M.flight(899f)).isLessThan(1f)
+        assertThat(M.flight(900f)).isEqualTo(1f)
         assertThat(M.aboutArcHead(0f) - M.aboutArcTail(0f)).isEqualTo(90f)
+        assertThat(M.aboutArcTail(1050f)).isWithin(eps).of(360f)
         val end = EmblemFrame.about(M.ABOUT_END)
         assertThat(end.arcHead).isWithin(eps).of(EmblemFrame.REST.arcHead)
         assertThat(end.arcTail).isWithin(eps).of(EmblemFrame.REST.arcTail)
     }
 
+    @Test fun arrivingViaSkipFadesTheEmblemInOver250ms() {
+        assertThat(M.arrivedViaSkipAlpha(0f)).isEqualTo(0f)
+        assertThat(M.arrivedViaSkipAlpha(125f)).isWithin(eps).of(0.5f)
+        assertThat(M.arrivedViaSkipAlpha(250f)).isEqualTo(1f)
+    }
+
+    @Test fun headlineThenBuilderCardEnter() {
+        assertThat(M.headline(450f)).isEqualTo(0f)
+        assertThat(M.headline(451f)).isGreaterThan(0f)
+        assertThat(M.builderCard(650f)).isEqualTo(0f)
+        assertThat(M.builderCard(651f)).isGreaterThan(0f)
+        assertThat(M.builderCard(1250f)).isEqualTo(1f)
+    }
+
+    @Test fun inputsPopLeftToRightThenConnectorsMeet() {
+        assertThat((0..2).map { M.inputAlpha(it, 900f) }).isInOrder(Comparator.reverseOrder<Float>())
+        assertThat(M.inputScale(0, 850f)).isWithin(eps).of(0.6f)
+        assertThat((0..2).any { M.inputScale(it, 1300f) > 1f }).isTrue() // overshoot
+        assertThat((0..2).all { M.connector(it, 1250f) == 0f }).isTrue()
+        assertThat((0..2).all { M.connector(it, 1870f) == 1f }).isTrue()
+    }
+
+    @Test fun outputPopsWithABriefGlow() {
+        assertThat(M.outputGlow(0f)).isEqualTo(0f)
+        assertThat(M.outputAlpha(1650f)).isEqualTo(0f)
+        assertThat(M.outputScale(2100f)).isGreaterThan(1f) // overshoot
+        val peak = (1650..2550 step 10).maxBy { M.outputGlow(it.toFloat()) }
+        assertThat(peak).isIn(1890..1960)
+        assertThat(M.outputGlow(1950f)).isWithin(eps).of(0.45f)
+        assertThat(M.outputGlow(2550f)).isEqualTo(0f)
+        assertThat(M.outputGlow(2800f)).isEqualTo(0f)
+    }
+
     @Test fun aboutEntranceIsCompleteAtItsEnd() {
         val t = M.ABOUT_END
+        assertThat(M.headline(t)).isEqualTo(1f)
+        assertThat(M.builderCard(t)).isEqualTo(1f)
+        assertThat(M.outputScale(t)).isEqualTo(1f)
+        assertThat(M.outputAlpha(t)).isEqualTo(1f)
+        assertThat(M.outputGlow(t)).isEqualTo(0f)
+        assertThat(M.privacyCard(t)).isEqualTo(1f)
         assertThat(M.footer(t)).isEqualTo(1f)
-        assertThat(M.card(t)).isEqualTo(1f)
-        assertThat((0..2).all { M.feature(it, t) == 1f && M.tileScale(it, t) == 1f && M.chipScale(it, t) == 1f }).isTrue()
+        assertThat((0..2).all { M.inputScale(it, t) == 1f && M.connector(it, t) == 1f && M.chipScale(it, t) == 1f }).isTrue()
+        assertThat((0..1).all { M.feature(it, t) == 1f && M.tileScale(it, t) == 1f }).isTrue()
     }
 }

@@ -1,6 +1,7 @@
 package wallcrawl.elopenmike.com.feature.welcome
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -39,7 +40,7 @@ class WelcomeScreenTest {
         show()
         compose.mainClock.advanceTimeBy(1000)
         compose.onNodeWithTag(WELCOME_INTRO_TEST_TAG).assertExists()
-        compose.mainClock.advanceTimeBy(1600 + 1400)
+        compose.mainClock.advanceTimeBy(1600 + 3200)
         assertAbout()
         compose.onNodeWithText(context.getString(R.string.welcome_get_started)).performClick()
         assertThat(started).isEqualTo(1)
@@ -65,6 +66,23 @@ class WelcomeScreenTest {
         show(reduced = true)
         compose.mainClock.advanceTimeBy(2200)
         assertAbout()
+    }
+
+    @Test fun theBuilderCardReadsAsOneNodeAndPlanYourWeekIsGone() {
+        show(reduced = true)
+        compose.mainClock.advanceTimeBy(2200)
+        val card = compose.onNodeWithTag(WELCOME_BUILDER_TEST_TAG).fetchSemanticsNode()
+        val read = card.config.getOrElse(SemanticsProperties.Text) { emptyList() }.map { it.text }
+        assertThat(read).containsExactly(
+            context.getString(R.string.welcome_builder_title),
+            context.getString(R.string.welcome_builder_goals),
+            context.getString(R.string.welcome_builder_progress),
+            context.getString(R.string.welcome_builder_equipment),
+            context.getString(R.string.welcome_builder_output_title),
+            context.getString(R.string.welcome_builder_output_body),
+        ).inOrder()
+        compose.onNodeWithText("Plan your week").assertDoesNotExist()
+        compose.onNodeWithText("What WallCrawl does").assertDoesNotExist()
     }
 
     @Test fun talkBackStartsOnAbout() {
