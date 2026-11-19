@@ -1160,9 +1160,9 @@
     <string name="welcome_builder_output_title">Your next workout</string>
     <string name="welcome_builder_output_body">Adjusts as you log.</string>
     <string name="welcome_feature_log_title">Log every set</string>
-    <string name="welcome_feature_log_body">Reps and weight in a tap or two. Rest starts on its own.</string>
+    <string name="welcome_feature_log_body">Reps and weight in a tap or two.</string>
     <string name="welcome_feature_progress_title">Track progress</string>
-    <string name="welcome_feature_progress_body">See each lift move over time, from what you logged.</string>
+    <string name="welcome_feature_progress_body">See each lift improve over time.</string>
     <string name="welcome_privacy_title">Private by design</string>
     <string name="welcome_privacy_no_account">No account</string>
     <string name="welcome_privacy_no_ads">No ads</string>

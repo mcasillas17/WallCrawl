@@ -83,6 +83,8 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.first
@@ -472,7 +474,8 @@ private fun AboutContent(
             Spacer(Modifier.height(28.dp))
             WorkoutBuilderCard(clock, tileFill, connectorColor, glowAlpha, paths)
 
-            Spacer(Modifier.height(24.dp))
+            // 16 dp, like the gap above the privacy card, so 360×800 fits without scrolling.
+            Spacer(Modifier.height(16.dp))
             Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
                 listOf(
                     Triple(Icons.Outlined.Checklist, R.string.welcome_feature_log_title, R.string.welcome_feature_log_body),
@@ -578,79 +581,126 @@ private fun WorkoutBuilderCard(clock: () -> Float, tileFill: Color, connectorCol
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(stringResource(R.string.welcome_builder_title), style = MaterialTheme.typography.titleMedium, color = colors.onBackground)
+        val inputs = listOf(
+            Icons.Outlined.TrackChanges to stringResource(R.string.welcome_builder_goals),
+            Icons.AutoMirrored.Outlined.TrendingUp to stringResource(R.string.welcome_builder_progress),
+            Icons.Outlined.FitnessCenter to stringResource(R.string.welcome_builder_equipment),
+        )
+        val labelStyle = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
+        val measurer = rememberTextMeasurer()
         // No spacing inside: the connector lines touch both the inputs and the output.
-        Column {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                listOf(
-                    Icons.Outlined.TrackChanges to R.string.welcome_builder_goals,
-                    Icons.AutoMirrored.Outlined.TrendingUp to R.string.welcome_builder_progress,
-                    Icons.Outlined.FitnessCenter to R.string.welcome_builder_equipment,
-                ).forEachIndexed { k, (icon, label) ->
-                    Column(
-                        Modifier
-                            .weight(1f)
-                            .graphicsLayer { val s = M.inputScale(k, clock()); scaleX = s; scaleY = s; alpha = M.inputAlpha(k, clock()) }
-                            .heightIn(min = 56.dp)
-                            .background(tileFill, RoundedCornerShape(12.dp))
-                            .border(1.dp, colors.outlineVariant, RoundedCornerShape(12.dp))
-                            .padding(vertical = 8.dp, horizontal = 4.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
-                    ) {
-                        Icon(icon, contentDescription = null, tint = colors.primary, modifier = Modifier.size(20.dp))
-                        Text(stringResource(label), style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                            color = colors.onBackground, textAlign = TextAlign.Center)
-                    }
-                }
+        BoxWithConstraints {
+            // Three tiles side by side, unless a label can't fit its tile on one line (narrow
+            // screens with large text). Then the inputs stack, so no word breaks mid-word.
+            val tileText = with(LocalDensity.current) { ((maxWidth - 16.dp) / 3 - 8.dp).roundToPx() }
+            val stacked = inputs.any { (_, label) ->
+                measurer.measure(label, labelStyle, maxLines = 1, softWrap = false).size.width > tileText
             }
-            Spacer(
-                Modifier.fillMaxWidth().height(20.dp).drawWithCache {
-                    val w = size.width
-                    val h = size.height
-                    fun curve(x: Float) = Path().apply { moveTo(x, 0f); cubicTo(x, 0.6f * h, w / 2f, 0.4f * h, w / 2f, h) }
-                    val lines = listOf(curve(w / 6f), Path().apply { moveTo(w / 2f, 0f); lineTo(w / 2f, h) }, curve(5f * w / 6f))
-                        .map { path -> PathMeasure().apply { setPath(path, false) } }
-                    val stroke = Stroke(1.5.dp.toPx(), cap = StrokeCap.Round)
-                    val drawn = Path()
-                    onDrawBehind {
-                        lines.forEachIndexed { k, line ->
-                            val p = M.connector(k, clock())
-                            // A zero-length round-capped segment would still leave a dot.
-                            if (p > 0f) {
-                                drawn.reset()
-                                line.getSegment(0f, line.length * p, drawn, true)
-                                drawPath(drawn, connectorColor, style = stroke)
+            Column {
+                if (stacked) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        inputs.forEachIndexed { k, (icon, label) ->
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .inputTile(k, clock, tileFill, colors.outlineVariant)
+                                    .heightIn(min = 48.dp)
+                                    .padding(vertical = 8.dp, horizontal = 12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Icon(icon, contentDescription = null, tint = colors.primary, modifier = Modifier.size(20.dp))
+                                Text(label, style = labelStyle, color = colors.onBackground)
+                            }
+                        }
+                    }
+                } else {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        inputs.forEachIndexed { k, (icon, label) ->
+                            Column(
+                                Modifier
+                                    .weight(1f)
+                                    .inputTile(k, clock, tileFill, colors.outlineVariant)
+                                    .heightIn(min = 56.dp)
+                                    .padding(vertical = 8.dp, horizontal = 4.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
+                            ) {
+                                Icon(icon, contentDescription = null, tint = colors.primary, modifier = Modifier.size(20.dp))
+                                Text(label, style = labelStyle, color = colors.onBackground, textAlign = TextAlign.Center)
                             }
                         }
                     }
                 }
-            )
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .graphicsLayer { val s = M.outputScale(clock()); scaleX = s; scaleY = s; alpha = M.outputAlpha(clock()) }
-                    .drawBehind {
-                        val glow = M.outputGlow(clock())
-                        if (glow > 0f) {
-                            val ring = 4.dp.toPx()
-                            drawRoundRect(SpiderRedPrimary.copy(alpha = glow), topLeft = Offset(-ring, -ring),
-                                size = Size(size.width + 2 * ring, size.height + 2 * ring), cornerRadius = CornerRadius(16.dp.toPx()))
-                        }
+                BuilderConnectors(stacked, clock, connectorColor)
+                BuilderOutput(clock, tileFill, emblemGlow, paths)
+            }
+        }
+    }
+}
+
+private fun Modifier.inputTile(k: Int, clock: () -> Float, fill: Color, border: Color) = this
+    .graphicsLayer { val s = M.inputScale(k, clock()); scaleX = s; scaleY = s; alpha = M.inputAlpha(k, clock()) }
+    .background(fill, RoundedCornerShape(12.dp))
+    .border(1.dp, border, RoundedCornerShape(12.dp))
+
+/** Three lines converging on the output, or one straight line under stacked inputs. */
+@Composable
+private fun BuilderConnectors(stacked: Boolean, clock: () -> Float, color: Color) {
+    Spacer(
+        Modifier.fillMaxWidth().height(20.dp).drawWithCache {
+            val w = size.width
+            val h = size.height
+            fun curve(x: Float) = Path().apply { moveTo(x, 0f); cubicTo(x, 0.6f * h, w / 2f, 0.4f * h, w / 2f, h) }
+            val middle = Path().apply { moveTo(w / 2f, 0f); lineTo(w / 2f, h) }
+            // Stacked: the single line draws with the last connector, after every input.
+            val lines = (if (stacked) listOf(null, null, middle) else listOf(curve(w / 6f), middle, curve(5f * w / 6f)))
+                .map { path -> path?.let { PathMeasure().apply { setPath(it, false) } } }
+            val stroke = Stroke(1.5.dp.toPx(), cap = StrokeCap.Round)
+            val drawn = Path()
+            onDrawBehind {
+                lines.forEachIndexed { k, line ->
+                    val p = M.connector(k, clock())
+                    // A zero-length round-capped segment would still leave a dot.
+                    if (line != null && p > 0f) {
+                        drawn.reset()
+                        line.getSegment(0f, line.length * p, drawn, true)
+                        drawPath(drawn, color, style = stroke)
                     }
-                    .background(tileFill, RoundedCornerShape(12.dp))
-                    .border(1.5.dp, SpiderRedPrimary, RoundedCornerShape(12.dp))
-                    .padding(vertical = 10.dp, horizontal = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(Modifier.size(28.dp).drawBehind { drawEmblem(EmblemFrame.REST, paths, TextDisabled, SpiderRedPrimary, emblemGlow) })
-                Column {
-                    Text(stringResource(R.string.welcome_builder_output_title),
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold), color = colors.onBackground)
-                    Text(stringResource(R.string.welcome_builder_output_body), style = MaterialTheme.typography.bodySmall,
-                        color = colors.onSurfaceVariant)
                 }
             }
+        }
+    )
+}
+
+/** "Your next workout": a static emblem, a red border and a brief glow as it arrives. */
+@Composable
+private fun BuilderOutput(clock: () -> Float, tileFill: Color, emblemGlow: Float, paths: EmblemPaths) {
+    val colors = MaterialTheme.colorScheme
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .graphicsLayer { val s = M.outputScale(clock()); scaleX = s; scaleY = s; alpha = M.outputAlpha(clock()) }
+            .drawBehind {
+                val glow = M.outputGlow(clock())
+                if (glow > 0f) {
+                    val ring = 4.dp.toPx()
+                    drawRoundRect(SpiderRedPrimary.copy(alpha = glow), topLeft = Offset(-ring, -ring),
+                        size = Size(size.width + 2 * ring, size.height + 2 * ring), cornerRadius = CornerRadius(16.dp.toPx()))
+                }
+            }
+            .background(tileFill, RoundedCornerShape(12.dp))
+            .border(1.5.dp, SpiderRedPrimary, RoundedCornerShape(12.dp))
+            .padding(vertical = 10.dp, horizontal = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(Modifier.size(28.dp).drawBehind { drawEmblem(EmblemFrame.REST, paths, TextDisabled, SpiderRedPrimary, emblemGlow) })
+        Column {
+            Text(stringResource(R.string.welcome_builder_output_title),
+                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold), color = colors.onBackground)
+            Text(stringResource(R.string.welcome_builder_output_body), style = MaterialTheme.typography.bodySmall,
+                color = colors.onSurfaceVariant)
         }
     }
 }

@@ -57,6 +57,10 @@ leaves a few dp to spare, so verify on device. If it overflows by a little, redu
 privacy card from 24 to 16 dp before changing anything else. The footer divider only appears when the
 content scrolls.
 
+**As built:** the estimate counted all 800 dp as content, but the status and navigation bars take about
+48 dp. So the gaps above the feature rows and above the privacy card are 16 dp, and both feature bodies are one line (§4 of
+`first-launch-intro.md`): "Reps and weight in a tap or two." and "See each lift improve over time.".
+
 ---
 
 ## 3. Workout builder card
@@ -81,6 +85,7 @@ content scrolls.
 | Card | `Column`, bg `colorScheme.surface`, 1 dp `outlineVariant` border, `RoundedCornerShape(16.dp)`, padding 16 dp, `spacedBy(12.dp)`. |
 | Title | `titleMedium` 16/22 sp SemiBold, onBackground. |
 | Input tiles | `Row(spacedBy(8.dp))` with 3 children of `weight(1f)`. Each tile: `Column(CenterHorizontally, Arrangement.spacedBy(4.dp, CenterVertically))`, `heightIn(min = 56.dp)`, padding vertical 8 dp and horizontal 4 dp, `RoundedCornerShape(12.dp)`, bg tile fill, 1 dp `outlineVariant` border. Icon 20 dp in the icon colour, then a label in `labelMedium` 12/16 sp SemiBold, onBackground, centred, `maxLines` unlimited (it wraps at 200%). **Not clickable.** |
+| Narrow fallback | When any label can't fit its tile on one line (measured, e.g. 320 dp at 200% font), the inputs stack: full-width rows, min height 48 dp, padding 8/12 dp, icon then label 10 dp apart, 8 dp between rows. The connectors become one straight centre line that draws with connector 2. Same animation and semantics. |
 | Input icons | Goals `Icons.Outlined.TrackChanges` · Progress `Icons.AutoMirrored.Outlined.TrendingUp` · Equipment `Icons.Outlined.FitnessCenter`. All decorative (`contentDescription = null`). |
 | Connectors | The input row, the connector canvas and the output tile sit in an inner `Column` with **no spacing**, so the lines touch both the tiles and the output. The card's 12 dp spacing applies only between the title and that inner column. Use `Canvas(Modifier.fillMaxWidth().height(20.dp))` and draw three strokes, 1.5 dp, `StrokeCap.Round`, in the connector colour (§5). With `w` = canvas width and `h` = 20 dp: left `M(w/6, 0) C(w/6, 0.6h) (w/2, 0.4h) (w/2, h)`, middle `M(w/2, 0) L(w/2, h)`, and right mirrored from `5w/6`. Decorative. |
 | Output tile | `Row(spacedBy(12.dp), verticalAlignment = CenterVertically)`, padding vertical 10 dp and horizontal 12 dp, `RoundedCornerShape(12.dp)`, bg tile fill, **1.5 dp border #DE2045** (`SpiderRedPrimary`). Left: the static emblem, 28 dp, drawn at rest with the same `Emblem` drawing as the header (red arc 12→3 o'clock, glints, streaks). Right: `Column` with title `titleSmall` 14/20 sp SemiBold onBackground and subtitle `bodySmall` 12/16 sp onSurfaceVariant. |
@@ -105,7 +110,7 @@ Add these to `res/values/strings.xml` and `res/values-es/strings.xml`. Follow `d
 | `welcome_builder_equipment` | Equipment | Equipo |
 | `welcome_builder_output_title` | Your next workout | Tu próxima rutina |
 | `welcome_builder_output_body` | Adjusts as you log. | Se ajusta con lo que registras. |
-| `welcome_privacy_body` *(changed)* | Stays on this phone, even offline. | Se queda en tu teléfono, incluso sin conexión. |
+| `welcome_privacy_body` *(changed)* | Stays on this phone, even offline. | En tu teléfono, incluso sin conexión. |
 
 Delete these: `welcome_about_eyebrow`, `welcome_feature_plan_title`, `welcome_feature_plan_body`.
 
