@@ -51,11 +51,11 @@ internal fun TodayDeloadCard(
     }
 }
 
+/** "2 × 6–8", "1 × 30 s", with any hold: the dose line both previews share. */
 @Composable
-internal fun PrescriptionPreview(exercise: PlannedExercise, unit: WeightUnit) {
+internal fun prescriptionSetsText(target: ExercisePrescription): String {
     val locale = LocalConfiguration.current.locales[0]
     fun count(value: Int) = LocaleFormatting.formatCount(value, locale)
-    val target = exercise.prescription
     val values = buildList {
         target.repRange?.let { add(if (it.min == it.max) count(it.min)
             else stringResource(R.string.prescription_rep_range, count(it.min), count(it.max))) }
@@ -64,7 +64,15 @@ internal fun PrescriptionPreview(exercise: PlannedExercise, unit: WeightUnit) {
             LocaleFormatting.formatMeasurement(it, locale))) }
     }
     val sets = stringResource(R.string.prescription_sets_by_reps, count(target.targetSets), values.joinToString(" · "))
-    Text(target.holdSeconds?.let { stringResource(R.string.workout_target_with_hold, sets, count(it)) } ?: sets)
+    return target.holdSeconds?.let { stringResource(R.string.workout_target_with_hold, sets, count(it)) } ?: sets
+}
+
+@Composable
+internal fun PrescriptionPreview(exercise: PlannedExercise, unit: WeightUnit) {
+    val locale = LocalConfiguration.current.locales[0]
+    fun count(value: Int) = LocaleFormatting.formatCount(value, locale)
+    val target = exercise.prescription
+    Text(prescriptionSetsText(target))
     target.targetWeight?.let { Text(stringResource(R.string.previous_load, LocaleFormatting.formatMeasurement(it, locale), unit.symbol)) }
     target.targetAssistanceWeight?.let { Text(stringResource(R.string.workout_assistance, LocaleFormatting.formatMeasurement(it, locale), unit.symbol)) }
     Text(stringResource(R.string.today_deload_preview_rest, stringResource(R.string.prescription_seconds, count(target.restSeconds))))
