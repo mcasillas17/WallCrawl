@@ -66,25 +66,32 @@ internal object WelcomeMotion {
     const val REDUCED_INTRO_END = 1880f
     fun reducedIntroAlpha(t: Float) = seg(t, 0f, 300f) * (1f - seg(t, 1700f, 180f, ACCEL))
 
-    // ---- Screen 2: what WallCrawl is about, 0 → 1280 ms ----
-    const val ABOUT_END = 1280f
-    /** Real-time stretch of the screen-2 timeline: 1280 spec ms play over about 2.3 s. */
-    const val ABOUT_PACE = 1.8f
+    // ---- Screen 2: what WallCrawl is about, 0 → 3000 ms real time ----
+    const val ABOUT_END = 3000f
     const val REDUCED_ABOUT_FADE_MS = 200
 
-    fun flight(t: Float) = seg(t, 0f, 560f, EMPH_DEC)
-    private fun aboutLap(t: Float) = seg(t, 100f, 540f, IN_OUT)
+    fun flight(t: Float) = seg(t, 0f, 900f, EMPH_DEC)
+    private fun aboutLap(t: Float) = seg(t, 150f, 900f, IN_OUT)
     fun aboutArcTail(t: Float) = 360f * aboutLap(t)
     fun aboutArcHead(t: Float) = 90f + 360f * aboutLap(t)
-    fun arrivedViaSkipAlpha(t: Float) = seg(t, 0f, 150f)
+    fun arrivedViaSkipAlpha(t: Float) = seg(t, 0f, 250f)
 
-    fun eyebrow(t: Float) = seg(t, 280f, 300f, EMPH_DEC)
-    fun headline(t: Float) = seg(t, 340f, 360f, EMPH_DEC)
-    fun feature(i: Int, t: Float) = seg(t, 460f + 70f * i, 320f, EMPH_DEC)
-    fun tileScale(i: Int, t: Float) = lerp(0.6f, 1f, seg(t, 460f + 70f * i, 360f, OVERSHOOT))
-    fun tileAlpha(i: Int, t: Float) = seg(t, 460f + 70f * i, 120f)
-    fun card(t: Float) = seg(t, 700f, 360f, EMPH_DEC)
-    fun chipScale(j: Int, t: Float) = lerp(0.8f, 1f, seg(t, 820f + 50f * j, 280f, OVERSHOOT))
-    fun chipAlpha(j: Int, t: Float) = seg(t, 820f + 50f * j, 100f)
-    fun footer(t: Float) = seg(t, 900f, 380f, EMPH_DEC)
+    fun headline(t: Float) = seg(t, 450f, 600f, EMPH_DEC)
+
+    // Workout builder card: inputs pop left to right, the lines draw and meet, the output pops and glows.
+    fun builderCard(t: Float) = seg(t, 650f, 600f, EMPH_DEC)
+    fun inputScale(k: Int, t: Float) = lerp(0.6f, 1f, seg(t, 850f + 120f * k, 600f, OVERSHOOT))
+    fun inputAlpha(k: Int, t: Float) = seg(t, 850f + 120f * k, 200f)
+    fun connector(k: Int, t: Float) = seg(t, 1250f + 60f * k, 500f, STANDARD)
+    fun outputScale(t: Float) = lerp(0.85f, 1f, seg(t, 1650f, 650f, OVERSHOOT))
+    fun outputAlpha(t: Float) = seg(t, 1650f, 200f)
+    fun outputGlow(t: Float) = 0.45f * seg(t, 1650f, 240f, STANDARD) * (1f - seg(t, 1950f, 600f, STANDARD))
+
+    fun feature(i: Int, t: Float) = seg(t, 1500f + 140f * i, 550f, EMPH_DEC)
+    fun tileScale(i: Int, t: Float) = lerp(0.6f, 1f, seg(t, 1500f + 140f * i, 600f, OVERSHOOT))
+    fun tileAlpha(i: Int, t: Float) = seg(t, 1500f + 140f * i, 200f)
+    fun privacyCard(t: Float) = seg(t, 1950f, 600f, EMPH_DEC)
+    fun chipScale(j: Int, t: Float) = lerp(0.8f, 1f, seg(t, 2150f + 100f * j, 450f, OVERSHOOT))
+    fun chipAlpha(j: Int, t: Float) = seg(t, 2150f + 100f * j, 150f)
+    fun footer(t: Float) = seg(t, 2350f, 650f, EMPH_DEC)
 }
