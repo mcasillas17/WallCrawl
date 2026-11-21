@@ -285,7 +285,7 @@ class ConditionControlsTest {
             CompositionLocalProvider(LocalContext provides context, LocalConfiguration provides config, LocalResources provides context.resources,
                 LocalDensity provides Density(LocalDensity.current.density, 1.6f)) {
                 WallCrawlTheme(themePreference = ThemePreference.DARK) {
-                    wallcrawl.elopenmike.com.feature.personalize.PersonalizeScreen(vm, {})
+                    wallcrawl.elopenmike.com.feature.personalize.PersonalizeScreen(vm, {}, {})
                 }
             }
         }

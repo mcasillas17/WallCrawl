@@ -18,8 +18,9 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
 
 /**
  * A new user's first workout comes from the production planner and context builder over the
- * bundled catalog. Whatever the planner picks, including warm-ups and cooldowns, must be
- * bodyweight only, not high impact, and beginner difficulty, and must fit the chosen length.
+ * bundled catalog. The main work must be bodyweight only, not high impact, and beginner
+ * difficulty, and must fit the chosen length. Warm-ups and cooldowns are only checked for
+ * impact; their difficulty and equipment are exempt.
  */
 @RunWith(Parameterized::class)
 class StarterWorkoutGuardTest(private val goal: FitnessGoal, private val minutes: Int) {

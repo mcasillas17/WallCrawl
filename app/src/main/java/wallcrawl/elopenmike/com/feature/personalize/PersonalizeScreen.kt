@@ -68,12 +68,13 @@ import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 
 /**
  * Three-step personalization: equipment, experience and movement, then conditions.
- * Back on the first step and Finish both end in [onClose]; only Finish saves.
+ * Back on the first step ends in [onClose]; Finish saves and ends in [onFinished].
  */
 @Composable
 fun PersonalizeScreen(
     viewModel: PersonalizeViewModel,
     onClose: () -> Unit,
+    onFinished: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -81,7 +82,7 @@ fun PersonalizeScreen(
     BackHandler { if (!state.isSaving && !viewModel.previousStep()) onClose() }
 
     LaunchedEffect(state.isComplete) {
-        if (state.isComplete) onClose()
+        if (state.isComplete) onFinished()
     }
 
     Box(

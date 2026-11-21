@@ -242,9 +242,9 @@ class ShortOnboardingNavigationTest {
         click(R.string.personalize_next)
         waitStep(3)
         click(R.string.personalize_finish)
-        compose.waitUntil(15_000) { nav.currentDestination?.route != AppRoutes.PERSONALIZE }
+        awaitToday()
+        assertThat(nav.currentDestination?.route).isEqualTo(AppRoutes.TODAY)
         assertThat(runBlocking { container.userProfileRepository.getProfileOnce() }.personalizationCompleted).isTrue()
-        doneThenToday()
         assertNoTodayCard()
         openProfile()
         assertThat(profileRowShown()).isFalse()
@@ -272,6 +272,17 @@ class ShortOnboardingNavigationTest {
         assertNoTodayCard()
         openProfile()
         assertThat(profileRowShown()).isFalse()
+    }
+
+    @Test fun deleteAllData_forgetsThePersonalizeDismissal() {
+        runBlocking { container.userProfileRepository.saveProfile(UserProfile(name = "Dismisser", onboardingCompleted = true)) }
+        val prefs = context.getSharedPreferences("personalize_prompt", Context.MODE_PRIVATE)
+        prefs.edit().putLong("dismissed_at", System.currentTimeMillis()).commit()
+        show()
+        awaitToday()
+        runBlocking { container.localDataBackupRepository.deleteAllLocalData() }
+        route(AppRoutes.ONBOARDING)
+        assertThat(prefs.contains("dismissed_at")).isFalse()
     }
 
     private fun finishFirstWorkoutNoOffer() {

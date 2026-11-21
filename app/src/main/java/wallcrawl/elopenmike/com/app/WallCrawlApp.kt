@@ -197,6 +197,8 @@ private fun WallCrawlAppContent(
         navController.clearBackStack(AppRoutes.ACTIVE_WORKOUT)
         savedWorkoutId = null
         todayPrefs.edit().clear().apply()
+        // A dismissal belongs to the data it was made on, so it goes with that data too.
+        personalizePrefs.edit().clear().apply()
     }
 
     fun openRoot(screen: Screen) {
@@ -352,7 +354,12 @@ private fun WallCrawlAppContent(
                         userProfileRepository = container.userProfileRepository
                     )
                 )
-                PersonalizeScreen(viewModel = personalizeViewModel, onClose = { navController.popBackStack(AppRoutes.PERSONALIZE, inclusive = true) })
+                PersonalizeScreen(
+                    viewModel = personalizeViewModel,
+                    onClose = { navController.popBackStack(AppRoutes.PERSONALIZE, inclusive = true) },
+                    // openRoot alone would restore the state it just saved, Personalize included.
+                    onFinished = { if (!navController.popBackStack(AppRoutes.TODAY, inclusive = false)) openRoot(Screen.Today) }
+                )
             }
 
             composable(AppRoutes.TODAY) { entry ->

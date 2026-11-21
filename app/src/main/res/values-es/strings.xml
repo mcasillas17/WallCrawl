@@ -102,7 +102,7 @@
     <string name="personalize_summary_title">Hazla tuya</string>
     <string name="personalize_summary_body">Cuéntanos tu equipo y qué debemos cuidar. Tu próxima rutina se adapta.</string>
     <string name="personalize_today_title">Personaliza tu plan</string>
-    <string name="personalize_today_body">Tus rutinas son de peso corporal y bajo impacto hasta que nos cuentes más.</string>
+    <string name="personalize_today_body">Tus rutinas se mantienen sencillas hasta que nos cuentes más.</string>
     <string name="personalize_action">Personalizar</string>
     <string name="personalize_not_now">Ahora no</string>
     <string name="personalize_dismiss_a11y">Descartar</string>

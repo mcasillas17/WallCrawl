@@ -89,7 +89,7 @@ class BandEquipmentUiTest {
     fun personalize_fullGymDoesNotConfirmSetupsAndEachControlHasAnExplanation() {
         val viewModel = PersonalizeViewModel(profiles)
         composeRule.setContent {
-            InLanguage("en") { PersonalizeScreen(viewModel, onClose = {}) }
+            InLanguage("en") { PersonalizeScreen(viewModel, onClose = {}, onFinished = {}) }
         }
         composeRule.waitUntil(10_000) { viewModel.uiState.value.isLoaded }
         composeRule.onNodeWithText("Full gym access").performClick()

@@ -105,7 +105,7 @@
     <string name="personalize_summary_title">Make it yours</string>
     <string name="personalize_summary_body">Tell us your equipment and anything to work around. Your next workout adapts.</string>
     <string name="personalize_today_title">Personalize your plan</string>
-    <string name="personalize_today_body">Your workouts are bodyweight and low impact until you tell us more.</string>
+    <string name="personalize_today_body">Your workouts stay simple until you tell us more.</string>
     <string name="personalize_action">Personalize</string>
     <string name="personalize_not_now">Not now</string>
     <string name="personalize_dismiss_a11y">Dismiss</string>
