@@ -35,29 +35,30 @@ class ConditionReassessmentPersistenceTest {
     }
     @After fun tearDown() = database.close()
 
-    @Test fun onboardingConditionDraftIsOneRevisionAndActiveRefusalIsAtomic() = runBlocking<Unit> {
+    @Test fun personalizeConditionDraftIsOneRevisionAndActiveRefusalIsAtomic() = runBlocking<Unit> {
         val repository = OfflineUserProfileRepository(database.userProfileDao())
         val initial = repository.getProfileOnce()
         val saved = androidx.lifecycle.SavedStateHandle()
-        suspend fun complete(name: String, selections: List<SelectedCondition>) {
+        suspend fun finish(selections: List<SelectedCondition>) {
             val vm = kotlinx.coroutines.withContext(Dispatchers.Main) {
-                wallcrawl.elopenmike.com.feature.onboarding.OnboardingViewModel(repository, saved).also {
-                    it.updateName(name)
-                    MovementCapabilityType.entries.forEach { type -> it.updateMovementCapability(type, CapabilityLevel.UNKNOWN) }
-                    it.updateConditions(selections)
-                    it.complete()
-                }
+                wallcrawl.elopenmike.com.feature.personalize.PersonalizeViewModel(repository, saved)
+            }
+            withTimeout(5000) { vm.uiState.first { it.isLoaded } }
+            kotlinx.coroutines.withContext(Dispatchers.Main) {
+                MovementCapabilityType.entries.forEach { type -> vm.updateMovementCapability(type, CapabilityLevel.UNKNOWN) }
+                vm.updateConditions(selections)
+                vm.finish()
             }
             withTimeout(5000) { vm.uiState.first { it.isComplete || it.error != null } }
         }
-        complete("saved atomically", listOf(condition))
+        finish(listOf(condition))
         val success = repository.getProfileOnce()
         assertEquals(initial.revision + 1, success.revision)
         assertEquals(listOf(condition), success.activeConditions)
         database.workoutSessionDao().insertWorkout(session("active"), emptyList(), emptyList())
-        complete("must not persist", emptyList())
+        finish(emptyList())
         assertEquals(success, repository.getProfileOnce())
-        assertTrue(saved.get<List<String>>("onboarding.conditions")!!.isEmpty())
+        assertTrue(saved.get<List<String>>("personalize.conditions")!!.isEmpty())
     }
 
     @Test fun pendingObservationTracksExactReplacementAndRejectsOverflowWithoutSelections() = runBlocking<Unit> {

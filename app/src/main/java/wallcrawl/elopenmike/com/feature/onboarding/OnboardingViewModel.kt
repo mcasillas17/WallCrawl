@@ -1,11 +1,5 @@
 package wallcrawl.elopenmike.com.feature.onboarding
 
-import wallcrawl.elopenmike.com.core.ui.encodeConditionDraft
-import wallcrawl.elopenmike.com.core.ui.decodeConditionDraft
-import wallcrawl.elopenmike.com.core.ai.ConditionPlanningPolicy
-import wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog
-import wallcrawl.elopenmike.com.core.model.ReportedCondition
-import wallcrawl.elopenmike.com.core.model.SelectedCondition
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.SavedStateHandle
@@ -14,19 +8,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
-import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
-import wallcrawl.elopenmike.com.core.model.MovementCapabilities
-import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
-import wallcrawl.elopenmike.com.core.model.StandardEquipment
-import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.ProfileGender
 
@@ -37,36 +25,11 @@ import wallcrawl.elopenmike.com.core.model.ProfileGender
  */
 class OnboardingViewModel(
     private val userProfileRepository: UserProfileRepository,
-    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
-    conditionSupport: suspend () -> ConditionSupportCatalog = { ConditionSupportCatalog("empty", emptyMap()) }
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle()
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(restoreDraft(savedStateHandle))
     val uiState: StateFlow<OnboardingUiState> = mutableState.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            try {
-                val current = userProfileRepository.getUserProfile().first()
-                updateState { it.copy(retainedConditions = current.activeConditions, retainedReports = current.reportedConditions) }
-                val records = conditionSupport().records.values.filter(ConditionPlanningPolicy()::supports)
-                updateState { it.copy(conditionRecords = records) }
-            } catch (error: CancellationException) { throw error
-            } catch (_: Exception) { updateState { it.copy(conditionLoadFailed = true) } }
-        }
-    }
-
-    fun setReportedCondition(id: String, selected: Boolean) {
-        if (mutableState.value.isSaving || (selected && id !in ReportedCondition.ids)) return
-        updateState { state ->
-            if (selected) state.copy(addedReports = state.addedReports + id, removedReports = state.removedReports - id)
-            else state.copy(addedReports = state.addedReports - id, removedReports = state.removedReports + id)
-        }
-    }
-
-    fun updateConditions(selections: List<SelectedCondition>) {
-        if (!mutableState.value.isSaving) updateState { it.copy(conditionDraft = selections.toList()) }
-    }
 
     fun updateName(name: String) {
         updateState { it.copy(name = name.take(NAME_MAX_LENGTH), error = null) }
@@ -113,65 +76,12 @@ class OnboardingViewModel(
         updateState { it.copy(unit = unit, error = null) }
     }
 
-    fun toggleEquipment(equipment: String) {
-        val current = mutableState.value.equipment
-        val updated = if (equipment in current) current - equipment else current + equipment
-        updateState { it.copy(equipment = updated, error = null) }
-    }
-
-    fun toggleConstraint(constraint: TrainingConstraint) {
-        val current = mutableState.value.constraints
-        val updated = if (constraint in current) current - constraint else current + constraint
-        updateState { it.copy(constraints = updated, error = null) }
-    }
-
-    fun updateReturningAfterBreakWeeks(weeks: Int) {
-        updateState { it.copy(returningAfterBreakWeeks = weeks, error = null) }
-    }
-
-    fun updateMovementCapability(
-        type: MovementCapabilityType,
-        level: CapabilityLevel
-    ) {
-        updateState { state ->
-            state.copy(
-                capabilityAnswers = state.capabilityAnswers + (type to level),
-                error = null
-            )
-        }
-    }
-
-    fun selectFullGymEquipment() {
-        updateState { state ->
-            state.copy(
-                equipment = StandardEquipment.FULL_GYM.toSet() +
-                    state.equipment.filter { it in StandardEquipment.BAND_SETUPS || it in StandardEquipment.SUPPORT_ASSEMBLY },
-                error = null
-            )
-        }
-    }
-
-    fun resetEquipmentToBodyweight() {
-        updateState { state -> state.copy(
-            equipment = setOf(StandardEquipment.BODYWEIGHT),
-            error = null
-        ) }
-    }
-
-    fun clearConstraints() {
-        updateState { it.copy(constraints = emptySet(), error = null) }
-    }
-
     fun nextStep() {
         val state = mutableState.value
         if (!state.canProceedCurrentStep) {
             updateState {
                 it.copy(
-                    error = if (state.currentStep == OnboardingStep.MOVEMENT_CAPABILITY) {
-                        OnboardingError.MOVEMENT_REQUIRED
-                    } else {
-                        OnboardingError.REQUIRED_FIELD
-                    }
+                    error = OnboardingError.REQUIRED_FIELD
                 )
             }
             return
@@ -215,11 +125,6 @@ class OnboardingViewModel(
         daysPerWeek: Int = mutableState.value.daysPerWeek,
         durationMinutes: Int = mutableState.value.durationMinutes,
         unit: WeightUnit = mutableState.value.unit,
-        equipment: Set<String> = mutableState.value.equipment,
-        constraints: Set<TrainingConstraint> = mutableState.value.constraints,
-        returningAfterBreakWeeks: Int = mutableState.value.returningAfterBreakWeeks,
-        capabilityAnswers: Map<MovementCapabilityType, CapabilityLevel> =
-            mutableState.value.capabilityAnswers,
         gender: ProfileGender = mutableState.value.gender
     ) {
         updateState { it.copy(
@@ -229,25 +134,8 @@ class OnboardingViewModel(
             daysPerWeek = daysPerWeek,
             durationMinutes = durationMinutes,
             unit = unit,
-            equipment = equipment,
-            constraints = constraints,
-            returningAfterBreakWeeks = returningAfterBreakWeeks,
-            capabilityAnswers = capabilityAnswers,
             gender = gender,
         ) }
-
-        val unansweredCapability = MovementCapabilityType.entries.firstOrNull {
-            it !in capabilityAnswers
-        }
-        if (unansweredCapability != null) {
-            updateState {
-                it.copy(
-                    currentStep = OnboardingStep.MOVEMENT_CAPABILITY,
-                    error = OnboardingError.MOVEMENT_REQUIRED
-                )
-            }
-            return
-        }
 
         viewModelScope.launch {
             updateState { it.copy(isSaving = true, error = null) }
@@ -261,12 +149,6 @@ class OnboardingViewModel(
                     daysPerWeek = daysPerWeek,
                     preferredDurationMinutes = durationMinutes,
                     preferredUnit = unit,
-                    availableEquipment = equipment.toList(),
-                    trainingConstraints = constraints,
-                    returningAfterBreakWeeks = returningAfterBreakWeeks,
-                    movementCapabilities = MovementCapabilities.from(capabilityAnswers),
-                    reportedConditions = mutableState.value.applyReportEdits(current.reportedConditions),
-                    activeConditions = mutableState.value.conditionDraft ?: current.activeConditions,
                     onboardingCompleted = true
                 )
                 userProfileRepository.saveProfile(profile)
@@ -295,9 +177,6 @@ class OnboardingViewModel(
     }
 
     private fun persistDraft(state: OnboardingUiState) {
-        savedStateHandle[STATE_ADDED_REPORTS] = ArrayList(state.addedReports)
-        savedStateHandle[STATE_REMOVED_REPORTS] = ArrayList(state.removedReports)
-        state.conditionDraft?.let { savedStateHandle[STATE_CONDITIONS] = encodeConditionDraft(it) }
         savedStateHandle[STATE_CURRENT_STEP] = state.currentStep.name
         savedStateHandle[STATE_NAME] = state.name
         savedStateHandle[STATE_GENDER] = state.gender.name
@@ -306,20 +185,9 @@ class OnboardingViewModel(
         savedStateHandle[STATE_DAYS_PER_WEEK] = state.daysPerWeek
         savedStateHandle[STATE_DURATION_MINUTES] = state.durationMinutes
         savedStateHandle[STATE_UNIT] = state.unit.name
-        savedStateHandle[STATE_EQUIPMENT] = ArrayList(state.equipment)
-        savedStateHandle[STATE_CONSTRAINTS] = ArrayList(state.constraints.map { it.name })
-        savedStateHandle[STATE_BREAK_WEEKS] = state.returningAfterBreakWeeks
-        savedStateHandle[STATE_CAPABILITY_ANSWERS] = ArrayList(
-            state.capabilityAnswers.entries.map { (type, level) ->
-                "${type.name}:${level.name}"
-            }
-        )
     }
 
     companion object {
-        private const val STATE_ADDED_REPORTS = "onboarding.addedReports"
-        private const val STATE_REMOVED_REPORTS = "onboarding.removedReports"
-        private const val STATE_CONDITIONS = "onboarding.conditions"
         private const val NAME_MAX_LENGTH = 60
         private const val STATE_CURRENT_STEP = "onboarding.currentStep"
         private const val STATE_NAME = "onboarding.name"
@@ -329,17 +197,10 @@ class OnboardingViewModel(
         private const val STATE_DAYS_PER_WEEK = "onboarding.daysPerWeek"
         private const val STATE_DURATION_MINUTES = "onboarding.durationMinutes"
         private const val STATE_UNIT = "onboarding.unit"
-        private const val STATE_EQUIPMENT = "onboarding.equipment"
-        private const val STATE_CONSTRAINTS = "onboarding.constraints"
-        private const val STATE_BREAK_WEEKS = "onboarding.returningAfterBreakWeeks"
-        private const val STATE_CAPABILITY_ANSWERS = "onboarding.capabilityAnswers"
 
         private fun restoreDraft(savedStateHandle: SavedStateHandle): OnboardingUiState {
             val defaults = OnboardingUiState()
             return defaults.copy(
-                addedReports = savedStateHandle.get<List<String>>(STATE_ADDED_REPORTS).orEmpty().intersect(ReportedCondition.ids),
-                removedReports = savedStateHandle.get<List<String>>(STATE_REMOVED_REPORTS).orEmpty().toSet(),
-                conditionDraft = savedStateHandle.get<List<String>>(STATE_CONDITIONS)?.let(::decodeConditionDraft),
                 currentStep = enumValueOrDefault(
                     savedStateHandle[STATE_CURRENT_STEP],
                     defaults.currentStep
@@ -354,22 +215,11 @@ class OnboardingViewModel(
                 daysPerWeek = savedStateHandle[STATE_DAYS_PER_WEEK] ?: defaults.daysPerWeek,
                 durationMinutes = savedStateHandle[STATE_DURATION_MINUTES]
                     ?: defaults.durationMinutes,
-                unit = enumValueOrDefault(savedStateHandle[STATE_UNIT], defaults.unit),
-                equipment = savedStateHandle.get<List<String>>(STATE_EQUIPMENT)?.toSet()
-                    ?: defaults.equipment,
-                constraints = enumSetOrDefault(
-                    savedStateHandle[STATE_CONSTRAINTS],
-                    defaults.constraints
-                ),
-                returningAfterBreakWeeks = savedStateHandle[STATE_BREAK_WEEKS]
-                    ?: defaults.returningAfterBreakWeeks,
-                capabilityAnswers = decodeCapabilityAnswers(
-                    savedStateHandle[STATE_CAPABILITY_ANSWERS]
-                )
+                unit = enumValueOrDefault(savedStateHandle[STATE_UNIT], defaults.unit)
             )
         }
 
-        private inline fun <reified T : Enum<T>> enumValueOrDefault(
+        internal inline fun <reified T : Enum<T>> enumValueOrDefault(
             persistedName: String?,
             defaultValue: T
         ): T {
@@ -381,7 +231,7 @@ class OnboardingViewModel(
             }
         }
 
-        private inline fun <reified T : Enum<T>> enumSetOrDefault(
+        internal inline fun <reified T : Enum<T>> enumSetOrDefault(
             persistedNames: List<String>?,
             defaultValue: Set<T>
         ): Set<T> {
@@ -395,36 +245,13 @@ class OnboardingViewModel(
             }.toSet()
         }
 
-        private fun decodeCapabilityAnswers(
-            persistedAnswers: List<String>?
-        ): Map<MovementCapabilityType, CapabilityLevel> {
-            if (persistedAnswers == null) return emptyMap()
-            return persistedAnswers.mapNotNull { answer ->
-                val parts = answer.split(':', limit = 2)
-                if (parts.size != 2) return@mapNotNull null
-                val type = try {
-                    MovementCapabilityType.valueOf(parts[0])
-                } catch (error: IllegalArgumentException) {
-                    return@mapNotNull null
-                }
-                val level = try {
-                    CapabilityLevel.valueOf(parts[1])
-                } catch (error: IllegalArgumentException) {
-                    return@mapNotNull null
-                }
-                type to level
-            }.toMap()
-        }
-
         fun provideFactory(
-            userProfileRepository: UserProfileRepository,
-            conditionSupport: suspend () -> ConditionSupportCatalog = { ConditionSupportCatalog("empty", emptyMap()) }
+            userProfileRepository: UserProfileRepository
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 OnboardingViewModel(
                     userProfileRepository = userProfileRepository,
-                    savedStateHandle = createSavedStateHandle(),
-                    conditionSupport = conditionSupport
+                    savedStateHandle = createSavedStateHandle()
                 )
             }
         }

@@ -107,6 +107,10 @@
     <string name="onboarding_summary_subtitle">You can change these choices in Profile and settings.</string>
 
     <string name="onboarding_step_counter">Step %1$s of %2$s</string>
+    <string name="personalize_step_counter">%1$s of %2$s</string>
+    <string name="personalize_finish">Finish</string>
+    <string name="personalize_next">Next</string>
+    <string name="personalize_experience_title">Experience</string>
     <string name="onboarding_codename_heading">Your name</string>
     <string name="onboarding_codename_placeholder">e.g. Alex</string>
     <string name="default_crawler_name" translatable="false">Crawler</string>

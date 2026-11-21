@@ -2,8 +2,6 @@ package wallcrawl.elopenmike.com.feature.onboarding
 
 import wallcrawl.elopenmike.com.core.ui.components.ProfileGenderSelector
 
-import wallcrawl.elopenmike.com.core.model.StandardEquipment
-import wallcrawl.elopenmike.com.core.ui.components.BandSetupControls
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -20,7 +18,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,7 +37,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -48,10 +44,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -69,7 +62,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import wallcrawl.elopenmike.com.R
@@ -79,22 +71,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
-import wallcrawl.elopenmike.com.core.model.BreakDurationHelper
-import wallcrawl.elopenmike.com.core.model.BreakRange
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
-import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
-import wallcrawl.elopenmike.com.core.model.ReportedCondition
-import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.ui.components.*
-import wallcrawl.elopenmike.com.core.ui.components.BreakDurationSelector
 import wallcrawl.elopenmike.com.core.ui.components.LanguageChip
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlCard
-import wallcrawl.elopenmike.com.core.ui.components.MovementCapabilityQuestion
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
-import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.localization.descriptionRes
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
 import wallcrawl.elopenmike.com.core.ui.localization.longLabelRes
@@ -103,7 +87,6 @@ import wallcrawl.elopenmike.com.core.ui.localization.shortLabelRes
 import wallcrawl.elopenmike.com.core.ui.localization.subtitleRes
 import wallcrawl.elopenmike.com.core.ui.localization.titleRes
 import wallcrawl.elopenmike.com.core.ui.localization.trainingDaysDescriptionRes
-import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedLight
 import wallcrawl.elopenmike.com.core.ui.theme.CrimsonRedPrimary
 import wallcrawl.elopenmike.com.core.ui.theme.TextWhite
 import wallcrawl.elopenmike.com.core.ui.theme.WebBlueAccent
@@ -158,10 +141,15 @@ fun OnboardingScreen(
                 .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
             // Wizard Header & Progress Bar
-            OnboardingHeader(
-                currentStep = state.currentStep,
+            StepHeader(
+                stepNumber = state.currentStep.stepNumber,
+                totalSteps = OnboardingStep.totalSteps,
                 canGoBack = canGoBack,
-                onBack = { viewModel.previousStep() }
+                onBack = { viewModel.previousStep() },
+                counterRes = R.string.onboarding_step_counter,
+                // Reachable from the first screen, before anything has to be typed, so a
+                // Spanish reader who landed on an English install can switch and carry on.
+                trailing = { LanguageChip() }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -217,13 +205,7 @@ fun OnboardingScreen(
                                     WelcomeStep(state = state, viewModel = viewModel)
                                 OnboardingStep.GOALS -> GoalsStep(state = state, viewModel = viewModel)
                                 OnboardingStep.EXPERIENCE_UNIT -> ExperienceAndUnitStep(state = state, viewModel = viewModel)
-                                OnboardingStep.MOVEMENT_CAPABILITY -> MovementCapabilityStep(
-                                    state = state,
-                                    viewModel = viewModel
-                                )
                                 OnboardingStep.SCHEDULE -> ScheduleStep(state = state, viewModel = viewModel)
-                                OnboardingStep.EQUIPMENT -> EquipmentStep(state = state, viewModel = viewModel)
-                                OnboardingStep.SAFETY -> SafetyStep(state = state, viewModel = viewModel)
                                 OnboardingStep.SUMMARY -> SummaryStep(state = state, viewModel = viewModel)
                             }
                             Spacer(modifier = Modifier.height(16.dp))
@@ -259,85 +241,6 @@ fun OnboardingScreen(
         }
     }
 }
-
-@Composable
-private fun OnboardingHeader(
-    currentStep: OnboardingStep,
-    canGoBack: Boolean,
-    onBack: () -> Unit
-) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // Both side slots are the language chip's width so the step counter stays
-            // centred, whether or not this step can go back.
-            if (!currentStep.isFirst()) {
-                IconButton(
-                    onClick = onBack,
-                    enabled = canGoBack,
-                    modifier = Modifier.size(48.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.action_back),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            } else {
-                Spacer(modifier = Modifier.size(48.dp))
-            }
-
-            val locale = LocalConfiguration.current.locales[0]
-            Text(
-                text = stringResource(
-                    R.string.onboarding_step_counter,
-                    LocaleFormatting.formatCount(currentStep.stepNumber, locale),
-                    LocaleFormatting.formatCount(OnboardingStep.totalSteps, locale)
-                ),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.5.sp,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-            // Reachable from the first screen, before anything has to be typed, so a
-            // Spanish reader who landed on an English install can switch and carry on. It
-            // is not a step: the wizard still has the same eight.
-            LanguageChip()
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Segmented Step Progress Bar
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            OnboardingStep.entries.forEach { step ->
-                val isCompletedOrActive = step.ordinal <= currentStep.ordinal
-                val isCurrent = step == currentStep
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(4.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(
-                            when {
-                                isCurrent -> CrimsonRedPrimary
-                                isCompletedOrActive -> CrimsonRedLight.copy(alpha = 0.7f)
-                                else -> MaterialTheme.colorScheme.outline
-                            }
-                        )
-                )
-            }
-        }
-    }
-}
-
-private fun OnboardingStep.isFirst(): Boolean = ordinal == 0
 
 @Composable
 private fun WelcomeStep(
@@ -622,344 +525,6 @@ private fun ScheduleStep(
                 )
             )
         }
-
-        WallCrawlCard(
-            cornerRadius = 16.dp,
-            contentPadding = 16.dp
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.onboarding_break_heading),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.8.sp,
-                    color = CrimsonRedLight,
-                    modifier = Modifier.weight(1f)
-                )
-                if (state.returningAfterBreakWeeks > 0) {
-                    Text(
-                        text = stringResource(R.string.break_reentry_active),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = stringResource(R.string.onboarding_break_hint),
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            BreakDurationSelector(
-                weeks = state.returningAfterBreakWeeks,
-                onSelectWeeks = { viewModel.updateReturningAfterBreakWeeks(it) }
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = stringResource(
-                    BreakDurationHelper.guidanceFor(state.returningAfterBreakWeeks).messageRes
-                ),
-                fontSize = 12.sp,
-                color = if (state.returningAfterBreakWeeks >= 52) CrimsonRedLight else MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.Medium
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun EquipmentStep(
-    state: OnboardingUiState,
-    viewModel: OnboardingViewModel
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        WallCrawlCard(
-            cornerRadius = 16.dp,
-            contentPadding = 16.dp
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.onboarding_equipment_quick_heading),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.8.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.surface)
-                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-                        .clickable { viewModel.resetEquipmentToBodyweight() }
-                        .padding(vertical = 10.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        stringResource(R.string.onboarding_equipment_bodyweight_only),
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.surface)
-                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-                        .clickable { viewModel.selectFullGymEquipment() }
-                        .padding(vertical = 10.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        stringResource(R.string.onboarding_equipment_full_gym),
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
-            }
-        }
-
-        WallCrawlCard(
-            cornerRadius = 16.dp,
-            contentPadding = 16.dp
-        ) {
-            Text(
-                text = stringResource(R.string.onboarding_equipment_heading),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.8.sp,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stringResource(R.string.onboarding_equipment_hint),
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            val vocabulary = LocalExerciseVocabulary.current
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                state.equipmentOptions.filterNot { it in StandardEquipment.BAND_SETUPS }.forEach { equipment ->
-                    val isSelected = equipment in state.equipment
-                    FilterChip(
-                        selected = isSelected,
-                        // The canonical English name stays the stored value and the
-                        // filter key; only the chip's label is translated.
-                        onClick = { viewModel.toggleEquipment(equipment) },
-                        label = {
-                            Text(
-                                text = vocabulary.equipment(equipment),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface
-                            )
-                        },
-                        colors = FilterChipDefaults.filterChipColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            selectedContainerColor = MaterialTheme.colorScheme.secondary,
-                            labelColor = MaterialTheme.colorScheme.onSurface,
-                            selectedLabelColor = MaterialTheme.colorScheme.onSecondary
-                        ),
-                        border = FilterChipDefaults.filterChipBorder(
-                            enabled = true,
-                            selected = isSelected,
-                            borderColor = MaterialTheme.colorScheme.outline,
-                            selectedBorderColor = MaterialTheme.colorScheme.secondary
-                        )
-                    )
-                }
-            }
-        }
-        WallCrawlCard(cornerRadius = 16.dp, contentPadding = 16.dp) {
-            BandSetupControls(state.equipment, viewModel::toggleEquipment)
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun SafetyStep(
-    state: OnboardingUiState,
-    viewModel: OnboardingViewModel
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        WallCrawlCard(cornerRadius = 16.dp, contentPadding = 16.dp) {
-            ReportedConditionPicker(state.reportedConditions, !state.isSaving, viewModel::setReportedCondition)
-        }
-        if (state.conditionLoadFailed) Text(stringResource(R.string.condition_load_error), color = MaterialTheme.colorScheme.onSurface)
-        ConditionSelectionControls(state.conditionRecords, state.conditionDraft ?: state.retainedConditions,
-            viewModel::updateConditions, !state.isSaving)
-        WallCrawlCard(
-            cornerRadius = 16.dp,
-            contentPadding = 16.dp
-        ) {
-            Text(
-                text = stringResource(R.string.onboarding_safety_heading),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.8.sp,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = stringResource(R.string.onboarding_safety_hint),
-                fontSize = 13.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(14.dp))
-
-            val hasNoConstraints = state.constraints.isEmpty()
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(if (hasNoConstraints) Color(0x2210B981) else MaterialTheme.colorScheme.surface)
-                    .border(1.dp, if (hasNoConstraints) Color(0xFF10B981) else MaterialTheme.colorScheme.outline, RoundedCornerShape(10.dp))
-                    .clickable { viewModel.clearConstraints() }
-                    .padding(12.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = stringResource(R.string.onboarding_safety_none_title),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = stringResource(R.string.onboarding_safety_none_subtitle),
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    if (hasNoConstraints) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = null,
-                            tint = Color(0xFF10B981),
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = stringResource(R.string.onboarding_safety_tag_prompt),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                state.constraintOptions.forEach { constraint ->
-                    val isSelected = constraint in state.constraints
-                    FilterChip(
-                        selected = isSelected,
-                        onClick = { viewModel.toggleConstraint(constraint) },
-                        label = {
-                            Text(
-                                text = stringResource(constraint.labelRes),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = if (isSelected) TextWhite else MaterialTheme.colorScheme.onSurface
-                            )
-                        },
-                        colors = FilterChipDefaults.filterChipColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            selectedContainerColor = CrimsonRedPrimary,
-                            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            selectedLabelColor = TextWhite
-                        ),
-                        border = FilterChipDefaults.filterChipBorder(
-                            enabled = true,
-                            selected = isSelected,
-                            borderColor = MaterialTheme.colorScheme.outline,
-                            selectedBorderColor = CrimsonRedPrimary
-                        )
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun MovementCapabilityStep(
-    state: OnboardingUiState,
-    viewModel: OnboardingViewModel
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Text(
-            text = stringResource(
-                wallcrawl.elopenmike.com.R.string.movement_capability_current_use
-            ),
-            fontSize = 12.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        MovementCapabilityType.entries.forEach { type ->
-            WallCrawlCard(
-                cornerRadius = 16.dp,
-                contentPadding = 16.dp
-            ) {
-                MovementCapabilityQuestion(
-                    type = type,
-                    selectedLevel = state.capabilityAnswers[type],
-                    onSelect = { level ->
-                        viewModel.updateMovementCapability(type, level)
-                    },
-                    showAnswerRequired = state.error != null &&
-                        state.unansweredCapability == type
-                )
-            }
-        }
     }
 }
 
@@ -972,7 +537,6 @@ private fun SummaryStep(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        ConditionSelectionControls(state.conditionRecords, state.conditionDraft ?: state.retainedConditions, null)
         WallCrawlCard(
             cornerRadius = 16.dp,
             contentPadding = 20.dp
@@ -1027,52 +591,6 @@ private fun SummaryStep(
                     state.unit.symbol
                 )
             )
-            SummaryRow(
-                label = stringResource(R.string.onboarding_summary_label_equipment),
-                value = pluralStringResource(
-                    R.plurals.count_gear_types,
-                    state.equipment.size,
-                    LocaleFormatting.formatCount(state.equipment.size, locale)
-                )
-            )
-            SummaryRow(
-                label = stringResource(R.string.movement_capability_summary_label),
-                value = pluralStringResource(
-                    R.plurals.count_preferences_answered,
-                    state.capabilityAnswers.size,
-                    LocaleFormatting.formatCount(state.capabilityAnswers.size, locale)
-                )
-            )
-            if (state.reportedConditions.isNotEmpty()) {
-                val names = state.reportedConditions.sorted().map { id ->
-                    val condition = ReportedCondition.entries.firstOrNull { it.id == id }
-                    condition?.let { stringResource(it.labelRes) } ?: id
-                }
-                SummaryRow(stringResource(R.string.reported_conditions_title), names.joinToString(separator))
-            }
-            SummaryRow(
-                label = stringResource(R.string.onboarding_summary_label_sensitive),
-                value = if (state.constraints.isEmpty()) {
-                    stringResource(R.string.onboarding_summary_value_no_sensitive)
-                } else {
-                    TrainingConstraint.entries
-                        .filter { it in state.constraints }
-                        .map { stringResource(it.labelRes) }
-                        .joinToString(separator)
-                }
-            )
-            if (state.returningAfterBreakWeeks > 0) {
-                val range: BreakRange =
-                    BreakDurationHelper.findMatchingRange(state.returningAfterBreakWeeks)
-                SummaryRow(
-                    label = stringResource(R.string.onboarding_summary_label_break),
-                    value = stringResource(
-                        R.string.onboarding_summary_value_break,
-                        stringResource(range.titleRes),
-                        stringResource(range.subtitleRes)
-                    )
-                )
-            }
         }
 
 

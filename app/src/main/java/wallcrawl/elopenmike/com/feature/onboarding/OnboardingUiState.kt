@@ -3,11 +3,7 @@ package wallcrawl.elopenmike.com.feature.onboarding
 import androidx.annotation.StringRes
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
-import wallcrawl.elopenmike.com.core.model.CapabilityLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
-import wallcrawl.elopenmike.com.core.model.StandardEquipment
-import wallcrawl.elopenmike.com.core.model.MovementCapabilityType
-import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.WeightUnit
 import wallcrawl.elopenmike.com.core.model.ProfileGender
 
@@ -30,21 +26,9 @@ enum class OnboardingStep(
         titleRes = R.string.onboarding_experience_title,
         subtitleRes = R.string.onboarding_experience_subtitle
     ),
-    MOVEMENT_CAPABILITY(
-        titleRes = R.string.onboarding_movement_capability_title,
-        subtitleRes = R.string.onboarding_movement_capability_subtitle
-    ),
     SCHEDULE(
         titleRes = R.string.onboarding_schedule_title,
         subtitleRes = R.string.onboarding_schedule_subtitle
-    ),
-    EQUIPMENT(
-        titleRes = R.string.onboarding_equipment_title,
-        subtitleRes = R.string.onboarding_equipment_subtitle
-    ),
-    SAFETY(
-        titleRes = R.string.onboarding_safety_title,
-        subtitleRes = R.string.onboarding_safety_subtitle
     ),
     SUMMARY(
         titleRes = R.string.onboarding_summary_title,
@@ -69,13 +53,6 @@ enum class OnboardingError(@StringRes val messageRes: Int) {
  * The current onboarding form values plus wizard step, error, and completion state.
  */
 data class OnboardingUiState(
-    val conditionDraft: List<wallcrawl.elopenmike.com.core.model.SelectedCondition>? = null,
-    val retainedConditions: List<wallcrawl.elopenmike.com.core.model.SelectedCondition> = emptyList(),
-    val conditionRecords: List<wallcrawl.elopenmike.com.core.model.ConditionSupportRecord> = emptyList(),
-    val conditionLoadFailed: Boolean = false,
-    val retainedReports: Set<String> = emptySet(),
-    val addedReports: Set<String> = emptySet(),
-    val removedReports: Set<String> = emptySet(),
     val currentStep: OnboardingStep = OnboardingStep.WELCOME,
     val name: String = "",
     val gender: ProfileGender = ProfileGender.UNSPECIFIED,
@@ -84,20 +61,10 @@ data class OnboardingUiState(
     val daysPerWeek: Int = 3,
     val durationMinutes: Int = 45,
     val unit: WeightUnit = WeightUnit.LBS,
-    val equipment: Set<String> = setOf(StandardEquipment.BODYWEIGHT),
-    val constraints: Set<TrainingConstraint> = emptySet(),
-    val capabilityAnswers: Map<MovementCapabilityType, CapabilityLevel> = emptyMap(),
-    val returningAfterBreakWeeks: Int = 0,
-    val equipmentOptions: List<String> = StandardEquipment.ALL,
-    val constraintOptions: List<TrainingConstraint> = TrainingConstraint.entries,
     val isSaving: Boolean = false,
     val error: OnboardingError? = null,
     val isComplete: Boolean = false
 ) {
-    val reportedConditions: Set<String> get() = applyReportEdits(retainedReports)
-
-    fun applyReportEdits(saved: Set<String>): Set<String> = (saved + addedReports) - removedReports
-
     val goal: FitnessGoal get() = goals.firstOrNull() ?: FitnessGoal.BUILD_MUSCLE
 
     val canProceedCurrentStep: Boolean
@@ -105,16 +72,9 @@ data class OnboardingUiState(
             OnboardingStep.WELCOME -> name.trim().isNotBlank()
             OnboardingStep.GOALS -> goals.isNotEmpty()
             OnboardingStep.EXPERIENCE_UNIT -> true
-            OnboardingStep.MOVEMENT_CAPABILITY -> unansweredCapability == null
             OnboardingStep.SCHEDULE -> daysPerWeek in 2..6 && durationMinutes in 20..120
-            OnboardingStep.EQUIPMENT -> equipment.isNotEmpty()
-            OnboardingStep.SAFETY -> true
-            OnboardingStep.SUMMARY -> !isSaving && name.trim().isNotBlank() &&
-                equipment.isNotEmpty() && goals.isNotEmpty() && unansweredCapability == null
+            OnboardingStep.SUMMARY -> !isSaving && name.trim().isNotBlank() && goals.isNotEmpty()
         }
-
-    val unansweredCapability: MovementCapabilityType?
-        get() = MovementCapabilityType.entries.firstOrNull { it !in capabilityAnswers }
 
     val isFirstStep: Boolean get() = currentStep.ordinal == 0
     val isLastStep: Boolean get() = currentStep.ordinal == OnboardingStep.entries.lastIndex

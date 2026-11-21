@@ -64,6 +64,8 @@ import wallcrawl.elopenmike.com.feature.exercises.ExercisesScreen
 import wallcrawl.elopenmike.com.feature.exercises.ExercisesViewModel
 import wallcrawl.elopenmike.com.feature.onboarding.OnboardingScreen
 import wallcrawl.elopenmike.com.feature.onboarding.OnboardingViewModel
+import wallcrawl.elopenmike.com.feature.personalize.PersonalizeScreen
+import wallcrawl.elopenmike.com.feature.personalize.PersonalizeViewModel
 import wallcrawl.elopenmike.com.feature.welcome.SplashHandoff
 import wallcrawl.elopenmike.com.feature.welcome.WelcomeScreen
 import wallcrawl.elopenmike.com.feature.profile.ProfileScreen
@@ -322,7 +324,6 @@ private fun WallCrawlAppContent(
             composable(AppRoutes.ONBOARDING) {
                 val onboardingViewModel: OnboardingViewModel = viewModel(
                     factory = OnboardingViewModel.provideFactory(
-                        conditionSupport = { container.conditionSupportStore.load() },
                         userProfileRepository = container.userProfileRepository
                     )
                 )
@@ -339,6 +340,16 @@ private fun WallCrawlAppContent(
                     },
                     isRestoreInFlight = localDataState.isBusy
                 )
+            }
+
+            composable(AppRoutes.PERSONALIZE) {
+                val personalizeViewModel: PersonalizeViewModel = viewModel(
+                    factory = PersonalizeViewModel.provideFactory(
+                        conditionSupport = { container.conditionSupportStore.load() },
+                        userProfileRepository = container.userProfileRepository
+                    )
+                )
+                PersonalizeScreen(viewModel = personalizeViewModel, onClose = { navController.popBackStack() })
             }
 
             composable(AppRoutes.TODAY) { entry ->

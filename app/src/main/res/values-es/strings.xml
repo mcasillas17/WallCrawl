@@ -104,6 +104,10 @@
     <string name="onboarding_summary_subtitle">Puedes cambiar estas opciones en Perfil y ajustes.</string>
 
     <string name="onboarding_step_counter">Paso %1$s de %2$s</string>
+    <string name="personalize_step_counter">%1$s de %2$s</string>
+    <string name="personalize_finish">Terminar</string>
+    <string name="personalize_next">Siguiente</string>
+    <string name="personalize_experience_title">Experiencia</string>
     <string name="onboarding_codename_heading">Tu nombre</string>
     <string name="onboarding_codename_placeholder">p. ej., Álex</string>
 
