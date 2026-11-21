@@ -209,8 +209,7 @@ class ShortOnboardingNavigationTest {
         show()
         route(AppRoutes.ONBOARDING)
         basicSetupToToday()
-        waitText(R.string.today_action_start)
-        assertThat(cardVisible()).isFalse()
+        assertNoTodayCard()
         assertThat(runBlocking { container.userProfileRepository.getProfileOnce() }.personalizationCompleted).isFalse()
     }
 
