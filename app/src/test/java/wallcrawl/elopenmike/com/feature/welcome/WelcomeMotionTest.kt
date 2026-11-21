@@ -4,7 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import wallcrawl.elopenmike.com.feature.welcome.WelcomeMotion as M
 
-/** Checks the timelines against the tables in docs/first-launch-intro.md §7–§8. */
+/** Checks the timelines against the tables in docs/welcome-screens-v2.md §6–§7. */
 class WelcomeMotionTest {
     private val eps = 1e-3f
 
@@ -59,11 +59,20 @@ class WelcomeMotionTest {
         assertThat(frame.arcHead - frame.arcTail).isWithin(eps).of(90f)
     }
 
-    @Test fun reducedIntroFadesInHoldsAndFadesOut() {
+    @Test fun introLasts4700msWithAReadingHold() {
+        assertThat(M.INTRO_END).isEqualTo(4700f)
+        assertThat(M.tagline2(2120f)).isEqualTo(0f)
+        assertThat(M.tagline2(2620f)).isEqualTo(1f)
+        assertThat((2620..4400 step 20).all { M.introChrome(it.toFloat()) == 1f }).isTrue()
+        assertThat(M.introChrome(4700f)).isEqualTo(0f)
+    }
+
+    @Test fun reducedIntroFadesInHoldsUntil3500AndFadesOut() {
         assertThat(M.reducedIntroAlpha(0f)).isEqualTo(0f)
-        assertThat(M.reducedIntroAlpha(300f)).isEqualTo(1f)
-        assertThat(M.reducedIntroAlpha(1700f)).isEqualTo(1f)
-        assertThat(M.reducedIntroAlpha(M.REDUCED_INTRO_END)).isEqualTo(0f)
+        assertThat(M.reducedIntroAlpha(1000f)).isEqualTo(1f)
+        assertThat(M.reducedIntroAlpha(3500f)).isEqualTo(1f)
+        assertThat(M.REDUCED_INTRO_END).isEqualTo(3800f)
+        assertThat(M.reducedIntroAlpha(3800f)).isEqualTo(0f)
     }
 
     @Test fun aboutPlaysOver3000RealMs() {
@@ -88,43 +97,55 @@ class WelcomeMotionTest {
         assertThat(M.arrivedViaSkipAlpha(250f)).isEqualTo(1f)
     }
 
-    @Test fun headlineThenBuilderCardEnter() {
-        assertThat(M.headline(450f)).isEqualTo(0f)
-        assertThat(M.headline(451f)).isGreaterThan(0f)
-        assertThat(M.builderCard(650f)).isEqualTo(0f)
-        assertThat(M.builderCard(651f)).isGreaterThan(0f)
-        assertThat(M.builderCard(1250f)).isEqualTo(1f)
-    }
-
     @Test fun inputsPopLeftToRightThenConnectorsMeet() {
-        assertThat((0..2).map { M.inputAlpha(it, 900f) }).isInOrder(Comparator.reverseOrder<Float>())
-        assertThat(M.inputScale(0, 850f)).isWithin(eps).of(0.6f)
-        assertThat((0..2).any { M.inputScale(it, 1300f) > 1f }).isTrue() // overshoot
-        assertThat((0..2).all { M.connector(it, 1250f) == 0f }).isTrue()
-        assertThat((0..2).all { M.connector(it, 1870f) == 1f }).isTrue()
+        assertThat((0..2).map { M.inputAlpha(it, 750f) }).isInOrder(Comparator.reverseOrder<Float>())
+        assertThat(M.inputScale(0, 700f)).isWithin(eps).of(0.6f)
+        assertThat((0..2).any { M.inputScale(it, 1150f) > 1f }).isTrue() // overshoot
+        assertThat((0..2).all { M.connector(it, 1100f) == 0f }).isTrue()
+        for (k in 0..2) {
+            assertThat(M.connector(k, 1549f + 60f * k)).isLessThan(1f)
+            assertThat(M.connector(k, 1550f + 60f * k)).isEqualTo(1f)
+        }
     }
 
-    @Test fun outputPopsWithABriefGlow() {
-        assertThat(M.outputGlow(0f)).isEqualTo(0f)
-        assertThat(M.outputAlpha(1650f)).isEqualTo(0f)
-        assertThat(M.outputScale(2100f)).isGreaterThan(1f) // overshoot
-        val peak = (1650..2550 step 10).maxBy { M.outputGlow(it.toFloat()) }
-        assertThat(peak).isIn(1890..1960)
-        assertThat(M.outputGlow(1950f)).isWithin(eps).of(0.45f)
-        assertThat(M.outputGlow(2550f)).isEqualTo(0f)
-        assertThat(M.outputGlow(2800f)).isEqualTo(0f)
+    @Test fun workoutRingsAndGlowsBriefly() {
+        assertThat(M.workoutGlow(0f)).isEqualTo(0f)
+        assertThat(M.workoutAlpha(1450f)).isEqualTo(0f)
+        assertThat(M.workoutScale(1800f)).isGreaterThan(1f) // overshoot
+        assertThat(M.workoutRing(2000f)).isEqualTo(1f)
+        val peak = (1450..2350 step 10).maxBy { M.workoutGlow(it.toFloat()) }
+        assertThat(peak).isIn(1690..1760)
+        assertThat(M.workoutGlow(2350f)).isEqualTo(0f)
+        assertThat(M.workoutGlow(2800f)).isEqualTo(0f)
+    }
+
+    @Test fun arrowThenLogThenLoopBackToProgressWithAPing() {
+        assertThat(M.down(1850f)).isEqualTo(0f)
+        assertThat(M.down(2150f)).isEqualTo(1f)
+        assertThat(M.logAlpha(2000f)).isEqualTo(0f)
+        assertThat(M.loop(2150f)).isEqualTo(0f)
+        assertThat(M.loop(2650f)).isEqualTo(1f)
+        assertThat(M.ping(2649f)).isEqualTo(0f)
+        assertThat(M.ping(3000f)).isEqualTo(1f)
+    }
+
+    @Test fun badgesPopInOrder() {
+        assertThat((0..3).map { M.badgeAlpha(it, 2350f) }).isInOrder(Comparator.reverseOrder<Float>())
+        assertThat(M.badgeScale(0, 2300f)).isWithin(eps).of(0.8f)
     }
 
     @Test fun aboutEntranceIsCompleteAtItsEnd() {
         val t = M.ABOUT_END
         assertThat(M.headline(t)).isEqualTo(1f)
-        assertThat(M.builderCard(t)).isEqualTo(1f)
-        assertThat(M.outputScale(t)).isEqualTo(1f)
-        assertThat(M.outputAlpha(t)).isEqualTo(1f)
-        assertThat(M.outputGlow(t)).isEqualTo(0f)
-        assertThat(M.privacyCard(t)).isEqualTo(1f)
+        assertThat(M.workoutScale(t)).isEqualTo(1f)
+        assertThat(M.workoutAlpha(t)).isEqualTo(1f)
+        assertThat(M.workoutRing(t)).isEqualTo(1f)
+        assertThat(M.workoutGlow(t)).isEqualTo(0f)
+        assertThat(M.down(t)).isEqualTo(1f)
+        assertThat(M.logScale(t)).isEqualTo(1f)
+        assertThat(M.loop(t)).isEqualTo(1f)
         assertThat(M.footer(t)).isEqualTo(1f)
-        assertThat((0..2).all { M.inputScale(it, t) == 1f && M.connector(it, t) == 1f && M.chipScale(it, t) == 1f }).isTrue()
-        assertThat((0..1).all { M.feature(it, t) == 1f && M.tileScale(it, t) == 1f }).isTrue()
+        assertThat((0..2).all { M.inputScale(it, t) == 1f && M.inputAlpha(it, t) == 1f && M.connector(it, t) == 1f }).isTrue()
+        assertThat((0..3).all { M.badgeScale(it, t) == 1f && M.badgeAlpha(it, t) == 1f }).isTrue()
     }
 }
