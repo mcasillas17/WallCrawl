@@ -56,6 +56,7 @@ fun ProfileScreen(
     onOpenCredits: () -> Unit,
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
+    onPersonalize: () -> Unit = {},
     localDataSection: @Composable () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -106,6 +107,15 @@ fun ProfileScreen(
                                     Text(stringResource(R.string.guided_review_restrictions))
                                 }
                             }
+                        }
+                        if (!current.profile.personalizationCompleted) item(key = "personalize") {
+                            ListItem(
+                                modifier = Modifier.clickable(role = Role.Button, onClick = dropUnlessResumed(block = onPersonalize)),
+                                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.background),
+                                headlineContent = { Text(stringResource(R.string.personalize_profile_row)) },
+                                trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) }
+                            )
+                            HorizontalDivider()
                         }
                         items(SettingsGroup.entries) { entry ->
                             ListItem(

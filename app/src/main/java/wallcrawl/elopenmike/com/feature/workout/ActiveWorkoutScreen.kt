@@ -111,7 +111,8 @@ fun ActiveWorkoutScreen(
     onWorkoutFinished: (summarySessionId: String) -> Unit,
     modifier: Modifier = Modifier,
     onOpenHistory: ((String) -> Unit)? = null,
-    onLeaveForLater: () -> Unit = onNavigateBack
+    onLeaveForLater: () -> Unit = onNavigateBack,
+    onPersonalize: () -> Unit = {}
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by produceState<ActiveWorkoutUiState>(ActiveWorkoutUiState.Loading, viewModel, lifecycleOwner) {
@@ -168,7 +169,9 @@ fun ActiveWorkoutScreen(
                     summary = state.summary,
                     advancedPartialProgram = state.advancedPartialProgram,
                     onDone = { onWorkoutFinished(state.summary.sessionId) },
-                    onOpenDetails = onOpenHistory?.let { open -> { open(state.summary.sessionId) } }
+                    onOpenDetails = onOpenHistory?.let { open -> { open(state.summary.sessionId) } },
+                    showPersonalize = state.showPersonalize,
+                    onPersonalize = onPersonalize
                 )
             }
 

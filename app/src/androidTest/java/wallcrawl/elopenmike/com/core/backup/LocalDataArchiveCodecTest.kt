@@ -25,6 +25,36 @@ import wallcrawl.elopenmike.com.core.model.hasRequiredEquipment
  */
 @RunWith(AndroidJUnit4::class)
 class LocalDataArchiveCodecTest {
+    @Test fun starterProfile_roundTripsPersonalizationFalse() {
+        val original = LocalDataArchiveFixtures.archive(snapshot = LocalDataArchiveFixtures.snapshot(
+            profile = LocalDataArchiveFixtures.profile().copy(personalizationCompleted = false)))
+        val restored = LocalDataArchiveCodec.read(original.toText().byteInputStream())
+        assertThat(restored.snapshot.profile?.personalizationCompleted).isFalse()
+    }
+
+    @Test fun version10Archive_restoresAsPersonalized() {
+        val old = LocalDataArchiveFixtures.archive(metadata = LocalDataArchiveFixtures.metadata(archiveVersion = 10))
+        val text = old.toText()
+        assertThat(text).doesNotContain("personalizationCompleted")
+        assertThat(LocalDataArchiveCodec.read(text.byteInputStream()).snapshot.profile?.personalizationCompleted).isTrue()
+        val starter = LocalDataArchiveFixtures.archive(
+            metadata = LocalDataArchiveFixtures.metadata(archiveVersion = 10),
+            snapshot = LocalDataArchiveFixtures.snapshot(
+                profile = LocalDataArchiveFixtures.profile().copy(personalizationCompleted = false)))
+        assertThrows(IllegalArgumentException::class.java) { starter.toText() }
+    }
+
+    @Test fun version11ArchiveWithoutField_isMalformed() {
+        val document = LocalDataArchiveFixtures.archive().toText()
+        val stripped = document.replace("\"personalizationCompleted\":true,", "")
+        assertThat(stripped).isNotEqualTo(document)
+        val error = assertThrows(LocalDataArchiveException::class.java) {
+            LocalDataArchiveCodec.read(stripped.byteInputStream())
+        }
+        assertThat(error.rejection).isEqualTo(ArchiveRejection.MALFORMED)
+        assertThat(error).hasMessageThat().contains("personalizationCompleted")
+    }
+
     @Test fun dumbbellRackRoundTripsAndOldArchivesRemainUnknown() {
         val rack = wallcrawl.elopenmike.com.core.model.DumbbellRack(WeightUnit.LBS, listOf(5.0, 12.5, 20.0))
         val original = LocalDataArchiveFixtures.archive(snapshot = LocalDataArchiveFixtures.snapshot(

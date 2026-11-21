@@ -77,7 +77,7 @@ class LocalDataBackupRepositoryTest {
         assertThat(database.completedWorkoutHistoryDao().getCompletedTimestamps()).isEmpty()
         val output = ByteArrayOutputStream().also { repository.exportTo { it } }
         val exported = LocalDataArchiveCodec.read(output.toByteArray().inputStream())
-        assertThat(exported.metadata.archiveVersion).isEqualTo(10)
+        assertThat(exported.metadata.archiveVersion).isEqualTo(11)
         assertThat(exported.snapshot).isEqualTo(expected)
 
         // Version 8 also permits the old Room separator inside an opaque ID.

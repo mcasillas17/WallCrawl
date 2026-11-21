@@ -269,7 +269,7 @@ class ConditionControlsTest {
         compose.onNodeWithText("Perfil y ajustes").assertIsDisplayed()
     }
 
-    @Test fun onboardingSafetyShowsRetainedSelectionAndExplicitRemoval() {
+    @Test fun personalizeConditionsShowsRetainedSelectionAndExplicitRemoval() {
         val base = InstrumentationRegistry.getInstrumentation().targetContext
         val config = Configuration(base.resources.configuration).apply { setLocale(Locale.forLanguageTag("es")) }
         val context = base.createConfigurationContext(config)
@@ -277,21 +277,22 @@ class ConditionControlsTest {
         database = db
         val repository = wallcrawl.elopenmike.com.core.database.repository.OfflineUserProfileRepository(db.userProfileDao())
         kotlinx.coroutines.runBlocking { repository.updateActiveConditions(listOf(SelectedCondition("withdrawn", 8, mapOf("side" to null)))) }
-        val vm = wallcrawl.elopenmike.com.feature.onboarding.OnboardingViewModel(repository)
-        viewModels.put("onboarding", vm)
-        compose.runOnUiThread { vm.goToStep(wallcrawl.elopenmike.com.feature.onboarding.OnboardingStep.SAFETY) }
+        // Restored straight onto the conditions step, as after recreation mid-flow.
+        val vm = wallcrawl.elopenmike.com.feature.personalize.PersonalizeViewModel(repository,
+            androidx.lifecycle.SavedStateHandle(mapOf("personalize.currentStep" to "CONDITIONS")))
+        viewModels.put("personalize", vm)
         compose.setContent {
             CompositionLocalProvider(LocalContext provides context, LocalConfiguration provides config, LocalResources provides context.resources,
                 LocalDensity provides Density(LocalDensity.current.density, 1.6f)) {
                 WallCrawlTheme(themePreference = ThemePreference.DARK) {
-                    wallcrawl.elopenmike.com.feature.onboarding.OnboardingScreen(vm, {})
+                    wallcrawl.elopenmike.com.feature.personalize.PersonalizeScreen(vm, {}, {})
                 }
             }
         }
         val unsupported = context.getString(R.string.condition_unsupported, "withdrawn", 8)
         compose.waitUntil(10_000) { vm.uiState.value.retainedConditions.isNotEmpty() }
         compose.onNodeWithText(unsupported).performScrollTo().assertIsDisplayed()
-        save("onboarding-withdrawn-es-dark-large.png")
+        save("personalize-withdrawn-es-dark-large.png")
         compose.onNodeWithText(context.getString(R.string.condition_remove, "withdrawn")).performScrollTo().performClick()
         assertThat(vm.uiState.value.conditionDraft).isEmpty()
     }

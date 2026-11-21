@@ -78,6 +78,65 @@ class TodayViewModelTest {
         assertThat(workoutRepository.startRequests).isEmpty()
     }
 
+    private suspend fun kotlinx.coroutines.test.TestScope.todayViewModel(
+        personalized: Boolean,
+        completed: List<WorkoutSession> = emptyList(),
+        personalizePrefs: android.content.SharedPreferences? = null
+    ): TodayViewModel {
+        val now = 20 * DAY_MILLIS
+        val catalog = InMemoryExerciseCatalog(listOf(
+            // BEGINNER programming keeps it in the starter pool, which plans beginner exercises only.
+            syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest").copy(
+                programming = wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata(
+                    requiredEquipmentCombinations = listOf(listOf(StandardEquipment.BODYWEIGHT)),
+                    movementPattern = wallcrawl.elopenmike.com.core.model.MovementPattern.HORIZONTAL_PUSH,
+                    difficulty = wallcrawl.elopenmike.com.core.model.Difficulty.BEGINNER,
+                    mechanics = wallcrawl.elopenmike.com.core.model.MechanicsType.COMPOUND,
+                    recommendedRepRange = wallcrawl.elopenmike.com.core.model.RepRange(8, 12),
+                    fatigueScore = 1,
+                    progressionType = wallcrawl.elopenmike.com.core.model.ProgressionType.REPETITIONS,
+                    coachingSummary = "Synthetic"
+                )
+            )
+        ))
+        val profiles = TodayUserProfileRepository(UserProfile(
+            availableEquipment = listOf(StandardEquipment.BODYWEIGHT), personalizationCompleted = personalized))
+        val workouts = TodayWorkoutRepository(completed)
+        val builder = WorkoutGenerationContextBuilder(profiles, workouts, catalog, ExerciseFilter(), WorkoutHistoryAnalyzer(), nowTimestamp = { now })
+        val viewModel = TodayViewModel(profiles, workouts, builder, FixedPlanWorkoutPlanner(),
+            ProgramValidator(GeneratedWorkoutValidator(catalog)), nowTimestamp = { now }, clock = flowOf(now),
+            personalizePrefs = personalizePrefs)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        return viewModel
+    }
+
+    private suspend fun kotlinx.coroutines.test.TestScope.todaySuccess(personalized: Boolean): TodayUiState.Success =
+        todayViewModel(personalized).uiState.value as TodayUiState.Success
+
+    @Test fun dismissPersonalizeCard_hidesCardAndStoresTimestampUnderDismissedAt() = runTest {
+        val prefs = MemoryPrefs()
+        val viewModel = todayViewModel(false, listOf(completedSession("done", 19 * DAY_MILLIS)), prefs)
+        assertThat((viewModel.uiState.value as TodayUiState.Success).showPersonalizeCard).isTrue()
+        viewModel.dismissPersonalizeCard()
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Success).showPersonalizeCard).isFalse()
+        assertThat(prefs.values.keys).containsExactly("dismissed_at")
+        assertThat(prefs.values["dismissed_at"]).isEqualTo(20 * DAY_MILLIS)
+    }
+
+    @Test fun starterProfile_showsSafetyLine() = runTest {
+        val state = todaySuccess(personalized = false)
+        assertThat(state.showStarterSafetyLine).isTrue()
+        assertThat(state.showPersonalizeCard).isFalse() // no completed workout yet
+    }
+
+    @Test fun personalizedProfile_hidesCardAndSafetyLine() = runTest {
+        val state = todaySuccess(personalized = true)
+        assertThat(state.showStarterSafetyLine).isFalse()
+        assertThat(state.showPersonalizeCard).isFalse()
+    }
+
     @Test
     fun startWorkout_revalidatesTheProposalEvenWhenContextIdentityMatches() = runTest {
         val now = 20 * DAY_MILLIS
@@ -1022,3 +1081,29 @@ private fun ledger(
     secondaryInvolvement = emptyMap(),
     unattributedWorkSets = emptyMap()
 )
+
+private class MemoryPrefs : android.content.SharedPreferences {
+    val values = mutableMapOf<String, Any?>()
+    override fun getAll(): MutableMap<String, *> = values
+    override fun getString(key: String?, defValue: String?) = values[key] as? String ?: defValue
+    override fun getStringSet(key: String?, defValues: MutableSet<String>?) = defValues
+    override fun getInt(key: String?, defValue: Int) = values[key] as? Int ?: defValue
+    override fun getLong(key: String?, defValue: Long) = values[key] as? Long ?: defValue
+    override fun getFloat(key: String?, defValue: Float) = values[key] as? Float ?: defValue
+    override fun getBoolean(key: String?, defValue: Boolean) = values[key] as? Boolean ?: defValue
+    override fun contains(key: String?) = values.containsKey(key)
+    override fun registerOnSharedPreferenceChangeListener(l: android.content.SharedPreferences.OnSharedPreferenceChangeListener?) {}
+    override fun unregisterOnSharedPreferenceChangeListener(l: android.content.SharedPreferences.OnSharedPreferenceChangeListener?) {}
+    override fun edit(): android.content.SharedPreferences.Editor = object : android.content.SharedPreferences.Editor {
+        override fun putLong(key: String?, value: Long) = apply { values[key!!] = value }
+        override fun putString(key: String?, value: String?) = apply { values[key!!] = value }
+        override fun putStringSet(key: String?, value: MutableSet<String>?) = apply { values[key!!] = value }
+        override fun putInt(key: String?, value: Int) = apply { values[key!!] = value }
+        override fun putFloat(key: String?, value: Float) = apply { values[key!!] = value }
+        override fun putBoolean(key: String?, value: Boolean) = apply { values[key!!] = value }
+        override fun remove(key: String?) = apply { values.remove(key) }
+        override fun clear() = apply { values.clear() }
+        override fun commit() = true
+        override fun apply() {}
+    }
+}

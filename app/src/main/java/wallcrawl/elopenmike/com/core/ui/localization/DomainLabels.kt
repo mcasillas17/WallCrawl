@@ -299,13 +299,3 @@ val CapabilityLevel.labelRes: Int
         CapabilityLevel.LIMITED -> R.string.capability_level_limited
         CapabilityLevel.AVOID -> R.string.capability_level_avoid
     }
-
-/** Copy for the split description under the training-days selector. */
-@StringRes
-fun trainingDaysDescriptionRes(daysPerWeek: Int): Int = when (daysPerWeek) {
-    2 -> R.string.schedule_days_2
-    3 -> R.string.schedule_days_3
-    4 -> R.string.schedule_days_4
-    5 -> R.string.schedule_days_5
-    else -> R.string.schedule_days_6
-}

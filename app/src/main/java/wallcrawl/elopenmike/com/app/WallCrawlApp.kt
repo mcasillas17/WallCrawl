@@ -64,6 +64,8 @@ import wallcrawl.elopenmike.com.feature.exercises.ExercisesScreen
 import wallcrawl.elopenmike.com.feature.exercises.ExercisesViewModel
 import wallcrawl.elopenmike.com.feature.onboarding.OnboardingScreen
 import wallcrawl.elopenmike.com.feature.onboarding.OnboardingViewModel
+import wallcrawl.elopenmike.com.feature.personalize.PersonalizeScreen
+import wallcrawl.elopenmike.com.feature.personalize.PersonalizeViewModel
 import wallcrawl.elopenmike.com.feature.welcome.SplashHandoff
 import wallcrawl.elopenmike.com.feature.welcome.WelcomeScreen
 import wallcrawl.elopenmike.com.feature.profile.ProfileScreen
@@ -175,6 +177,9 @@ private fun WallCrawlAppContent(
     val appContext = LocalContext.current.applicationContext
     val todayPrefs = remember(appContext) { appContext.getSharedPreferences(TODAY_PREFS, android.content.Context.MODE_PRIVATE) }
 
+    val personalizePrefs = remember(appContext) { appContext.getSharedPreferences("personalize_prompt", android.content.Context.MODE_PRIVATE) }
+    fun openPersonalize() { navController.navigate(AppRoutes.PERSONALIZE) { launchSingleTop = true } }
+
     var savedWorkoutId by rememberSaveable { mutableStateOf<String?>(null) }
 
     fun openWorkout(sessionId: String) {
@@ -192,6 +197,8 @@ private fun WallCrawlAppContent(
         navController.clearBackStack(AppRoutes.ACTIVE_WORKOUT)
         savedWorkoutId = null
         todayPrefs.edit().clear().apply()
+        // A dismissal belongs to the data it was made on, so it goes with that data too.
+        personalizePrefs.edit().clear().apply()
     }
 
     fun openRoot(screen: Screen) {
@@ -322,7 +329,6 @@ private fun WallCrawlAppContent(
             composable(AppRoutes.ONBOARDING) {
                 val onboardingViewModel: OnboardingViewModel = viewModel(
                     factory = OnboardingViewModel.provideFactory(
-                        conditionSupport = { container.conditionSupportStore.load() },
                         userProfileRepository = container.userProfileRepository
                     )
                 )
@@ -341,6 +347,21 @@ private fun WallCrawlAppContent(
                 )
             }
 
+            composable(AppRoutes.PERSONALIZE) {
+                val personalizeViewModel: PersonalizeViewModel = viewModel(
+                    factory = PersonalizeViewModel.provideFactory(
+                        conditionSupport = { container.conditionSupportStore.load() },
+                        userProfileRepository = container.userProfileRepository
+                    )
+                )
+                PersonalizeScreen(
+                    viewModel = personalizeViewModel,
+                    onClose = { navController.popBackStack(AppRoutes.PERSONALIZE, inclusive = true) },
+                    // openRoot alone would restore the state it just saved, Personalize included.
+                    onFinished = { if (!navController.popBackStack(AppRoutes.TODAY, inclusive = false)) openRoot(Screen.Today) }
+                )
+            }
+
             composable(AppRoutes.TODAY) { entry ->
                 val todayViewModel: TodayViewModel = viewModel(
                     viewModelStoreOwner = entry,
@@ -353,7 +374,8 @@ private fun WallCrawlAppContent(
                         programValidator = container.programValidator,
                         deloadRepository = container.deloadRepository,
                         programRepository = container.programRepository,
-                        prefs = todayPrefs
+                        prefs = todayPrefs,
+                        personalizePrefs = personalizePrefs
                     )
                 )
                 val programViewModel: ProgramViewModel = viewModel(factory = ProgramViewModel.provideFactory(
@@ -362,6 +384,7 @@ private fun WallCrawlAppContent(
                 TodayScreen(
                     visualProvider = container.exerciseVisualProvider,
                     onOpenProfile = { navController.navigate(AppRoutes.PROFILE) },
+                    onPersonalize = ::openPersonalize,
                     viewModel = todayViewModel,
                     onStartWorkout = ::openWorkout,
                     onResumeWorkout = ::openWorkout,
@@ -487,6 +510,7 @@ private fun WallCrawlAppContent(
                     viewModel = profileViewModel,
                     onBack = { navController.popBackStack() },
                     onOpenCredits = { navController.navigate(AppRoutes.CREDITS) },
+                    onPersonalize = ::openPersonalize,
                     localDataSection = { LocalDataSection(viewModel = localDataViewModel) }
                 )
             }
@@ -530,6 +554,7 @@ private fun WallCrawlAppContent(
                         }
                     },
                     onOpenHistory = { navController.navigate(AppRoutes.historyDetail(it)) },
+                    onPersonalize = ::openPersonalize,
                     onWorkoutFinished = {
                         navController.popBackStack()
                         openRoot(Screen.Progress)

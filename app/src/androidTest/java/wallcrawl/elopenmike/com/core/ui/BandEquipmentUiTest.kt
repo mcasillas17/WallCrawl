@@ -60,9 +60,8 @@ import wallcrawl.elopenmike.com.core.ui.localization.LocalExerciseVocabulary
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
 import wallcrawl.elopenmike.com.core.ui.theme.LightSurfaceCard
 import wallcrawl.elopenmike.com.core.ui.theme.GraphiteSurfaceElevated
-import wallcrawl.elopenmike.com.feature.onboarding.OnboardingScreen
-import wallcrawl.elopenmike.com.feature.onboarding.OnboardingStep
-import wallcrawl.elopenmike.com.feature.onboarding.OnboardingViewModel
+import wallcrawl.elopenmike.com.feature.personalize.PersonalizeScreen
+import wallcrawl.elopenmike.com.feature.personalize.PersonalizeViewModel
 import wallcrawl.elopenmike.com.feature.profile.ProfileScreen
 import wallcrawl.elopenmike.com.feature.profile.ProfileViewModel
 import wallcrawl.elopenmike.com.feature.templates.TemplateEditorScreen
@@ -87,12 +86,12 @@ class BandEquipmentUiTest {
     }
 
     @Test
-    fun onboarding_fullGymDoesNotConfirmSetupsAndEachControlHasAnExplanation() {
-        val viewModel = OnboardingViewModel(profiles)
-        viewModel.goToStep(OnboardingStep.EQUIPMENT)
+    fun personalize_fullGymDoesNotConfirmSetupsAndEachControlHasAnExplanation() {
+        val viewModel = PersonalizeViewModel(profiles)
         composeRule.setContent {
-            InLanguage("en") { OnboardingScreen(viewModel, onCompleted = {}) }
+            InLanguage("en") { PersonalizeScreen(viewModel, onClose = {}, onFinished = {}) }
         }
+        composeRule.waitUntil(10_000) { viewModel.uiState.value.isLoaded }
         composeRule.onNodeWithText("Full gym access").performClick()
         StandardEquipment.BAND_SETUPS.forEach { setup ->
             composeRule.onNodeWithText(setup).performScrollTo().assertIsNotSelected()

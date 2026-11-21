@@ -15,7 +15,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
@@ -34,19 +33,18 @@ import wallcrawl.elopenmike.com.core.model.ThemePreference
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WeightUnit
-import wallcrawl.elopenmike.com.core.ui.localization.longLabelRes
-import wallcrawl.elopenmike.com.core.ui.localization.shortLabelRes
+import wallcrawl.elopenmike.com.core.ui.localization.labelRes
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
 
 /**
- * How the restore entry sits inside the wizard.
+ * How the restore entry sits inside the one-screen basic setup.
  *
  * `LocalDataControlsTest` covers the entry point and its sheet on their own. What only
- * shows up here is the wiring between them and the wizard: that a restore in flight blocks
- * the step that would write a profile over it, that the entry belongs to the first step
- * alone, and that using it neither advances the wizard nor loses what was typed.
+ * shows up here is the wiring between them and the screen: that a restore in flight blocks
+ * the action that would write a profile over it, and that using the entry neither saves
+ * nor loses what was chosen.
  *
- * The restore slot is a stand-in rather than the real sheet — this is about the host, and
+ * The restore slot is a stand-in rather than the real sheet: this is about the host, and
  * the real flow is exercised where it lives.
  */
 @RunWith(AndroidJUnit4::class)
@@ -59,90 +57,59 @@ class OnboardingRestoreEntryTest {
         InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
 
     @Test
-    fun weightUnitTilesCenterBothLabelsAndSwitchSelection() {
-        val viewModel = showWizard()
-        composeRule.runOnIdle {
-            viewModel.updateName("Alex")
-            viewModel.nextStep()
-            viewModel.nextStep()
-        }
+    fun theActionStaysDisabledUntilAGoalIsChosen() {
+        val viewModel = showSetup()
 
-        val bounds = WeightUnit.entries.map { unit ->
-            val tile = composeRule.onNodeWithText(text(unit.shortLabelRes)).performScrollTo()
-            val tileBounds = tile.fetchSemanticsNode().boundsInRoot
-            for (label in listOf(unit.shortLabelRes, unit.longLabelRes)) {
-                val labelBounds = composeRule.onNodeWithText(text(label), useUnmergedTree = true)
-                    .fetchSemanticsNode().boundsInRoot
-                assertThat(labelBounds.center.x).isWithin(1f).of(tileBounds.center.x)
-            }
-            tileBounds
-        }
-        assertThat(bounds.first().width).isWithin(1f).of(bounds.last().width)
-        assertThat(bounds.first().height).isEqualTo(bounds.last().height)
+        composeRule.onNodeWithText(text(R.string.onboarding_basic_cta)).assertIsNotEnabled()
 
-        val pounds = composeRule.onNodeWithText(text(WeightUnit.LBS.shortLabelRes))
-        val kilograms = composeRule.onNodeWithText(text(WeightUnit.KG.shortLabelRes))
-        pounds.assertIsSelected()
-        kilograms.assertIsNotSelected().performClick()
-        kilograms.assertIsSelected()
-        pounds.assertIsNotSelected()
-        assertThat(viewModel.uiState.value.unit).isEqualTo(WeightUnit.KG)
+        composeRule.onNodeWithText(text(FitnessGoal.STRENGTH.labelRes)).performClick()
+
+        composeRule.onNodeWithText(text(FitnessGoal.STRENGTH.labelRes)).assertIsSelected()
+        composeRule.onNodeWithText(text(R.string.onboarding_basic_cta)).assertIsEnabled()
+        assertThat(viewModel.uiState.value.goal).isEqualTo(FitnessGoal.STRENGTH)
     }
 
     @Test
-    fun genderDropdownKeepsTheNameAndDraftWhenReturningToWelcome() {
-        val viewModel = showWizard()
-        composeRule.onNodeWithText(text(R.string.onboarding_codename_heading))
-            .performTextInput("Alex")
-        composeRule.onNodeWithText(text(R.string.profile_gender_title)).performClick()
-        composeRule.onNodeWithText(text(R.string.gender_woman)).performClick()
-        composeRule.onNodeWithText("Alex").assertIsDisplayed()
-        assertThat(viewModel.uiState.value.gender).isEqualTo(ProfileGender.WOMAN)
+    fun daysAndMinutesChipsMoveTheSelection() {
+        val viewModel = showSetup()
 
-        composeRule.onNodeWithText(text(R.string.onboarding_action_continue)).performClick()
-        composeRule.runOnIdle { viewModel.previousStep() }
+        composeRule.onNodeWithText("5").performScrollTo().performClick()
+        composeRule.onNodeWithText("45").performScrollTo().performClick()
 
-        composeRule.onNodeWithText(text(R.string.gender_woman)).assertIsDisplayed()
-        composeRule.onNodeWithText("Alex").assertIsDisplayed()
-        assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.WELCOME)
+        composeRule.onNodeWithText("5").assertIsSelected()
+        composeRule.onNodeWithText("3").assertIsNotSelected()
+        assertThat(viewModel.uiState.value.daysPerWeek).isEqualTo(5)
+        assertThat(viewModel.uiState.value.durationMinutes).isEqualTo(45)
     }
 
     @Test
-    fun aRestoreInFlightBlocksTheStepThatWouldOverwriteIt() {
-        // Finishing the wizard writes a whole profile. A restore is about to commit one, so
-        // the two must not race: Continue says what is happening and refuses.
-        showWizard(isRestoreInFlight = true)
+    fun aRestoreInFlightBlocksTheActionThatWouldOverwriteIt() {
+        // Saving writes a whole profile. A restore is about to commit one, so the two must
+        // not race: the button says what is happening and refuses.
+        val viewModel = showSetup(isRestoreInFlight = true)
+        composeRule.runOnIdle { viewModel.updateGoal(FitnessGoal.STRENGTH) }
 
         composeRule.onNodeWithText(text(R.string.local_data_restore_progress))
             .assertIsDisplayed()
             .assertIsNotEnabled()
-        composeRule.onNodeWithText(text(R.string.onboarding_action_continue)).assertDoesNotExist()
+        composeRule.onNodeWithText(text(R.string.onboarding_basic_cta)).assertDoesNotExist()
     }
 
     @Test
-    fun theEntryBelongsToTheFirstStepOnly() {
-        val viewModel = showWizard()
+    fun theEntryIsShownOnTheSetupScreen() {
+        showSetup()
 
         composeRule.onNodeWithText(RESTORE_SLOT).assertIsDisplayed()
-
-        // The first step will not advance without a name, so give it one.
-        composeRule.onNodeWithText(text(R.string.onboarding_codename_heading))
-            .performTextInput("Alex")
-        composeRule.waitForIdle()
-        composeRule.onNodeWithText(text(R.string.onboarding_action_continue)).performClick()
-        composeRule.waitForIdle()
-
-        assertThat(viewModel.uiState.value.currentStep).isNotEqualTo(OnboardingStep.WELCOME)
-        composeRule.onNodeWithText(RESTORE_SLOT).assertDoesNotExist()
     }
 
     @Test
-    fun openingAndClosingTheEntryAdvancesNothingAndKeepsTheDraft() {
-        // The sheet's open state lives in the slot, not in the wizard. Toggling it here is
-        // the whole point: the wizard is never told, which is why opening or dismissing it
-        // cannot move the step or clear what was typed.
+    fun openingAndClosingTheEntrySavesNothingAndKeepsTheDraft() {
+        // The sheet's open state lives in the slot, not in the screen. Toggling it here is
+        // the whole point: the screen is never told, which is why opening or dismissing it
+        // cannot save or clear what was chosen.
         var sheetOpen by mutableStateOf(false)
-        val viewModel = OnboardingViewModel(FakeUserProfileRepository())
+        val repository = FakeUserProfileRepository()
+        val viewModel = OnboardingViewModel(repository)
         composeRule.setContent {
             WallCrawlTheme {
                 OnboardingScreen(
@@ -156,9 +123,7 @@ class OnboardingRestoreEntryTest {
         }
         composeRule.waitForIdle()
 
-        composeRule.onNodeWithText(text(R.string.onboarding_codename_heading))
-            .performTextInput("Gabriela")
-        composeRule.waitForIdle()
+        composeRule.onNodeWithText(text(FitnessGoal.FAT_LOSS.labelRes)).performClick()
 
         sheetOpen = true
         composeRule.waitForIdle()
@@ -167,13 +132,13 @@ class OnboardingRestoreEntryTest {
         sheetOpen = false
         composeRule.waitForIdle()
 
-        assertThat(viewModel.uiState.value.currentStep).isEqualTo(OnboardingStep.WELCOME)
-        assertThat(viewModel.uiState.value.name).isEqualTo("Gabriela")
-        composeRule.onNodeWithText("Gabriela").assertIsDisplayed()
-        composeRule.onNodeWithText(text(R.string.onboarding_action_continue)).assertIsEnabled()
+        assertThat(viewModel.uiState.value.goal).isEqualTo(FitnessGoal.FAT_LOSS)
+        assertThat(viewModel.uiState.value.isComplete).isFalse()
+        composeRule.onNodeWithText(text(FitnessGoal.FAT_LOSS.labelRes)).assertIsSelected()
+        composeRule.onNodeWithText(text(R.string.onboarding_basic_cta)).assertIsEnabled()
     }
 
-    private fun showWizard(
+    private fun showSetup(
         isRestoreInFlight: Boolean = false,
         restoreSlot: @Composable () -> Unit = { Text(RESTORE_SLOT) }
     ): OnboardingViewModel {

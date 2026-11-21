@@ -38,6 +38,8 @@ data class UserProfileEntity(
     val excludedExerciseIdsJson: String,
     @ColumnInfo(defaultValue = "0")
     val onboardingCompleted: Boolean = false,
+    @ColumnInfo(defaultValue = "1")
+    val personalizationCompleted: Boolean = true,
     @ColumnInfo(defaultValue = "''")
     val trainingConstraintsJson: String = "",
     @ColumnInfo(defaultValue = "0")
