@@ -146,6 +146,9 @@ object LocalDataArchiveCodec {
         require(format.version >= 9 || snapshot.profile?.dumbbellRack == null) {
             "Dumbbell racks require archive version 9."
         }
+        require(format.supportsPersonalization || snapshot.profile?.personalizationCompleted != false) {
+            "An unpersonalized profile requires archive version 11."
+        }
         require(format.supportsWorkoutPhases || snapshot.sessions.none { session ->
             session.exercises.any { it.prescription.purpose.isWorkoutPhase }
         }) { "Workout phases require archive version 10." }
@@ -368,6 +371,7 @@ object LocalDataArchiveCodec {
             private set
 
         val supportsWorkoutPhases get() = version >= 10
+        val supportsPersonalization get() = version >= 11
         val supportsContext get() =
             version >= 8 || (version == 7 && version7Layout != ArchiveV7Layout.REPORTED_CONDITIONS)
         val supportsReportsAndHolds get() =
@@ -697,6 +701,7 @@ object LocalDataArchiveCodec {
         endObject()
         name("excludedExerciseIds").writeStringArray(profile.excludedExerciseIds)
         name("onboardingCompleted").value(profile.onboardingCompleted)
+        if (format.supportsPersonalization) name("personalizationCompleted").value(profile.personalizationCompleted)
         name("trainingConstraints").writeStringArray(
             profile.trainingConstraints.map(TrainingConstraint::name)
         )
@@ -1265,6 +1270,7 @@ object LocalDataArchiveCodec {
         var musclePriorities: Map<String, PriorityLevel>? = null
         var excludedExerciseIds: List<String>? = null
         var onboardingCompleted: Boolean? = null
+        var personalizationCompleted: Boolean? = null
         var trainingConstraints: List<TrainingConstraint>? = null
         var returningAfterBreakWeeks: Int? = null
         var confirmedStartingLoads: Map<String, Double>? = null
@@ -1316,6 +1322,7 @@ object LocalDataArchiveCodec {
                         }
 
                 "onboardingCompleted" -> onboardingCompleted = nextBoolean()
+                "personalizationCompleted" -> personalizationCompleted = nextBoolean()
                 "trainingConstraints" ->
                     trainingConstraints =
                         readArray("profile.trainingConstraints", MAX_COLLECTION_ITEMS) {
@@ -1441,6 +1448,9 @@ object LocalDataArchiveCodec {
                 ?: malformed("The archived profile is missing 'excludedExerciseIds'."),
             onboardingCompleted = onboardingCompleted
                 ?: malformed("The archived profile is missing 'onboardingCompleted'."),
+            personalizationCompleted = personalizationCompleted
+                ?: if (!format.supportsPersonalization) true
+                else malformed("The archived profile is missing 'personalizationCompleted'."),
             trainingConstraints = LinkedHashSet(
                 trainingConstraints
                     ?: malformed("The archived profile is missing 'trainingConstraints'.")
