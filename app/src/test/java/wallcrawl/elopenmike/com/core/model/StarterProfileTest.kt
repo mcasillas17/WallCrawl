@@ -19,7 +19,7 @@ class StarterProfileTest {
 
         val profile = StarterProfile.apply(base, FitnessGoal.STRENGTH, 4, 45, "DE")
 
-        assertThat(profile.name).isEqualTo("Kept")
+        assertThat(profile.name).isEqualTo(UserProfile().name)
         assertThat(profile.goals).containsExactly(FitnessGoal.STRENGTH)
         assertThat(profile.daysPerWeek).isEqualTo(4)
         assertThat(profile.preferredDurationMinutes).isEqualTo(45)

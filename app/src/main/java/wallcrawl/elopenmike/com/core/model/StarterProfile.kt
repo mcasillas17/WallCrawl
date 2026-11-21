@@ -14,6 +14,7 @@ object StarterProfile {
         durationMinutes: Int,
         regionCountry: String
     ): UserProfile = base.copy(
+        name = UserProfile().name,
         gender = ProfileGender.UNSPECIFIED,
         goals = setOf(goal),
         daysPerWeek = daysPerWeek,

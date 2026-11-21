@@ -171,7 +171,6 @@
     <!-- ============================ Movement preferences ============================ -->
     <string name="movement_capability_current_use">Automatic workouts read these settings. A movement that needs something you mark Avoid is left out of your recommendations, and if that leaves nothing to plan, WallCrawl says so instead of offering one.</string>
     <string name="movement_capability_answer_required">Choose an answer for this movement preference.</string>
-    <string name="movement_capability_summary_label">Movement preferences</string>
     <string name="movement_capability_option_accessibility">%1$s, %2$s</string>
 
     <string name="movement_capability_impact_label">Impact tolerance</string>
@@ -701,17 +700,9 @@
         <item quantity="one">%1$s illustration frame</item>
         <item quantity="other">%1$s illustration frames</item>
     </plurals>
-    <plurals name="count_gear_types">
-        <item quantity="one">%1$s gear type selected</item>
-        <item quantity="other">%1$s gear types selected</item>
-    </plurals>
     <plurals name="count_equipment_available">
         <item quantity="one">%1$s equipment type available</item>
         <item quantity="other">%1$s equipment types available</item>
-    </plurals>
-    <plurals name="count_preferences_answered">
-        <item quantity="one">%1$s preference answered</item>
-        <item quantity="other">%1$s preferences answered</item>
     </plurals>
     <plurals name="count_days_per_week">
         <item quantity="one">%1$s day/wk</item>

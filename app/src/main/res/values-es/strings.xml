@@ -168,7 +168,6 @@
     <!-- ============================ Movement preferences ============================ -->
     <string name="movement_capability_current_use">Los entrenamientos automáticos leen estos ajustes. Un movimiento que requiere algo marcado como Evitar queda fuera de tus recomendaciones y, si no queda nada que planificar, WallCrawl lo dice en vez de ofrecer uno.</string>
     <string name="movement_capability_answer_required">Elige una respuesta para esta preferencia de movimiento.</string>
-    <string name="movement_capability_summary_label">Preferencias de movimiento</string>
     <string name="movement_capability_option_accessibility">%1$s, %2$s</string>
 
     <string name="movement_capability_impact_label">Tolerancia al impacto</string>
@@ -694,17 +693,9 @@
         <item quantity="one">%1$s cuadro de ilustración</item>
         <item quantity="other">%1$s cuadros de ilustración</item>
     </plurals>
-    <plurals name="count_gear_types">
-        <item quantity="one">%1$s tipo de equipo seleccionado</item>
-        <item quantity="other">%1$s tipos de equipo seleccionados</item>
-    </plurals>
     <plurals name="count_equipment_available">
         <item quantity="one">%1$s tipo de equipo disponible</item>
         <item quantity="other">%1$s tipos de equipo disponibles</item>
-    </plurals>
-    <plurals name="count_preferences_answered">
-        <item quantity="one">%1$s preferencia respondida</item>
-        <item quantity="other">%1$s preferencias respondidas</item>
     </plurals>
     <plurals name="count_days_per_week">
         <item quantity="one">%1$s día/sem</item>

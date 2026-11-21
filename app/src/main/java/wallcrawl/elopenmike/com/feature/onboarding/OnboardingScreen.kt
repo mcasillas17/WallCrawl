@@ -186,7 +186,7 @@ fun OnboardingScreen(
                     else -> R.string.onboarding_basic_cta
                 }
             ),
-            onClick = { viewModel.save(locale.country) },
+            onClick = { viewModel.save(deviceRegion()) },
             enabled = state.canSave && !isRestoreInFlight,
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
         )
@@ -274,3 +274,10 @@ private fun ChipRow(
         }
     }
 }
+
+/**
+ * The device's region. The system resources ignore per-app locales, which the language chip
+ * sets as a bare "en"/"es" with no country, so this still answers "US" after a switch.
+ */
+internal fun deviceRegion(): String =
+    android.content.res.Resources.getSystem().configuration.locales[0].country
