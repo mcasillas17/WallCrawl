@@ -34,6 +34,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import wallcrawl.elopenmike.com.R
+import wallcrawl.elopenmike.com.feature.personalize.PersonalizeCard
 import wallcrawl.elopenmike.com.core.exercise.visual.ExerciseVisualProvider
 import wallcrawl.elopenmike.com.core.model.*
 import wallcrawl.elopenmike.com.core.ui.components.ConditionExecution
@@ -62,7 +63,8 @@ fun TodayScreen(
     onManageProgram: () -> Unit,
     onRetryProgram: () -> Unit,
     modifier: Modifier = Modifier,
-    onOpenProfile: () -> Unit = {}
+    onOpenProfile: () -> Unit = {},
+    onPersonalize: () -> Unit = {}
 ) {
     val pending by viewModel.pendingConditions.collectAsState()
     val selected by viewModel.planningIntent.collectAsState()
@@ -95,6 +97,7 @@ fun TodayScreen(
         onDeloadAction = viewModel::decideDeload, onOpenProfile = onOpenProfile,
         programState = programState, selected = selected, onSelect = viewModel::selectPlanningIntent,
         onManageProgram = onManageProgram, onRetryProgram = onRetryProgram,
+        onPersonalize = onPersonalize, onDismissPersonalize = viewModel::dismissPersonalizeCard,
         conditionContent = {
             if (pending.pendingFailed) StatusText(stringResource(R.string.condition_pending_read_error))
             if (!pending.pending.isNullOrEmpty()) {
@@ -123,7 +126,9 @@ internal fun TodayContent(
     onManageProgram: () -> Unit = {},
     onRetryProgram: () -> Unit = {},
     onOpenProfile: () -> Unit = {},
-    visualProvider: ExerciseVisualProvider? = null
+    visualProvider: ExerciseVisualProvider? = null,
+    onPersonalize: () -> Unit = {},
+    onDismissPersonalize: () -> Unit = {}
 ) {
     var dialog by rememberSaveable { mutableStateOf<TrainDialog?>(null) }
     val locale = LocalConfiguration.current.locales[0]
@@ -156,6 +161,15 @@ internal fun TodayContent(
         state = if (settled) settledListState else rememberLazyListState(),
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (ready?.showPersonalizeCard == true) item(key = "personalize") {
+            PersonalizeCard(
+                title = stringResource(R.string.personalize_today_title),
+                body = stringResource(R.string.personalize_today_body),
+                onPersonalize = onPersonalize,
+                onDismiss = onDismissPersonalize,
+                dismissLabel = null
+            )
+        }
         if (ready != null) item(key = "week") {
             val name = ready.userProfile.name.lineSequence().firstOrNull()?.trim().orEmpty()
             if (name.isNotBlank()) Text(stringResource(R.string.today_greeting, name),
@@ -191,6 +205,9 @@ internal fun TodayContent(
         if (active == null) {
             when {
                 ready != null -> item(key = "workout") {
+                    if (ready.showStarterSafetyLine) Text(stringResource(R.string.personalize_starter_safety),
+                        style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 8.dp))
                     WorkoutHero(ready, visualProvider, selected, busy, onStartWorkout, chooseSource, onDialog = { dialog = it })
                 }
                 error != null -> item(key = "error") {

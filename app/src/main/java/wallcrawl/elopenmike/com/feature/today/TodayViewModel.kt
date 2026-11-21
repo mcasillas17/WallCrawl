@@ -40,6 +40,7 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.model.WorkoutSession
 import wallcrawl.elopenmike.com.core.model.TrainingWeek
 import wallcrawl.elopenmike.com.core.model.TrainingFrequencyRecencyEvidence
+import wallcrawl.elopenmike.com.feature.personalize.shouldShowTodayCard
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -68,14 +69,16 @@ class TodayViewModel(
     private val workoutGenerationContextBuilder: WorkoutGenerationContextBuilder,
     private val workoutPlanner: WorkoutPlanner,
     private val programValidator: ProgramValidator,
-    nowTimestamp: () -> Long = System::currentTimeMillis,
+    private val nowTimestamp: () -> Long = System::currentTimeMillis,
     clock: Flow<Long> = minuteClock(nowTimestamp),
     zoneId: () -> ZoneId = ZoneId::systemDefault,
     private val deloadRepository: DeloadRepository? = null,
     private val programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null,
     private val savedStateHandle: androidx.lifecycle.SavedStateHandle = androidx.lifecycle.SavedStateHandle(),
     /** Disk copy of the Today keys, so a relaunch shows the same plan instead of a new one. */
-    private val prefs: SharedPreferences? = null
+    private val prefs: SharedPreferences? = null,
+    /** Device setting: when the personalize card was dismissed. Not profile data, never exported. */
+    private val personalizePrefs: SharedPreferences? = null
 ) : ViewModel() {
 
     val pendingConditions = workoutRepository.observePendingConditionReassessments(UserProfile.DEFAULT_PROFILE_ID)
@@ -164,15 +167,30 @@ class TodayViewModel(
             )
         }
 
+    private val personalizeDismissedAt = MutableStateFlow(
+        personalizePrefs?.takeIf { it.contains(PERSONALIZE_DISMISSED_KEY) }?.getLong(PERSONALIZE_DISMISSED_KEY, 0L)
+    )
+
+    fun dismissPersonalizeCard() {
+        val now = nowTimestamp()
+        personalizePrefs?.edit()?.putLong(PERSONALIZE_DISMISSED_KEY, now)?.apply()
+        personalizeDismissedAt.value = now
+    }
+
     private val sourceStateFlow = combine(
         userProfileRepository.getUserProfile(),
         workoutRepository.observeActiveSession(),
-        completedThisWeekFlow
-    ) { profile, activeSession, completedThisWeek ->
+        completedThisWeekFlow,
+        workoutRepository.observeCompletedWorkoutCount(),
+        personalizeDismissedAt
+    ) { profile, activeSession, completedThisWeek, completedTotal, dismissedAt ->
         TodaySourceState(
             userProfile = profile,
             activeSession = activeSession,
-            completedThisWeek = completedThisWeek
+            completedThisWeek = completedThisWeek,
+            showPersonalizeCard = shouldShowTodayCard(
+                profile.personalizationCompleted, completedTotal, dismissedAt, nowTimestamp()
+            )
         )
     }
 
@@ -214,7 +232,9 @@ class TodayViewModel(
                 planningIntent = recommendation.intent,
                 programSession = recommendation.snapshot.programSession,
                 conditionContext = recommendation.snapshot.conditionContext,
-                isStarting = isStartingFlow.value
+                isStarting = isStartingFlow.value,
+                showPersonalizeCard = sourceState.showPersonalizeCard,
+                showStarterSafetyLine = !sourceState.userProfile.personalizationCompleted
             )
         }
     }.onStart {
@@ -662,7 +682,8 @@ class TodayViewModel(
             programValidator: ProgramValidator,
             deloadRepository: DeloadRepository? = null,
             programRepository: wallcrawl.elopenmike.com.core.database.repository.ProgramRepository? = null,
-            prefs: SharedPreferences? = null
+            prefs: SharedPreferences? = null,
+            personalizePrefs: SharedPreferences? = null
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 TodayViewModel(
@@ -674,7 +695,8 @@ class TodayViewModel(
                     deloadRepository = deloadRepository,
                     programRepository = programRepository,
                     savedStateHandle = createSavedStateHandle(),
-                    prefs = prefs
+                    prefs = prefs,
+                    personalizePrefs = personalizePrefs
                 )
             }
         }
@@ -690,9 +712,12 @@ class TodayViewModel(
     private data class TodaySourceState(
         val userProfile: UserProfile,
         val activeSession: WorkoutSession?,
-        val completedThisWeek: Int
+        val completedThisWeek: Int,
+        val showPersonalizeCard: Boolean
     )
 }
+
+private const val PERSONALIZE_DISMISSED_KEY = "dismissedAt"
 
 internal fun automaticEligibilityError(failure: AutomaticEligibilityFailure?): TodayError =
     when (failure) {

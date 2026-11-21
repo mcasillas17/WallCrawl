@@ -81,7 +81,9 @@ sealed interface TodayUiState {
         val planningIntent: wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent = wallcrawl.elopenmike.com.core.model.WorkoutPlanningIntent.ORDINARY,
         val conditionContext: wallcrawl.elopenmike.com.core.model.SessionConditionContext? = null,
         val programSession: wallcrawl.elopenmike.com.core.model.ProgramSessionSnapshot? = null,
-        val isStarting: Boolean = false
+        val isStarting: Boolean = false,
+        val showPersonalizeCard: Boolean = false,
+        val showStarterSafetyLine: Boolean = false
     ) : TodayUiState
 
     /**

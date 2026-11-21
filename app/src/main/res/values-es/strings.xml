@@ -99,6 +99,15 @@
     <string name="onboarding_basic_cta">Ver mi primera rutina</string>
     <string name="personalize_step_counter">%1$s de %2$s</string>
     <string name="personalize_finish">Terminar</string>
+    <string name="personalize_summary_title">Hazla tuya</string>
+    <string name="personalize_summary_body">Cuéntanos tu equipo y qué debemos cuidar. Tu próxima rutina se adapta.</string>
+    <string name="personalize_today_title">Personaliza tu plan</string>
+    <string name="personalize_today_body">Tus rutinas son de peso corporal y bajo impacto hasta que nos cuentes más.</string>
+    <string name="personalize_action">Personalizar</string>
+    <string name="personalize_not_now">Ahora no</string>
+    <string name="personalize_dismiss_a11y">Descartar</string>
+    <string name="personalize_profile_row">Personaliza tu plan</string>
+    <string name="personalize_starter_safety">¿Eres nuevo? Ve con calma y detente si algo duele.</string>
     <string name="personalize_next">Siguiente</string>
     <string name="personalize_experience_title">Experiencia</string>
 

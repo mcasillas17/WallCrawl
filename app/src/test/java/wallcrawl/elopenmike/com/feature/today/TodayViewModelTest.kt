@@ -78,6 +78,32 @@ class TodayViewModelTest {
         assertThat(workoutRepository.startRequests).isEmpty()
     }
 
+    private suspend fun kotlinx.coroutines.test.TestScope.todaySuccess(personalized: Boolean): TodayUiState.Success {
+        val now = 20 * DAY_MILLIS
+        val catalog = InMemoryExerciseCatalog(listOf(syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest")))
+        val profiles = TodayUserProfileRepository(UserProfile(
+            availableEquipment = listOf(StandardEquipment.BODYWEIGHT), personalizationCompleted = personalized))
+        val workouts = TodayWorkoutRepository(emptyList())
+        val builder = WorkoutGenerationContextBuilder(profiles, workouts, catalog, ExerciseFilter(), WorkoutHistoryAnalyzer(), nowTimestamp = { now })
+        val viewModel = TodayViewModel(profiles, workouts, builder, FixedPlanWorkoutPlanner(),
+            ProgramValidator(GeneratedWorkoutValidator(catalog)), nowTimestamp = { now }, clock = flowOf(now))
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        return viewModel.uiState.value as TodayUiState.Success
+    }
+
+    @Test fun starterProfile_showsSafetyLine() = runTest {
+        val state = todaySuccess(personalized = false)
+        assertThat(state.showStarterSafetyLine).isTrue()
+        assertThat(state.showPersonalizeCard).isFalse() // no completed workout yet
+    }
+
+    @Test fun personalizedProfile_hidesCardAndSafetyLine() = runTest {
+        val state = todaySuccess(personalized = true)
+        assertThat(state.showStarterSafetyLine).isFalse()
+        assertThat(state.showPersonalizeCard).isFalse()
+    }
+
     @Test
     fun startWorkout_revalidatesTheProposalEvenWhenContextIdentityMatches() = runTest {
         val now = 20 * DAY_MILLIS

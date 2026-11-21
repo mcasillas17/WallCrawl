@@ -192,9 +192,17 @@ class ActiveWorkoutViewModel(
         WorkoutRead(history, index, matchingCatalog, guidance)
     }
 
+    // A failed profile read just hides the prompt; the summary never depends on it.
+    private val offerPersonalize = userProfileRepository?.getUserProfile()
+        ?.map { !it.personalizationCompleted }
+        ?.catch { error ->
+            if (error is CancellationException) throw error
+            emit(false)
+        } ?: flowOf(false)
+
     val uiState: StateFlow<ActiveWorkoutUiState> = combine(
-        workoutRead, errorStateFlow, associationFlow
-    ) { read, screenState, associationState ->
+        workoutRead, errorStateFlow, associationFlow, offerPersonalize
+    ) { read, screenState, associationState, showPersonalize ->
         val (sessionHistory, exerciseIndex, catalogEx, guidance) = read
         val (session, completedSessions) = sessionHistory
         latestSession = session
@@ -209,7 +217,8 @@ class ActiveWorkoutViewModel(
         } else if (session.status == SessionStatus.COMPLETED) {
             sessionHistory.summary?.let {
                 ActiveWorkoutUiState.Completed(it, associationState.association?.supportedSnapshot != null &&
-                    session.exercises.any { exercise -> exercise.sets.any { set -> !set.isCompleted } })
+                    session.exercises.any { exercise -> exercise.sets.any { set -> !set.isCompleted } },
+                    showPersonalize)
             }
                 ?: ActiveWorkoutUiState.Error(R.string.workout_no_longer_active)
         } else if (error != null) {
