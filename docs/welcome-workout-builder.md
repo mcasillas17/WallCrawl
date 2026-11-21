@@ -1,5 +1,7 @@
 # Welcome screens — "Workouts built for you" update
 
+> **This change is superseded in full by [`welcome-screens-v2.md`](welcome-screens-v2.md).** Where they disagree, v2 wins.
+
 Change spec for the existing first-launch welcome flow. It tells users that WallCrawl builds
 their workouts from their **goals**, **logged progress** and **equipment**.
 

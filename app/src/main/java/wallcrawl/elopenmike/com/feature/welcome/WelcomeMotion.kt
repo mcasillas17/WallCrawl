@@ -5,7 +5,7 @@ import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.LinearEasing
 
 /**
- * The first-launch timelines from docs/first-launch-intro.md (§7, §8), as pure functions of
+ * The first-launch timelines from docs/welcome-screens-v2.md (§6, §7), as pure functions of
  * a millisecond clock. Every animated property is derived from one clock per phase, so a
  * frame is fully determined by its time and the tests can check the spec table directly.
  */
@@ -22,12 +22,12 @@ internal object WelcomeMotion {
 
     fun lerp(from: Float, to: Float, f: Float) = from + (to - from) * f
 
-    // ---- Screen 1: intro, 0 → 2440 ms ----
-    const val INTRO_END = 2440f
+    // ---- Screen 1: intro, 0 → 4700 ms ----
+    const val INTRO_END = 4700f
     /** The launch splash ends in the intro's 1260 ms state, so a first launch starts here. */
     const val SPLASH_HANDOFF_MS = 1260f
-    /** Every element has reached its final value; only the hold and the fade-out remain. */
-    const val INTRO_SETTLED = 2180f
+    /** Every element has reached its final value; only the reading hold and the fade-out remain. */
+    const val INTRO_SETTLED = 2620f
     const val SKIP_FADE_MS = 150
     const val INTRO_EMBLEM_DP = 168f
     const val INTRO_SLOT_DP = 120f
@@ -57,14 +57,14 @@ internal object WelcomeMotion {
     fun wall(t: Float) = seg(t, 1400f, 300f, EMPH_DEC)
     fun pillScale(t: Float) = lerp(0.5f, 1f, seg(t, 1540f, 380f, OVERSHOOT))
     fun pillAlpha(t: Float) = seg(t, 1540f, 100f)
-    fun tagline1(t: Float) = seg(t, 1820f, 280f, STANDARD)
-    fun tagline2(t: Float) = seg(t, 1900f, 280f, STANDARD)
+    fun tagline1(t: Float) = seg(t, 1820f, 500f, STANDARD)
+    fun tagline2(t: Float) = seg(t, 2120f, 500f, STANDARD)
     /** Wordmark, tagline and Skip fade out; the emblem stays and flies into screen 2. */
-    fun introChrome(t: Float) = 1f - seg(t, 2260f, 180f, ACCEL)
+    fun introChrome(t: Float) = 1f - seg(t, 4400f, 300f, ACCEL)
 
     // Reduced motion: final frame fades in, holds, fades out (emblem included).
-    const val REDUCED_INTRO_END = 1880f
-    fun reducedIntroAlpha(t: Float) = seg(t, 0f, 300f) * (1f - seg(t, 1700f, 180f, ACCEL))
+    const val REDUCED_INTRO_END = 3800f
+    fun reducedIntroAlpha(t: Float) = seg(t, 0f, 300f) * (1f - seg(t, 3500f, 300f, ACCEL))
 
     // ---- Screen 2: what WallCrawl is about, 0 → 3000 ms real time ----
     const val ABOUT_END = 3000f
@@ -78,20 +78,23 @@ internal object WelcomeMotion {
 
     fun headline(t: Float) = seg(t, 450f, 600f, EMPH_DEC)
 
-    // Workout builder card: inputs pop left to right, the lines draw and meet, the output pops and glows.
-    fun builderCard(t: Float) = seg(t, 650f, 600f, EMPH_DEC)
-    fun inputScale(k: Int, t: Float) = lerp(0.6f, 1f, seg(t, 850f + 120f * k, 600f, OVERSHOOT))
-    fun inputAlpha(k: Int, t: Float) = seg(t, 850f + 120f * k, 200f)
-    fun connector(k: Int, t: Float) = seg(t, 1250f + 60f * k, 500f, STANDARD)
-    fun outputScale(t: Float) = lerp(0.85f, 1f, seg(t, 1650f, 650f, OVERSHOOT))
-    fun outputAlpha(t: Float) = seg(t, 1650f, 200f)
-    fun outputGlow(t: Float) = 0.45f * seg(t, 1650f, 240f, STANDARD) * (1f - seg(t, 1950f, 600f, STANDARD))
+    // Flow diagram: inputs pop left to right, the lines meet at the workout, it rings and glows,
+    // the arrow drops to Log it, and the loop arrow returns to Progress with a ping.
+    fun inputScale(k: Int, t: Float) = lerp(0.6f, 1f, seg(t, 700f + 120f * k, 600f, OVERSHOOT))
+    fun inputAlpha(k: Int, t: Float) = seg(t, 700f + 120f * k, 200f)
+    fun connector(k: Int, t: Float) = seg(t, 1100f + 60f * k, 450f, STANDARD)
+    fun workoutScale(t: Float) = lerp(0.7f, 1f, seg(t, 1450f, 650f, OVERSHOOT))
+    fun workoutAlpha(t: Float) = seg(t, 1450f, 200f)
+    fun workoutRing(t: Float) = seg(t, 1450f, 550f, IN_OUT)
+    fun workoutGlow(t: Float) = 0.45f * seg(t, 1450f, 240f, STANDARD) * (1f - seg(t, 1750f, 600f, STANDARD))
+    fun down(t: Float) = seg(t, 1850f, 300f, STANDARD)
+    fun logScale(t: Float) = lerp(0.6f, 1f, seg(t, 2000f, 550f, OVERSHOOT))
+    fun logAlpha(t: Float) = seg(t, 2000f, 200f)
+    fun loop(t: Float) = seg(t, 2150f, 500f, IN_OUT)
+    /** Progress ping: ring scale 1 + 0.5p, alpha 0.7(1 − p), hidden at p == 0. */
+    fun ping(t: Float) = seg(t, 2650f, 350f, STANDARD)
 
-    fun feature(i: Int, t: Float) = seg(t, 1500f + 140f * i, 550f, EMPH_DEC)
-    fun tileScale(i: Int, t: Float) = lerp(0.6f, 1f, seg(t, 1500f + 140f * i, 600f, OVERSHOOT))
-    fun tileAlpha(i: Int, t: Float) = seg(t, 1500f + 140f * i, 200f)
-    fun privacyCard(t: Float) = seg(t, 1950f, 600f, EMPH_DEC)
-    fun chipScale(j: Int, t: Float) = lerp(0.8f, 1f, seg(t, 2150f + 100f * j, 450f, OVERSHOOT))
-    fun chipAlpha(j: Int, t: Float) = seg(t, 2150f + 100f * j, 150f)
+    fun badgeScale(j: Int, t: Float) = lerp(0.8f, 1f, seg(t, 2300f + 80f * j, 450f, OVERSHOOT))
+    fun badgeAlpha(j: Int, t: Float) = seg(t, 2300f + 80f * j, 150f)
     fun footer(t: Float) = seg(t, 2350f, 650f, EMPH_DEC)
 }

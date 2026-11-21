@@ -1,5 +1,7 @@
 # First-launch intro + "What WallCrawl is about" — implementation spec
 
+> **§3, §4, §7 and §8 are superseded by [`welcome-screens-v2.md`](welcome-screens-v2.md).** Where they disagree, v2 wins.
+
 Self-contained brief for implementing the two first-launch screens in WallCrawl.
 Everything needed is in this file: flow, layout (dp/sp), colors, copy (EN + ES),
 emblem path data, the full timeline, accessibility, and acceptance criteria.

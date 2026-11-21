@@ -2,6 +2,7 @@ package wallcrawl.elopenmike.com.feature.welcome
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -48,7 +49,7 @@ class WelcomeScreenTest {
         show()
         compose.mainClock.advanceTimeBy(1000)
         compose.onNodeWithTag(WELCOME_INTRO_TEST_TAG).assertExists()
-        compose.mainClock.advanceTimeBy(1600 + 3200)
+        compose.mainClock.advanceTimeBy(3700 + 3200)
         assertAbout()
         compose.onNodeWithText(context.getString(R.string.welcome_get_started)).performClick()
         assertThat(started).isEqualTo(1)
@@ -70,53 +71,48 @@ class WelcomeScreenTest {
         assertAbout()
     }
 
-    @Test fun reducedMotionStillReachesAbout() {
+    @Test fun reducedMotionHoldsTheIntroUntil3500msThenReachesAbout() {
         show(reduced = true)
-        compose.mainClock.advanceTimeBy(2200)
+        compose.mainClock.advanceTimeBy(3400)
+        compose.onNodeWithTag(WELCOME_INTRO_TEST_TAG).assertExists()
+        compose.mainClock.advanceTimeBy(600)
         assertAbout()
     }
 
-    @Test fun theBuilderCardReadsAsOneNodeAndPlanYourWeekIsGone() {
+    @Test fun theDiagramReadsAsOneSentenceAndTheOldContentIsGone() {
         show(reduced = true)
-        compose.mainClock.advanceTimeBy(2200)
-        val card = compose.onNodeWithTag(WELCOME_BUILDER_TEST_TAG).fetchSemanticsNode()
-        val read = card.config.getOrElse(SemanticsProperties.Text) { emptyList() }.map { it.text }
-        assertThat(read).containsExactly(
-            context.getString(R.string.welcome_builder_title),
-            context.getString(R.string.welcome_builder_goals),
-            context.getString(R.string.welcome_builder_progress),
-            context.getString(R.string.welcome_builder_equipment),
-            context.getString(R.string.welcome_builder_output_title),
-            context.getString(R.string.welcome_builder_output_body),
-        ).inOrder()
-        compose.onNodeWithText("Plan your week").assertDoesNotExist()
-        compose.onNodeWithText("What WallCrawl does").assertDoesNotExist()
+        compose.mainClock.advanceTimeBy(4000)
+        val diagram = compose.onNodeWithTag(WELCOME_FLOW_TEST_TAG).fetchSemanticsNode()
+        assertThat(diagram.config[SemanticsProperties.ContentDescription])
+            .containsExactly(context.getString(R.string.welcome_flow_a11y))
+        // The one-word labels are drawn but not read; TalkBack hears only the sentence.
+        assertThat(SemanticsProperties.Text in diagram.config).isFalse()
+        assertThat(diagram.children).isEmpty()
+        listOf(R.string.welcome_privacy_no_account, R.string.welcome_privacy_no_ads,
+            R.string.welcome_privacy_no_tracking, R.string.welcome_privacy_offline)
+            .forEach { compose.onNodeWithText(context.getString(it)).assertIsDisplayed() }
+        listOf("What WallCrawl does", "Plan your week", "Private by design", "Workouts built for you")
+            .forEach { compose.onNodeWithText(it).assertDoesNotExist() }
     }
 
-    /** Builder input labels at [fontScale] in a 320 dp wide screen: the top of Goals and of Equipment. */
-    private fun inputTops(fontScale: Float): Pair<Float, Float> {
+    /** At 320 dp and 200% text the diagram grows with its labels and the badges stay below it. */
+    @Test fun largeTextOnANarrowScreenGrowsTheDiagramWithoutOverlap() {
         compose.mainClock.autoAdvance = false
         compose.setContent {
             val density = LocalDensity.current
-            CompositionLocalProvider(LocalDensity provides Density(density.density, fontScale)) {
+            CompositionLocalProvider(LocalDensity provides Density(density.density, 2f)) {
                 WallCrawlTheme(ThemePreference.DARK) {
-                    Box(Modifier.width(320.dp)) { WelcomeScreen(onGetStarted = {}, reducedMotion = true, touchExploration = true) }
+                    Box(Modifier.width(320.dp).height(640.dp)) {
+                        WelcomeScreen(onGetStarted = {}, reducedMotion = true, touchExploration = true)
+                    }
                 }
             }
         }
         compose.mainClock.advanceTimeBy(300)
-        fun top(id: Int) = compose.onNodeWithText(context.getString(id), useUnmergedTree = true).getUnclippedBoundsInRoot().top.value
-        return top(R.string.welcome_builder_goals) to top(R.string.welcome_builder_equipment)
-    }
-
-    @Test fun builderInputsSitSideBySideAtNormalText() {
-        val (goals, equipment) = inputTops(1f)
-        assertThat(equipment).isWithin(1f).of(goals)
-    }
-
-    @Test fun builderInputsStackWhenALabelCannotFitItsTile() {
-        val (goals, equipment) = inputTops(2f)
-        assertThat(equipment).isGreaterThan(goals + 40f)
+        val diagram = compose.onNodeWithTag(WELCOME_FLOW_TEST_TAG).getUnclippedBoundsInRoot()
+        assertThat((diagram.bottom - diagram.top).value).isGreaterThan(326f)
+        val badge = compose.onNodeWithText(context.getString(R.string.welcome_privacy_no_account)).getUnclippedBoundsInRoot()
+        assertThat(badge.top.value).isAtLeast(diagram.bottom.value + 27f)
     }
 
     @Test fun talkBackStartsOnAbout() {
@@ -125,6 +121,6 @@ class WelcomeScreenTest {
         assertAbout()
         // Scrolling animates; with the clock paused it would never finish (320×640 needs it).
         compose.mainClock.autoAdvance = true
-        compose.onNodeWithText(context.getString(R.string.welcome_privacy_body)).performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText(context.getString(R.string.welcome_privacy_offline)).performScrollTo().assertIsDisplayed()
     }
 }
