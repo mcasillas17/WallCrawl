@@ -717,7 +717,7 @@ class TodayViewModel(
     )
 }
 
-private const val PERSONALIZE_DISMISSED_KEY = "dismissedAt"
+private const val PERSONALIZE_DISMISSED_KEY = "dismissed_at"
 
 internal fun automaticEligibilityError(failure: AutomaticEligibilityFailure?): TodayError =
     when (failure) {

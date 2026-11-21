@@ -78,7 +78,11 @@ class TodayViewModelTest {
         assertThat(workoutRepository.startRequests).isEmpty()
     }
 
-    private suspend fun kotlinx.coroutines.test.TestScope.todaySuccess(personalized: Boolean): TodayUiState.Success {
+    private suspend fun kotlinx.coroutines.test.TestScope.todayViewModel(
+        personalized: Boolean,
+        completed: List<WorkoutSession> = emptyList(),
+        personalizePrefs: android.content.SharedPreferences? = null
+    ): TodayViewModel {
         val now = 20 * DAY_MILLIS
         val catalog = InMemoryExerciseCatalog(listOf(
             // BEGINNER programming keeps it in the starter pool, which plans beginner exercises only.
@@ -97,13 +101,28 @@ class TodayViewModelTest {
         ))
         val profiles = TodayUserProfileRepository(UserProfile(
             availableEquipment = listOf(StandardEquipment.BODYWEIGHT), personalizationCompleted = personalized))
-        val workouts = TodayWorkoutRepository(emptyList())
+        val workouts = TodayWorkoutRepository(completed)
         val builder = WorkoutGenerationContextBuilder(profiles, workouts, catalog, ExerciseFilter(), WorkoutHistoryAnalyzer(), nowTimestamp = { now })
         val viewModel = TodayViewModel(profiles, workouts, builder, FixedPlanWorkoutPlanner(),
-            ProgramValidator(GeneratedWorkoutValidator(catalog)), nowTimestamp = { now }, clock = flowOf(now))
+            ProgramValidator(GeneratedWorkoutValidator(catalog)), nowTimestamp = { now }, clock = flowOf(now),
+            personalizePrefs = personalizePrefs)
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
         advanceUntilIdle()
-        return viewModel.uiState.value as TodayUiState.Success
+        return viewModel
+    }
+
+    private suspend fun kotlinx.coroutines.test.TestScope.todaySuccess(personalized: Boolean): TodayUiState.Success =
+        todayViewModel(personalized).uiState.value as TodayUiState.Success
+
+    @Test fun dismissPersonalizeCard_hidesCardAndStoresTimestampUnderDismissedAt() = runTest {
+        val prefs = MemoryPrefs()
+        val viewModel = todayViewModel(false, listOf(completedSession("done", 19 * DAY_MILLIS)), prefs)
+        assertThat((viewModel.uiState.value as TodayUiState.Success).showPersonalizeCard).isTrue()
+        viewModel.dismissPersonalizeCard()
+        advanceUntilIdle()
+        assertThat((viewModel.uiState.value as TodayUiState.Success).showPersonalizeCard).isFalse()
+        assertThat(prefs.values.keys).containsExactly("dismissed_at")
+        assertThat(prefs.values["dismissed_at"]).isEqualTo(20 * DAY_MILLIS)
     }
 
     @Test fun starterProfile_showsSafetyLine() = runTest {
@@ -1062,3 +1081,29 @@ private fun ledger(
     secondaryInvolvement = emptyMap(),
     unattributedWorkSets = emptyMap()
 )
+
+private class MemoryPrefs : android.content.SharedPreferences {
+    val values = mutableMapOf<String, Any?>()
+    override fun getAll(): MutableMap<String, *> = values
+    override fun getString(key: String?, defValue: String?) = values[key] as? String ?: defValue
+    override fun getStringSet(key: String?, defValues: MutableSet<String>?) = defValues
+    override fun getInt(key: String?, defValue: Int) = values[key] as? Int ?: defValue
+    override fun getLong(key: String?, defValue: Long) = values[key] as? Long ?: defValue
+    override fun getFloat(key: String?, defValue: Float) = values[key] as? Float ?: defValue
+    override fun getBoolean(key: String?, defValue: Boolean) = values[key] as? Boolean ?: defValue
+    override fun contains(key: String?) = values.containsKey(key)
+    override fun registerOnSharedPreferenceChangeListener(l: android.content.SharedPreferences.OnSharedPreferenceChangeListener?) {}
+    override fun unregisterOnSharedPreferenceChangeListener(l: android.content.SharedPreferences.OnSharedPreferenceChangeListener?) {}
+    override fun edit(): android.content.SharedPreferences.Editor = object : android.content.SharedPreferences.Editor {
+        override fun putLong(key: String?, value: Long) = apply { values[key!!] = value }
+        override fun putString(key: String?, value: String?) = apply { values[key!!] = value }
+        override fun putStringSet(key: String?, value: MutableSet<String>?) = apply { values[key!!] = value }
+        override fun putInt(key: String?, value: Int) = apply { values[key!!] = value }
+        override fun putFloat(key: String?, value: Float) = apply { values[key!!] = value }
+        override fun putBoolean(key: String?, value: Boolean) = apply { values[key!!] = value }
+        override fun remove(key: String?) = apply { values.remove(key) }
+        override fun clear() = apply { values.clear() }
+        override fun commit() = true
+        override fun apply() {}
+    }
+}
