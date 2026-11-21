@@ -30,6 +30,8 @@ data class UserProfile(
     // Must stay false until onboarding explicitly confirms the fields above and below it;
     // Today must not generate or render a workout for an unconfirmed profile.
     val onboardingCompleted: Boolean = false,
+    // False after the short setup until the user finishes or skips personalization.
+    val personalizationCompleted: Boolean = true,
     val trainingConstraints: Set<TrainingConstraint> = emptySet(),
     val returningAfterBreakWeeks: Int = 0,
     // Never populated with a guessed or catalog default: a load only lands here once a

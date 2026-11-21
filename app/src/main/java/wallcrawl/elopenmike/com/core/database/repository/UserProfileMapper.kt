@@ -64,6 +64,7 @@ internal fun UserProfileEntity.toUserProfile(): UserProfile {
         musclePriorities = priorities,
         excludedExerciseIds = excluded,
         onboardingCompleted = onboardingCompleted,
+        personalizationCompleted = personalizationCompleted,
         trainingConstraints = knownConstraints,
         returningAfterBreakWeeks = returningAfterBreakWeeks,
         confirmedStartingLoads = decodeConfirmedStartingLoads(confirmedStartingLoadsJson),
@@ -93,6 +94,7 @@ internal fun UserProfile.toUserProfileEntity(): UserProfileEntity = UserProfileE
     },
     excludedExerciseIdsJson = excludedExerciseIds.joinToString(PERSISTED_LIST_SEPARATOR),
     onboardingCompleted = onboardingCompleted,
+    personalizationCompleted = personalizationCompleted,
     trainingConstraintsJson = unresolvedTrainingConstraintsRaw?.also {
         require(decodeTrainingConstraints(it).first == trainingConstraints) {
             "Unresolved training constraints cannot be changed through known constraint controls."

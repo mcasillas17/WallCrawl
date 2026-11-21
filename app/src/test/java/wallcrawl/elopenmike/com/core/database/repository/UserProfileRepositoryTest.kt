@@ -94,6 +94,13 @@ class UserProfileRepositoryTest {
     }
 
     @Test
+    fun mapper_roundTripsPersonalizationCompleted() {
+        val entity = UserProfile(personalizationCompleted = false).toUserProfileEntity()
+        assertThat(entity.personalizationCompleted).isFalse()
+        assertThat(entity.toUserProfile().personalizationCompleted).isFalse()
+    }
+
+    @Test
     fun explicitBandSetups_surviveProfileSaveAndMapperRoundTrip() = runTest {
         StandardEquipment.BAND_SETUPS.forEach { setup ->
             val equipment = listOf(StandardEquipment.RESISTANCE_BAND, setup)

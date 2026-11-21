@@ -39,7 +39,7 @@ import wallcrawl.elopenmike.com.core.database.entity.WorkoutTemplateExerciseEnti
  * Exposed as a constant so provenance recorded in an export names the same number the
  * database is actually built with, rather than a copy that can drift after a migration.
  */
-const val WALLCRAWL_SCHEMA_VERSION = 19
+const val WALLCRAWL_SCHEMA_VERSION = 20
 
 @Database(
     entities = [
@@ -491,6 +491,13 @@ abstract class WallCrawlDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_19_20 = object : Migration(19, 20) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Existing profiles already chose their setup, so they count as personalized.
+                db.execSQL("ALTER TABLE user_profiles ADD COLUMN personalizationCompleted INTEGER NOT NULL DEFAULT 1")
+            }
+        }
+
         val MIGRATION_17_18 = object : Migration(17, 18) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 // The released v17 and the condition-evidence preview used the same version number.
@@ -554,7 +561,8 @@ abstract class WallCrawlDatabase : RoomDatabase() {
                 MIGRATION_15_16,
                 MIGRATION_16_17,
                 MIGRATION_17_18,
-                MIGRATION_18_19
+                MIGRATION_18_19,
+                MIGRATION_19_20
             )
     }
 }
