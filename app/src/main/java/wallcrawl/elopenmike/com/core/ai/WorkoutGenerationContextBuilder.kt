@@ -17,6 +17,7 @@ import wallcrawl.elopenmike.com.core.database.repository.WorkoutRepository
 import wallcrawl.elopenmike.com.core.database.repository.DeloadRepository
 import wallcrawl.elopenmike.com.core.database.repository.ProgramRepository
 import wallcrawl.elopenmike.com.core.model.ConditionViolation
+import wallcrawl.elopenmike.com.core.model.Difficulty
 import wallcrawl.elopenmike.com.core.model.ExerciseType
 import wallcrawl.elopenmike.com.core.model.convertWeight
 import wallcrawl.elopenmike.com.core.model.ConditionSupportCatalog
@@ -250,6 +251,11 @@ class WorkoutGenerationContextBuilder(
             is ConditionPlanningResult.Ready -> allowedExercises.filter { it.id in conditionPlanning.ordinaryRules }
             is ConditionPlanningResult.Blocked -> emptyList()
             ConditionPlanningResult.NotApplicable -> allowedExercises
+        }.let { pool ->
+            // Starter workouts only: until the user personalizes, plan beginner exercises only.
+            // Warm-up and cooldown candidates travel separately in phaseExercises.
+            if (profile.personalizationCompleted) pool
+            else pool.filter { it.programming?.difficulty == Difficulty.BEGINNER }
         }
 
         val context = WorkoutGenerationContext(

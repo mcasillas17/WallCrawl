@@ -80,7 +80,21 @@ class TodayViewModelTest {
 
     private suspend fun kotlinx.coroutines.test.TestScope.todaySuccess(personalized: Boolean): TodayUiState.Success {
         val now = 20 * DAY_MILLIS
-        val catalog = InMemoryExerciseCatalog(listOf(syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest")))
+        val catalog = InMemoryExerciseCatalog(listOf(
+            // BEGINNER programming keeps it in the starter pool, which plans beginner exercises only.
+            syntheticApprovedExercise(id = "press-a", directPrimaryMuscle = "Chest").copy(
+                programming = wallcrawl.elopenmike.com.core.model.ExerciseProgrammingMetadata(
+                    requiredEquipmentCombinations = listOf(listOf(StandardEquipment.BODYWEIGHT)),
+                    movementPattern = wallcrawl.elopenmike.com.core.model.MovementPattern.HORIZONTAL_PUSH,
+                    difficulty = wallcrawl.elopenmike.com.core.model.Difficulty.BEGINNER,
+                    mechanics = wallcrawl.elopenmike.com.core.model.MechanicsType.COMPOUND,
+                    recommendedRepRange = wallcrawl.elopenmike.com.core.model.RepRange(8, 12),
+                    fatigueScore = 1,
+                    progressionType = wallcrawl.elopenmike.com.core.model.ProgressionType.REPETITIONS,
+                    coachingSummary = "Synthetic"
+                )
+            )
+        ))
         val profiles = TodayUserProfileRepository(UserProfile(
             availableEquipment = listOf(StandardEquipment.BODYWEIGHT), personalizationCompleted = personalized))
         val workouts = TodayWorkoutRepository(emptyList())
