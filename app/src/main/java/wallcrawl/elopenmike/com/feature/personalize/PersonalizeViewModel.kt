@@ -27,8 +27,8 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.ui.decodeConditionDraft
 import wallcrawl.elopenmike.com.core.ui.encodeConditionDraft
 import wallcrawl.elopenmike.com.feature.onboarding.OnboardingError
-import wallcrawl.elopenmike.com.feature.onboarding.OnboardingViewModel.Companion.enumSetOrDefault
-import wallcrawl.elopenmike.com.feature.onboarding.OnboardingViewModel.Companion.enumValueOrDefault
+import wallcrawl.elopenmike.com.core.ui.enumSetOrDefault
+import wallcrawl.elopenmike.com.core.ui.enumValueOrDefault
 
 /**
  * Drives the three-step personalization flow. The draft starts from the current profile

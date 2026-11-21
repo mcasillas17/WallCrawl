@@ -86,41 +86,25 @@
     <string name="language_option_system_short">Auto</string>
 
     <!-- ============================ Onboarding ============================ -->
-    <string name="onboarding_welcome_title">Te damos la bienvenida a WallCrawl</string>
-    <string name="onboarding_welcome_subtitle">Configura tus entrenamientos en ocho pasos.</string>
-    <string name="onboarding_goals_title">Tus objetivos</string>
-    <string name="onboarding_goals_subtitle">Elige tus objetivos.</string>
-    <string name="onboarding_experience_title">Experiencia y unidades</string>
-    <string name="onboarding_experience_subtitle">Elige tu unidad de peso preferida y tu experiencia previa.</string>
-    <string name="onboarding_movement_capability_title">Preferencias de movimiento</string>
     <string name="onboarding_movement_capability_subtitle">Cuéntanos qué te resulta cómodo hoy. Puedes cambiarlo después.</string>
-    <string name="onboarding_schedule_title">Tu horario</string>
-    <string name="onboarding_schedule_subtitle">Define tu rutina semanal y la duración que prefieres por sesión.</string>
     <string name="onboarding_equipment_title">Tu equipo</string>
     <string name="onboarding_equipment_subtitle">Escoge el equipo que tengas disponible.</string>
     <string name="onboarding_safety_title">Restricciones de movimiento</string>
     <string name="onboarding_safety_subtitle">Cuéntanos qué zonas quieres cuidar.</string>
-    <string name="onboarding_summary_title">Revisa tus preferencias</string>
-    <string name="onboarding_summary_subtitle">Puedes cambiar estas opciones en Perfil y ajustes.</string>
 
-    <string name="onboarding_step_counter">Paso %1$s de %2$s</string>
+    <string name="onboarding_basic_title">Armemos tu primera rutina</string>
+    <string name="onboarding_basic_goal">¿Cuál es tu meta?</string>
+    <string name="onboarding_basic_days">Días por semana</string>
+    <string name="onboarding_basic_minutes">Minutos por rutina</string>
+    <string name="onboarding_basic_cta">Ver mi primera rutina</string>
     <string name="personalize_step_counter">%1$s de %2$s</string>
     <string name="personalize_finish">Terminar</string>
     <string name="personalize_next">Siguiente</string>
     <string name="personalize_experience_title">Experiencia</string>
-    <string name="onboarding_codename_heading">Tu nombre</string>
-    <string name="onboarding_codename_placeholder">p. ej., Álex</string>
 
-    <string name="onboarding_goals_heading">Objetivos de entrenamiento</string>
-    <string name="onboarding_goals_hint">Selecciona lo que aplique a tu bloque actual:</string>
 
-    <string name="onboarding_unit_heading">Unidad de peso preferida</string>
-    <string name="onboarding_unit_hint">Se usa para las cargas, los discos y el registro.</string>
     <string name="onboarding_experience_heading">Nivel de experiencia</string>
 
-    <string name="onboarding_schedule_days_heading">Días de entrenamiento por semana</string>
-    <string name="onboarding_duration_heading">Duración objetivo</string>
-    <string name="onboarding_duration_hint">Incluye el calentamiento, las series de trabajo, los descansos y la vuelta a la calma.</string>
     <string name="onboarding_break_heading">¿Has dejado de entrenar?</string>
     <string name="onboarding_break_hint">Si dejaste de entrenar un tiempo, indica cuánto para que WallCrawl empiece con un volumen conservador. ¿Apenas empiezas? Elige la primera opción.</string>
 
@@ -142,22 +126,8 @@
     <string name="onboarding_safety_none_subtitle">Ninguna zona que cuidar.</string>
     <string name="onboarding_safety_tag_prompt">O marca zonas específicas:</string>
 
-    <string name="onboarding_summary_heading">Preferencias de entrenamiento</string>
-    <string name="onboarding_summary_label_name">Nombre</string>
-    <string name="onboarding_summary_label_goals">Objetivos</string>
     <string name="onboarding_summary_label_experience">Experiencia</string>
-    <string name="onboarding_summary_label_schedule">Frecuencia</string>
-    <string name="onboarding_summary_value_schedule">%1$s · ~%2$s</string>
-    <string name="onboarding_summary_label_units">Unidades</string>
-    <string name="onboarding_summary_value_units">%1$s (%2$s)</string>
-    <string name="onboarding_summary_label_equipment">Equipo</string>
-    <string name="onboarding_summary_label_sensitive">Zonas sensibles</string>
-    <string name="onboarding_summary_value_no_sensitive">Ninguna</string>
-    <string name="onboarding_summary_label_break">Regreso tras la pausa</string>
-    <string name="onboarding_summary_value_break">%1$s • %2$s</string>
 
-    <string name="onboarding_action_continue">Continuar</string>
-    <string name="onboarding_action_start">Guardar y terminar</string>
     <string name="onboarding_action_saving">Guardando tu perfil…</string>
 
     <string name="onboarding_error_required_field">Responde cada campo obligatorio de la configuración inicial.</string>
@@ -792,11 +762,6 @@
         <item quantity="one">Busca entre %1$s ejercicio, músculos o equipo…</item>
         <item quantity="other">Busca entre %1$s ejercicios, músculos o equipo…</item>
     </plurals>
-    <string name="schedule_days_2">2 días • mantenimiento de cuerpo completo.</string>
-    <string name="schedule_days_3">3 días • progresión clásica de cuerpo completo (recomendado).</string>
-    <string name="schedule_days_4">4 días • frecuencia equilibrada de tren superior e inferior.</string>
-    <string name="schedule_days_5">5 días • rutina adaptativa de empuje, tirón y pierna.</string>
-    <string name="schedule_days_6">6 días • entrenamiento dedicado de alta frecuencia.</string>
     <string name="profile_gender_title">Género (opcional)</string>
     <string name="gender_unspecified">Prefiero no decirlo</string>
     <string name="gender_woman">Mujer</string>
