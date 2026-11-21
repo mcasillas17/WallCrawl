@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -22,6 +23,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -148,8 +150,35 @@ class ShortOnboardingNavigationTest {
     private fun cardVisible() = hasNode(text(R.string.personalize_today_title))
     private fun awaitCardState(visible: Boolean) = compose.waitUntil(15_000) { cardVisible() == visible }
 
+    /** Fails if the list is missing or the target is not in it. */
     private fun scrollTodayTo(id: Int) {
-        runCatching { compose.onNodeWithTag("today-list").performScrollToNode(hasText(text(id))) }
+        compose.onNodeWithTag("today-list").assertExists().performScrollToNode(hasText(text(id)))
+    }
+
+    /**
+     * Absence means something only once Today has loaded and the card's slot (the top of the list)
+     * has been composed: wait for the workout, then look at the top.
+     */
+    private fun assertNoTodayCard() {
+        scrollTodayTo(R.string.today_action_start)
+        compose.onNodeWithTag("today-list").performScrollToIndex(0)
+        compose.waitForIdle()
+        assertThat(cardVisible()).isFalse()
+    }
+
+    private fun openProfile() {
+        compose.runOnIdle { nav.navigate("profile") }
+        route("profile")
+        compose.onNodeWithTag("profile-settings-list").assertExists()
+    }
+
+    /** Scrolls the whole settings list (failing if it is absent) and reports whether the row is at its top. */
+    private fun profileRowShown(): Boolean {
+        val list = compose.onNodeWithTag("profile-settings-list").assertExists()
+        list.performScrollToNode(hasText(text(R.string.guided_about_credits)))
+        list.performScrollToIndex(0)
+        compose.waitForIdle()
+        return hasNode(text(R.string.personalize_profile_row))
     }
 
     /** Done leaves the summary for Progress, so Today is reached through the bottom bar. */
@@ -195,6 +224,9 @@ class ShortOnboardingNavigationTest {
         doneThenToday()
         scrollTodayTo(R.string.personalize_today_title)
         awaitCardState(true)
+        // Positive control for the "row gone" check in the Finish test: same helper, row present.
+        openProfile()
+        assertThat(profileRowShown()).isTrue()
     }
 
     @Test fun personalize_threeSteps_finish_removesCardAndProfileRow() {
@@ -214,11 +246,9 @@ class ShortOnboardingNavigationTest {
         compose.waitUntil(15_000) { nav.currentDestination?.route != AppRoutes.PERSONALIZE }
         assertThat(runBlocking { container.userProfileRepository.getProfileOnce() }.personalizationCompleted).isTrue()
         doneThenToday()
-        assertThat(cardVisible()).isFalse()
-        compose.runOnIdle { nav.navigate("profile") }
-        route("profile")
-        compose.waitForIdle()
-        assertThat(hasNode(text(R.string.personalize_profile_row))).isFalse()
+        assertNoTodayCard()
+        openProfile()
+        assertThat(profileRowShown()).isFalse()
     }
 
     @Test fun todayCard_dismiss_hidesIt() {
@@ -230,22 +260,19 @@ class ShortOnboardingNavigationTest {
         doneThenToday()
         scrollTodayTo(R.string.personalize_today_title)
         awaitCardState(true)
-        compose.onNode(androidx.compose.ui.test.hasContentDescription(text(R.string.personalize_dismiss_a11y))).performClick()
+        compose.onNode(hasContentDescription(text(R.string.personalize_dismiss_a11y))).performClick()
         awaitCardState(false)
     }
 
     @Test fun existingPersonalizedProfile_seesNoPrompts() {
-        runBlocking { container.userProfileRepository.saveProfile(UserProfile(name = "Veteran", onboardingCompleted = true)) }
+        runBlocking { container.userProfileRepository.saveProfile(UserProfile(name = "Veteran", onboardingCompleted = true, personalizationCompleted = true)) }
         show()
         awaitToday()
         finishFirstWorkoutNoOffer()
         doneThenToday()
-        scrollTodayTo(R.string.personalize_today_title)
-        assertThat(cardVisible()).isFalse()
-        compose.runOnIdle { nav.navigate("profile") }
-        route("profile")
-        compose.waitForIdle()
-        assertThat(hasNode(text(R.string.personalize_profile_row))).isFalse()
+        assertNoTodayCard()
+        openProfile()
+        assertThat(profileRowShown()).isFalse()
     }
 
     private fun finishFirstWorkoutNoOffer() {
