@@ -171,8 +171,8 @@ internal fun TodayContent(
             )
         }
         if (ready != null) item(key = "week") {
-            val name = ready.userProfile.name.lineSequence().firstOrNull()?.trim().orEmpty()
-            if (name.isNotBlank()) Text(stringResource(R.string.today_greeting, name),
+            val name = UserProfile.displayName(ready.userProfile.name)
+            Text(if (name.isEmpty()) stringResource(R.string.today_greeting_no_name) else stringResource(R.string.today_greeting, name),
                 style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
             val goal = ready.userProfile.daysPerWeek
             FlowRow(Modifier.fillMaxWidth().padding(vertical = 8.dp),

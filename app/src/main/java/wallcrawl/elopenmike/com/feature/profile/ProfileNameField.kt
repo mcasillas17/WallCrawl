@@ -32,7 +32,9 @@ const val PROFILE_NAME_FIELD_TEST_TAG = "profile-name-field"
  * keeps the saved name.
  */
 @Composable
-fun ProfileNameField(name: String, onSave: (String) -> Unit, modifier: Modifier = Modifier) {
+fun ProfileNameField(savedName: String, onSave: (String) -> Unit, modifier: Modifier = Modifier) {
+    // The placeholder name shows as an empty field, not as the user's name.
+    val name = UserProfile.displayName(savedName)
     var text by rememberSaveable(name) { mutableStateOf(name) }
     var focused by rememberSaveable { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current

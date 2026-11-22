@@ -300,6 +300,7 @@
     <string name="today_loading">Building today\'s plan…</string>
     <string name="today_error_title">Generation issue</string>
     <string name="today_greeting">Ready to train, %1$s</string>
+    <string name="today_greeting_no_name">Ready to train</string>
     <string name="today_action_resume">Resume</string>
     <string name="today_regenerate_content_description">Generate another workout</string>
     <string name="today_stat_duration">~%1$s min</string>

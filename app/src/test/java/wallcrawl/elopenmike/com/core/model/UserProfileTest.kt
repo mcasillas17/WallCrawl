@@ -28,4 +28,11 @@ class UserProfileTest {
             "LOW_IMPACT_ONLY"
         )
     }
+
+    @Test
+    fun displayName_hidesThePlaceholderAndKeepsRealNames() {
+        assertThat(UserProfile.displayName(UserProfile().name)).isEqualTo("")
+        assertThat(UserProfile.displayName("  ")).isEqualTo("")
+        assertThat(UserProfile.displayName(" Ana \nx")).isEqualTo("Ana")
+    }
 }

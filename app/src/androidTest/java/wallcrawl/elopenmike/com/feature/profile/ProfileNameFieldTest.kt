@@ -3,11 +3,15 @@ package wallcrawl.elopenmike.com.feature.profile
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.text.AnnotatedString
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
@@ -26,7 +30,7 @@ class ProfileNameFieldTest {
 
     private fun show(name: String = "Crawler") {
         composeRule.setContent {
-            WallCrawlTheme { if (shown) ProfileNameField(name = name, onSave = { saved += it }) }
+            WallCrawlTheme { if (shown) ProfileNameField(savedName = name, onSave = { saved += it }) }
         }
     }
 
@@ -50,5 +54,13 @@ class ProfileNameFieldTest {
         composeRule.onNodeWithTag(PROFILE_NAME_FIELD_TEST_TAG).performTextReplacement("Lu")
         composeRule.runOnIdle { shown = false }
         composeRule.runOnIdle { assertThat(saved).containsExactly("Lu") }
+    }
+
+    @Test fun thePlaceholderNameShowsAsAnEmptyField() {
+        show()
+        composeRule.onNodeWithTag(PROFILE_NAME_FIELD_TEST_TAG)
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.EditableText, AnnotatedString("")))
+        composeRule.onNodeWithTag(PROFILE_NAME_FIELD_TEST_TAG).performImeAction()
+        composeRule.runOnIdle { assertThat(saved).isEmpty() }
     }
 }

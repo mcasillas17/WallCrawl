@@ -6,7 +6,7 @@ package wallcrawl.elopenmike.com.core.model
 data class UserProfile(
     val id: String = DEFAULT_PROFILE_ID,
     val revision: Long = 0,
-    val name: String = "Crawler",
+    val name: String = DEFAULT_NAME,
     val goals: Set<FitnessGoal> = setOf(FitnessGoal.BUILD_MUSCLE),
     val experienceLevel: ExperienceLevel = ExperienceLevel.INTERMEDIATE,
     val preferredDurationMinutes: Int = 50,
@@ -65,6 +65,11 @@ data class UserProfile(
 
         /** Name-field limit. Typing is capped here; line breaks become spaces. */
         const val MAX_NAME_LENGTH = 40
+
+        /** Placeholder until the user picks a name; never shown as if it were theirs. */
+        const val DEFAULT_NAME = "Crawler"
+        fun displayName(name: String): String = name.lineSequence().firstOrNull()?.trim().orEmpty()
+            .takeUnless { it == DEFAULT_NAME }.orEmpty()
         fun nameInput(raw: String): String = raw.replace('\n', ' ').take(MAX_NAME_LENGTH)
 
         /**
