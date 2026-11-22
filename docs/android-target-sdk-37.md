@@ -146,8 +146,8 @@ noted:
 Pull requests, `main` and tag releases each run the instrumentation job three times (in
 [`ci.yml`](../.github/workflows/ci.yml) and [`release.yml`](../.github/workflows/release.yml)).
 A tag cannot publish unless all three pass. In `ci.yml` only, the API 36 and API `37.0` legs
-each run as two shards on separate emulators (`numShards=2`, `shardIndex` 0 and 1), so a pull
-request finishes sooner; together the two shards run the full suite. That job also builds both
+each run as four shards on separate emulators (`numShards=4`, `shardIndex` 0 to 3), so a pull
+request finishes sooner; together the four shards run the full suite. That job also builds both
 APKs before the emulator starts and restores each emulator system image from a cache that only `main` writes.
 
 | Leg | Runs | Why |
