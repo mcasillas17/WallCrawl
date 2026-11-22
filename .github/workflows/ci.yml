@@ -181,7 +181,7 @@ jobs:
           script: |
             ./gradlew connectedDebugAndroidTest $INSTRUMENTATION_ARGS --stacktrace --no-daemon
             grep -q 'tests="[1-9]' app/build/outputs/androidTest-results/connected/debug/TEST-*.xml
-            grep -ho 'testsuite [^>]*tests="[0-9]*"' app/build/outputs/androidTest-results/connected/debug/TEST-*.xml | grep -o 'tests="[0-9]*"'
+            python3 tools/ci/instrumentation_summary.py
 
       - name: Upload instrumentation report
         if: failure()
