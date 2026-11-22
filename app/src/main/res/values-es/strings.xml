@@ -297,7 +297,7 @@
     <string name="today_regenerate_content_description">Generar otro entrenamiento</string>
     <string name="today_stat_duration">~%1$s min</string>
     <string name="today_exercise_position">%1$s.</string>
-    <string name="today_action_start">Empezar entrenamiento</string>
+    <string name="today_action_start">Empezar rutina</string>
     <string name="today_my_workouts_title">Mis rutinas</string>
 
     <string name="today_error_no_candidates">Todavía no hay ejercicios que coincidan con tu equipo y tus exclusiones. Agrega equipo o quita una exclusión en el perfil.</string>
@@ -442,7 +442,7 @@
     <string name="templates_empty_title">Crea tu propia rutina</string>
     <string name="templates_action_create">Crear rutina</string>
     <string name="template_summary">%1$s · %2$s</string>
-    <string name="template_action_start">Empezar entrenamiento</string>
+    <string name="template_action_start">Empezar rutina</string>
     <string name="template_action_starting">Iniciando…</string>
     <string name="template_delete_title">¿Eliminar «%1$s»?</string>
     <string name="template_delete_body">Esta rutina se quitará de tus rutinas guardadas. El historial de entrenamientos completados no se ve afectado.</string>
