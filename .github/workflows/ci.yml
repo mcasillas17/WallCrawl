@@ -67,7 +67,7 @@ jobs:
         run: ./gradlew test lint assembleDebug --stacktrace --no-daemon
 
   instrumentation:
-    name: Instrumentation tests (API ${{ matrix.api-level }})
+    name: Instrumentation tests (API ${{ matrix.api-level }}${{ matrix.shard && format(', shard {0}', matrix.shard) || '' }})
     runs-on: ubuntu-latest
     timeout-minutes: 45
     # The matrix and its limits are explained in docs/android-target-sdk-37.md.
@@ -75,12 +75,23 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # The full suite runs on 36 and 37 split in two halves, one emulator each, so
+          # the slowest leg takes about half as long. AndroidJUnitRunner assigns every
+          # test to exactly one shard, so the two halves together are the whole suite.
           # Regression baseline the suite has always run on.
           - api-level: "36"
-            instrumentation-args: ""
+            shard: "1/2"
+            instrumentation-args: "-Pandroid.testInstrumentationRunnerArguments.numShards=2 -Pandroid.testInstrumentationRunnerArguments.shardIndex=0"
+          - api-level: "36"
+            shard: "2/2"
+            instrumentation-args: "-Pandroid.testInstrumentationRunnerArguments.numShards=2 -Pandroid.testInstrumentationRunnerArguments.shardIndex=1"
           # targetSdk. Android 17's SDK packages are versioned 37.0, not 37.
           - api-level: "37.0"
-            instrumentation-args: ""
+            shard: "1/2"
+            instrumentation-args: "-Pandroid.testInstrumentationRunnerArguments.numShards=2 -Pandroid.testInstrumentationRunnerArguments.shardIndex=0"
+          - api-level: "37.0"
+            shard: "2/2"
+            instrumentation-args: "-Pandroid.testInstrumentationRunnerArguments.numShards=2 -Pandroid.testInstrumentationRunnerArguments.shardIndex=1"
           # minSdk boundary: only the app-level suites (installed SDK levels, packaged
           # backup rules, launcher icon, and real navigation, Back, recreation and
           # restore), so the matrix stays bounded. A package, not a class list: AGP keeps
@@ -104,6 +115,25 @@ jobs:
         uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
         with:
           cache-provider: basic
+
+      # Build both APKs before the emulator starts, so compiling does not compete with a
+      # running emulator for the runner's CPUs. The connected test task then finds them
+      # up to date.
+      - name: Build app and test APKs
+        run: ./gradlew assembleDebug assembleDebugAndroidTest --stacktrace --no-daemon
+
+      - name: Locate Android SDK
+        id: sdk
+        run: echo "dir=${ANDROID_HOME:?}" >> "$GITHUB_OUTPUT"
+
+      # The system image is the biggest download (about two minutes for 37.0). The
+      # emulator action's sdkmanager install finds it already present and skips it.
+      # Bump the key's trailing version to force a fresh download.
+      - name: Cache emulator system image
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.sdk.outputs.dir }}/system-images/android-${{ matrix.api-level }}/google_apis/x86_64
+          key: system-image-${{ runner.os }}-android-${{ matrix.api-level }}-google_apis-x86_64-v1
 
       # The emulator needs hardware acceleration to finish in a sane time, and the
       # hosted runner does not grant access to /dev/kvm by default.
@@ -151,12 +181,13 @@ jobs:
           script: |
             ./gradlew connectedDebugAndroidTest $INSTRUMENTATION_ARGS --stacktrace --no-daemon
             grep -q 'tests="[1-9]' app/build/outputs/androidTest-results/connected/debug/TEST-*.xml
+            grep -ho 'testsuite [^>]*tests="[0-9]*"' app/build/outputs/androidTest-results/connected/debug/TEST-*.xml | grep -o 'tests="[0-9]*"'
 
       - name: Upload instrumentation report
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: instrumentation-report-api-${{ matrix.api-level }}
+          name: instrumentation-report-api-${{ matrix.api-level }}${{ matrix.shard && format('-shard-{0}', strategy.job-index) || '' }}
           path: |
             app/build/reports/androidTests/connected/
             app/build/outputs/androidTest-results/connected/
