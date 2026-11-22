@@ -65,8 +65,8 @@ Add colors (`values/colors.xml` and `values-night/colors.xml`):
      `CircularProgressIndicator` flash in `WallCrawlApp` (keep that branch as a fallback).
    - `setOnExitAnimationListener { provider -> ... }`:
      - Wait for the icon animation to finish: `remaining = provider.iconAnimationStartMillis + provider.iconAnimationDurationMillis - SystemClock.uptimeMillis()`; if > 0, post the exit after `remaining`.
-     - **Every launch (onboarded or intro already seen):** zoom-through exit below, then `provider.remove()`.
-     - **First launch (WELCOME):** no exit animation. Record `provider.iconView` bounds on screen, hand them to `WelcomeScreen` as the emblem start rect, start the intro clock at 1260 ms, then `provider.remove()` once the first intro frame is drawn.
+     - **Every launch once onboarded:** zoom-through exit below, then `provider.remove()`.
+     - **Every launch before onboarding is completed (WELCOME):** no exit animation. Record `provider.iconView` bounds on screen, hand them to `WelcomeScreen` as the emblem start rect, start the intro clock at 1260 ms, then `provider.remove()` once the first intro frame is drawn.
 5. Theme mismatch: the splash follows the **system** night mode, but the app follows the in-app
    `ThemePreference`. On API 31+, call `UiModeManager.setApplicationNightMode(...)` whenever the
    preference changes (MODE_NIGHT_YES / NO / AUTO for SYSTEM) so the next splash matches. On 26–30

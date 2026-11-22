@@ -9,14 +9,14 @@ object StarterProfile {
 
     fun apply(
         base: UserProfile,
-        goal: FitnessGoal,
+        goals: Set<FitnessGoal>,
         daysPerWeek: Int,
         durationMinutes: Int,
         regionCountry: String
     ): UserProfile = base.copy(
         name = UserProfile().name,
         gender = ProfileGender.UNSPECIFIED,
-        goals = setOf(goal),
+        goals = goals,
         daysPerWeek = daysPerWeek,
         preferredDurationMinutes = durationMinutes,
         experienceLevel = ExperienceLevel.BEGINNER,

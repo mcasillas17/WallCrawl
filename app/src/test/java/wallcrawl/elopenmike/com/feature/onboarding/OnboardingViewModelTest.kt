@@ -48,7 +48,7 @@ class OnboardingViewModelTest {
             viewModel.uiState.collect {}
         }
 
-        viewModel.updateGoal(FitnessGoal.STRENGTH)
+        viewModel.toggleGoal(FitnessGoal.STRENGTH)
         viewModel.updateDaysPerWeek(5)
         viewModel.updateDurationMinutes(60)
         viewModel.save("US")
@@ -68,10 +68,37 @@ class OnboardingViewModelTest {
     }
 
     @Test
+    fun goals_toggleAndSaveInTapOrder() = runTest {
+        val repository = RecordingUserProfileRepository()
+        val viewModel = OnboardingViewModel(repository)
+
+        viewModel.toggleGoal(FitnessGoal.FAT_LOSS)
+        viewModel.toggleGoal(FitnessGoal.STRENGTH)
+        viewModel.toggleGoal(FitnessGoal.GENERAL_FITNESS)
+        viewModel.toggleGoal(FitnessGoal.GENERAL_FITNESS)
+        viewModel.save("US")
+        advanceUntilIdle()
+
+        val saved = repository.saved.single()
+        assertThat(saved.goals).containsExactly(FitnessGoal.FAT_LOSS, FitnessGoal.STRENGTH).inOrder()
+        assertThat(saved.primaryGoal).isEqualTo(FitnessGoal.FAT_LOSS)
+    }
+
+    @Test
+    fun goals_deselectingTheLastOneDisablesSave() {
+        val viewModel = OnboardingViewModel(RecordingUserProfileRepository())
+
+        viewModel.toggleGoal(FitnessGoal.STRENGTH)
+        assertThat(viewModel.uiState.value.canSave).isTrue()
+        viewModel.toggleGoal(FitnessGoal.STRENGTH)
+        assertThat(viewModel.uiState.value.canSave).isFalse()
+    }
+
+    @Test
     fun defaults_areThreeDaysThirtyMinutesNoGoal() {
         val state = OnboardingViewModel(RecordingUserProfileRepository()).uiState.value
 
-        assertThat(state.goal).isNull()
+        assertThat(state.goals).isEmpty()
         assertThat(state.daysPerWeek).isEqualTo(3)
         assertThat(state.durationMinutes).isEqualTo(30)
     }
@@ -81,13 +108,14 @@ class OnboardingViewModelTest {
         val repository = RecordingUserProfileRepository()
         val savedState = SavedStateHandle()
         val original = OnboardingViewModel(repository, savedState)
-        original.updateGoal(FitnessGoal.FAT_LOSS)
+        original.toggleGoal(FitnessGoal.FAT_LOSS)
+        original.toggleGoal(FitnessGoal.STRENGTH)
         original.updateDaysPerWeek(5)
         original.updateDurationMinutes(45)
 
         val state = OnboardingViewModel(repository, savedState).uiState.value
 
-        assertThat(state.goal).isEqualTo(FitnessGoal.FAT_LOSS)
+        assertThat(state.goals).containsExactly(FitnessGoal.FAT_LOSS, FitnessGoal.STRENGTH).inOrder()
         assertThat(state.daysPerWeek).isEqualTo(5)
         assertThat(state.durationMinutes).isEqualTo(45)
         assertThat(repository.saved).isEmpty()
@@ -97,7 +125,7 @@ class OnboardingViewModelTest {
     fun save_surfacesRepositoryErrorsWithoutCompleting() = runTest {
         val repository = RecordingUserProfileRepository()
         val viewModel = OnboardingViewModel(repository)
-        viewModel.updateGoal(FitnessGoal.STRENGTH)
+        viewModel.toggleGoal(FitnessGoal.STRENGTH)
         viewModel.updateDaysPerWeek(1)
 
         viewModel.save("US")

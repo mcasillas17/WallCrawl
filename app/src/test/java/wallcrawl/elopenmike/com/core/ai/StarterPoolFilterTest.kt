@@ -35,7 +35,7 @@ class StarterPoolFilterTest {
 
     @Test
     fun starterPoolIsBeginnerOnly_personalizedPoolIsUnfiltered() = runTest {
-        val starter = StarterProfile.apply(UserProfile(), FitnessGoal.GENERAL_FITNESS, 3, 45, "US")
+        val starter = StarterProfile.apply(UserProfile(), setOf(FitnessGoal.GENERAL_FITNESS), 3, 45, "US")
         val personalized = starter.copy(personalizationCompleted = true)
         val starterPool = pool(starter)
         val fullPool = pool(personalized)

@@ -22,30 +22,34 @@ Keep the architecture. Change:
 | Area | Now (v1) | v2 |
 |---|---|---|
 | Intro tagline line 2 | "All on your phone." | "Workouts built from your goals, progress and equipment." (§4) |
-| Intro length | 2440 ms, 80 ms hold | **4700 ms**: slower tagline and a **1780 ms reading hold** (§6) |
-| Intro, reduced motion | ends at 1880 ms | ends at **3800 ms** (§6) |
+| Intro length | 2440 ms, 80 ms hold | **3500 ms**: slower tagline and a **580 ms reading hold** (§6) |
+| Intro, reduced motion | ends at 1880 ms | ends at **3500 ms** (§6) |
 | Screen 2 content | eyebrow, headline, 3 feature rows, privacy card | headline, **flow diagram**, **4 privacy badges** (§5) |
 | Screen 2 length | 1280 ms × `ABOUT_PACE` 1.8 | **3000 ms real time**. Delete `ABOUT_PACE` (§7). |
 | Strings | see §8 | add, change and delete keys as listed in §8 |
 
-Navigation, `introSeen`, Skip, Back, TalkBack start, the splash handoff and the shared overlay
-emblem are unchanged (§1, §3).
+Skip, Back, TalkBack start, the splash handoff and the shared overlay
+emblem are unchanged (§3). **Navigation changed:** the welcome screens now open on every launch
+until onboarding is completed; the `introSeen` flag is gone (§1).
 
 ---
 
-## 1. Flow (unchanged)
+## 1. Flow
 
 ```
 every cold/warm start ─► system splash (docs/launch-animation.md), held until the profile has loaded
-  ├─ !onboardingCompleted && !introSeen ─► WELCOME (phase INTRO → phase ABOUT) ─► ONBOARDING
-  ├─ !onboardingCompleted &&  introSeen ─► ONBOARDING
-  └─  onboardingCompleted               ─► TODAY
+  ├─ !onboardingCompleted ─► WELCOME (phase INTRO → phase ABOUT) ─► ONBOARDING
+  └─  onboardingCompleted ─► TODAY
 ```
 
 - One route (`AppRoutes.WELCOME`), one `WelcomeScreen`, internal `phase` (`INTRO`, `ABOUT`), one overlay emblem.
 - **First launch from the splash:** the intro clock starts at `SPLASH_HANDOFF_MS` = 1260 ms, with the emblem starting at the splash icon's on-screen bounds.
 - **Skip** (intro only, also Back during intro): freeze element values, fade wordmark, tagline, Skip **and emblem** over 150 ms (ACCEL), then phase → ABOUT with "arrived via Skip".
-- **Get started:** set `introSeen = true`, then navigate to ONBOARDING, popping WELCOME.
+- **Get started:** navigate to ONBOARDING, popping WELCOME. This lasts only for the running session
+  (saved instance state, so rotation keeps the user on onboarding). Quitting before finishing
+  onboarding shows the welcome screens again on the next launch. Deleting all data mid-session
+  still goes straight to onboarding (`restartAtOnboarding()`); the next launch shows welcome.
+  The old `first_launch`/`intro_seen` preference is ignored.
 - **Back on ABOUT:** default (exits).
 - **TalkBack on:** start directly in ABOUT with the reduced-motion entrance.
 - Both phases paint `colorScheme.background` and follow `ThemePreference` (light and dark).
@@ -230,7 +234,7 @@ It is unchanged at normal sizes.
 
 ---
 
-## 6. Timeline: screen 1 (INTRO), 0 → 4700 ms
+## 6. Timeline: screen 1 (INTRO), 0 → 3500 ms
 
 Easings: `IN_OUT` (0.65, 0, 0.35, 1) · `STANDARD` (0.2, 0, 0, 1) · `EMPH_DEC` (0.05, 0.7, 0.1, 1) ·
 `OVERSHOOT` (0.34, 1.56, 0.64, 1) · `ACCEL` (0.3, 0, 1, 1).
@@ -253,21 +257,21 @@ Easings: `IN_OUT` (0.65, 0, 0.35, 1) · `STANDARD` (0.2, 0, 0, 1) · `EMPH_DEC` 
 | "CRAWL" pill | scale / alpha | 1540 | 380 / 100 | OVERSHOOT / linear | 0.5→1 / 0→1 |
 | ★ Tagline line 1 | alpha / Y | 1820 | **500** | STANDARD | 0→1 / +8→0 dp |
 | ★ Tagline line 2 | alpha / Y | **2120** | **500** | STANDARD | 0→1 / +8→0 dp |
-| ★ **Hold (reading time)** | nothing moves | **2620** | **1780** | — | final frame fully visible |
-| ★ Wordmark, tagline, Skip | alpha | **4400** | **300** | ACCEL | 1 → 0 |
+| ★ **Hold (reading time)** | nothing moves | **2620** | **580** | — | final frame fully visible |
+| ★ Wordmark, tagline, Skip | alpha | **3200** | **300** | ACCEL | 1 → 0 |
 | Emblem | stays fully visible (shared into screen 2) | — | — | — | — |
-| ★ Phase → ABOUT | | **4700** | | | |
+| ★ Phase → ABOUT | | **3500** | | | |
 
 - First launch from the splash: clock starts at 1260, so the visible intro is **3.44 s**.
 - Skip at time t: 150 ms ACCEL exit of everything including the emblem, then ABOUT (arrived via Skip).
 - ★ **Reduced motion:** final frame (emblem at slot, 120 dp, arc resting, streaks out), alpha 0→1
-  over 300 ms linear, hold, at **3500** ms everything (emblem included) 1→0 over **300** ms ACCEL,
-  phase → ABOUT at **3800** ms.
+  over 300 ms linear, hold, at **3200** ms everything (emblem included) 1→0 over **300** ms ACCEL,
+  phase → ABOUT at **3500** ms.
 
-`WelcomeMotion` changes: `INTRO_END = 4700f`, `INTRO_SETTLED = 2620f`,
+`WelcomeMotion` changes: `INTRO_END = 3500f`, `INTRO_SETTLED = 2620f`,
 `tagline1 = seg(t, 1820, 500, STANDARD)`, `tagline2 = seg(t, 2120, 500, STANDARD)`,
-`introChrome = 1 − seg(t, 4400, 300, ACCEL)`, `REDUCED_INTRO_END = 3800f`,
-`reducedIntroAlpha = seg(t, 0, 300) * (1 − seg(t, 3500, 300, ACCEL))`.
+`introChrome = 1 − seg(t, 3200, 300, ACCEL)`, `REDUCED_INTRO_END = 3500f`,
+`reducedIntroAlpha = seg(t, 0, 300) * (1 − seg(t, 3200, 300, ACCEL))`.
 
 ---
 
@@ -352,13 +356,13 @@ wording.** The planner is rules-based.
 ## 10. Tests
 
 **`WelcomeMotionTest` (JVM)**, updated to:
-- Intro: `INTRO_END == 4700`. Tagline 2 is 0 at 2120 and 1 at ≥ 2620. Chrome alpha is 1 throughout 2620–4400 (the hold), 0 at 4700. Reduced: alpha 1 at 1000, 0 at 3800.
+- Intro: `INTRO_END == 3500`. Tagline 2 is 0 at 2120 and 1 at ≥ 2620. Chrome alpha is 1 throughout 2620–3200 (the hold), 0 at 3500. Reduced: alpha 1 at 1000, 0 at 3500.
 - Screen 2: `ABOUT_END == 3000` and `ABOUT_PACE` is gone. Flight is complete at ≥ 900. Connector k is 1 at ≥ 1550 + 60·k. Workout glow is 0 at 0, peaks near 1750, and is 0 at ≥ 2350. Loop is 1 at ≥ 2650. Ping is 0 before 2650 and 1 at 3000. Footer is 1 at 3000.
 
 **`WelcomeScreenTest` (instrumented)**:
 - The diagram node's content description equals `welcome_flow_a11y`. The texts "Goals", "Equipment", "Progress", "Your workout" and "Log it" are displayed. The 4 badges are displayed.
 - The removed texts ("What WallCrawl does", "Plan your week", "Private by design") do not exist.
-- Existing flow tests still pass: Skip, Back, Get started → ONBOARDING with `introSeen`, reduced motion and TalkBack start.
+- Existing flow tests still pass: Skip, Back, Get started → ONBOARDING, welcome again on relaunch until onboarding is done, reduced motion and TalkBack start.
 - Use `mainClock.autoAdvance = false` and `advanceTimeBy` for the timing checks.
 
 Run the full suite. Nothing outside `feature/welcome`, the strings and the tests should change.

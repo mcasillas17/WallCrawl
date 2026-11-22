@@ -141,6 +141,21 @@ class ProfileViewModelTest {
     }
 
     @Test
+    fun nameEditsAreTrimmedAndBlankKeepsTheCurrentName() = runTest {
+        val repository = repositoryWith(profile())
+        val viewModel = ProfileViewModel(repository)
+        viewModel.updateName("  Ana Sofía ")
+        advanceUntilIdle()
+        assertThat(repository.getProfileOnce().name).isEqualTo("Ana Sofía")
+        val revision = repository.getProfileOnce().revision
+        viewModel.updateName("   ")
+        viewModel.updateName("Ana Sofía")
+        advanceUntilIdle()
+        assertThat(repository.getProfileOnce().name).isEqualTo("Ana Sofía")
+        assertThat(repository.getProfileOnce().revision).isEqualTo(revision)
+    }
+
+    @Test
     fun genderEditsPersistAndSelectArtwork() = runTest {
         val repository = repositoryWith(profile())
         val viewModel = ProfileViewModel(repository)

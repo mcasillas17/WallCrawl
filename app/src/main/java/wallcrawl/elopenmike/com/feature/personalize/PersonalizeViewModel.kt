@@ -31,7 +31,7 @@ import wallcrawl.elopenmike.com.core.ui.enumSetOrDefault
 import wallcrawl.elopenmike.com.core.ui.enumValueOrDefault
 
 /**
- * Drives the three-step personalization flow. The draft starts from the current profile
+ * Drives the four-step personalization flow. The draft starts from the current profile
  * and nothing is written until [finish] saves it once with `personalizationCompleted = true`.
  */
 class PersonalizeViewModel(
@@ -72,6 +72,10 @@ class PersonalizeViewModel(
 
     fun updateConditions(selections: List<SelectedCondition>) {
         if (!mutableState.value.isSaving) edit { it.copy(conditionDraft = selections.toList()) }
+    }
+
+    fun updateName(name: String) {
+        edit { it.copy(name = UserProfile.nameInput(name)) }
     }
 
     fun updateExperience(experience: ExperienceLevel) {
@@ -124,7 +128,7 @@ class PersonalizeViewModel(
         if (!state.canProceedCurrentStep) {
             updateState {
                 it.copy(
-                    error = if (state.currentStep == PersonalizeStep.EXPERIENCE_MOVEMENT) {
+                    error = if (state.currentStep == PersonalizeStep.MOVEMENT) {
                         OnboardingError.MOVEMENT_REQUIRED
                     } else {
                         OnboardingError.REQUIRED_FIELD
@@ -153,7 +157,7 @@ class PersonalizeViewModel(
         if (!draft.isLoaded || draft.isSaving) return
         if (draft.unansweredCapability != null) {
             updateState {
-                it.copy(currentStep = PersonalizeStep.EXPERIENCE_MOVEMENT, error = OnboardingError.MOVEMENT_REQUIRED)
+                it.copy(currentStep = PersonalizeStep.MOVEMENT, error = OnboardingError.MOVEMENT_REQUIRED)
             }
             return
         }
@@ -164,6 +168,7 @@ class PersonalizeViewModel(
                 val current = userProfileRepository.getProfileOnce()
                 userProfileRepository.saveProfile(
                     current.copy(
+                        name = draft.name.trim().ifEmpty { current.name },
                         experienceLevel = draft.experience,
                         availableEquipment = draft.equipment.toList(),
                         trainingConstraints = draft.constraints,
@@ -201,6 +206,7 @@ class PersonalizeViewModel(
         savedStateHandle[STATE_REMOVED_REPORTS] = ArrayList(state.removedReports)
         state.conditionDraft?.let { savedStateHandle[STATE_CONDITIONS] = encodeConditionDraft(it) }
         savedStateHandle[STATE_CURRENT_STEP] = state.currentStep.name
+        savedStateHandle[STATE_NAME] = state.name
         savedStateHandle[STATE_EXPERIENCE] = state.experience.name
         savedStateHandle[STATE_EQUIPMENT] = ArrayList(state.equipment)
         savedStateHandle[STATE_CONSTRAINTS] = ArrayList(state.constraints.map { it.name })
@@ -215,6 +221,7 @@ class PersonalizeViewModel(
         private const val STATE_REMOVED_REPORTS = "personalize.removedReports"
         private const val STATE_CONDITIONS = "personalize.conditions"
         private const val STATE_CURRENT_STEP = "personalize.currentStep"
+        private const val STATE_NAME = "personalize.name"
         private const val STATE_EXPERIENCE = "personalize.experience"
         private const val STATE_EQUIPMENT = "personalize.equipment"
         private const val STATE_CONSTRAINTS = "personalize.constraints"
@@ -230,6 +237,8 @@ class PersonalizeViewModel(
             val starter = !profile.personalizationCompleted
             return copy(
                 isLoaded = true,
+                // The model default is a placeholder, not the user's name, so it is not prefilled.
+                name = if (profile.name == UserProfile().name) "" else profile.name,
                 experience = profile.experienceLevel,
                 equipment = profile.availableEquipment.toSet(),
                 constraints = if (starter) profile.trainingConstraints - TrainingConstraint.LOW_IMPACT_ONLY
@@ -248,6 +257,7 @@ class PersonalizeViewModel(
                 removedReports = savedStateHandle.get<List<String>>(STATE_REMOVED_REPORTS).orEmpty().toSet(),
                 conditionDraft = savedStateHandle.get<List<String>>(STATE_CONDITIONS)?.let(::decodeConditionDraft),
                 currentStep = enumValueOrDefault(step, defaults.currentStep),
+                name = savedStateHandle[STATE_NAME] ?: defaults.name,
                 experience = enumValueOrDefault(savedStateHandle[STATE_EXPERIENCE], defaults.experience),
                 equipment = savedStateHandle.get<List<String>>(STATE_EQUIPMENT)?.toSet() ?: defaults.equipment,
                 constraints = enumSetOrDefault(savedStateHandle[STATE_CONSTRAINTS], defaults.constraints),

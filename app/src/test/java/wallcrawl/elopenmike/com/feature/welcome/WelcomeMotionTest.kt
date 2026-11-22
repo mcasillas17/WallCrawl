@@ -59,20 +59,20 @@ class WelcomeMotionTest {
         assertThat(frame.arcHead - frame.arcTail).isWithin(eps).of(90f)
     }
 
-    @Test fun introLasts4700msWithAReadingHold() {
-        assertThat(M.INTRO_END).isEqualTo(4700f)
+    @Test fun introLasts3500msWithAReadingHold() {
+        assertThat(M.INTRO_END).isEqualTo(3500f)
         assertThat(M.tagline2(2120f)).isEqualTo(0f)
         assertThat(M.tagline2(2620f)).isEqualTo(1f)
-        assertThat((2620..4400 step 20).all { M.introChrome(it.toFloat()) == 1f }).isTrue()
-        assertThat(M.introChrome(4700f)).isEqualTo(0f)
+        assertThat((2620..3200 step 20).all { M.introChrome(it.toFloat()) == 1f }).isTrue()
+        assertThat(M.introChrome(3500f)).isEqualTo(0f)
     }
 
-    @Test fun reducedIntroFadesInHoldsUntil3500AndFadesOut() {
+    @Test fun reducedIntroFadesInHoldsUntil3200AndFadesOut() {
         assertThat(M.reducedIntroAlpha(0f)).isEqualTo(0f)
         assertThat(M.reducedIntroAlpha(1000f)).isEqualTo(1f)
-        assertThat(M.reducedIntroAlpha(3500f)).isEqualTo(1f)
-        assertThat(M.REDUCED_INTRO_END).isEqualTo(3800f)
-        assertThat(M.reducedIntroAlpha(3800f)).isEqualTo(0f)
+        assertThat(M.reducedIntroAlpha(3200f)).isEqualTo(1f)
+        assertThat(M.REDUCED_INTRO_END).isEqualTo(3500f)
+        assertThat(M.reducedIntroAlpha(3500f)).isEqualTo(0f)
     }
 
     @Test fun aboutPlaysOver3000RealMs() {

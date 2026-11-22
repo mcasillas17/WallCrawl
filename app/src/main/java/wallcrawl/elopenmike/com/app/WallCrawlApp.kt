@@ -111,19 +111,13 @@ fun WallCrawlApp(
     // re-derived whenever the configuration's locale changes.
     val vocabulary = rememberExerciseVocabulary(container.exerciseLocalizationSource)
 
-    // The first-launch intro is a device setting, not profile data: it is not exported, and
-    // deleting or restoring data never replays it. Anyone already onboarded counts as seen.
-    val appContext = LocalContext.current.applicationContext
-    val firstLaunchPrefs = remember(appContext) {
-        appContext.getSharedPreferences(FIRST_LAUNCH_PREFS, android.content.Context.MODE_PRIVATE)
-    }
-    var introPending by remember { mutableStateOf(!firstLaunchPrefs.getBoolean(KEY_INTRO_SEEN, false)) }
-    fun markIntroSeen() {
-        firstLaunchPrefs.edit().putBoolean(KEY_INTRO_SEEN, true).apply()
-        introPending = false
-    }
+    // The welcome screens open on every launch until onboarding is completed. Get Started, or
+    // a profile that is already onboarded, moves past them for this session only (saveable, so
+    // rotation keeps the user on onboarding). Deleting all data mid-session therefore goes
+    // straight to onboarding; the next launch shows the welcome screens again.
+    var introPending by rememberSaveable { mutableStateOf(true) }
     LaunchedEffect(effectiveProfile?.onboardingCompleted) {
-        if (effectiveProfile?.onboardingCompleted == true && introPending) markIntroSeen()
+        if (effectiveProfile?.onboardingCompleted == true) introPending = false
     }
 
     CompositionLocalProvider(
@@ -151,7 +145,7 @@ fun WallCrawlApp(
                         introPending -> AppRoutes.WELCOME
                         else -> AppRoutes.ONBOARDING
                     },
-                    onIntroFinished = ::markIntroSeen,
+                    onIntroFinished = { introPending = false },
                     splashHandoff = splashHandoff
                 )
             }
@@ -681,11 +675,5 @@ internal fun WallCrawlBottomBar(
 /** SharedPreferences file holding the Today screen's remembered mode and workout variant. */
 const val TODAY_PREFS = "today"
 
-/** Device-only flags about first launch; never exported and not cleared with local data. */
-const val FIRST_LAUNCH_PREFS = "first_launch"
-const val KEY_INTRO_SEEN = "intro_seen"
-
-/** Whether this launch opens the first-launch intro; the launch splash asks the same question. */
-fun shouldShowIntro(context: android.content.Context, profile: UserProfile): Boolean =
-    !profile.onboardingCompleted &&
-        !context.getSharedPreferences(FIRST_LAUNCH_PREFS, android.content.Context.MODE_PRIVATE).getBoolean(KEY_INTRO_SEEN, false)
+/** Whether this launch opens the welcome screens; the launch splash asks the same question. */
+fun shouldShowIntro(profile: UserProfile): Boolean = !profile.onboardingCompleted

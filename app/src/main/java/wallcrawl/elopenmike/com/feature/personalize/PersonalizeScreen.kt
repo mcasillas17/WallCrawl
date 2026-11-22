@@ -1,6 +1,10 @@
 package wallcrawl.elopenmike.com.feature.personalize
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -33,6 +37,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +48,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -153,7 +161,8 @@ fun PersonalizeScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                         when (step) {
                             PersonalizeStep.EQUIPMENT -> EquipmentStep(state = state, viewModel = viewModel)
-                            PersonalizeStep.EXPERIENCE_MOVEMENT -> ExperienceMovementStep(state = state, viewModel = viewModel)
+                            PersonalizeStep.EXPERIENCE -> ExperienceStep(state = state, viewModel = viewModel)
+                            PersonalizeStep.MOVEMENT -> MovementStep(state = state, viewModel = viewModel)
                             PersonalizeStep.CONDITIONS -> SafetyStep(state = state, viewModel = viewModel)
                         }
                         Spacer(modifier = Modifier.height(16.dp))
@@ -199,6 +208,19 @@ private fun EquipmentStep(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        OutlinedTextField(
+            value = state.name,
+            onValueChange = viewModel::updateName,
+            label = { Text(stringResource(R.string.personalize_name_label)) },
+            supportingText = { Text(stringResource(R.string.personalize_name_supporting)) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Words,
+                imeAction = ImeAction.Done
+            ),
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.fillMaxWidth()
+        )
         WallCrawlCard(
             cornerRadius = 16.dp,
             contentPadding = 16.dp
@@ -443,7 +465,7 @@ private fun SafetyStep(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ExperienceMovementStep(
+private fun ExperienceStep(
     state: PersonalizeUiState,
     viewModel: PersonalizeViewModel
 ) {
@@ -451,49 +473,37 @@ private fun ExperienceMovementStep(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        WallCrawlCard(
-            cornerRadius = 16.dp,
-            contentPadding = 16.dp
+        Column(
+            modifier = Modifier.fillMaxWidth().selectableGroup(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                text = stringResource(R.string.onboarding_experience_heading),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.8.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                ExperienceLevel.entries.forEach { level ->
-                    val isSelected = state.experience == level
-                    FilterChip(
-                        selected = isSelected,
-                        onClick = { viewModel.updateExperience(level) },
-                        label = {
-                            Text(
-                                text = stringResource(level.labelRes),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface
-                            )
-                        },
-                        colors = FilterChipDefaults.filterChipColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            selectedContainerColor = MaterialTheme.colorScheme.secondary,
-                            labelColor = MaterialTheme.colorScheme.onSurface,
-                            selectedLabelColor = MaterialTheme.colorScheme.onSecondary
-                        ),
-                        border = FilterChipDefaults.filterChipBorder(
-                            enabled = true,
-                            selected = isSelected,
-                            borderColor = MaterialTheme.colorScheme.outline,
-                            selectedBorderColor = MaterialTheme.colorScheme.secondary
+            ExperienceLevel.entries.forEach { level ->
+                val isSelected = state.experience == level
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 52.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(if (isSelected) MaterialTheme.colorScheme.secondary.copy(alpha = 0.14f) else MaterialTheme.colorScheme.surface)
+                        .border(
+                            1.dp,
+                            if (isSelected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.outline,
+                            RoundedCornerShape(12.dp)
                         )
+                        .selectable(selected = isSelected, role = Role.RadioButton) { viewModel.updateExperience(level) }
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(level.labelRes),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.weight(1f)
                     )
+                    if (isSelected) {
+                        Icon(Icons.Default.Check, contentDescription = null, tint = MaterialTheme.colorScheme.secondary)
+                    }
                 }
             }
         }
@@ -502,60 +512,46 @@ private fun ExperienceMovementStep(
             cornerRadius = 16.dp,
             contentPadding = 16.dp
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.onboarding_break_heading),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.8.sp,
-                    color = CrimsonRedLight,
-                    modifier = Modifier.weight(1f)
-                )
-                if (state.returningAfterBreakWeeks > 0) {
-                    Text(
-                        text = stringResource(R.string.break_reentry_active),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = stringResource(R.string.onboarding_break_heading),
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = stringResource(R.string.onboarding_break_hint),
-                fontSize = 12.sp,
+                fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(12.dp))
-
             BreakDurationSelector(
                 weeks = state.returningAfterBreakWeeks,
                 onSelectWeeks = { viewModel.updateReturningAfterBreakWeeks(it) }
             )
-
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = stringResource(
-                    BreakDurationHelper.guidanceFor(state.returningAfterBreakWeeks).messageRes
-                ),
-                fontSize = 12.sp,
-                color = if (state.returningAfterBreakWeeks >= 52) CrimsonRedLight else MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.Medium
-            )
+            // Guidance only once a break is chosen; "no break" needs no explanation.
+            if (state.returningAfterBreakWeeks > 0) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = stringResource(BreakDurationHelper.guidanceFor(state.returningAfterBreakWeeks).messageRes),
+                    fontSize = 12.sp,
+                    color = if (state.returningAfterBreakWeeks >= 52) CrimsonRedLight else MaterialTheme.colorScheme.secondary,
+                    fontWeight = FontWeight.Medium
+                )
+            }
         }
+    }
+}
 
-        Text(
-            text = stringResource(
-                R.string.movement_capability_current_use
-            ),
-            fontSize = 12.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
+@Composable
+private fun MovementStep(
+    state: PersonalizeUiState,
+    viewModel: PersonalizeViewModel
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         MovementCapabilityType.entries.forEach { type ->
             WallCrawlCard(
                 cornerRadius = 16.dp,
@@ -564,13 +560,16 @@ private fun ExperienceMovementStep(
                 MovementCapabilityQuestion(
                     type = type,
                     selectedLevel = state.capabilityAnswers[type],
-                    onSelect = { level ->
-                        viewModel.updateMovementCapability(type, level)
-                    },
-                    showAnswerRequired = state.error != null &&
-                        state.unansweredCapability == type
+                    onSelect = { level -> viewModel.updateMovementCapability(type, level) },
+                    showAnswerRequired = state.error != null && state.unansweredCapability == type
                 )
             }
         }
+        // Required wherever movement answers are edited (SafetyCopyTest): what Avoid does.
+        Text(
+            text = stringResource(R.string.movement_capability_current_use),
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }

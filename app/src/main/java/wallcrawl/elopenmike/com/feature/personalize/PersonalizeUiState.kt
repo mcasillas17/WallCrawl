@@ -16,7 +16,8 @@ enum class PersonalizeStep(
     @StringRes val subtitleRes: Int
 ) {
     EQUIPMENT(R.string.onboarding_equipment_title, R.string.onboarding_equipment_subtitle),
-    EXPERIENCE_MOVEMENT(R.string.personalize_experience_title, R.string.onboarding_movement_capability_subtitle),
+    EXPERIENCE(R.string.personalize_experience_title, R.string.personalize_experience_subtitle),
+    MOVEMENT(R.string.personalize_movement_title, R.string.onboarding_movement_capability_subtitle),
     CONDITIONS(R.string.onboarding_safety_title, R.string.onboarding_safety_subtitle);
 
     val stepNumber: Int get() = ordinal + 1
@@ -37,6 +38,8 @@ data class PersonalizeUiState(
     val retainedReports: Set<String> = emptySet(),
     val addedReports: Set<String> = emptySet(),
     val removedReports: Set<String> = emptySet(),
+    /** Typed name; blank keeps the profile's current name. */
+    val name: String = "",
     val experience: ExperienceLevel = ExperienceLevel.BEGINNER,
     val equipment: Set<String> = setOf(StandardEquipment.BODYWEIGHT),
     val constraints: Set<TrainingConstraint> = emptySet(),
@@ -58,7 +61,8 @@ data class PersonalizeUiState(
     val canProceedCurrentStep: Boolean
         get() = when (currentStep) {
             PersonalizeStep.EQUIPMENT -> equipment.isNotEmpty()
-            PersonalizeStep.EXPERIENCE_MOVEMENT -> unansweredCapability == null
+            PersonalizeStep.EXPERIENCE -> true
+            PersonalizeStep.MOVEMENT -> unansweredCapability == null
             PersonalizeStep.CONDITIONS -> !isSaving
         }
 

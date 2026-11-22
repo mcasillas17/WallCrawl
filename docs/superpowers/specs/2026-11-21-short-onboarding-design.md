@@ -58,8 +58,8 @@ Two PRs, both targeting `main` (not stacked):
 
 One screen at the `ONBOARDING` route, no step counter, no Summary step.
 
-1. **Goal**: icon tiles over the existing `FitnessGoal` values, single selection, required. More goals
-   can be added later in Profile.
+1. **Goal**: icon tiles over the existing `FitnessGoal` values, multi-select (tap toggles), at least one
+   required. Saved in tap order, so the first tapped is the primary goal.
 2. **Days per week**: chips 2–6, default 3.
 3. **Session length**: chips 20 / 30 / 45 / 60 minutes, default 30.
 
@@ -72,7 +72,7 @@ The existing "Restore from backup" entry stays on this screen.
 
 | Field | Value |
 |---|---|
-| `name` | model default ("Crawler"), editable in Profile |
+| `name` | model default ("Crawler"); set by the optional name field on Personalize step 1 |
 | `gender` | `UNSPECIFIED` (automatic artwork), editable in Profile |
 | `goals`, `daysPerWeek`, `preferredDurationMinutes` | from the screen |
 | `experienceLevel` | `BEGINNER` |
@@ -90,12 +90,15 @@ Equipment, Movement and Safety (conditions) step composables are kept and reused
 
 ## 2. Personalization flow
 
-New route `AppRoutes.PERSONALIZE`. Three steps with a "1 of 3" step bar:
+New route `AppRoutes.PERSONALIZE`. Four steps with a "1 of 4" step bar:
 
-1. **Equipment**: the existing Equipment step.
-2. **Experience and movement**: experience level as a 3-chip row, then the existing movement-preference
-   questions.
-3. **Conditions**: the existing Safety step.
+1. **Equipment**: an optional "What should we call you?" field (max 40 characters; blank keeps the
+   current name; the "Crawler" placeholder is not prefilled), then the existing Equipment step.
+2. **Experience**: the three levels as full-width rows, then "Time off from training?" (one-line hint;
+   the guidance line only appears once a break is picked). Never blocks Next.
+3. **How movements feel**: the movement-preference questions only, every one answered (Not sure
+   counts). Finish with an unanswered question returns here.
+4. **Conditions**: the existing Safety step.
 
 - Back on step 1 leaves the flow and saves nothing.
 - **Finish** saves all answers at once and sets `personalizationCompleted = true`. It removes the

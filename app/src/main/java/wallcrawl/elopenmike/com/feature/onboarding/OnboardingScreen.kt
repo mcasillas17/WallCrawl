@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -132,7 +133,7 @@ fun OnboardingScreen(
 
             SectionLabel(stringResource(R.string.onboarding_basic_goal))
             Column(
-                modifier = Modifier.fillMaxWidth().selectableGroup(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FlowRow(
@@ -143,8 +144,8 @@ fun OnboardingScreen(
                     FitnessGoal.entries.forEach { goal ->
                         GoalTile(
                             goal = goal,
-                            isSelected = state.goal == goal,
-                            onClick = { viewModel.updateGoal(goal) },
+                            isSelected = goal in state.goals,
+                            onClick = { viewModel.toggleGoal(goal) },
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -217,7 +218,7 @@ private fun GoalTile(
     Surface(
         modifier = modifier
             .heightIn(min = 88.dp)
-            .selectable(selected = isSelected, role = Role.RadioButton, onClick = onClick),
+            .toggleable(value = isSelected, role = Role.Checkbox, onValueChange = { onClick() }),
         shape = RoundedCornerShape(12.dp),
         color = if (isSelected) CrimsonRedPrimary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, if (isSelected) CrimsonRedPrimary else MaterialTheme.colorScheme.outline)

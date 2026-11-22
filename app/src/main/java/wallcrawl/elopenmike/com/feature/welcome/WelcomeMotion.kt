@@ -22,8 +22,8 @@ internal object WelcomeMotion {
 
     fun lerp(from: Float, to: Float, f: Float) = from + (to - from) * f
 
-    // ---- Screen 1: intro, 0 → 4700 ms ----
-    const val INTRO_END = 4700f
+    // ---- Screen 1: intro, 0 → 3500 ms ----
+    const val INTRO_END = 3500f
     /** The launch splash ends in the intro's 1260 ms state, so a first launch starts here. */
     const val SPLASH_HANDOFF_MS = 1260f
     /** Every element has reached its final value; only the reading hold and the fade-out remain. */
@@ -60,11 +60,11 @@ internal object WelcomeMotion {
     fun tagline1(t: Float) = seg(t, 1820f, 500f, STANDARD)
     fun tagline2(t: Float) = seg(t, 2120f, 500f, STANDARD)
     /** Wordmark, tagline and Skip fade out; the emblem stays and flies into screen 2. */
-    fun introChrome(t: Float) = 1f - seg(t, 4400f, 300f, ACCEL)
+    fun introChrome(t: Float) = 1f - seg(t, 3200f, 300f, ACCEL)
 
     // Reduced motion: final frame fades in, holds, fades out (emblem included).
-    const val REDUCED_INTRO_END = 3800f
-    fun reducedIntroAlpha(t: Float) = seg(t, 0f, 300f) * (1f - seg(t, 3500f, 300f, ACCEL))
+    const val REDUCED_INTRO_END = 3500f
+    fun reducedIntroAlpha(t: Float) = seg(t, 0f, 300f) * (1f - seg(t, 3200f, 300f, ACCEL))
 
     // ---- Screen 2: what WallCrawl is about, 0 → 3000 ms real time ----
     const val ABOUT_END = 3000f

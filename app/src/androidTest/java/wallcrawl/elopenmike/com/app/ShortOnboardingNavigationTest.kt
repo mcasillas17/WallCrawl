@@ -77,13 +77,12 @@ class ShortOnboardingNavigationTest {
         override fun after() = compose.waitForIdle()
     })
 
-    private fun clearPrefs() = listOf(FIRST_LAUNCH_PREFS, TODAY_PREFS, "personalize_prompt").forEach {
+    private fun clearPrefs() = listOf(TODAY_PREFS, "personalize_prompt").forEach {
         context.getSharedPreferences(it, Context.MODE_PRIVATE).edit().clear().commit()
     }
 
     @Before fun setup() {
         clearPrefs()
-        context.getSharedPreferences(FIRST_LAUNCH_PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_INTRO_SEEN, true).commit()
         database = Room.inMemoryDatabaseBuilder(context, WallCrawlDatabase::class.java).build()
         val gate = Mutex()
         val assets = DefaultAppContainer(context)
@@ -146,7 +145,7 @@ class ShortOnboardingNavigationTest {
             compose.onAllNodesWithText(comfortable)[i].performScrollTo().performClick()
         }
     }
-    private fun waitStep(n: Int) = compose.waitUntil(15_000) { hasNode(context.getString(R.string.personalize_step_counter, "$n", "3")) }
+    private fun waitStep(n: Int) = compose.waitUntil(15_000) { hasNode(context.getString(R.string.personalize_step_counter, "$n", "4")) }
     private fun cardVisible() = hasNode(text(R.string.personalize_today_title))
     private fun awaitCardState(visible: Boolean) = compose.waitUntil(15_000) { cardVisible() == visible }
 
@@ -189,6 +188,13 @@ class ShortOnboardingNavigationTest {
         awaitToday()
     }
 
+    /** The welcome screens open until onboarding is done; Get Started leaves them. */
+    private fun passWelcome() {
+        route(AppRoutes.WELCOME)
+        click(R.string.welcome_get_started)
+        route(AppRoutes.ONBOARDING)
+    }
+
     private fun basicSetupToToday() {
         compose.onNodeWithText(text(FitnessGoal.GENERAL_FITNESS.labelRes)).performClick()
         click(R.string.onboarding_basic_cta)
@@ -207,7 +213,7 @@ class ShortOnboardingNavigationTest {
 
     @Test fun freshInstall_basicSetup_landsOnTodayWithWorkoutAndNoCard() {
         show()
-        route(AppRoutes.ONBOARDING)
+        passWelcome()
         basicSetupToToday()
         assertNoTodayCard()
         assertThat(runBlocking { container.userProfileRepository.getProfileOnce() }.personalizationCompleted).isFalse()
@@ -215,7 +221,7 @@ class ShortOnboardingNavigationTest {
 
     @Test fun completedWorkout_summaryOffersPersonalize_notNow_todayShowsCard() {
         show()
-        route(AppRoutes.ONBOARDING)
+        passWelcome()
         basicSetupToToday()
         finishFirstWorkoutToSummary()
         click(R.string.personalize_not_now)
@@ -228,9 +234,9 @@ class ShortOnboardingNavigationTest {
         assertThat(profileRowShown()).isTrue()
     }
 
-    @Test fun personalize_threeSteps_finish_removesCardAndProfileRow() {
+    @Test fun personalize_fourSteps_finish_removesCardAndProfileRow() {
         show()
-        route(AppRoutes.ONBOARDING)
+        passWelcome()
         basicSetupToToday()
         finishFirstWorkoutToSummary()
         click(R.string.personalize_action)
@@ -238,9 +244,11 @@ class ShortOnboardingNavigationTest {
         waitText(R.string.personalize_next)
         click(R.string.personalize_next)
         waitStep(2)
-        answerEveryMovementQuestion()
         click(R.string.personalize_next)
         waitStep(3)
+        answerEveryMovementQuestion()
+        click(R.string.personalize_next)
+        waitStep(4)
         click(R.string.personalize_finish)
         awaitToday()
         assertThat(nav.currentDestination?.route).isEqualTo(AppRoutes.TODAY)
@@ -252,7 +260,7 @@ class ShortOnboardingNavigationTest {
 
     @Test fun todayCard_dismiss_hidesIt() {
         show()
-        route(AppRoutes.ONBOARDING)
+        passWelcome()
         basicSetupToToday()
         finishFirstWorkoutToSummary()
         click(R.string.personalize_not_now)
@@ -298,7 +306,7 @@ class ShortOnboardingNavigationTest {
 
     @Test fun basicSetup_fitsAt200PercentFont() {
         show(fontScale = 2f)
-        route(AppRoutes.ONBOARDING)
+        passWelcome()
         FitnessGoal.entries.forEach { goal ->
             val tile = compose.onNodeWithText(text(goal.labelRes))
             if (compose.onAllNodes(hasText(text(goal.labelRes)) and hasAnyAncestor(hasScrollAction())).fetchSemanticsNodes().isNotEmpty()) tile.performScrollTo()

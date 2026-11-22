@@ -1,5 +1,6 @@
 # First-launch intro + "What WallCrawl is about" — implementation spec
 
+> **The `introSeen` flag (§1) is gone:** welcome now shows on every launch until onboarding is completed.
 > **§3, §4, §7 and §8 are superseded by [`welcome-screens-v2.md`](welcome-screens-v2.md).** Where they disagree, v2 wins.
 
 Self-contained brief for implementing the two first-launch screens in WallCrawl.

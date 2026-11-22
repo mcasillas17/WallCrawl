@@ -69,6 +69,10 @@ interface UserProfileRepository {
     suspend fun updateReturningAfterBreakWeeks(weeks: Int)
     suspend fun updateThemePreference(theme: ThemePreference)
     suspend fun updateGender(gender: ProfileGender)
+    /** Trims [name]; a blank name keeps the current one. */
+    suspend fun updateName(name: String) {
+        throw UnsupportedOperationException("Name editing is unavailable.")
+    }
 }
 
 /**
@@ -289,6 +293,11 @@ class OfflineUserProfileRepository(
 
     override suspend fun updateThemePreference(theme: ThemePreference) {
         mutateProfile { current -> current.copy(themePreference = theme) }
+    }
+
+    override suspend fun updateName(name: String) {
+        val trimmed = name.trim()
+        mutateProfile { current -> if (trimmed.isEmpty() || trimmed == current.name) null else current.copy(name = trimmed) }
     }
 
     override suspend fun updateGender(gender: ProfileGender) {

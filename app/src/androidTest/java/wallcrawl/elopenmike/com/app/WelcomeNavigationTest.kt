@@ -29,11 +29,12 @@ import wallcrawl.elopenmike.com.core.database.repository.OfflineWorkoutRepositor
 import wallcrawl.elopenmike.com.core.model.UserProfile
 import wallcrawl.elopenmike.com.core.ui.theme.WallCrawlTheme
 
-/** Where first launch lands, and that the intro is remembered as a device setting. */
+/** The welcome screens open on every launch until onboarding is completed. */
 class WelcomeNavigationTest {
     private val compose = createAndroidComposeRule<ComponentActivity>()
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
-    private val prefs = context.getSharedPreferences(FIRST_LAUNCH_PREFS, Context.MODE_PRIVATE)
+    /** The flag older versions wrote after Get Started; it no longer skips anything. */
+    private val prefs = context.getSharedPreferences("first_launch", Context.MODE_PRIVATE)
     private lateinit var database: WallCrawlDatabase
     private lateinit var nav: NavHostController
 
@@ -72,10 +73,9 @@ class WelcomeNavigationTest {
 
     private fun waitForRoute(route: String) = compose.waitUntil(15_000) { nav.currentDestination?.route == route }
 
-    @Test fun freshInstallShowsIntroThenGetStartedOpensOnboardingAndIsRemembered() {
+    @Test fun freshInstallShowsWelcomeThenGetStartedOpensOnboarding() {
         launch(UserProfile(onboardingCompleted = false))
         waitForRoute(AppRoutes.WELCOME)
-        assertThat(prefs.getBoolean(KEY_INTRO_SEEN, false)).isFalse()
 
         // The intro plays on its own clock here; WelcomeScreenTest drives Skip deterministically.
         val getStarted = context.getString(R.string.welcome_get_started)
@@ -83,19 +83,17 @@ class WelcomeNavigationTest {
         compose.onNodeWithText(getStarted).performClick()
 
         waitForRoute(AppRoutes.ONBOARDING)
-        assertThat(prefs.getBoolean(KEY_INTRO_SEEN, false)).isTrue()
         assertThat(nav.previousBackStackEntry).isNull()
     }
 
-    @Test fun seenIntroGoesStraightToOnboarding() {
-        prefs.edit().putBoolean(KEY_INTRO_SEEN, true).commit()
+    @Test fun anUnfinishedOnboardingShowsWelcomeAgainEvenIfAnOldVersionMarkedItSeen() {
+        prefs.edit().putBoolean("intro_seen", true).commit()
         launch(UserProfile(onboardingCompleted = false))
-        waitForRoute(AppRoutes.ONBOARDING)
+        waitForRoute(AppRoutes.WELCOME)
     }
 
-    @Test fun onboardedUsersOpenTodayAndNeverSeeTheIntroLater() {
+    @Test fun onboardedUsersOpenToday() {
         launch(UserProfile(onboardingCompleted = true))
         waitForRoute(AppRoutes.TODAY)
-        compose.waitUntil(5_000) { prefs.getBoolean(KEY_INTRO_SEEN, false) }
     }
 }

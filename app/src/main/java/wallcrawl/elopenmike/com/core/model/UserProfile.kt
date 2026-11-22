@@ -63,6 +63,10 @@ data class UserProfile(
     companion object {
         const val DEFAULT_PROFILE_ID = "default_user"
 
+        /** Name-field limit. Typing is capped here; line breaks become spaces. */
+        const val MAX_NAME_LENGTH = 40
+        fun nameInput(raw: String): String = raw.replace('\n', ' ').take(MAX_NAME_LENGTH)
+
         /**
          * Read-compatibility bound already supported by local archives. Derived decisions
          * must accept these persisted values without clamping or rewriting them.
