@@ -238,7 +238,7 @@ class PersonalizeViewModel(
             return copy(
                 isLoaded = true,
                 // The model default is a placeholder, not the user's name, so it is not prefilled.
-                name = if (profile.name == UserProfile().name) "" else profile.name,
+                name = UserProfile.displayName(profile.name),
                 experience = profile.experienceLevel,
                 equipment = profile.availableEquipment.toSet(),
                 constraints = if (starter) profile.trainingConstraints - TrainingConstraint.LOW_IMPACT_ONLY

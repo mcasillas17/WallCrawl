@@ -112,7 +112,7 @@
     <string name="personalize_name_label">¿Cómo te llamamos?</string>
     <string name="personalize_name_supporting">Opcional. Se muestra en Entrenar.</string>
     <string name="personalize_experience_subtitle">Define con qué intensidad empiezas.</string>
-    <string name="personalize_movement_title">Cómo te sientes al moverte</string>
+    <string name="personalize_movement_title">¿Cómo te mueves?</string>
     <string name="movement_capability_current_use">Los entrenamientos automáticos leen estos ajustes. Un movimiento que requiere algo marcado como Evitar queda fuera de tus recomendaciones y, si no queda nada que planificar, WallCrawl lo dice en vez de ofrecer uno.</string>
     <string name="personalize_experience_title">Experiencia</string>
 
@@ -296,6 +296,7 @@
     <string name="today_loading">Preparando el plan de hoy…</string>
     <string name="today_error_title">No se pudo generar</string>
     <string name="today_greeting">Listo para entrenar, %1$s</string>
+    <string name="today_greeting_no_name">Listo para entrenar</string>
     <string name="today_action_resume">Reanudar</string>
     <string name="today_regenerate_content_description">Generar otro entrenamiento</string>
     <string name="today_stat_duration">~%1$s min</string>
