@@ -129,6 +129,10 @@ class ProgramNavigationTest {
         container.deloadRepository.decide(DeloadAction.ACCEPT, profile.revision, preferences.revision, offer.id)
         show(locale)
         awaitTodayList()
+        // The button stays disabled until today's workout is generated.
+        compose.waitUntil(15_000) {
+            compose.onAllNodes(hasText(text(R.string.today_action_start)) and isEnabled()).fetchSemanticsNodes().isNotEmpty()
+        }
         val start = compose.onNodeWithText(text(R.string.today_action_start))
         capture("today-returning-first-viewport-${locale.language}")
         start.assertIsDisplayed().assertIsEnabled()
