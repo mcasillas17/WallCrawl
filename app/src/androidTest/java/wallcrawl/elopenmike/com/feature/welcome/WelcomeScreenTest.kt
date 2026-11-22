@@ -71,9 +71,9 @@ class WelcomeScreenTest {
         assertAbout()
     }
 
-    @Test fun reducedMotionHoldsTheIntroUntil3500msThenReachesAbout() {
+    @Test fun reducedMotionHoldsTheIntroUntil3200msThenReachesAbout() {
         show(reduced = true)
-        compose.mainClock.advanceTimeBy(3400)
+        compose.mainClock.advanceTimeBy(3100)
         compose.onNodeWithTag(WELCOME_INTRO_TEST_TAG).assertExists()
         compose.mainClock.advanceTimeBy(600)
         assertAbout()

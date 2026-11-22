@@ -96,6 +96,38 @@ class PersonalizeViewModelTest {
     }
 
     @Test
+    fun name_isOptional_blankKeepsTheCurrentNameAndTypedOneIsTrimmed() = runTest {
+        val blank = RecordingUserProfileRepository(starter)
+        loaded(blank).apply { updateName("   "); answerAll(this); finish() }
+        advanceUntilIdle()
+        assertThat(blank.saved.single().name).isEqualTo(UserProfile().name)
+
+        val typed = RecordingUserProfileRepository(starter)
+        loaded(typed).apply { updateName("  Ana  "); answerAll(this); finish() }
+        advanceUntilIdle()
+        assertThat(typed.saved.single().name).isEqualTo("Ana")
+    }
+
+    @Test
+    fun name_placeholderIsNotPrefilledButARealNameIsAndItSurvivesRecreation() = runTest {
+        assertThat(loaded(RecordingUserProfileRepository(starter)).uiState.value.name).isEmpty()
+        assertThat(loaded(RecordingUserProfileRepository(starter.copy(name = "Sam"))).uiState.value.name)
+            .isEqualTo("Sam")
+
+        val handle = SavedStateHandle()
+        loaded(RecordingUserProfileRepository(starter), handle).updateName("Lu\nis")
+        val restored = loaded(RecordingUserProfileRepository(starter), handle).uiState.value.name
+        assertThat(restored).isEqualTo("Lu is")
+    }
+
+    @Test
+    fun name_isCappedAtMaxLength() = runTest {
+        val viewModel = loaded(RecordingUserProfileRepository(starter))
+        viewModel.updateName("x".repeat(100))
+        assertThat(viewModel.uiState.value.name).hasLength(UserProfile.MAX_NAME_LENGTH)
+    }
+
+    @Test
     fun finish_keepsLowImpactWhenUserSelectsIt() = runTest {
         val repository = RecordingUserProfileRepository(starter)
         val viewModel = loaded(repository)
@@ -118,14 +150,15 @@ class PersonalizeViewModelTest {
     }
 
     @Test
-    fun previousStep_onConditions_goesToExperienceMovement() = runTest {
+    fun previousStep_onConditions_goesToMovement() = runTest {
         val viewModel = loaded(RecordingUserProfileRepository(starter))
+        viewModel.nextStep()
         viewModel.nextStep()
         answerAll(viewModel)
         viewModel.nextStep()
         assertThat(viewModel.uiState.value.currentStep).isEqualTo(PersonalizeStep.CONDITIONS)
         assertThat(viewModel.previousStep()).isTrue()
-        assertThat(viewModel.uiState.value.currentStep).isEqualTo(PersonalizeStep.EXPERIENCE_MOVEMENT)
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(PersonalizeStep.MOVEMENT)
     }
 
     @Test
@@ -139,7 +172,7 @@ class PersonalizeViewModelTest {
 
         val recreated = loaded(repository, handle)
         val state = recreated.uiState.value
-        assertThat(state.currentStep).isEqualTo(PersonalizeStep.EXPERIENCE_MOVEMENT)
+        assertThat(state.currentStep).isEqualTo(PersonalizeStep.EXPERIENCE)
         assertThat(state.equipment).containsExactly(StandardEquipment.BODYWEIGHT, StandardEquipment.BARBELL)
         assertThat(state.constraints).isEmpty()
         assertThat(repository.saved).isEmpty()
@@ -267,12 +300,24 @@ class PersonalizeViewModelTest {
     // Movement validation, moved from OnboardingViewModelTest.
 
     @Test
+    fun experienceStep_neverBlocksAndLeadsToTheMovementQuestions() = runTest {
+        val viewModel = loaded(RecordingUserProfileRepository(starter))
+        viewModel.nextStep()
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(PersonalizeStep.EXPERIENCE)
+        assertThat(viewModel.uiState.value.canProceedCurrentStep).isTrue()
+        viewModel.nextStep()
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(PersonalizeStep.MOVEMENT)
+        assertThat(viewModel.uiState.value.error).isNull()
+    }
+
+    @Test
     fun movementStep_requiresAnExplicitAnswerForEveryCapability() = runTest {
         val viewModel = loaded(RecordingUserProfileRepository(starter))
         viewModel.nextStep()
         viewModel.nextStep()
+        viewModel.nextStep()
         val state = viewModel.uiState.value
-        assertThat(state.currentStep).isEqualTo(PersonalizeStep.EXPERIENCE_MOVEMENT)
+        assertThat(state.currentStep).isEqualTo(PersonalizeStep.MOVEMENT)
         assertThat(state.unansweredCapability).isEqualTo(MovementCapabilityType.IMPACT)
         assertThat(state.error).isEqualTo(OnboardingError.MOVEMENT_REQUIRED)
         assertThat(state.canProceedCurrentStep).isFalse()
@@ -303,7 +348,7 @@ class PersonalizeViewModelTest {
         assertThat(repository.saved).isEmpty()
         val state = viewModel.uiState.value
         assertThat(state.isComplete).isFalse()
-        assertThat(state.currentStep).isEqualTo(PersonalizeStep.EXPERIENCE_MOVEMENT)
+        assertThat(state.currentStep).isEqualTo(PersonalizeStep.MOVEMENT)
         assertThat(state.error).isEqualTo(OnboardingError.MOVEMENT_REQUIRED)
         assertThat(state.unansweredCapability).isEqualTo(MovementCapabilityType.FLOOR_TRANSITION)
     }
@@ -329,7 +374,7 @@ class PersonalizeViewModelTest {
         original.updateMovementCapability(MovementCapabilityType.FLOOR_TRANSITION, CapabilityLevel.LIMITED)
 
         val state = loaded(repository, handle).uiState.value
-        assertThat(state.currentStep).isEqualTo(PersonalizeStep.EXPERIENCE_MOVEMENT)
+        assertThat(state.currentStep).isEqualTo(PersonalizeStep.EXPERIENCE)
         assertThat(state.capabilityAnswers).containsExactly(
             MovementCapabilityType.IMPACT, CapabilityLevel.UNKNOWN,
             MovementCapabilityType.FLOOR_TRANSITION, CapabilityLevel.LIMITED

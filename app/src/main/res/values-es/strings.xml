@@ -86,14 +86,14 @@
     <string name="language_option_system_short">Auto</string>
 
     <!-- ============================ Onboarding ============================ -->
-    <string name="onboarding_movement_capability_subtitle">Cuéntanos qué te resulta cómodo hoy. Puedes cambiarlo después.</string>
+    <string name="onboarding_movement_capability_subtitle">Elige lo que te resulte cómodo hoy.</string>
     <string name="onboarding_equipment_title">Tu equipo</string>
-    <string name="onboarding_equipment_subtitle">Escoge el equipo que tengas disponible.</string>
+    <string name="onboarding_equipment_subtitle">Elige lo que tengas.</string>
     <string name="onboarding_safety_title">Restricciones de movimiento</string>
     <string name="onboarding_safety_subtitle">Cuéntanos qué zonas quieres cuidar.</string>
 
     <string name="onboarding_basic_title">Armemos tu primera rutina</string>
-    <string name="onboarding_basic_goal">¿Cuál es tu meta?</string>
+    <string name="onboarding_basic_goal">¿Cuáles son tus metas?</string>
     <string name="onboarding_basic_days">Días por semana</string>
     <string name="onboarding_basic_minutes">Minutos por rutina</string>
     <string name="onboarding_basic_cta">Ver mi primera rutina</string>
@@ -109,13 +109,17 @@
     <string name="personalize_profile_row">Personaliza tu plan</string>
     <string name="personalize_starter_safety">¿Eres nuevo? Ve con calma y detente si algo duele.</string>
     <string name="personalize_next">Siguiente</string>
+    <string name="personalize_name_label">¿Cómo te llamamos?</string>
+    <string name="personalize_name_supporting">Opcional. Se muestra en Entrenar.</string>
+    <string name="personalize_experience_subtitle">Define con qué intensidad empiezas.</string>
+    <string name="personalize_movement_title">Cómo te sientes al moverte</string>
+    <string name="movement_capability_current_use">Los entrenamientos automáticos leen estos ajustes. Un movimiento que requiere algo marcado como Evitar queda fuera de tus recomendaciones y, si no queda nada que planificar, WallCrawl lo dice en vez de ofrecer uno.</string>
     <string name="personalize_experience_title">Experiencia</string>
 
 
-    <string name="onboarding_experience_heading">Nivel de experiencia</string>
 
     <string name="onboarding_break_heading">¿Has dejado de entrenar?</string>
-    <string name="onboarding_break_hint">Si dejaste de entrenar un tiempo, indica cuánto para que WallCrawl empiece con un volumen conservador. ¿Apenas empiezas? Elige la primera opción.</string>
+    <string name="onboarding_break_hint">Indica cuánto tiempo y empezaremos con calma.</string>
 
     <string name="onboarding_equipment_quick_heading">Opciones de equipo</string>
     <string name="onboarding_equipment_bodyweight_only">Solo peso corporal</string>
@@ -175,7 +179,6 @@
     <string name="break_range_close_menu">Cerrar el menú de duraciones</string>
 
     <!-- ============================ Movement preferences ============================ -->
-    <string name="movement_capability_current_use">Los entrenamientos automáticos leen estos ajustes. Un movimiento que requiere algo marcado como Evitar queda fuera de tus recomendaciones y, si no queda nada que planificar, WallCrawl lo dice en vez de ofrecer uno.</string>
     <string name="movement_capability_answer_required">Elige una respuesta para esta preferencia de movimiento.</string>
     <string name="movement_capability_option_accessibility">%1$s, %2$s</string>
 
@@ -762,6 +765,7 @@
         <item quantity="one">Busca entre %1$s ejercicio, músculos o equipo…</item>
         <item quantity="other">Busca entre %1$s ejercicios, músculos o equipo…</item>
     </plurals>
+    <string name="profile_name_title">Nombre</string>
     <string name="profile_gender_title">Género (opcional)</string>
     <string name="gender_unspecified">Prefiero no decirlo</string>
     <string name="gender_woman">Mujer</string>

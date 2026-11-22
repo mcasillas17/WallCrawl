@@ -11,6 +11,7 @@ import wallcrawl.elopenmike.com.core.ai.ConditionPlanningPolicy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.CancellationException
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
@@ -269,6 +270,11 @@ class ProfileViewModel(
         viewModelScope.launch {
             userProfileRepository.updateThemePreference(theme)
         }
+    }
+
+    /** Detached from the scope: the field saves on leaving, when this view model may already be cleared. */
+    fun updateName(name: String) {
+        viewModelScope.launch(NonCancellable) { userProfileRepository.updateName(name) }
     }
 
     fun updateGender(gender: ProfileGender) {

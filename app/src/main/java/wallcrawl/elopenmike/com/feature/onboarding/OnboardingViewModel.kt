@@ -28,8 +28,8 @@ class OnboardingViewModel(
     private val mutableState = MutableStateFlow(restoreDraft(savedStateHandle))
     val uiState: StateFlow<OnboardingUiState> = mutableState.asStateFlow()
 
-    fun updateGoal(goal: FitnessGoal) {
-        updateState { it.copy(goal = goal, error = null) }
+    fun toggleGoal(goal: FitnessGoal) {
+        updateState { it.copy(goals = if (goal in it.goals) it.goals - goal else it.goals + goal, error = null) }
     }
 
     fun updateDaysPerWeek(days: Int) {
@@ -43,15 +43,14 @@ class OnboardingViewModel(
     /** Persists the starter profile in one save. [regionCountry] picks the weight unit. */
     fun save(regionCountry: String) {
         val state = mutableState.value
-        val goal = state.goal
-        if (goal == null || state.isSaving) return
+        if (!state.canSave) return
 
         viewModelScope.launch {
             updateState { it.copy(isSaving = true, error = null) }
             try {
                 val profile = StarterProfile.apply(
                     base = userProfileRepository.getProfileOnce(),
-                    goal = goal,
+                    goals = state.goals,
                     daysPerWeek = state.daysPerWeek,
                     durationMinutes = state.durationMinutes,
                     regionCountry = regionCountry
@@ -74,20 +73,21 @@ class OnboardingViewModel(
     }
 
     private fun persistDraft(state: OnboardingUiState) {
-        savedStateHandle[STATE_GOAL] = state.goal?.name
+        savedStateHandle[STATE_GOALS] = ArrayList(state.goals.map { it.name })
         savedStateHandle[STATE_DAYS_PER_WEEK] = state.daysPerWeek
         savedStateHandle[STATE_DURATION_MINUTES] = state.durationMinutes
     }
 
     companion object {
-        private const val STATE_GOAL = "onboarding.goal"
+        private const val STATE_GOALS = "onboarding.goals"
         private const val STATE_DAYS_PER_WEEK = "onboarding.daysPerWeek"
         private const val STATE_DURATION_MINUTES = "onboarding.durationMinutes"
 
         private fun restoreDraft(savedStateHandle: SavedStateHandle): OnboardingUiState {
             val defaults = OnboardingUiState()
             return defaults.copy(
-                goal = FitnessGoal.entries.firstOrNull { it.name == savedStateHandle.get<String>(STATE_GOAL) },
+                goals = savedStateHandle.get<ArrayList<String>>(STATE_GOALS).orEmpty()
+                    .mapNotNull { name -> FitnessGoal.entries.firstOrNull { it.name == name } }.toSet(),
                 daysPerWeek = savedStateHandle[STATE_DAYS_PER_WEEK] ?: defaults.daysPerWeek,
                 durationMinutes = savedStateHandle[STATE_DURATION_MINUTES]
                     ?: defaults.durationMinutes

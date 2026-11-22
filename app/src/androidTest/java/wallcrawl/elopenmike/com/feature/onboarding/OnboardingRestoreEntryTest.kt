@@ -10,6 +10,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsNotSelected
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -64,9 +66,24 @@ class OnboardingRestoreEntryTest {
 
         composeRule.onNodeWithText(text(FitnessGoal.STRENGTH.labelRes)).performClick()
 
-        composeRule.onNodeWithText(text(FitnessGoal.STRENGTH.labelRes)).assertIsSelected()
+        composeRule.onNodeWithText(text(FitnessGoal.STRENGTH.labelRes)).assertIsOn()
         composeRule.onNodeWithText(text(R.string.onboarding_basic_cta)).assertIsEnabled()
-        assertThat(viewModel.uiState.value.goal).isEqualTo(FitnessGoal.STRENGTH)
+        assertThat(viewModel.uiState.value.goals).containsExactly(FitnessGoal.STRENGTH)
+    }
+
+    @Test
+    fun moreThanOneGoalCanBeChosenAndTappingAgainClearsIt() {
+        val viewModel = showSetup()
+
+        composeRule.onNodeWithText(text(FitnessGoal.STRENGTH.labelRes)).performClick()
+        composeRule.onNodeWithText(text(FitnessGoal.FAT_LOSS.labelRes)).performClick()
+        composeRule.onNodeWithText(text(FitnessGoal.STRENGTH.labelRes)).assertIsOn()
+        composeRule.onNodeWithText(text(FitnessGoal.FAT_LOSS.labelRes)).assertIsOn()
+
+        composeRule.onNodeWithText(text(FitnessGoal.STRENGTH.labelRes)).performClick()
+
+        composeRule.onNodeWithText(text(FitnessGoal.STRENGTH.labelRes)).assertIsOff()
+        assertThat(viewModel.uiState.value.goals).containsExactly(FitnessGoal.FAT_LOSS)
     }
 
     @Test
@@ -87,7 +104,7 @@ class OnboardingRestoreEntryTest {
         // Saving writes a whole profile. A restore is about to commit one, so the two must
         // not race: the button says what is happening and refuses.
         val viewModel = showSetup(isRestoreInFlight = true)
-        composeRule.runOnIdle { viewModel.updateGoal(FitnessGoal.STRENGTH) }
+        composeRule.runOnIdle { viewModel.toggleGoal(FitnessGoal.STRENGTH) }
 
         composeRule.onNodeWithText(text(R.string.local_data_restore_progress))
             .assertIsDisplayed()
@@ -132,9 +149,9 @@ class OnboardingRestoreEntryTest {
         sheetOpen = false
         composeRule.waitForIdle()
 
-        assertThat(viewModel.uiState.value.goal).isEqualTo(FitnessGoal.FAT_LOSS)
+        assertThat(viewModel.uiState.value.goals).containsExactly(FitnessGoal.FAT_LOSS)
         assertThat(viewModel.uiState.value.isComplete).isFalse()
-        composeRule.onNodeWithText(text(FitnessGoal.FAT_LOSS.labelRes)).assertIsSelected()
+        composeRule.onNodeWithText(text(FitnessGoal.FAT_LOSS.labelRes)).assertIsOn()
         composeRule.onNodeWithText(text(R.string.onboarding_basic_cta)).assertIsEnabled()
     }
 

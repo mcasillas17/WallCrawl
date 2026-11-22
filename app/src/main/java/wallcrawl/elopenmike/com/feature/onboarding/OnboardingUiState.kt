@@ -13,12 +13,13 @@ enum class OnboardingError(@StringRes val messageRes: Int) {
 
 /** The basic-setup answers plus save and completion state. */
 data class OnboardingUiState(
-    val goal: FitnessGoal? = null,
+    /** In tap order; the first is the primary goal. */
+    val goals: Set<FitnessGoal> = emptySet(),
     val daysPerWeek: Int = 3,
     val durationMinutes: Int = 30,
     val isSaving: Boolean = false,
     val error: OnboardingError? = null,
     val isComplete: Boolean = false
 ) {
-    val canSave: Boolean get() = goal != null && !isSaving
+    val canSave: Boolean get() = goals.isNotEmpty() && !isSaving
 }

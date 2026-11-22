@@ -302,6 +302,7 @@ private fun SettingsDetail(
                         }
                     }
                 }
+                item { ProfileNameField(profile.name, viewModel::updateName) }
                 item { ProfileGenderSelector(profile.gender, viewModel::updateGender) }
                 item { AppPreferencesCard(profile.themePreference, viewModel::updateThemePreference) }
             }

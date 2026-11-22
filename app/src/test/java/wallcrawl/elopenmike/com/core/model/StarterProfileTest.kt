@@ -17,7 +17,7 @@ class StarterProfileTest {
             personalizationCompleted = true
         )
 
-        val profile = StarterProfile.apply(base, FitnessGoal.STRENGTH, 4, 45, "DE")
+        val profile = StarterProfile.apply(base, setOf(FitnessGoal.STRENGTH), 4, 45, "DE")
 
         assertThat(profile.name).isEqualTo(UserProfile().name)
         assertThat(profile.goals).containsExactly(FitnessGoal.STRENGTH)

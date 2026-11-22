@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun exitSplash(provider: SplashScreenViewProvider, profile: UserProfile?, handoff: SplashHandoff) {
-        val animatedIntro = profile != null && shouldShowIntro(this, profile) &&
+        val animatedIntro = profile != null && shouldShowIntro(profile) &&
             !isReducedMotion(this) && !isTouchExploration(this)
         if (animatedIntro) {
             // First launch: no zoom. The intro draws the same emblem in the same place and

@@ -23,14 +23,14 @@ import wallcrawl.elopenmike.com.core.model.UserProfile
  * impact; their difficulty and equipment are exempt.
  */
 @RunWith(Parameterized::class)
-class StarterWorkoutGuardTest(private val goal: FitnessGoal, private val minutes: Int) {
+class StarterWorkoutGuardTest(private val goals: Set<FitnessGoal>, private val minutes: Int) {
 
     private val catalog = PlannerFixtureContextFactory().bundledCatalogProjection()
 
     @Test
     fun starterWorkout_isSimpleAndSafe() = runTest {
         val week = TrainingWeek.startingOn(MONDAY_EPOCH_DAY, ZONE)
-        val profile = StarterProfile.apply(UserProfile(), goal, 3, minutes, "US")
+        val profile = StarterProfile.apply(UserProfile(), goals, 3, minutes, "US")
         val builder = WorkoutGenerationContextBuilder(
             userProfileRepository = StaticUserProfileRepository(profile),
             workoutRepository = StaticWorkoutRepository(emptyList()),
@@ -49,7 +49,7 @@ class StarterWorkoutGuardTest(private val goal: FitnessGoal, private val minutes
             zoneId = { ZONE }
         )
         val workout = FakeWorkoutPlanner().generateWorkout(builder.build())
-        val label = "$goal x $minutes min"
+        val label = "$goals x $minutes min"
         val byId = catalog.exercises.associateBy { it.id }
 
         assertWithMessage("$label: empty workout").that(workout.exercises).isNotEmpty()
@@ -86,6 +86,13 @@ class StarterWorkoutGuardTest(private val goal: FitnessGoal, private val minutes
         @JvmStatic
         @Parameterized.Parameters(name = "{0} {1}min")
         fun cases(): List<Array<Any>> =
-            FitnessGoal.entries.flatMap { g -> listOf(20, 30, 45, 60).map { arrayOf<Any>(g, it) } }
+            goalSets().flatMap { g -> listOf(20, 30, 45, 60).map { arrayOf<Any>(g, it) } }
+
+        /** Every single goal, every pair, and all goals at once: onboarding allows any mix. */
+        private fun goalSets(): List<Set<FitnessGoal>> {
+            val all = FitnessGoal.entries
+            val pairs = all.flatMapIndexed { i, a -> all.drop(i + 1).map { b -> setOf(a, b) } }
+            return all.map { setOf(it) } + pairs + listOf(all.toSet())
+        }
     }
 }
