@@ -126,11 +126,14 @@ jobs:
         id: sdk
         run: echo "dir=${ANDROID_HOME:?}" >> "$GITHUB_OUTPUT"
 
-      # The system image is the biggest download (about two minutes for 37.0). The
+      # The system image is the biggest download (40 s to two minutes for 37.0). The
       # emulator action's sdkmanager install finds it already present and skips it.
-      # Bump the key's trailing version to force a fresh download.
-      - name: Cache emulator system image
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      # Only main saves images: the three are about 4.8 GB, so a copy per pull request
+      # would overflow the repository's 10 GB cache and evict the Gradle cache. Pull
+      # requests read main's copy. Bump the key's trailing version to force a fresh download.
+      - name: Restore emulator system image
+        id: system-image
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ steps.sdk.outputs.dir }}/system-images/android-${{ matrix.api-level }}/google_apis/x86_64
           key: system-image-${{ runner.os }}-android-${{ matrix.api-level }}-google_apis-x86_64-v1
@@ -182,6 +185,13 @@ jobs:
             ./gradlew connectedDebugAndroidTest $INSTRUMENTATION_ARGS --stacktrace --no-daemon
             grep -q 'tests="[1-9]' app/build/outputs/androidTest-results/connected/debug/TEST-*.xml
             python3 tools/ci/instrumentation_summary.py
+
+      - name: Save emulator system image
+        if: github.ref == 'refs/heads/main' && steps.system-image.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.sdk.outputs.dir }}/system-images/android-${{ matrix.api-level }}/google_apis/x86_64
+          key: ${{ steps.system-image.outputs.cache-primary-key }}
 
       - name: Upload instrumentation report
         if: failure()
