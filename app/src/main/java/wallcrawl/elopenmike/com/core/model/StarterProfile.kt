@@ -1,7 +1,8 @@
 package wallcrawl.elopenmike.com.core.model
 
 /**
- * The safe profile written by the one-screen basic setup: bodyweight, low impact, beginner.
+ * The safe profile written by the one-screen basic setup: bodyweight, low impact, beginner,
+ * plus the optional gender that picks the exercise artwork.
  * Personalization replaces these answers later.
  */
 object StarterProfile {
@@ -12,10 +13,12 @@ object StarterProfile {
         goals: Set<FitnessGoal>,
         daysPerWeek: Int,
         durationMinutes: Int,
-        regionCountry: String
+        regionCountry: String,
+        // Only selects exercise artwork; planning never reads it.
+        gender: ProfileGender = ProfileGender.UNSPECIFIED
     ): UserProfile = base.copy(
         name = UserProfile().name,
-        gender = ProfileGender.UNSPECIFIED,
+        gender = gender,
         goals = goals,
         daysPerWeek = daysPerWeek,
         preferredDurationMinutes = durationMinutes,

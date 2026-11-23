@@ -36,6 +36,14 @@ class StarterProfileTest {
     }
 
     @Test
+    fun apply_writesTheChosenGender() {
+        val profile = StarterProfile.apply(UserProfile(), setOf(FitnessGoal.STRENGTH), 3, 30, "US", ProfileGender.WOMAN)
+
+        assertThat(profile.gender).isEqualTo(ProfileGender.WOMAN)
+        assertThat(profile.illustrationVariant).isEqualTo(IllustrationVariant.FEMALE)
+    }
+
+    @Test
     fun unitFor_US_LR_MM_isLbs() {
         listOf("US", "LR", "MM").forEach {
             assertThat(StarterProfile.unitFor(it)).isEqualTo(WeightUnit.LBS)

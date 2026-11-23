@@ -100,6 +100,21 @@ class OnboardingRestoreEntryTest {
     }
 
     @Test
+    fun theChosenGenderIsSavedWithTheStarterProfile() {
+        val repository = FakeUserProfileRepository()
+        showSetup(repository = repository)
+
+        composeRule.onNodeWithText(text(FitnessGoal.STRENGTH.labelRes)).performClick()
+        composeRule.onNodeWithText(text(R.string.gender_unspecified)).performScrollTo().performClick()
+        composeRule.onNodeWithText(text(R.string.gender_woman)).performClick()
+        composeRule.onNodeWithText(text(R.string.gender_woman)).assertIsDisplayed()
+        composeRule.onNodeWithText(text(R.string.onboarding_basic_cta)).performClick()
+
+        composeRule.waitUntil(5_000) { repository.current.onboardingCompleted }
+        assertThat(repository.current.gender).isEqualTo(ProfileGender.WOMAN)
+    }
+
+    @Test
     fun aRestoreInFlightBlocksTheActionThatWouldOverwriteIt() {
         // Saving writes a whole profile. A restore is about to commit one, so the two must
         // not race: the button says what is happening and refuses.
@@ -157,9 +172,10 @@ class OnboardingRestoreEntryTest {
 
     private fun showSetup(
         isRestoreInFlight: Boolean = false,
+        repository: FakeUserProfileRepository = FakeUserProfileRepository(),
         restoreSlot: @Composable () -> Unit = { Text(RESTORE_SLOT) }
     ): OnboardingViewModel {
-        val viewModel = OnboardingViewModel(FakeUserProfileRepository())
+        val viewModel = OnboardingViewModel(repository)
         composeRule.setContent {
             WallCrawlTheme {
                 OnboardingScreen(
@@ -182,6 +198,7 @@ class OnboardingRestoreEntryTest {
 
 private class FakeUserProfileRepository : UserProfileRepository {
     private val profile = MutableStateFlow(UserProfile())
+    val current: UserProfile get() = profile.value
 
     override fun getUserProfile(): Flow<UserProfile> = profile
     override suspend fun getProfileOnce(): UserProfile = profile.value
@@ -208,7 +225,7 @@ private class FakeUserProfileRepository : UserProfileRepository {
         error("Not used")
 
     override suspend fun updateReturningAfterBreakWeeks(weeks: Int) = error("Not used")
-    override suspend fun updateGender(gender: wallcrawl.elopenmike.com.core.model.ProfileGender) = saveProfile(getProfileOnce().copy(gender = gender))
+    override suspend fun updateGender(gender: ProfileGender) = saveProfile(getProfileOnce().copy(gender = gender))
     override suspend fun updateThemePreference(themePreference: ThemePreference) =
         error("Not used")
 }
