@@ -13,7 +13,8 @@ gender and see male artwork.
 
 The closed field shows the current choice; opening it marks that choice with a
 checkmark. Selecting an option closes the menu. Dismissing it leaves the selection
-unchanged. Onboarding groups codename and gender in one card.
+unchanged. In onboarding it sits on the first screen, below session length, so the
+first workout already shows the chosen artwork.
 
 These component captures show the shared dropdown in English dark mode and Spanish
 light mode with enlarged text (1.6x), using a disposable test profile:

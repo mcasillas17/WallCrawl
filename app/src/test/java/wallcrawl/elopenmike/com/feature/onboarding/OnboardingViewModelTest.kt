@@ -15,6 +15,7 @@ import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.model.ExperienceLevel
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.model.PriorityLevel
+import wallcrawl.elopenmike.com.core.model.ProfileGender
 import wallcrawl.elopenmike.com.core.model.StandardEquipment
 import wallcrawl.elopenmike.com.core.model.TrainingConstraint
 import wallcrawl.elopenmike.com.core.model.UserProfile
@@ -51,6 +52,7 @@ class OnboardingViewModelTest {
         viewModel.toggleGoal(FitnessGoal.STRENGTH)
         viewModel.updateDaysPerWeek(5)
         viewModel.updateDurationMinutes(60)
+        viewModel.updateGender(ProfileGender.WOMAN)
         viewModel.save("US")
         advanceUntilIdle()
 
@@ -58,6 +60,7 @@ class OnboardingViewModelTest {
         assertThat(saved.goals).containsExactly(FitnessGoal.STRENGTH)
         assertThat(saved.daysPerWeek).isEqualTo(5)
         assertThat(saved.preferredDurationMinutes).isEqualTo(60)
+        assertThat(saved.gender).isEqualTo(ProfileGender.WOMAN)
         assertThat(saved.preferredUnit).isEqualTo(WeightUnit.LBS)
         assertThat(saved.experienceLevel).isEqualTo(ExperienceLevel.BEGINNER)
         assertThat(saved.availableEquipment).containsExactly(StandardEquipment.BODYWEIGHT)
@@ -101,6 +104,7 @@ class OnboardingViewModelTest {
         assertThat(state.goals).isEmpty()
         assertThat(state.daysPerWeek).isEqualTo(3)
         assertThat(state.durationMinutes).isEqualTo(30)
+        assertThat(state.gender).isEqualTo(ProfileGender.UNSPECIFIED)
     }
 
     @Test
@@ -112,12 +116,14 @@ class OnboardingViewModelTest {
         original.toggleGoal(FitnessGoal.STRENGTH)
         original.updateDaysPerWeek(5)
         original.updateDurationMinutes(45)
+        original.updateGender(ProfileGender.NON_BINARY)
 
         val state = OnboardingViewModel(repository, savedState).uiState.value
 
         assertThat(state.goals).containsExactly(FitnessGoal.FAT_LOSS, FitnessGoal.STRENGTH).inOrder()
         assertThat(state.daysPerWeek).isEqualTo(5)
         assertThat(state.durationMinutes).isEqualTo(45)
+        assertThat(state.gender).isEqualTo(ProfileGender.NON_BINARY)
         assertThat(repository.saved).isEmpty()
     }
 

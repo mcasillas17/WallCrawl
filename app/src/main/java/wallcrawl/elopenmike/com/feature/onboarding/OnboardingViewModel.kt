@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import wallcrawl.elopenmike.com.core.database.repository.UserProfileRepository
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
+import wallcrawl.elopenmike.com.core.model.ProfileGender
 import wallcrawl.elopenmike.com.core.model.StarterProfile
 
 /**
@@ -40,6 +41,10 @@ class OnboardingViewModel(
         updateState { it.copy(durationMinutes = minutes, error = null) }
     }
 
+    fun updateGender(gender: ProfileGender) {
+        updateState { it.copy(gender = gender, error = null) }
+    }
+
     /** Persists the starter profile in one save. [regionCountry] picks the weight unit. */
     fun save(regionCountry: String) {
         val state = mutableState.value
@@ -53,7 +58,8 @@ class OnboardingViewModel(
                     goals = state.goals,
                     daysPerWeek = state.daysPerWeek,
                     durationMinutes = state.durationMinutes,
-                    regionCountry = regionCountry
+                    regionCountry = regionCountry,
+                    gender = state.gender
                 )
                 userProfileRepository.saveProfile(profile)
                 updateState { it.copy(isSaving = false, isComplete = true) }
@@ -76,12 +82,14 @@ class OnboardingViewModel(
         savedStateHandle[STATE_GOALS] = ArrayList(state.goals.map { it.name })
         savedStateHandle[STATE_DAYS_PER_WEEK] = state.daysPerWeek
         savedStateHandle[STATE_DURATION_MINUTES] = state.durationMinutes
+        savedStateHandle[STATE_GENDER] = state.gender.name
     }
 
     companion object {
         private const val STATE_GOALS = "onboarding.goals"
         private const val STATE_DAYS_PER_WEEK = "onboarding.daysPerWeek"
         private const val STATE_DURATION_MINUTES = "onboarding.durationMinutes"
+        private const val STATE_GENDER = "onboarding.gender"
 
         private fun restoreDraft(savedStateHandle: SavedStateHandle): OnboardingUiState {
             val defaults = OnboardingUiState()
@@ -90,7 +98,10 @@ class OnboardingViewModel(
                     .mapNotNull { name -> FitnessGoal.entries.firstOrNull { it.name == name } }.toSet(),
                 daysPerWeek = savedStateHandle[STATE_DAYS_PER_WEEK] ?: defaults.daysPerWeek,
                 durationMinutes = savedStateHandle[STATE_DURATION_MINUTES]
-                    ?: defaults.durationMinutes
+                    ?: defaults.durationMinutes,
+                gender = savedStateHandle.get<String>(STATE_GENDER)
+                    ?.let { name -> ProfileGender.entries.firstOrNull { it.name == name } }
+                    ?: defaults.gender
             )
         }
 

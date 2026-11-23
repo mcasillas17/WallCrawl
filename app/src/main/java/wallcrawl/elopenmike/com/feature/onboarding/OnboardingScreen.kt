@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
 import wallcrawl.elopenmike.com.core.ui.components.LanguageChip
+import wallcrawl.elopenmike.com.core.ui.components.ProfileGenderSelector
 import wallcrawl.elopenmike.com.core.ui.components.WallCrawlPrimaryButton
 import wallcrawl.elopenmike.com.core.ui.format.LocaleFormatting
 import wallcrawl.elopenmike.com.core.ui.localization.labelRes
@@ -69,7 +70,7 @@ private val FitnessGoal.icon: ImageVector
     }
 
 /**
- * One-screen basic setup: goal, days per week and session length. Only shown during
+ * One-screen basic setup: goal, days per week, session length and optional gender (artwork only). Only shown during
  * first-time setup until [OnboardingViewModel.save] persists `onboardingCompleted = true`.
  */
 @OptIn(ExperimentalLayoutApi::class)
@@ -167,6 +168,8 @@ fun OnboardingScreen(
                 label = { LocaleFormatting.formatCount(it, locale) },
                 onSelect = viewModel::updateDurationMinutes
             )
+
+            ProfileGenderSelector(gender = state.gender, onGenderChange = viewModel::updateGender)
         }
 
         val error = state.error

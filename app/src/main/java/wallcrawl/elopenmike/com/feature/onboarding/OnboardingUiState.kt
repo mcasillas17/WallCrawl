@@ -3,6 +3,7 @@ package wallcrawl.elopenmike.com.feature.onboarding
 import androidx.annotation.StringRes
 import wallcrawl.elopenmike.com.R
 import wallcrawl.elopenmike.com.core.model.FitnessGoal
+import wallcrawl.elopenmike.com.core.model.ProfileGender
 
 enum class OnboardingError(@StringRes val messageRes: Int) {
     REQUIRED_FIELD(R.string.onboarding_error_required_field),
@@ -17,6 +18,8 @@ data class OnboardingUiState(
     val goals: Set<FitnessGoal> = emptySet(),
     val daysPerWeek: Int = 3,
     val durationMinutes: Int = 30,
+    /** Optional; only picks the exercise artwork. */
+    val gender: ProfileGender = ProfileGender.UNSPECIFIED,
     val isSaving: Boolean = false,
     val error: OnboardingError? = null,
     val isComplete: Boolean = false
