@@ -104,7 +104,11 @@ internal fun WorkoutPreviewSheet(
     ).filter { it.second.isNotEmpty() }
     val expanded = remember { mutableStateMapOf<String, Boolean>() }
 
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+    // No drag gestures: Material's sheet stretches when pulled up past its open position, so
+    // trying to scroll a list that already fits made the whole sheet jump on every swipe.
+    // Close, Back and the scrim still dismiss it.
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        sheetGesturesEnabled = false) {
         val pane = stringResource(R.string.guided_train_preview)
         Column(Modifier.fillMaxWidth().navigationBarsPadding().semantics { paneTitle = pane }) {
             Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 8.dp), verticalAlignment = Alignment.Top) {
