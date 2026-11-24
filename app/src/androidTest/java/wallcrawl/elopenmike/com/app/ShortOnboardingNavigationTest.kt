@@ -168,7 +168,10 @@ class ShortOnboardingNavigationTest {
     private fun openProfile() {
         compose.runOnIdle { nav.navigate("profile") }
         route("profile")
-        compose.onNodeWithTag("profile-settings-list").assertExists()
+        // The route changes before Profile has loaded and composed its list.
+        compose.waitUntil(15_000) {
+            compose.onAllNodesWithTag("profile-settings-list").fetchSemanticsNodes().isNotEmpty()
+        }
     }
 
     /** Scrolls the whole settings list (failing if it is absent) and reports whether the row is at its top. */
