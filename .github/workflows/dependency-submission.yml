@@ -35,4 +35,7 @@ jobs:
         uses: gradle/actions/dependency-submission@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
         with:
           cache-provider: basic
+          # This job resolves dependencies without downloading their jars, and it finishes
+          # first, so a cache it saved would be missing them. CI's build job saves it instead.
+          cache-read-only: true
           dependency-graph: generate-and-submit

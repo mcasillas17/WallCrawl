@@ -39,6 +39,8 @@ jobs:
         uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
         with:
           cache-provider: basic
+          # Only the build job saves the Gradle cache; see its setup step.
+          cache-read-only: true
 
       - name: Check catalog against pinned upstream source
         run: python3 tools/workout-guide/check_pinned_catalog.py
@@ -82,13 +84,18 @@ jobs:
           distribution: temurin
           java-version: "17"
 
+      # The Gradle cache has one key shared by every job, and the first job to finish on
+      # main writes it. A job that skips part of the build would save a cache missing those
+      # jars, and every later job would download them from Maven Central, which rate-limits
+      # a dozen parallel jobs. So only this job saves, after building everything the other
+      # jobs need except lint's own tools.
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
         with:
           cache-provider: basic
 
-      - name: Run unit tests and debug build
-        run: ./gradlew test assembleDebug --stacktrace --no-daemon
+      - name: Run unit tests and build the app and test APKs
+        run: ./gradlew test assembleDebug assembleDebugAndroidTest --stacktrace --no-daemon
 
   lint:
     name: Lint
@@ -111,6 +118,8 @@ jobs:
         uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
         with:
           cache-provider: basic
+          # Only the build job saves the Gradle cache; see its setup step.
+          cache-read-only: true
 
       - name: Run lint
         run: ./gradlew lint --stacktrace --no-daemon
@@ -176,6 +185,8 @@ jobs:
         uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
         with:
           cache-provider: basic
+          # Only the build job saves the Gradle cache; see its setup step.
+          cache-read-only: true
 
       # Build both APKs before the emulator starts, so compiling does not compete with a
       # running emulator for the runner's CPUs. The connected test task then finds them

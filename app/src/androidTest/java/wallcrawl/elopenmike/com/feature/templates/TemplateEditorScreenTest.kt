@@ -41,6 +41,7 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextReplacement
+import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
@@ -265,7 +266,9 @@ class TemplateEditorScreenTest {
         }
         composeRule.onNodeWithText(editor.resources.getString(R.string.editor_action_add)).performClick()
         val search = composeRule.onNode(hasSetTextAction() and hasText("Search", substring = true))
-        search.performClick()
+        // Focused directly rather than tapped: a tap can land while the new sheet is still
+        // sliding into place, miss the field, and leave the keyboard down.
+        search.requestFocus()
         composeRule.waitUntil(10_000) { imeTop() != null }
         assertAboveKeyboard(search)
         search.performTextInput("squat")
